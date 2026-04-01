@@ -4,7 +4,7 @@
 
 PolarisChain is a research-driven platform focused on modeling trust relationships in federated Public Key Infrastructure (PKI) environments using graph-based approaches. Its goal is to enable efficient, explainable, and interoperable certificate validation across complex, multi-domain ecosystems.
 
-## 🚀 Overview
+## :newspaper: Overview
 
 In modern PKI ecosystems, certificate validation paths can become increasingly complex due to:
 
@@ -42,9 +42,9 @@ polarischain-web/
 ├── astro.config.mjs
 ├── package.json
 └── README.md
+```
 
-
-## 🧪 Development
+## 🚀 Development
 
 Run locally:
 
@@ -70,7 +70,7 @@ The generated static site will be available in:
 
 All commands are run from the root of the project:
 
-| Command           | Action                            |
+| Command          | Action                            |
 |------------------|-----------------------------------|
 | `npm install`    | Install dependencies              |
 | `npm run dev`    | Start local development server    |
