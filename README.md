@@ -4,8 +4,6 @@
 
 PolarisChain is a research-driven platform focused on modeling trust relationships in federated Public Key Infrastructure (PKI) environments using graph-based approaches. Its goal is to enable efficient, explainable, and interoperable certificate validation across complex, multi-domain ecosystems.
 
----
-
 ## 🚀 Overview
 
 In modern PKI ecosystems, certificate validation paths can become increasingly complex due to:
@@ -20,7 +18,6 @@ PolarisChain addresses this complexity by:
 - Enabling **path discovery algorithms** for certificate validation
 - Providing a **visual and conceptual framework** for federated trust
 
----
 
 ## 🧠 Key Concepts
 
@@ -29,7 +26,6 @@ PolarisChain addresses this complexity by:
 - **Path Discovery**: Finding optimal validation chains between entities  
 - **Interoperability**: Supporting diverse PKI models without replacing existing standards (e.g., PKIX)
 
----
 
 ## 🏗️ Project Structure
 
@@ -47,7 +43,6 @@ polarischain-web/
 ├── package.json
 └── README.md
 
----
 
 ## 🧪 Development
 
@@ -70,7 +65,6 @@ The generated static site will be available in:
 /dist
 ```
 
----
 
 ## 🧞 Commands
 
@@ -84,7 +78,6 @@ All commands are run from the root of the project:
 | `npm run preview`| Preview build locally             |
 | `npm run astro`  | Run Astro CLI commands            |
 
----
 
 ## 🌐 Deployment
 
@@ -96,7 +89,6 @@ Example deployment environments:
 - Nginx / Apache
 - Static hosting (GitHub Pages, Vercel, Netlify)
 
----
 
 ## 🔗 Ecosystem
 
@@ -106,7 +98,6 @@ PolarisChain is structured as a modular platform:
 - `polarischain-docs` → Technical documentation
 - `polarischain-app` → Core application (validation engine & APIs)
 
----
 
 ## 🎓 Academic Context
 
@@ -116,7 +107,6 @@ This project is developed as part of:
 - 🏫 Universitat Politècnica de València (UPV)  
 - 📄 Master’s Thesis (TFM), with potential continuation toward a PhD  
 
----
 
 ## 🔬 Research Vision
 
@@ -126,7 +116,6 @@ PolarisChain aims to contribute to:
 - Graph-based validation models  
 - Post-quantum-ready interoperability strategies  
 
----
 
 ## 🤝 Open Source Philosophy
 
@@ -136,14 +125,12 @@ This project embraces an open and collaborative approach to:
 - Enable reproducible research  
 - Contribute to the evolution of PKI systems  
 
----
 
 ## 📬 Contact
 
 Author: Jorge Pablo Trías Posa  
 Institution: Universitat Politècnica de València  
 
----
 
 ## ⭐ Future Work
 
@@ -152,7 +139,6 @@ Institution: Universitat Politècnica de València
 - Integration with real PKI infrastructures (EJBCA, etc.)  
 - Support for hybrid and post-quantum PKI models  
 
----
 
 ## 🧭 Inspiration
 
