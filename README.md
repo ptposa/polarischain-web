@@ -1,8 +1,10 @@
 # 🌌 PolarisChain
 
-**Navigating Trust Across Federated PKI Ecosystems**
+**Navigating Trust across federated PKI ecosystems**
 
 PolarisChain is a research-driven platform focused on modeling trust relationships in federated Public Key Infrastructure (PKI) environments using graph-based approaches. Its goal is to enable efficient, explainable, and interoperable certificate validation across complex, multi-domain ecosystems.
+
+<br>
 
 ## :newspaper: Overview
 
@@ -18,6 +20,7 @@ PolarisChain addresses this complexity by:
 - Enabling **path discovery algorithms** for certificate validation
 - Providing a **visual and conceptual framework** for federated trust
 
+<br>
 
 ## 🧠 Key Concepts
 
@@ -26,6 +29,7 @@ PolarisChain addresses this complexity by:
 - **Path Discovery**: Finding optimal validation chains between entities  
 - **Interoperability**: Supporting diverse PKI models without replacing existing standards (e.g., PKIX)
 
+<br>
 
 ## 🏗️ Project Structure
 
@@ -43,6 +47,8 @@ polarischain-web/
 ├── package.json
 └── README.md
 ```
+
+<br>
 
 ## 🚀 Development
 
@@ -65,6 +71,7 @@ The generated static site will be available in:
 /dist
 ```
 
+<br>
 
 ## 🧞 Commands
 
@@ -78,6 +85,7 @@ All commands are run from the root of the project:
 | `npm run preview`| Preview build locally             |
 | `npm run astro`  | Run Astro CLI commands            |
 
+<br>
 
 ## 🌐 Deployment
 
@@ -89,6 +97,7 @@ Example deployment environments:
 - Nginx / Apache
 - Static hosting (GitHub Pages, Vercel, Netlify)
 
+<br>
 
 ## 🔗 Ecosystem
 
@@ -98,6 +107,7 @@ PolarisChain is structured as a modular platform:
 - `polarischain-docs` → Technical documentation
 - `polarischain-app` → Core application (validation engine & APIs)
 
+<br>
 
 ## 🎓 Academic Context
 
@@ -107,6 +117,7 @@ This project is developed as part of:
 - 🏫 Universitat Politècnica de València (UPV)  
 - 📄 Master’s Thesis (TFM), with potential continuation toward a PhD  
 
+<br>
 
 ## 🔬 Research Vision
 
@@ -116,6 +127,7 @@ PolarisChain aims to contribute to:
 - Graph-based validation models  
 - Post-quantum-ready interoperability strategies  
 
+<br>
 
 ## 🤝 Open Source Philosophy
 
@@ -125,12 +137,14 @@ This project embraces an open and collaborative approach to:
 - Enable reproducible research  
 - Contribute to the evolution of PKI systems  
 
+<br>
 
 ## 📬 Contact
 
 Author: Jorge Pablo Trías Posa  
 Institution: Universitat Politècnica de València  
 
+<br>
 
 ## ⭐ Future Work
 
@@ -139,11 +153,14 @@ Institution: Universitat Politècnica de València
 - Integration with real PKI infrastructures (EJBCA, etc.)  
 - Support for hybrid and post-quantum PKI models  
 
+<br>
 
 ## 🧭 Inspiration
 
 Just as navigators relied on the **Polaris star** to find their way across the ocean,  
 **PolarisChain** aims to guide certificates through the complexity of federated trust.
+
+<br>
 
 ## 👀 Live Deployment
 
