@@ -1,0 +1,100 @@
+<section id="research" class="paper-section">
+  <div class="container paper-shell">
+    <div class="section-heading">
+      <span class="section-kicker">Research</span>
+      <h2>Formalizing federated PKI as a governed weighted graph.</h2>
+      <p>
+        The proposal focuses on controlled interoperability between multidomain PKIs,
+        representing certification authorities and federation links as a directed,
+        weighted graph that can be queried for valid and optimal certification paths.
+      </p>
+    </div>
+
+    <div class="research-grid">
+      <article class="research-card">
+        <div class="research-card-header">
+          <span class="research-index">01</span>
+          <h3>Multidomain PKI complexity</h3>
+        </div>
+        <p>
+          Traditional cross-certification and mesh-like trust structures become hard to
+          govern as domains, policies, and interoperability constraints increase.
+        </p>
+        <ul>
+          <li>RFC 4158 highlights the intrinsic difficulty of path building in dense trust topologies.</li>
+          <li>Bridge CAs and trust lists reduce friction, but not always deterministic route selection.</li>
+          <li>The model targets explicit governance of inter-domain trust relationships.</li>
+        </ul>
+      </article>
+
+      <article class="research-card research-card-figure">
+        <div class="mini-chart" aria-hidden="true">
+          <div class="mini-chart-toolbar">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <svg viewBox="0 0 320 180" class="mini-chart-svg">
+            <defs>
+              <linearGradient id="chartArea" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="rgba(90, 122, 166, 0.24)" />
+                <stop offset="100%" stop-color="rgba(90, 122, 166, 0)" />
+              </linearGradient>
+            </defs>
+            <path d="M18 150 L18 18 L302 18" class="mini-chart-axis"></path>
+            <path d="M18 150 C60 145, 85 132, 110 98 S170 42, 204 62 S266 86, 302 54" class="mini-chart-line"></path>
+            <path d="M18 150 C60 145, 85 132, 110 98 S170 42, 204 62 S266 86, 302 54 L302 150 Z" class="mini-chart-area"></path>
+            <circle cx="110" cy="98" r="4" class="mini-chart-point"></circle>
+            <circle cx="204" cy="62" r="4" class="mini-chart-point"></circle>
+            <circle cx="302" cy="54" r="4" class="mini-chart-point"></circle>
+          </svg>
+        </div>
+        <div class="figure-caption">
+          <h3>Topology growth observation</h3>
+          <p>
+            As the number of federation links grows, candidate certification paths
+            increase and exhaustive exploration becomes less manageable.
+          </p>
+        </div>
+      </article>
+
+      <article class="research-card">
+        <div class="research-card-header">
+          <span class="research-index">02</span>
+          <h3>Weighted path selection</h3>
+        </div>
+        <p>
+          The proposal introduces a multicriteria weighting function over federation
+          edges to prioritize cryptographic robustness, compatibility, and structural
+          efficiency during certification path selection.
+        </p>
+        <ul>
+          <li>Edge weights capture algorithm, crypto profile, key strength, and logical distance.</li>
+          <li>Dijkstra is proposed to compute deterministic optimal paths over the graph.</li>
+          <li>The target is explainable route selection between issuer CA and governed trust points.</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="research-notes">
+      <div>
+        <span class="note-label">Research problem</span>
+        <p>
+          Exhaustive trust-path discovery does not scale well in dense multidomain PKI federations.
+        </p>
+      </div>
+      <div>
+        <span class="note-label">Methodological lens</span>
+        <p>
+          Directed weighted graphs, Dijkstra traversal, and policy-aware trust modelling.
+        </p>
+      </div>
+      <div id="interoperability">
+        <span class="note-label">Interoperability objective</span>
+        <p>
+          Support controlled interoperability across classical, hybrid, and post-quantum PKI domains.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

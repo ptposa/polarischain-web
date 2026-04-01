@@ -1,0 +1,945 @@
+---
+const graphFrame = { x: 150, y: 110, width: 880, height: 310 };
+
+const primaryNodes = [
+  {
+    id: "target",
+    label: ["Target certificate"],
+    x: 220,
+    y: 314,
+    type: "target",
+    meta: {
+      policy: "Leaf authentication policy",
+      crypto: "End-entity RSA-3072",
+      score: "N/A",
+    },
+    card: { x: 232, y: 344 },
+  },
+  {
+    id: "issuing",
+    label: ["Issuing CA"],
+    x: 382,
+    y: 246,
+    type: "issuing",
+    meta: {
+      policy: "Enterprise issuance policy",
+      crypto: "RSA-4096",
+      score: "0.81",
+    },
+  },
+  {
+    id: "bridge",
+    label: ["Federated", "bridge CA"],
+    x: 544,
+    y: 206,
+    type: "bridge",
+    meta: {
+      policy: "Cross-domain trust policy",
+      crypto: "Hybrid RSA/PQC",
+      score: "0.89",
+    },
+  },
+  {
+    id: "external",
+    label: ["External", "trust CA"],
+    x: 690,
+    y: 286,
+    type: "external",
+    meta: {
+      policy: "Federated validation policy",
+      crypto: "ML-DSA",
+      score: "0.93",
+    },
+  },
+  {
+    id: "anchor",
+    label: ["Trust anchor"],
+    x: 826,
+    y: 190,
+    type: "anchor",
+    meta: {
+      policy: "Root governance policy",
+      crypto: "PQC-Ready",
+      score: "0.97",
+    },
+  },
+];
+
+const ambientNodes = [
+  { id: "a1", x: 170, y: 230, size: "tiny" },
+  { id: "a2", x: 206, y: 402, size: "tiny" },
+  { id: "a3", x: 252, y: 182, size: "small" },
+  { id: "a4", x: 286, y: 374, size: "small" },
+  { id: "a5", x: 318, y: 122, size: "tiny" },
+  { id: "a6", x: 336, y: 432, size: "tiny" },
+  { id: "a7", x: 410, y: 154, size: "small" },
+  { id: "a8", x: 430, y: 344, size: "small" },
+  { id: "a9", x: 466, y: 258, size: "tiny" },
+  { id: "a10", x: 492, y: 392, size: "tiny" },
+  { id: "a11", x: 522, y: 130, size: "small" },
+  { id: "a12", x: 586, y: 150, size: "tiny" },
+  { id: "a13", x: 610, y: 364, size: "small" },
+  { id: "a14", x: 646, y: 120, size: "tiny" },
+  { id: "a15", x: 652, y: 240, size: "small" },
+  { id: "a16", x: 684, y: 380, size: "tiny" },
+  { id: "a17", x: 748, y: 148, size: "small" },
+  { id: "a18", x: 754, y: 332, size: "small" },
+  { id: "a19", x: 806, y: 270, size: "tiny" },
+  { id: "a20", x: 832, y: 362, size: "small" },
+  { id: "a21", x: 890, y: 236, size: "small" },
+  { id: "a22", x: 926, y: 144, size: "tiny" },
+  { id: "a23", x: 952, y: 314, size: "small" },
+  { id: "a24", x: 998, y: 200, size: "tiny" },
+  { id: "a25", x: 1018, y: 292, size: "small" },
+  { id: "a26", x: 1042, y: 126, size: "tiny" },
+  { id: "a27", x: 1060, y: 356, size: "tiny" },
+  { id: "a28", x: 1106, y: 228, size: "small" },
+  { id: "a29", x: 1134, y: 166, size: "tiny" },
+  { id: "a30", x: 1162, y: 304, size: "small" },
+  { id: "a35", x: 268, y: 226, size: "tiny" },
+  { id: "a36", x: 310, y: 176, size: "tiny" },
+  { id: "a38", x: 364, y: 404, size: "tiny" },
+  { id: "a40", x: 420, y: 214, size: "tiny" },
+  { id: "a43", x: 522, y: 246, size: "tiny" },
+  { id: "a46", x: 614, y: 204, size: "tiny" },
+  { id: "a48", x: 672, y: 164, size: "tiny" },
+  { id: "a49", x: 702, y: 240, size: "tiny" },
+  { id: "a51", x: 762, y: 194, size: "tiny" },
+  { id: "a53", x: 824, y: 132, size: "tiny" },
+  { id: "a54", x: 846, y: 214, size: "tiny" },
+  { id: "a57", x: 950, y: 352, size: "tiny" },
+  { id: "a59", x: 1012, y: 238, size: "tiny" },
+  { id: "a63", x: 1144, y: 134, size: "tiny" },
+];
+
+const nodeMap = Object.fromEntries(
+  [...primaryNodes, ...ambientNodes].map((node) => [node.id, node]),
+);
+
+const ambientLinks = [
+  ["a1", "target"],
+  ["a3", "issuing"],
+  ["a3", "a7"],
+  ["a4", "target"],
+  ["a4", "a8"],
+  ["a5", "a7"],
+  ["a6", "a4"],
+  ["a7", "issuing"],
+  ["a7", "bridge"],
+  ["a8", "bridge"],
+  ["a8", "a13"],
+  ["a9", "bridge"],
+  ["a10", "a13"],
+  ["a11", "bridge"],
+  ["a11", "a14"],
+  ["a12", "external"],
+  ["a13", "external"],
+  ["a14", "external"],
+  ["a15", "external"],
+  ["a16", "a20"],
+  ["a17", "anchor"],
+  ["a17", "a21"],
+  ["a18", "anchor"],
+  ["a18", "a23"],
+  ["a19", "anchor"],
+  ["a20", "a23"],
+  ["a21", "a24"],
+  ["a22", "a24"],
+  ["a23", "a25"],
+  ["a24", "a28"],
+  ["a25", "a28"],
+  ["a26", "a29"],
+  ["a27", "a30"],
+  ["a28", "a29"],
+  ["a28", "a30"],
+];
+
+const primaryLinks = [
+  ["target", "issuing"],
+  ["issuing", "bridge"],
+  ["bridge", "external"],
+  ["external", "anchor"],
+];
+
+function linkPath(fromId, toId) {
+  const from = nodeMap[fromId];
+  const to = nodeMap[toId];
+  return `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
+}
+---
+
+<section class="pki-hero" id="top">
+  <div class="pki-hero-track">
+    <div class="pki-hero-backdrop" aria-hidden="true"></div>
+    <div class="pki-hero-starfield" aria-hidden="true"></div>
+    <div class="pki-hero-overlay" aria-hidden="true"></div>
+
+    <div class="container pki-hero-shell">
+      <div class="pki-hero-copy">
+        <h1>Navigating Trust across federated PKI ecosystems</h1>
+        <p class="pki-hero-lead">
+          A research-driven platform for graph-based federation, trust path discovery,
+          and interoperable validation across multidomain PKI ecosystems.
+        </p>
+        <p class="pki-hero-body">
+          PolarisChain models trust as a federated graph of certification authorities,
+          enabling explainable path discovery across classical, hybrid, and
+          post-quantum environments without replacing PKIX validation semantics.
+        </p>
+
+        <div class="pki-hero-actions">
+          <a class="btn btn-primary" href="#research">Explore research</a>
+          <a class="btn btn-secondary" href="/docs">Read documentation</a>
+        </div>
+
+        <div class="pki-hero-byline" aria-label="Author and academic context">
+          <p><span>Author:</span> Jorge Pablo Trías Posa</p>
+          <p><span>Email:</span> jptripos@etsinf.upv.es</p>
+          <p><span>Institution:</span> Polytechnic University of Valencia</p>
+          <p><span>Thesis supervisor:</span> Mario Aragonés Lozano</p>
+          <p><span>Thesis supervisor email:</span> maragones@teleco.upv.es</p>
+          <p><span>Academic context:</span> Master’s thesis with progress toward a PhD</p>
+        </div>
+      </div>
+
+      <div class="pki-hero-graph-wrap">
+        <svg
+          id="pki-hero-graph"
+          class="pki-hero-graph"
+          viewBox={`${graphFrame.x} ${graphFrame.y} ${graphFrame.width} ${graphFrame.height}`}
+          role="img"
+          aria-label="Federated PKI graph with optimal trust path"
+        >
+          <defs>
+            <radialGradient id="pkiPathGlow" cx="50%" cy="50%" r="55%">
+              <stop offset="0%" stop-color="rgba(212, 233, 255, 0.34)" />
+              <stop offset="100%" stop-color="rgba(212, 233, 255, 0)" />
+            </radialGradient>
+          </defs>
+
+          <g class="pki-ambient-links">
+            {ambientLinks.map(([from, to]) => (
+              <path
+                class={`pki-link ${from.startsWith("a") && to.startsWith("a") ? "is-dim" : "is-structural"}`}
+                d={linkPath(from, to)}
+              />
+            ))}
+          </g>
+
+          <g class="pki-primary-links">
+            {primaryLinks.map(([from, to], index) => (
+              <path
+                class="pki-primary-link"
+                data-path-link
+                data-step={index + 1}
+                d={linkPath(from, to)}
+              />
+            ))}
+          </g>
+
+          <g class="pki-ambient-nodes">
+            {ambientNodes.map((node) => (
+              <circle
+                class={`pki-node pki-node-ambient ${node.size === "tiny" ? "is-tiny" : "is-small"}`}
+                cx={node.x}
+                cy={node.y}
+                r={node.size === "tiny" ? 2.9 : 5.2}
+              />
+            ))}
+          </g>
+
+          <g class="pki-primary-nodes">
+            {primaryNodes.map((node, index) => (
+              <g class="pki-primary-node-group" data-path-node-group data-step={index + 1}>
+                <circle
+                  class="pki-node-halo"
+                  data-node-halo
+                  cx={node.x}
+                  cy={node.y}
+                  r={node.type === "anchor" ? 32 : 24}
+                />
+                <circle
+                  class={`pki-node pki-node-primary is-${node.type}`}
+                  data-path-node
+                  cx={node.x}
+                  cy={node.y}
+                  r={node.type === "anchor" ? 9.5 : 8}
+                />
+                <g class="pki-node-label">
+                  {node.label.map((line, lineIndex) => (
+                    <text
+                      x={node.x + (node.type === "target" ? -50 : node.type === "anchor" ? -34 : -28)}
+                      y={node.y + (node.type === "target" ? 38 : node.type === "anchor" ? -22 : -22) + lineIndex * 20}
+                    >
+                      {line}
+                    </text>
+                  ))}
+                </g>
+              </g>
+            ))}
+          </g>
+        </svg>
+
+        <div class="pki-node-cards" aria-hidden="true">
+          {primaryNodes.map((node, index) => (
+            <article
+              class={`pki-node-card is-${node.type}`}
+              data-node-card
+              data-step={index + 1}
+              style={`--card-x:${(((node.card?.x ?? node.x) - graphFrame.x) / graphFrame.width) * 100}%; --card-y:${(((node.card?.y ?? node.y) - graphFrame.y) / graphFrame.height) * 100}%;`}
+            >
+              <span class="pki-node-card-title">{node.label[0]}</span>
+              {node.label[1] ? <span class="pki-node-card-title">{node.label[1]}</span> : null}
+              <dl>
+                <div>
+                  <dt>Policy</dt>
+                  <dd>{node.meta.policy}</dd>
+                </div>
+                <div>
+                  <dt>Crypto</dt>
+                  <dd>{node.meta.crypto}</dd>
+                </div>
+                <div>
+                  <dt>Trust score</dt>
+                  <dd>{node.meta.score}</dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pki-hero {
+    position: relative;
+    min-height: 220vh;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background:
+      radial-gradient(circle at 68% 30%, rgba(100, 135, 185, 0.12), transparent 22%),
+      radial-gradient(circle at 86% 22%, rgba(212, 231, 255, 0.07), transparent 16%),
+      linear-gradient(180deg, #070b13 0%, #0b1018 100%);
+    overflow: clip;
+  }
+
+  .pki-hero-track {
+    position: relative;
+    min-height: 100vh;
+  }
+
+  .pki-hero-backdrop,
+  .pki-hero-starfield,
+  .pki-hero-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .pki-hero-backdrop {
+    opacity: 0.24;
+    background-image:
+      radial-gradient(circle at 8% 14%, rgba(255, 255, 255, 0.42) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 12% 22%, rgba(255, 255, 255, 0.78) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 22% 12%, rgba(255, 255, 255, 0.4) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 28% 34%, rgba(255, 255, 255, 0.36) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 42% 30%, rgba(255, 255, 255, 0.52) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 56% 16%, rgba(255, 255, 255, 0.38) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 74% 26%, rgba(255, 255, 255, 0.56) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 82% 44%, rgba(255, 255, 255, 0.34) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 88% 62%, rgba(255, 255, 255, 0.44) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 94% 20%, rgba(255, 255, 255, 0.32) 0 1px, transparent 1.6px);
+    background-size:
+      320px 320px,
+      520px 520px,
+      360px 360px,
+      420px 420px,
+      640px 640px,
+      460px 460px,
+      700px 700px,
+      540px 540px,
+      760px 760px,
+      620px 620px;
+  }
+
+  .pki-hero-starfield {
+    opacity: 0.34;
+    background-image:
+      radial-gradient(circle at 8% 12%, rgba(255, 255, 255, 0.46) 0 1px, transparent 1.7px),
+      radial-gradient(circle at 14% 28%, rgba(255, 255, 255, 0.4) 0 1px, transparent 1.7px),
+      radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.62) 0 1px, transparent 1.7px),
+      radial-gradient(circle at 22% 44%, rgba(255, 255, 255, 0.34) 0 1px, transparent 1.7px),
+      radial-gradient(circle at 28% 14%, rgba(255, 255, 255, 0.36) 0 1px, transparent 1.7px),
+      radial-gradient(circle at 34% 58%, rgba(255, 255, 255, 0.42) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 42% 32%, rgba(255, 255, 255, 0.32) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 50% 16%, rgba(255, 255, 255, 0.28) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 58% 24%, rgba(255, 255, 255, 0.48) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 66% 52%, rgba(255, 255, 255, 0.3) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 72% 72%, rgba(255, 255, 255, 0.36) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 82% 22%, rgba(255, 255, 255, 0.28) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 92% 34%, rgba(255, 255, 255, 0.4) 0 1px, transparent 1.8px);
+    background-size:
+      120px 120px,
+      160px 160px,
+      220px 220px,
+      180px 180px,
+      240px 240px,
+      280px 280px,
+      320px 320px,
+      360px 360px,
+      420px 420px,
+      460px 460px,
+      520px 520px,
+      560px 560px,
+      620px 620px;
+    mix-blend-mode: screen;
+  }
+
+  .pki-hero-overlay {
+    background:
+      linear-gradient(90deg, rgba(6, 10, 17, 0.9) 0%, rgba(7, 11, 18, 0.8) 22%, rgba(8, 12, 20, 0.5) 42%, rgba(8, 12, 20, 0.12) 62%, rgba(8, 12, 20, 0) 76%);
+  }
+
+  .pki-hero-shell {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 1.32fr);
+    align-items: center;
+    gap: 22px;
+    padding: 90px 0 100px;
+  }
+
+  .pki-hero-copy {
+    position: relative;
+    z-index: 3;
+    max-width: 700px;
+    padding-right: 0;
+  }
+
+  .pki-hero-kicker {
+    display: inline-block;
+    margin-bottom: 18px;
+    color: rgba(198, 190, 178, 0.82);
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
+  }
+
+  .pki-hero-copy h1 {
+    margin: 0;
+    max-width: 12ch;
+    color: #f4efe5;
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(3.4rem, 6.5vw, 5.8rem);
+    font-weight: 600;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+
+  .pki-hero-lead {
+    margin: 30px 0 0;
+    max-width: 54ch;
+    color: rgba(242, 236, 227, 0.95);
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(1.55rem, 2.2vw, 2rem);
+    line-height: 1.1;
+  }
+
+  .pki-hero-body {
+    margin: 24px 0 0;
+    max-width: 54ch;
+    color: rgba(211, 203, 191, 0.82);
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 1.03rem;
+    line-height: 1.82;
+  }
+
+  .pki-hero-actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 34px;
+  }
+
+  .pki-hero-byline {
+    margin-top: 50px;
+    margin-bottom: 28px;
+    display: grid;
+    gap: 4px;
+    max-width: 56ch;
+  }
+
+  .pki-hero-byline p {
+    margin: 0;
+    font-family: "Inter", system-ui, sans-serif;
+    color: rgba(196, 189, 179, 0.62);
+    font-size: 0.86rem;
+    line-height: 1.55;
+    letter-spacing: 0.01em;
+  }
+
+  .pki-hero-byline span {
+    color: rgba(230, 224, 214, 0.8);
+    margin-right: 4px;
+  }
+
+  .pki-hero-graph-wrap {
+    position: relative;
+    min-height: 620px;
+    margin-left: 8px;
+  }
+
+  .pki-hero-graph {
+    display: block;
+    width: min(118%, 1120px);
+    height: auto;
+    margin-left: 0;
+    margin-right: -18px;
+    overflow: visible;
+  }
+
+  .pki-link {
+    fill: none;
+    stroke: rgba(189, 205, 223, 0.16);
+    stroke-width: 1.2;
+    stroke-linecap: round;
+  }
+
+  .pki-link.is-dim {
+    opacity: 0.55;
+  }
+
+  .pki-link.is-structural {
+    opacity: 0.8;
+  }
+
+  .pki-primary-link {
+    fill: none;
+    stroke: rgba(223, 236, 255, 0.96);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    opacity: 0;
+    filter: drop-shadow(0 0 10px rgba(210, 230, 255, 0.28));
+  }
+
+  .pki-node {
+    transform-origin: center;
+  }
+
+  .pki-node-ambient {
+    fill: rgba(231, 237, 246, 0.74);
+    filter: drop-shadow(0 0 10px rgba(227, 235, 246, 0.2));
+  }
+
+  .pki-node-ambient.is-tiny {
+    opacity: 0.72;
+  }
+
+  .pki-node-ambient.is-small {
+    opacity: 0.88;
+  }
+
+  .pki-node-primary {
+    fill: rgba(213, 226, 241, 0.72);
+    filter: drop-shadow(0 0 12px rgba(205, 225, 245, 0.18));
+  }
+
+  .pki-node-primary.is-anchor {
+    fill: rgba(241, 247, 255, 0.82);
+    filter: drop-shadow(0 0 18px rgba(219, 235, 255, 0.34));
+  }
+
+  .pki-node-halo {
+    fill: url(#pkiPathGlow);
+    opacity: 0;
+    transform-origin: center;
+  }
+
+  .pki-node-label text {
+    fill: rgba(239, 234, 224, 0.96);
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    filter: drop-shadow(0 2px 10px rgba(7, 11, 18, 0.85));
+  }
+
+  .pki-node-cards {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .pki-node-card {
+    position: absolute;
+    left: var(--card-x);
+    top: var(--card-y);
+    min-width: 158px;
+    max-width: 172px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    background: rgba(15, 20, 31, 0.34);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(18px);
+  }
+
+  .pki-node-card.is-target {
+    transform: translate(-10%, -132%) translateY(0);
+  }
+
+  .pki-node-card.is-issuing {
+    transform: translate(-32%, 18%) translateY(18px);
+  }
+
+  .pki-node-card.is-bridge {
+    transform: translate(-14%, 18%) translateY(18px);
+  }
+
+  .pki-node-card.is-external {
+    transform: translate(-8%, 18%) translateY(18px);
+  }
+
+  .pki-node-card.is-anchor {
+    transform: translate(-86%, 18%) translateY(18px);
+  }
+
+  .pki-node-card-title {
+    display: block;
+    color: #f4efe5;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .pki-node-card dl {
+    margin: 8px 0 0;
+    display: grid;
+    gap: 6px;
+  }
+
+  .pki-node-card dl div {
+    display: grid;
+    gap: 2px;
+  }
+
+  .pki-node-card dt {
+    color: rgba(186, 179, 169, 0.7);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+  }
+
+  .pki-node-card dd {
+    margin: 0;
+    color: rgba(236, 232, 225, 0.94);
+    font-size: 0.8rem;
+    line-height: 1.32;
+  }
+
+  @media (max-width: 1080px) {
+    .pki-hero {
+      min-height: 190vh;
+    }
+
+    .pki-hero-shell {
+      grid-template-columns: 1fr;
+      gap: 22px;
+    }
+
+    .pki-hero-copy,
+    .pki-hero-lead,
+    .pki-hero-body {
+      max-width: none;
+    }
+
+    .pki-hero-copy h1 {
+      max-width: none;
+    }
+
+    .pki-hero-graph-wrap {
+      margin-left: 0;
+      min-height: 520px;
+    }
+
+    .pki-hero-graph {
+      width: 106%;
+      margin: 0 -18px 0 0;
+    }
+
+    .pki-node-card {
+      min-width: 140px;
+      max-width: 154px;
+      padding: 9px 10px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .pki-hero {
+      min-height: auto;
+    }
+
+    .pki-hero-shell {
+      min-height: auto;
+      padding: 42px 0 76px;
+    }
+
+    .pki-hero-overlay {
+      background:
+        linear-gradient(180deg, rgba(6, 10, 17, 0.84) 0%, rgba(7, 11, 18, 0.7) 34%, rgba(8, 12, 20, 0.16) 66%, rgba(8, 12, 20, 0) 100%);
+    }
+
+    .pki-hero-copy {
+      padding-right: 0;
+    }
+
+    .pki-hero-copy h1 {
+      font-size: clamp(2.95rem, 13vw, 4.4rem);
+      line-height: 0.96;
+    }
+
+    .pki-hero-lead {
+      margin-top: 34px;
+      font-size: 1.42rem;
+      line-height: 1.15;
+    }
+
+    .pki-hero-body {
+      font-size: 1rem;
+      line-height: 1.72;
+    }
+
+    .pki-hero-byline {
+      margin-top: 40px;
+      margin-bottom: 22px;
+    }
+
+    .pki-hero-byline p {
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .pki-hero-graph-wrap {
+      min-height: auto;
+      margin-top: 20px;
+    }
+
+    .pki-hero-graph {
+      width: 100%;
+      margin: 0;
+    }
+
+    .pki-node-cards {
+      position: relative;
+      inset: auto;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+      width: 100%;
+      padding-right: 0;
+    }
+
+    .pki-node-card {
+      position: static;
+      left: unset;
+      top: unset;
+      min-width: 0;
+      max-width: none;
+      width: 100%;
+      margin: 0;
+      padding: 10px 10px;
+      box-sizing: border-box;
+      transform: none;
+      border-radius: 14px;
+    }
+
+    .pki-node-card-title {
+      font-size: 0.9rem;
+      line-height: 0.98;
+    }
+
+    .pki-node-card dl {
+      margin-top: 7px;
+      gap: 4px;
+    }
+
+    .pki-node-card dt {
+      font-size: 0.64rem;
+      letter-spacing: 0.1em;
+    }
+
+    .pki-node-card dd {
+      font-size: 0.72rem;
+      line-height: 1.22;
+    }
+
+    .pki-node-card.is-target,
+    .pki-node-card.is-issuing,
+    .pki-node-card.is-bridge,
+    .pki-node-card.is-external,
+    .pki-node-card.is-anchor {
+      transform: none;
+    }
+
+    .pki-node-label text {
+      font-size: 13px;
+    }
+
+    .pki-ambient-links .pki-link.is-dim,
+    .pki-ambient-nodes .pki-node-ambient.is-tiny {
+      opacity: 0.42;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .pki-node-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const section = document.querySelector(".pki-hero");
+    const track = document.querySelector(".pki-hero-track");
+    const graph = document.querySelector("#pki-hero-graph");
+    const ambientNodes = graph?.querySelectorAll(".pki-node-ambient");
+    const primaryNodes = graph?.querySelectorAll("[data-path-node]");
+    const primaryLinks = graph?.querySelectorAll("[data-path-link]");
+    const halos = graph?.querySelectorAll("[data-node-halo]");
+    const cards = document.querySelectorAll("[data-node-card]");
+
+    if (section && track && graph && ambientNodes && primaryNodes && primaryLinks && halos && cards.length) {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const isCompactViewport = window.matchMedia("(max-width: 760px)").matches;
+
+      if (!isCompactViewport) {
+        ambientNodes.forEach((node) => {
+          gsap.to(node, {
+            opacity: "+=0.18",
+            duration: 2.8 + Math.random() * 2.2,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut",
+          });
+        });
+      }
+
+      primaryLinks.forEach((link) => {
+        const path = link;
+        if (path instanceof SVGPathElement) {
+          const length = path.getTotalLength();
+          path.style.strokeDasharray = `${length}`;
+          path.style.strokeDashoffset = `${length}`;
+        }
+      });
+
+      gsap.set(primaryNodes, {
+        opacity: 0.7,
+        scale: 1,
+        transformOrigin: "center center",
+      });
+
+      gsap.set(halos, {
+        opacity: 0,
+        scale: 0.55,
+        transformOrigin: "center center",
+      });
+
+      gsap.set(cards, {
+        opacity: 0,
+        y: 18,
+      });
+
+      if (prefersReducedMotion || isCompactViewport) {
+        gsap.set(primaryLinks, {
+          opacity: 1,
+          strokeDashoffset: 0,
+        });
+
+        primaryNodes.forEach((node, index) => {
+          gsap.set(node, {
+            opacity: 1,
+            scale: index === primaryNodes.length - 1 ? 1.28 : 1.16,
+          });
+        });
+
+        halos.forEach((halo, index) => {
+          gsap.set(halo, {
+            opacity: index === primaryNodes.length - 1 ? 0.9 : 0.68,
+            scale: index === primaryNodes.length - 1 ? 1.24 : 1.08,
+          });
+        });
+
+        gsap.set(cards, {
+          opacity: 1,
+          y: 0,
+        });
+      } else {
+        const timeline = gsap.timeline({
+          defaults: { ease: "power2.out" },
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=1800",
+            scrub: 1.1,
+            pin: track,
+          },
+        });
+
+        primaryNodes.forEach((node, index) => {
+          timeline.to(
+            node,
+            {
+              opacity: 1,
+              scale: index === primaryNodes.length - 1 ? 1.34 : 1.22,
+              duration: 0.28,
+            },
+            index === 0 ? 0.18 : ">"
+          );
+
+          timeline.to(
+            halos[index],
+            {
+              opacity: index === primaryNodes.length - 1 ? 1 : 0.78,
+              scale: index === primaryNodes.length - 1 ? 1.32 : 1.18,
+              duration: 0.3,
+            },
+            "<"
+          );
+
+          timeline.to(
+            cards[index],
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.34,
+            },
+            "<+0.06"
+          );
+
+          if (index < primaryLinks.length) {
+            timeline.to(
+              primaryLinks[index],
+              {
+                opacity: 1,
+                strokeDashoffset: 0,
+                duration: 0.48,
+              },
+              ">"
+            );
+          }
+        });
+      }
+    }
+  }
+</script>

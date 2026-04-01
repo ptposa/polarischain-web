@@ -1,0 +1,370 @@
+<section id="how-it-works" class="process-section">
+  <div class="container process-shell-wide">
+    <div class="process-heading">
+      <span class="section-kicker">How it works</span>
+      <h2>Certification path building over a federated graph of CAs.</h2>
+      <p>
+        PolarisChain does not replace PKIX validation. It provides a formal layer for
+        modelling federation relationships, discovering viable routes, and selecting an
+        optimal path between the issuer side of a certificate request and governed trust
+        points across multidomain PKI environments.
+      </p>
+    </div>
+
+    <div class="process-overview" aria-label="Trust path discovery stages">
+      <div class="stage stage-certificate">
+        <svg viewBox="0 0 88 88" class="stage-icon stage-icon-certificate" aria-hidden="true">
+          <rect x="14" y="10" width="46" height="58" rx="6"></rect>
+          <path d="M26 26 H48"></path>
+          <path d="M26 34 H48"></path>
+          <path d="M26 42 H45"></path>
+          <circle cx="58" cy="54" r="10"></circle>
+          <path d="M54 63 L52 76 L58 72 L64 76 L62 63"></path>
+        </svg>
+        <div class="stage-copy">
+          <strong>Input certificate</strong>
+          <span>Certificate request enters the federated validation model.</span>
+        </div>
+      </div>
+
+      <span class="stage-arrow" aria-hidden="true">→</span>
+
+      <div class="stage">
+        <svg viewBox="0 0 96 64" class="stage-icon" aria-hidden="true">
+          <path d="M14 36 L32 22 L52 38 L80 18"></path>
+          <path d="M16 24 L34 40 L52 38 L74 44"></path>
+          <circle cx="14" cy="36" r="4"></circle>
+          <circle cx="32" cy="22" r="4"></circle>
+          <circle cx="34" cy="40" r="4"></circle>
+          <circle cx="52" cy="38" r="4"></circle>
+          <circle cx="80" cy="18" r="4"></circle>
+          <circle cx="74" cy="44" r="4"></circle>
+        </svg>
+        <div class="stage-copy">
+          <strong>Graph traversal</strong>
+          <span>Potential issuer-to-trust-point routes are enumerated.</span>
+        </div>
+      </div>
+
+      <span class="stage-arrow" aria-hidden="true">→</span>
+
+      <div class="stage">
+        <svg viewBox="0 0 96 64" class="stage-icon" aria-hidden="true">
+          <path d="M12 40 L28 32 L44 18 L62 28 L82 14"></path>
+          <path d="M28 32 L44 44 L62 28 L80 42"></path>
+          <circle cx="12" cy="40" r="4"></circle>
+          <circle cx="28" cy="32" r="4"></circle>
+          <circle cx="44" cy="18" r="4"></circle>
+          <circle cx="44" cy="44" r="4"></circle>
+          <circle cx="62" cy="28" r="4"></circle>
+          <circle cx="82" cy="14" r="5" class="is-bright"></circle>
+          <circle cx="80" cy="42" r="4"></circle>
+        </svg>
+        <div class="stage-copy">
+          <strong>Path scoring</strong>
+          <span>Weights penalize weak or inefficient inter-domain relationships.</span>
+        </div>
+      </div>
+
+      <span class="stage-arrow" aria-hidden="true">→</span>
+
+      <div class="stage">
+        <svg viewBox="0 0 96 64" class="stage-icon" aria-hidden="true">
+          <path class="is-highlight" d="M12 38 L34 24 L54 30 L82 14"></path>
+          <path d="M12 38 L34 44 L54 30 L80 46"></path>
+          <path d="M34 24 L54 30 L80 46"></path>
+          <circle cx="12" cy="38" r="5" class="is-bright"></circle>
+          <circle cx="34" cy="24" r="5"></circle>
+          <circle cx="34" cy="44" r="4"></circle>
+          <circle cx="54" cy="30" r="5" class="is-bright"></circle>
+          <circle cx="80" cy="46" r="4"></circle>
+          <circle cx="82" cy="14" r="5" class="is-bright"></circle>
+        </svg>
+        <div class="stage-copy">
+          <strong>Optimal trust chain</strong>
+          <span>The selected route is surfaced as an explainable validation path.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="federation-graph-card" aria-label="Federated trust graph with optimal chain animation">
+      <svg id="federated-process-graph" viewBox="0 0 1240 420" class="federation-graph" role="img">
+        <defs>
+          <radialGradient id="processStarGlow" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="rgba(255, 248, 220, 0.42)" />
+            <stop offset="100%" stop-color="rgba(255, 248, 220, 0)" />
+          </radialGradient>
+        </defs>
+
+        <g class="process-background-grid">
+          <path d="M120 56 H1140"></path>
+          <path d="M120 140 H1140"></path>
+          <path d="M120 224 H1140"></path>
+          <path d="M120 308 H1140"></path>
+        </g>
+
+        <g class="incoming-certs">
+          <g transform="translate(28 286)" class="incoming-cert cert-small">
+            <rect x="0" y="0" width="30" height="36" rx="4"></rect>
+            <path d="M8 10 H22"></path>
+            <path d="M8 16 H22"></path>
+            <circle cx="24" cy="24" r="4"></circle>
+          </g>
+          <g transform="translate(58 262)" class="incoming-cert cert-medium">
+            <rect x="0" y="0" width="38" height="46" rx="5"></rect>
+            <path d="M10 13 H28"></path>
+            <path d="M10 19 H28"></path>
+            <path d="M10 25 H24"></path>
+            <circle cx="30" cy="31" r="5"></circle>
+          </g>
+          <g transform="translate(102 232)" class="incoming-cert cert-large">
+            <rect x="0" y="0" width="48" height="58" rx="6"></rect>
+            <path d="M12 16 H34"></path>
+            <path d="M12 23 H34"></path>
+            <path d="M12 30 H31"></path>
+            <circle cx="38" cy="40" r="6"></circle>
+            <path d="M35 45 L34 56 L38 53 L42 56 L41 45"></path>
+          </g>
+          <g transform="translate(160 194)" class="incoming-cert cert-large">
+            <rect x="0" y="0" width="50" height="60" rx="6"></rect>
+            <path d="M13 16 H36"></path>
+            <path d="M13 24 H36"></path>
+            <path d="M13 32 H32"></path>
+            <circle cx="40" cy="41" r="6"></circle>
+            <path d="M37 46 L36 58 L40 55 L44 58 L43 46"></path>
+          </g>
+        </g>
+
+        <g class="federation-links">
+          <path d="M182 230 L254 176" />
+          <path d="M182 230 L272 268" />
+          <path d="M182 230 L318 220" />
+          <path d="M254 176 L318 220" />
+          <path d="M254 176 L340 124" />
+          <path d="M272 268 L318 220" />
+          <path d="M272 268 L356 306" />
+          <path d="M318 220 L340 124" />
+          <path d="M318 220 L412 184" />
+          <path d="M318 220 L426 248" />
+          <path d="M340 124 L412 184" />
+          <path d="M340 124 L448 110" />
+          <path d="M356 306 L426 248" />
+          <path d="M356 306 L470 330" />
+          <path d="M412 184 L426 248" />
+          <path d="M412 184 L530 170" />
+          <path d="M426 248 L530 170" />
+          <path d="M426 248 L552 242" />
+          <path d="M448 110 L530 170" />
+          <path d="M448 110 L610 92" />
+          <path d="M470 330 L552 242" />
+          <path d="M470 330 L634 326" />
+          <path d="M530 170 L552 242" />
+          <path d="M530 170 L636 154" />
+          <path d="M552 242 L636 154" />
+          <path d="M552 242 L716 210" />
+          <path d="M610 92 L636 154" />
+          <path d="M610 92 L742 114" />
+          <path d="M634 326 L716 210" />
+          <path d="M634 326 L786 326" />
+          <path d="M636 154 L716 210" />
+          <path d="M636 154 L762 188" />
+          <path d="M716 210 L762 188" />
+          <path d="M716 210 L844 150" />
+          <path d="M716 210 L852 244" />
+          <path d="M742 114 L844 150" />
+          <path d="M742 114 L914 98" />
+          <path d="M762 188 L844 150" />
+          <path d="M762 188 L852 244" />
+          <path d="M786 326 L852 244" />
+          <path d="M786 326 L926 324" />
+          <path d="M844 150 L914 98" />
+          <path d="M844 150 L960 192" />
+          <path d="M852 244 L960 192" />
+          <path d="M852 244 L1008 264" />
+          <path d="M914 98 L960 192" />
+          <path d="M914 98 L1060 128" />
+          <path d="M926 324 L1008 264" />
+          <path d="M960 192 L1008 264" />
+          <path d="M960 192 L1060 128" />
+          <path d="M960 192 L1108 198" />
+          <path d="M1008 264 L1108 198" />
+          <path d="M1060 128 L1108 198" />
+        </g>
+
+        <g class="federation-links federation-links-active">
+          <path class="process-active-edge" data-step="1" d="M182 230 L318 220" />
+          <path class="process-active-edge" data-step="2" d="M318 220 L426 248" />
+          <path class="process-active-edge" data-step="3" d="M426 248 L552 242" />
+          <path class="process-active-edge" data-step="4" d="M552 242 L716 210" />
+          <path class="process-active-edge" data-step="5" d="M716 210 L852 244" />
+          <path class="process-active-edge" data-step="6" d="M852 244 L960 192" />
+          <path class="process-active-edge" data-step="7" d="M960 192 L1108 198" />
+        </g>
+
+        <g class="federation-nodes">
+          <circle cx="182" cy="230" r="10" class="process-graph-node is-issuer"></circle>
+          <circle cx="254" cy="176" r="9" class="process-graph-node"></circle>
+          <circle cx="272" cy="268" r="8" class="process-graph-node"></circle>
+          <circle cx="318" cy="220" r="12" class="process-graph-node is-highlight"></circle>
+          <circle cx="340" cy="124" r="10" class="process-graph-node"></circle>
+          <circle cx="356" cy="306" r="8" class="process-graph-node"></circle>
+          <circle cx="412" cy="184" r="9" class="process-graph-node"></circle>
+          <circle cx="426" cy="248" r="10" class="process-graph-node is-highlight"></circle>
+          <circle cx="448" cy="110" r="8" class="process-graph-node"></circle>
+          <circle cx="470" cy="330" r="7" class="process-graph-node"></circle>
+          <circle cx="530" cy="170" r="11" class="process-graph-node"></circle>
+          <circle cx="552" cy="242" r="10" class="process-graph-node is-highlight"></circle>
+          <circle cx="610" cy="92" r="8" class="process-graph-node"></circle>
+          <circle cx="634" cy="326" r="8" class="process-graph-node"></circle>
+          <circle cx="636" cy="154" r="10" class="process-graph-node"></circle>
+          <circle cx="716" cy="210" r="11" class="process-graph-node is-highlight"></circle>
+          <circle cx="742" cy="114" r="8" class="process-graph-node"></circle>
+          <circle cx="762" cy="188" r="10" class="process-graph-node"></circle>
+          <circle cx="786" cy="326" r="7" class="process-graph-node"></circle>
+          <circle cx="844" cy="150" r="10" class="process-graph-node"></circle>
+          <circle cx="852" cy="244" r="12" class="process-graph-node is-highlight"></circle>
+          <circle cx="914" cy="98" r="9" class="process-graph-node"></circle>
+          <circle cx="926" cy="324" r="8" class="process-graph-node"></circle>
+          <circle cx="960" cy="192" r="14" class="process-graph-node is-highlight"></circle>
+          <circle cx="1008" cy="264" r="8" class="process-graph-node"></circle>
+          <circle cx="1060" cy="128" r="11" class="process-graph-node"></circle>
+          <circle cx="1108" cy="198" r="15" class="process-graph-node is-anchor"></circle>
+        </g>
+
+        <g class="process-active-halos">
+          <circle cx="182" cy="230" r="28" class="process-halo"></circle>
+          <circle cx="552" cy="242" r="28" class="process-halo"></circle>
+          <circle cx="852" cy="244" r="32" class="process-halo"></circle>
+          <circle cx="1108" cy="198" r="42" class="process-halo process-halo-anchor"></circle>
+        </g>
+
+        <g class="process-graph-labels">
+          <text x="164" y="258">Issuer CA</text>
+          <text x="396" y="277">Cross-certified</text>
+          <text x="408" y="299">domain edge</text>
+          <text x="825" y="277">Bridge / trust</text>
+          <text x="848" y="299">federation zone</text>
+          <text x="1062" y="238">Trust Anchor</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!prefersReducedMotion) {
+    const graph = document.querySelector("#federated-process-graph");
+    const activeEdges = graph?.querySelectorAll(".process-active-edge");
+    const allNodes = graph?.querySelectorAll(".process-graph-node");
+    const highlightNodes = graph?.querySelectorAll(".process-graph-node.is-highlight, .process-graph-node.is-anchor, .process-graph-node.is-issuer");
+    const halos = graph?.querySelectorAll(".process-halo");
+    const incoming = graph?.querySelectorAll(".incoming-cert");
+
+    if (graph && activeEdges && allNodes && highlightNodes && halos && incoming) {
+      activeEdges.forEach((edge) => {
+        const path = edge as SVGPathElement;
+        const len = path.getTotalLength();
+        path.style.strokeDasharray = `${len}`;
+        path.style.strokeDashoffset = `${len}`;
+      });
+
+      gsap.set(allNodes, {
+        opacity: 0.42,
+        scale: 0.9,
+        transformOrigin: "center center",
+      });
+
+      gsap.set(halos, {
+        opacity: 0,
+        scale: 0.5,
+        transformOrigin: "center center",
+      });
+
+      gsap.set(incoming, {
+        opacity: 0.35,
+        x: -10,
+      });
+
+      const tl = gsap.timeline({
+        repeat: -1,
+        repeatDelay: 1.2,
+        defaults: { ease: "power2.out" },
+      });
+
+      tl.to(incoming, {
+        opacity: 0.92,
+        x: 0,
+        duration: 0.8,
+        stagger: 0.18,
+      })
+        .to(
+          activeEdges,
+          {
+            strokeDashoffset: 0,
+            opacity: 1,
+            duration: 1.15,
+            stagger: 0.45,
+          },
+          "-=0.2"
+        )
+        .to(
+          highlightNodes,
+          {
+            opacity: 1,
+            scale: 1.16,
+            duration: 0.55,
+            stagger: 0.38,
+          },
+          "-=4.9"
+        )
+        .to(
+          halos,
+          {
+            opacity: 1,
+            scale: 1.18,
+            duration: 0.75,
+            stagger: 1.05,
+            yoyo: true,
+            repeat: 1,
+          },
+          "-=4.2"
+        )
+        .to(
+          activeEdges,
+          {
+            opacity: 0.24,
+            strokeDashoffset: (index, target) => {
+              const path = target as SVGPathElement;
+              return path.getTotalLength();
+            },
+            duration: 0.01,
+            stagger: 0,
+          },
+          "+=0.45"
+        )
+        .to(
+          highlightNodes,
+          {
+            opacity: 0.72,
+            scale: 1,
+            duration: 0.2,
+            stagger: 0,
+          },
+          "<"
+        )
+        .to(
+          incoming,
+          {
+            opacity: 0.35,
+            duration: 0.2,
+            stagger: 0,
+          },
+          "<"
+        );
+    }
+  }
+</script>
