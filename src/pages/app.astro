@@ -1,0 +1,29 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import StatusPage from "../components/StatusPage.astro";
+---
+
+<MainLayout
+  title="App | PolarisChain"
+  description="The PolarisChain interactive platform is still under construction."
+>
+  <SiteHeader ctaHref="/app" />
+  <StatusPage
+    eyebrow="Platform status"
+    title="Still under construction"
+    description="The interactive PolarisChain platform is being prepared and refined. We are shaping the application layer around the same research-driven trust-graph model presented on the landing page."
+    note="This area is under active development and will be available soon."
+    primaryHref="/"
+    primaryLabel="Back to PolarisChain"
+    secondaryHref="/#research"
+    secondaryLabel="Explore research"
+    panelKicker="Interactive platform"
+    panelTitle="Application layer in preparation."
+    panelText="The interface, trust-path workflows, and validation views are being assembled with the same academic and premium design language as the core site."
+    metaPrimaryLabel="State"
+    metaPrimaryValue="In development"
+    metaSecondaryLabel="Module"
+    metaSecondaryValue="Interactive app"
+  />
+</MainLayout>

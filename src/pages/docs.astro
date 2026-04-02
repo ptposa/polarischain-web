@@ -1,0 +1,29 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import StatusPage from "../components/StatusPage.astro";
+---
+
+<MainLayout
+  title="Documentation | PolarisChain"
+  description="The PolarisChain documentation portal is being prepared."
+>
+  <SiteHeader />
+  <StatusPage
+    eyebrow="Documentation status"
+    title="Still under construction"
+    description="The PolarisChain documentation portal is being organized and prepared for publication. We are structuring the material so the research, architecture, and implementation details are presented with the same clarity as the main landing page."
+    note="This section will be published soon as the documentation set is finalized."
+    primaryHref="/"
+    primaryLabel="Back to PolarisChain"
+    secondaryHref="/#research"
+    secondaryLabel="Explore research"
+    panelKicker="Documentation portal"
+    panelTitle="Publication set in progress."
+    panelText="Reference material, technical notes, and supporting documentation are being curated into a coherent public portal for the next release."
+    metaPrimaryLabel="State"
+    metaPrimaryValue="In preparation"
+    metaSecondaryLabel="Next release"
+    metaSecondaryValue="Coming soon"
+  />
+</MainLayout>

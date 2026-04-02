@@ -1,0 +1,19 @@
+---
+const { ctaHref = "/app", ctaLabel = "Launch app" } = Astro.props;
+---
+
+<header class="site-header">
+  <div class="container header-shell">
+    <a href="/" class="brand" aria-label="PolarisChain home">
+      <img src="/logo.svg" alt="PolarisChain" />
+      <span>PolarisChain</span>
+    </a>
+
+    <nav class="nav nav-right" aria-label="Primary">
+      <a href="/#research">Research</a>
+      <a href="/#interoperability">Interoperability</a>
+      <a href="/#how-it-works">How it works</a>
+      <a href={ctaHref} class="cta">{ctaLabel}</a>
+    </nav>
+  </div>
+</header>

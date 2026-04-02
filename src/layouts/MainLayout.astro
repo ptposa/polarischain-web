@@ -1,5 +1,10 @@
 ---
-const { title = "PolarisChain" } = Astro.props;
+import "../styles/global.css";
+
+const {
+  title = "PolarisChain",
+  description = "PolarisChain — research-driven trust path discovery across federated PKI ecosystems.",
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -8,10 +13,7 @@ const { title = "PolarisChain" } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    <meta
-      name="description"
-      content="PolarisChain — research-driven trust path discovery across federated PKI ecosystems."
-    />
+    <meta name="description" content={description} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

@@ -1,0 +1,128 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  description: string;
+  note?: string;
+  statusCode?: string;
+  primaryHref: string;
+  primaryLabel: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
+  panelKicker: string;
+  panelTitle: string;
+  panelText: string;
+  metaPrimaryLabel?: string;
+  metaPrimaryValue?: string;
+  metaSecondaryLabel?: string;
+  metaSecondaryValue?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  note,
+  statusCode,
+  primaryHref,
+  primaryLabel,
+  secondaryHref,
+  secondaryLabel,
+  panelKicker,
+  panelTitle,
+  panelText,
+  metaPrimaryLabel = "Status",
+  metaPrimaryValue = "In progress",
+  metaSecondaryLabel = "Availability",
+  metaSecondaryValue = "Soon",
+} = Astro.props;
+
+const hasSecondary = Boolean(secondaryHref && secondaryLabel);
+---
+
+<main class="status-page">
+  <section class="status-hero">
+    <div class="container status-shell">
+      <div class="status-copy">
+        <span class="section-kicker">{eyebrow}</span>
+        {statusCode && <span class="status-code">{statusCode}</span>}
+        <h1>{title}</h1>
+        <p class="status-lead">{description}</p>
+        {note && <p class="status-note">{note}</p>}
+
+        <div class="status-actions open-actions">
+          <a class="btn btn-primary" href={primaryHref}>{primaryLabel}</a>
+          {
+            hasSecondary && (
+              <a class="btn btn-secondary" href={secondaryHref}>
+                {secondaryLabel}
+              </a>
+            )
+          }
+        </div>
+      </div>
+
+      <div class="status-visual" aria-hidden="true">
+        <div class="status-orb status-orb-left"></div>
+        <div class="status-orb status-orb-right"></div>
+
+        <svg viewBox="0 0 620 620" class="status-graph" role="presentation">
+          <g class="status-graph-grid">
+            <path d="M104 122 L520 122"></path>
+            <path d="M90 242 L540 242"></path>
+            <path d="M82 364 L546 364"></path>
+            <path d="M122 486 L512 486"></path>
+            <path d="M122 96 L168 188 L102 300 L170 408 L132 510"></path>
+            <path d="M232 82 L266 182 L220 296 L276 410 L250 520"></path>
+            <path d="M368 88 L394 184 L344 304 L402 422 L376 522"></path>
+            <path d="M500 100 L522 188 L470 300 L530 412 L506 514"></path>
+          </g>
+
+          <g class="status-links">
+            <path d="M126 418 L210 338 L306 364 L414 244 L500 196"></path>
+            <path d="M126 418 L246 470 L348 428 L428 482 L510 430"></path>
+            <path d="M210 338 L250 208 L352 178 L414 244"></path>
+            <path d="M306 364 L348 428"></path>
+            <path d="M352 178 L500 196"></path>
+          </g>
+
+          <g class="status-halos">
+            <circle cx="126" cy="418" r="42"></circle>
+            <circle cx="414" cy="244" r="36"></circle>
+            <circle cx="500" cy="196" r="54"></circle>
+          </g>
+
+          <g class="status-nodes">
+            <circle cx="126" cy="418" r="11"></circle>
+            <circle cx="210" cy="338" r="8"></circle>
+            <circle cx="250" cy="208" r="7"></circle>
+            <circle cx="306" cy="364" r="8"></circle>
+            <circle cx="352" cy="178" r="7"></circle>
+            <circle cx="348" cy="428" r="7"></circle>
+            <circle cx="414" cy="244" r="9"></circle>
+            <circle cx="428" cy="482" r="7"></circle>
+            <circle cx="500" cy="196" r="12"></circle>
+            <circle cx="510" cy="430" r="8"></circle>
+          </g>
+        </svg>
+
+        <div class="status-panel">
+          <span class="note-label">{panelKicker}</span>
+          <h2>{panelTitle}</h2>
+          <p>{panelText}</p>
+
+          <div class="status-metadata">
+            <div>
+              <span>{metaPrimaryLabel}</span>
+              <strong>{metaPrimaryValue}</strong>
+            </div>
+            <div>
+              <span>{metaSecondaryLabel}</span>
+              <strong>{metaSecondaryValue}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
