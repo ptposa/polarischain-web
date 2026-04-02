@@ -1,7 +1,40 @@
 ---
+type PrimaryNodeId = "target" | "issuing" | "bridge" | "external" | "anchor";
+type AmbientNodeId = `a${number}`;
+type NodeId = PrimaryNodeId | AmbientNodeId;
+
+type NodeMeta = {
+  policy: string;
+  crypto: string;
+  score: string;
+};
+
+type PrimaryNode = {
+  id: PrimaryNodeId;
+  label: string[];
+  x: number;
+  y: number;
+  type: PrimaryNodeId;
+  meta: NodeMeta;
+  card?: {
+    x: number;
+    y: number;
+  };
+};
+
+type AmbientNode = {
+  id: AmbientNodeId;
+  x: number;
+  y: number;
+  size: "tiny" | "small";
+};
+
+type GraphNode = PrimaryNode | AmbientNode;
+type GraphLink = readonly [NodeId, NodeId];
+
 const graphFrame = { x: 150, y: 110, width: 880, height: 310 };
 
-const primaryNodes = [
+const primaryNodes: PrimaryNode[] = [
   {
     id: "target",
     label: ["Target certificate"],
@@ -65,7 +98,7 @@ const primaryNodes = [
   },
 ];
 
-const ambientNodes = [
+const ambientNodes: AmbientNode[] = [
   { id: "a1", x: 170, y: 230, size: "tiny" },
   { id: "a2", x: 206, y: 402, size: "tiny" },
   { id: "a3", x: 252, y: 182, size: "small" },
@@ -112,11 +145,11 @@ const ambientNodes = [
   { id: "a63", x: 1144, y: 134, size: "tiny" },
 ];
 
-const nodeMap = Object.fromEntries(
+const nodeMap: Record<NodeId, GraphNode> = Object.fromEntries(
   [...primaryNodes, ...ambientNodes].map((node) => [node.id, node]),
-);
+ ) as Record<NodeId, GraphNode>;
 
-const ambientLinks = [
+const ambientLinks: GraphLink[] = [
   ["a1", "target"],
   ["a3", "issuing"],
   ["a3", "a7"],
@@ -154,14 +187,14 @@ const ambientLinks = [
   ["a28", "a30"],
 ];
 
-const primaryLinks = [
+const primaryLinks: GraphLink[] = [
   ["target", "issuing"],
   ["issuing", "bridge"],
   ["bridge", "external"],
   ["external", "anchor"],
 ];
 
-function linkPath(fromId, toId) {
+function linkPath(fromId: NodeId, toId: NodeId) {
   const from = nodeMap[fromId];
   const to = nodeMap[toId];
   return `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
@@ -173,6 +206,7 @@ function linkPath(fromId, toId) {
     <div class="pki-hero-backdrop" aria-hidden="true"></div>
     <div class="pki-hero-starfield" aria-hidden="true"></div>
     <div class="pki-hero-overlay" aria-hidden="true"></div>
+    <div class="pki-hero-mobile-sweep" aria-hidden="true"></div>
 
     <div class="container pki-hero-shell">
       <div class="pki-hero-copy">
@@ -331,7 +365,8 @@ function linkPath(fromId, toId) {
 
   .pki-hero-backdrop,
   .pki-hero-starfield,
-  .pki-hero-overlay {
+  .pki-hero-overlay,
+  .pki-hero-mobile-sweep {
     position: absolute;
     inset: 0;
     pointer-events: none;
@@ -401,6 +436,20 @@ function linkPath(fromId, toId) {
       linear-gradient(90deg, rgba(6, 10, 17, 0.9) 0%, rgba(7, 11, 18, 0.8) 22%, rgba(8, 12, 20, 0.5) 42%, rgba(8, 12, 20, 0.12) 62%, rgba(8, 12, 20, 0) 76%);
   }
 
+  .pki-hero-mobile-sweep {
+    display: none;
+    z-index: 1;
+    inset: auto -30% -20% -30%;
+    height: 56%;
+    opacity: 0;
+    background:
+      radial-gradient(circle at 50% 72%, rgba(222, 239, 255, 0.17) 0%, rgba(164, 204, 245, 0.1) 24%, rgba(94, 136, 184, 0.05) 48%, rgba(8, 12, 20, 0) 80%),
+      linear-gradient(180deg, rgba(226, 239, 255, 0) 0%, rgba(187, 214, 243, 0.04) 58%, rgba(214, 232, 255, 0.1) 100%);
+    filter: blur(58px);
+    mix-blend-mode: screen;
+    transform: translate3d(0, 0, 0);
+  }
+
   .pki-hero-shell {
     position: relative;
     z-index: 2;
@@ -431,10 +480,10 @@ function linkPath(fromId, toId) {
     margin: 0;
     max-width: 12ch;
     color: #f4efe5;
-    font-family: "Cormorant Garamond", serif;
+    font-family: "Playfair Display", serif;
     font-size: clamp(3.4rem, 6.5vw, 5.8rem);
-    font-weight: 600;
-    line-height: 0.95;
+    font-weight: 400;
+    line-height: 1.02;
     letter-spacing: -0.03em;
   }
 
@@ -442,7 +491,7 @@ function linkPath(fromId, toId) {
     margin: 30px 0 0;
     max-width: 54ch;
     color: rgba(242, 236, 227, 0.95);
-    font-family: "Cormorant Garamond", serif;
+    font-family: "Playfair Display", serif;
     font-size: clamp(1.55rem, 2.2vw, 2rem);
     line-height: 1.1;
   }
@@ -488,6 +537,7 @@ function linkPath(fromId, toId) {
   .pki-hero-graph-wrap {
     position: relative;
     min-height: 620px;
+    margin-top: 28px;
     margin-left: 8px;
   }
 
@@ -573,9 +623,11 @@ function linkPath(fromId, toId) {
   }
 
   .pki-node-card {
+    --card-offset-x: 0px;
+    --card-offset-y: 0px;
     position: absolute;
-    left: var(--card-x);
-    top: var(--card-y);
+    left: calc(var(--card-x) + var(--card-offset-x));
+    top: calc(var(--card-y) + var(--card-offset-y));
     min-width: 158px;
     max-width: 172px;
     padding: 10px 12px;
@@ -589,29 +641,34 @@ function linkPath(fromId, toId) {
   }
 
   .pki-node-card.is-target {
-    transform: translate(-10%, -132%) translateY(0);
+    --card-offset-x: 28px;
+    --card-offset-y: -170px;
   }
 
   .pki-node-card.is-issuing {
-    transform: translate(-32%, 18%) translateY(18px);
+    --card-offset-x: 57px;
+    --card-offset-y: -10px;
   }
 
   .pki-node-card.is-bridge {
-    transform: translate(-14%, 18%) translateY(18px);
+    --card-offset-x: 50px;
+    --card-offset-y: 150px;
   }
 
   .pki-node-card.is-external {
-    transform: translate(-8%, 18%) translateY(18px);
+    --card-offset-x: 80px;
+    --card-offset-y: -82px;
   }
 
   .pki-node-card.is-anchor {
-    transform: translate(-86%, 18%) translateY(18px);
+    --card-offset-x: 120px;
+    --card-offset-y: 82px;
   }
 
   .pki-node-card-title {
     display: block;
     color: #f4efe5;
-    font-family: "Cormorant Garamond", serif;
+    font-family: "Playfair Display", serif;
     font-size: 1rem;
     line-height: 1;
   }
@@ -682,6 +739,10 @@ function linkPath(fromId, toId) {
       min-height: auto;
     }
 
+    .pki-hero-mobile-sweep {
+      display: block;
+    }
+
     .pki-hero-shell {
       min-height: auto;
       padding: 42px 0 76px;
@@ -698,7 +759,7 @@ function linkPath(fromId, toId) {
 
     .pki-hero-copy h1 {
       font-size: clamp(2.95rem, 13vw, 4.4rem);
-      line-height: 0.96;
+      line-height: 1.03;
     }
 
     .pki-hero-lead {
@@ -724,7 +785,7 @@ function linkPath(fromId, toId) {
 
     .pki-hero-graph-wrap {
       min-height: auto;
-      margin-top: 20px;
+      margin-top: 34px;
     }
 
     .pki-hero-graph {
@@ -737,6 +798,7 @@ function linkPath(fromId, toId) {
       inset: auto;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-flow: row;
       gap: 10px;
       margin-top: 18px;
       width: 100%;
@@ -795,7 +857,7 @@ function linkPath(fromId, toId) {
     }
   }
 
-  @media (max-width: 400px) {
+  @media (max-width: 340px) {
     .pki-node-cards {
       grid-template-columns: 1fr;
     }
@@ -811,14 +873,16 @@ function linkPath(fromId, toId) {
 
     const section = document.querySelector(".pki-hero");
     const track = document.querySelector(".pki-hero-track");
+    const graphWrap = document.querySelector(".pki-hero-graph-wrap");
     const graph = document.querySelector("#pki-hero-graph");
     const ambientNodes = graph?.querySelectorAll(".pki-node-ambient");
     const primaryNodes = graph?.querySelectorAll("[data-path-node]");
     const primaryLinks = graph?.querySelectorAll("[data-path-link]");
     const halos = graph?.querySelectorAll("[data-node-halo]");
     const cards = document.querySelectorAll("[data-node-card]");
+    const mobileSweep = section?.querySelector(".pki-hero-mobile-sweep");
 
-    if (section && track && graph && ambientNodes && primaryNodes && primaryLinks && halos && cards.length) {
+    if (section && track && graphWrap && ambientNodes && primaryNodes && primaryLinks && halos && cards.length) {
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const isCompactViewport = window.matchMedia("(max-width: 760px)").matches;
 
@@ -860,7 +924,15 @@ function linkPath(fromId, toId) {
         y: 18,
       });
 
-      if (prefersReducedMotion || isCompactViewport) {
+      if (prefersReducedMotion) {
+        if (mobileSweep instanceof HTMLElement && isCompactViewport) {
+          gsap.set(mobileSweep, {
+            opacity: 0.16,
+            yPercent: -18,
+            scale: 1,
+          });
+        }
+
         gsap.set(primaryLinks, {
           opacity: 1,
           strokeDashoffset: 0,
@@ -883,6 +955,97 @@ function linkPath(fromId, toId) {
         gsap.set(cards, {
           opacity: 1,
           y: 0,
+        });
+      } else if (isCompactViewport) {
+        const mobileTimeline = gsap.timeline({
+          defaults: { ease: "power2.out" },
+          scrollTrigger: {
+            trigger: graph,
+            start: "top 54%",
+            end: "bottom 28%",
+            scrub: 0.75,
+          },
+        });
+
+        if (mobileSweep instanceof HTMLElement) {
+          gsap.set(mobileSweep, {
+            opacity: 0.05,
+            yPercent: 22,
+            scale: 0.94,
+            transformOrigin: "center center",
+          });
+
+          gsap.timeline({
+            defaults: { ease: "none" },
+            scrollTrigger: {
+              trigger: section,
+              start: "top 94%",
+              end: "bottom top",
+              scrub: 1.4,
+            },
+          }).to(
+            mobileSweep,
+            {
+              opacity: 0.48,
+              yPercent: -104,
+              scale: 1.08,
+              ease: "none",
+              duration: 0.82,
+            },
+            0
+          ).to(
+            mobileSweep,
+            {
+              opacity: 0.08,
+              ease: "sine.out",
+              duration: 0.18,
+            },
+            0.64
+          );
+        }
+
+        primaryNodes.forEach((node, index) => {
+          mobileTimeline.to(
+            node,
+            {
+              opacity: 1,
+              scale: index === primaryNodes.length - 1 ? 1.28 : 1.16,
+              duration: 0.16,
+            },
+            index === 0 ? 0 : ">"
+          );
+
+          mobileTimeline.to(
+            halos[index],
+            {
+              opacity: index === primaryNodes.length - 1 ? 0.9 : 0.68,
+              scale: index === primaryNodes.length - 1 ? 1.24 : 1.08,
+              duration: 0.16,
+            },
+            "<"
+          );
+
+          mobileTimeline.to(
+            cards[index],
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.18,
+            },
+            "<+0.04"
+          );
+
+          if (index < primaryLinks.length) {
+            mobileTimeline.to(
+              primaryLinks[index],
+              {
+                opacity: 1,
+                strokeDashoffset: 0,
+                duration: 0.24,
+              },
+              ">"
+            );
+          }
         });
       } else {
         const timeline = gsap.timeline({

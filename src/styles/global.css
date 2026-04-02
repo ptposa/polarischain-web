@@ -16,8 +16,8 @@
   --shadow-dark: 0 30px 90px rgba(0, 0, 0, 0.32);
   --shadow-paper: 0 24px 50px rgba(51, 43, 35, 0.08);
   --radius-xl: 34px;
-  --radius-lg: 22px;
-  --radius-md: 16px;
+  --radius-lg: 7px;
+  --radius-md: 7px;
   --max: 1280px;
 }
 
@@ -78,26 +78,26 @@ svg {
 }
 
 .header-shell {
-  min-height: 82px;
+  min-height: 60px;
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
 }
 
 .brand {
   justify-self: start;
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  font-family: "Cormorant Garamond", serif;
-  font-size: 2rem;
+  gap: 10px;
+  font-family: "Playfair Display", serif;
+  font-size: 1.48rem;
   letter-spacing: 0.01em;
 }
 
 .brand-mark {
-  width: 17px;
-  height: 17px;
+  width: 15px;
+  height: 15px;
   position: relative;
   transform: rotate(45deg);
   border: 1px solid rgba(255, 255, 255, 0.82);
@@ -115,18 +115,18 @@ svg {
 
 .brand-mark::before {
   width: 1px;
-  height: 22px;
+  height: 19px;
 }
 
 .brand-mark::after {
-  width: 22px;
+  width: 19px;
   height: 1px;
 }
 
 .nav {
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 20px;
   min-width: 0;
 }
 
@@ -136,7 +136,7 @@ svg {
 
 .nav a {
   color: rgba(237, 231, 221, 0.82);
-  font-size: 0.92rem;
+  font-size: 0.89rem;
   letter-spacing: 0.01em;
 }
 
@@ -145,7 +145,7 @@ svg {
 }
 
 .nav .cta {
-  padding: 11px 16px;
+  padding: 8px 13px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.03);
@@ -161,8 +161,8 @@ svg {
 .section-heading h2,
 .process-copy h2 {
   margin: 0;
-  font-family: "Cormorant Garamond", serif;
-  font-weight: 600;
+  font-family: "Playfair Display", serif;
+  font-weight: 400;
   letter-spacing: -0.03em;
 }
 
@@ -278,7 +278,7 @@ svg {
 
 .research-index {
   color: rgba(58, 54, 49, 0.42);
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Playfair Display", serif;
   font-size: 2.35rem;
   line-height: 1;
   min-width: 1.8ch;
@@ -288,7 +288,8 @@ svg {
 .figure-caption h3,
 .open-card h3 {
   margin: 0;
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Playfair Display", serif;
+  font-weight: 400;
   font-size: 2rem;
   line-height: 1;
 }
@@ -433,7 +434,7 @@ svg {
   position: absolute;
   inset: -6px auto auto 0;
   color: rgba(245, 238, 227, 0.72);
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Playfair Display", serif;
   font-size: 2.8rem;
   line-height: 1;
 }
@@ -442,9 +443,9 @@ svg {
   display: block;
   color: #f4efe5;
   margin-bottom: 4px;
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.45rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .process-overview {
@@ -469,9 +470,9 @@ svg {
 
 .stage-copy strong {
   color: #f1ecdf;
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.9rem;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 0.95;
 }
 
@@ -483,7 +484,7 @@ svg {
 
 .stage-arrow {
   color: rgba(232, 224, 212, 0.56);
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Playfair Display", serif;
   font-size: 3rem;
   line-height: 1;
 }
@@ -619,7 +620,7 @@ svg {
 .process-graph-labels text {
   fill: rgba(225, 218, 206, 0.78);
   font-size: 17px;
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Playfair Display", serif;
 }
 
 .process-visual {
@@ -676,7 +677,7 @@ svg {
 .process-labels text {
   fill: rgba(233, 226, 214, 0.9);
   font-size: 18px;
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Playfair Display", serif;
   text-anchor: middle;
 }
 
@@ -758,13 +759,13 @@ svg {
   }
 
   .header-shell {
-    min-height: 72px;
+    min-height: 56px;
     grid-template-columns: auto auto;
     gap: 12px;
   }
 
   .brand {
-    font-size: 1.68rem;
+    font-size: 1.24rem;
   }
 
   .nav {
