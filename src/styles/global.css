@@ -2,8 +2,8 @@
   --bg: #0a0e17;
   --bg-deep: #070b12;
   --bg-panel: rgba(10, 14, 23, 0.82);
-  --paper: #f4efe6;
-  --paper-strong: #ede6da;
+  --paper: #d6cfc2;
+  --paper-strong: #cbc3b4;
   --paper-border: rgba(54, 49, 41, 0.12);
   --text: #f2eee6;
   --text-soft: #c1b8aa;
@@ -90,9 +90,21 @@ svg {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  line-height: 0;
+}
+
+.brand img {
+  display: block;
+  height: 30px;
+  width: auto;
+}
+
+.brand span {
   font-family: "Playfair Display", serif;
   font-size: 1.48rem;
+  line-height: 1;
   letter-spacing: 0.01em;
+  color: #ffffff;
 }
 
 .brand-mark {
@@ -159,7 +171,8 @@ svg {
 }
 
 .section-heading h2,
-.process-copy h2 {
+.process-copy h2,
+.process-heading h2 {
   margin: 0;
   font-family: "Playfair Display", serif;
   font-weight: 400;
@@ -216,7 +229,7 @@ svg {
   position: relative;
   background:
     radial-gradient(circle at 16% 0%, rgba(255, 255, 255, 0.5), transparent 14%),
-    linear-gradient(180deg, var(--paper) 0%, #f6f1e9 100%);
+    linear-gradient(180deg, var(--paper) 0%, var(--paper-strong) 100%);
   color: var(--ink);
 }
 
@@ -234,7 +247,8 @@ svg {
 }
 
 .section-heading h2,
-.process-copy h2 {
+.process-copy h2,
+.process-heading h2 {
   font-size: clamp(2.8rem, 4vw, 4rem);
   line-height: 0.96;
   max-width: 14ch;
@@ -400,6 +414,11 @@ svg {
   color: rgba(196, 188, 175, 0.74);
 }
 
+.process-heading .section-kicker {
+  display: block;
+  margin-bottom: 18px;
+}
+
 .process-copy h2,
 .process-heading h2 {
   color: #f3eee5;
@@ -407,7 +426,7 @@ svg {
 }
 
 .process-heading p {
-  margin: 16px 0 0;
+  margin: 26px 0 0;
   max-width: 78ch;
   color: rgba(215, 206, 193, 0.78);
   line-height: 1.85;
@@ -765,6 +784,14 @@ svg {
   }
 
   .brand {
+    gap: 8px;
+  }
+
+  .brand img {
+    height: 24px;
+  }
+
+  .brand span {
     font-size: 1.24rem;
   }
 
@@ -783,7 +810,8 @@ svg {
   }
 
   .section-heading h2,
-  .process-copy h2 {
+  .process-copy h2,
+  .process-heading h2 {
     font-size: clamp(2.25rem, 9vw, 3.2rem);
     max-width: none;
     line-height: 1.06;
@@ -794,8 +822,16 @@ svg {
     max-width: none;
   }
 
+  .process-heading .section-kicker {
+    margin-bottom: 22px;
+  }
+
   .section-heading p {
     margin-top: 24px;
+  }
+
+  .process-heading p {
+    margin-top: 30px;
   }
 
   .research-card,
