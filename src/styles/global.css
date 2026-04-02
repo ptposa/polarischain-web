@@ -237,6 +237,10 @@ svg {
   padding: 88px 0 96px;
 }
 
+#research .paper-shell {
+  padding-top: 56px;
+}
+
 .section-heading {
   max-width: 840px;
 }
@@ -288,14 +292,6 @@ svg {
   align-items: baseline;
   gap: 14px;
   margin-bottom: 18px;
-}
-
-.research-index {
-  color: rgba(58, 54, 49, 0.42);
-  font-family: "Playfair Display", serif;
-  font-size: 2.35rem;
-  line-height: 1;
-  min-width: 1.8ch;
 }
 
 .research-card h3,
@@ -807,6 +803,10 @@ svg {
   .process-shell,
   .process-shell-wide {
     padding: 68px 0 72px;
+  }
+
+  #research .paper-shell {
+    padding-top: 40px;
   }
 
   .section-heading h2,
