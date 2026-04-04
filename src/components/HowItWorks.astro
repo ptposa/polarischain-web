@@ -253,118 +253,202 @@
 
 <script>
   import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger);
 
-  if (!prefersReducedMotion) {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const lightMotion = window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;
     const graph = document.querySelector("#federated-process-graph");
-    const activeEdges = graph?.querySelectorAll(".process-active-edge");
-    const allNodes = graph?.querySelectorAll(".process-graph-node");
-    const highlightNodes = graph?.querySelectorAll(".process-graph-node.is-highlight, .process-graph-node.is-anchor, .process-graph-node.is-issuer");
-    const halos = graph?.querySelectorAll(".process-halo");
-    const incoming = graph?.querySelectorAll(".incoming-cert");
+    const activeEdges = Array.from(graph?.querySelectorAll(".process-active-edge") ?? []);
+    const allNodes = Array.from(graph?.querySelectorAll(".process-graph-node") ?? []);
+    const highlightNodes = Array.from(
+      graph?.querySelectorAll(".process-graph-node.is-highlight, .process-graph-node.is-anchor, .process-graph-node.is-issuer") ?? [],
+    );
+    const halos = Array.from(graph?.querySelectorAll(".process-halo") ?? []);
+    const incoming = Array.from(graph?.querySelectorAll(".incoming-cert") ?? []);
+    const incomingActive = lightMotion ? incoming.slice(-2) : incoming;
+    const motionTargets = [...highlightNodes, ...halos, ...incomingActive];
 
-    if (graph && activeEdges && allNodes && highlightNodes && halos && incoming) {
+    if (graph instanceof SVGSVGElement && activeEdges.length && allNodes.length && highlightNodes.length && halos.length) {
       activeEdges.forEach((edge) => {
-        const path = edge as SVGPathElement;
-        const len = path.getTotalLength();
-        path.style.strokeDasharray = `${len}`;
-        path.style.strokeDashoffset = `${len}`;
+        if (edge instanceof SVGPathElement) {
+          const len = edge.getTotalLength();
+          edge.style.strokeDasharray = `${len}`;
+          edge.style.strokeDashoffset = `${len}`;
+        }
       });
 
-      gsap.set(allNodes, {
-        opacity: 0.42,
-        scale: 0.9,
-        transformOrigin: "center center",
-      });
+      if (prefersReducedMotion) {
+        gsap.set(allNodes, {
+          opacity: 1,
+          scale: 1,
+          transformOrigin: "center center",
+        });
 
-      gsap.set(halos, {
-        opacity: 0,
-        scale: 0.5,
-        transformOrigin: "center center",
-      });
+        gsap.set(activeEdges, {
+          opacity: 1,
+          strokeDashoffset: 0,
+        });
 
-      gsap.set(incoming, {
-        opacity: 0.35,
-        x: -10,
-      });
+        gsap.set(halos, {
+          opacity: 0.72,
+          scale: 1.04,
+          transformOrigin: "center center",
+        });
 
-      const tl = gsap.timeline({
-        repeat: -1,
-        repeatDelay: 1.2,
-        defaults: { ease: "power2.out" },
-      });
+        if (incomingActive.length) {
+          gsap.set(incomingActive, {
+            opacity: 0.92,
+            x: 0,
+          });
+        }
+      } else {
+        gsap.set(allNodes, {
+          opacity: lightMotion ? 0.68 : 0.42,
+          scale: lightMotion ? 1 : 0.92,
+          transformOrigin: "center center",
+        });
 
-      tl.to(incoming, {
-        opacity: 0.92,
-        x: 0,
-        duration: 0.8,
-        stagger: 0.18,
-      })
-        .to(
+        gsap.set(highlightNodes, {
+          willChange: "transform, opacity",
+        });
+
+        gsap.set(halos, {
+          opacity: 0,
+          scale: lightMotion ? 0.82 : 0.5,
+          transformOrigin: "center center",
+          willChange: "transform, opacity",
+        });
+
+        if (incomingActive.length) {
+          gsap.set(incomingActive, {
+            opacity: lightMotion ? 0.5 : 0.35,
+            x: lightMotion ? -4 : -10,
+            willChange: "transform, opacity",
+          });
+        }
+
+        const clearMotionHints = () => {
+          if (motionTargets.length) {
+            gsap.set(motionTargets, {
+              clearProps: "willChange",
+            });
+          }
+        };
+
+        const tl = gsap.timeline({
+          paused: true,
+          repeat: lightMotion ? 0 : -1,
+          repeatDelay: lightMotion ? 0 : 1.35,
+          defaults: { ease: "power2.out" },
+          onComplete: () => {
+            if (lightMotion) {
+              clearMotionHints();
+            }
+          },
+        });
+
+        if (incomingActive.length) {
+          tl.to(incomingActive, {
+            opacity: 0.88,
+            x: 0,
+            duration: lightMotion ? 0.36 : 0.76,
+            stagger: lightMotion ? 0.08 : 0.16,
+          });
+        }
+
+        tl.to(
           activeEdges,
           {
             strokeDashoffset: 0,
             opacity: 1,
-            duration: 1.15,
-            stagger: 0.45,
+            duration: lightMotion ? 0.44 : 0.9,
+            stagger: lightMotion ? 0.14 : 0.32,
           },
-          "-=0.2"
+          incomingActive.length ? "-=0.08" : 0,
         )
-        .to(
-          highlightNodes,
-          {
-            opacity: 1,
-            scale: 1.16,
-            duration: 0.55,
-            stagger: 0.38,
-          },
-          "-=4.9"
-        )
-        .to(
-          halos,
-          {
-            opacity: 1,
-            scale: 1.18,
-            duration: 0.75,
-            stagger: 1.05,
-            yoyo: true,
-            repeat: 1,
-          },
-          "-=4.2"
-        )
-        .to(
-          activeEdges,
-          {
-            opacity: 0.24,
-            strokeDashoffset: (index, target) => {
-              const path = target as SVGPathElement;
-              return path.getTotalLength();
+          .to(
+            highlightNodes,
+            {
+              opacity: 1,
+              scale: lightMotion ? 1.08 : 1.14,
+              duration: lightMotion ? 0.26 : 0.48,
+              stagger: lightMotion ? 0.08 : 0.26,
             },
-            duration: 0.01,
-            stagger: 0,
-          },
-          "+=0.45"
-        )
-        .to(
-          highlightNodes,
-          {
-            opacity: 0.72,
-            scale: 1,
-            duration: 0.2,
-            stagger: 0,
-          },
-          "<"
-        )
-        .to(
-          incoming,
-          {
-            opacity: 0.35,
-            duration: 0.2,
-            stagger: 0,
-          },
-          "<"
-        );
+            lightMotion ? "-=1.0" : "-=3.4",
+          )
+          .to(
+            halos,
+            {
+              opacity: lightMotion ? 0.68 : 0.92,
+              scale: lightMotion ? 1.04 : 1.16,
+              duration: lightMotion ? 0.34 : 0.68,
+              stagger: lightMotion ? 0.16 : 0.9,
+              yoyo: !lightMotion,
+              repeat: lightMotion ? 0 : 1,
+            },
+            lightMotion ? "<" : "-=2.8",
+          );
+
+        if (!lightMotion) {
+          tl.to(
+            activeEdges,
+            {
+              opacity: 0.22,
+              strokeDashoffset: (_, target) => {
+                if (target instanceof SVGPathElement) {
+                  return target.getTotalLength();
+                }
+
+                return 0;
+              },
+              duration: 0.01,
+              stagger: 0,
+            },
+            "+=0.35",
+          )
+            .to(
+              highlightNodes,
+              {
+                opacity: 0.72,
+                scale: 1,
+                duration: 0.2,
+                stagger: 0,
+              },
+              "<",
+            )
+            .to(
+              incomingActive,
+              {
+                opacity: 0.35,
+                duration: 0.2,
+                stagger: 0,
+              },
+              "<",
+            );
+        }
+
+        if (lightMotion) {
+          ScrollTrigger.create({
+            trigger: graph,
+            start: "top 80%",
+            once: true,
+            onEnter: () => tl.play(0),
+          });
+        } else {
+          ScrollTrigger.create({
+            trigger: graph,
+            start: "top 78%",
+            end: "bottom 24%",
+            onEnter: () => tl.play(0),
+            onEnterBack: () => tl.play(0),
+            onLeave: () => tl.pause(0),
+            onLeaveBack: () => tl.pause(0),
+          });
+        }
+      }
     }
   }
 </script>

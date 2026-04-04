@@ -29,6 +29,12 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   margin: 0;
   color: var(--text);
@@ -72,7 +78,7 @@ svg {
   position: sticky;
   top: 0;
   z-index: 40;
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(14px);
   background: rgba(7, 11, 18, 0.68);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -741,7 +747,7 @@ svg {
 
 .stage-icon .is-highlight {
   fill: none;
-  filter: drop-shadow(0 0 6px rgba(220, 236, 255, 0.32));
+  filter: drop-shadow(0 0 3px rgba(220, 236, 255, 0.24));
 }
 
 .stage-icon-certificate {
@@ -771,7 +777,8 @@ svg {
     radial-gradient(circle at 86% 54%, rgba(255, 241, 203, 0.12), transparent 12%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: var(--shadow-dark);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.26);
+  contain: paint;
 }
 
 .federation-graph {
@@ -814,10 +821,10 @@ svg {
 .process-active-edge {
   fill: none;
   stroke: rgba(248, 243, 224, 0.96);
-  stroke-width: 3.2;
+  stroke-width: 2.8;
   stroke-linecap: round;
-  opacity: 0.24;
-  filter: drop-shadow(0 0 9px rgba(255, 238, 188, 0.3));
+  opacity: 0.22;
+  filter: drop-shadow(0 0 4px rgba(255, 238, 188, 0.2));
 }
 
 .process-graph-node {
@@ -834,7 +841,7 @@ svg {
 
 .process-graph-node.is-anchor {
   fill: rgba(255, 247, 229, 0.98);
-  filter: drop-shadow(0 0 18px rgba(255, 239, 193, 0.48));
+  filter: drop-shadow(0 0 8px rgba(255, 239, 193, 0.28));
 }
 
 .process-halo {
@@ -900,7 +907,7 @@ svg {
 }
 
 .process-node.is-target {
-  filter: drop-shadow(0 0 12px rgba(210, 230, 248, 0.44));
+  filter: drop-shadow(0 0 6px rgba(210, 230, 248, 0.3));
 }
 
 .process-labels text {
@@ -996,8 +1003,17 @@ svg {
 }
 
 @media (max-width: 760px) {
+  body::before {
+    opacity: 0.06;
+  }
+
   .container {
     width: min(var(--max), calc(100% - 28px));
+  }
+
+  .site-header {
+    backdrop-filter: blur(10px);
+    background: rgba(7, 11, 18, 0.8);
   }
 
   .header-shell {
@@ -1156,6 +1172,39 @@ svg {
 
   .federation-graph-card {
     padding: 10px 6px 0;
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.22);
+  }
+
+  .process-background-grid {
+    display: none;
+  }
+
+  .federation-links:not(.federation-links-active) path:nth-child(odd) {
+    display: none;
+  }
+
+  .federation-nodes .process-graph-node:not(.is-highlight):not(.is-anchor):not(.is-issuer):nth-child(odd) {
+    display: none;
+  }
+
+  .federation-links path {
+    stroke-width: 1.55;
+  }
+
+  .process-active-edge,
+  .process-graph-node.is-anchor,
+  .process-node.is-target,
+  .stage-icon .is-highlight {
+    filter: none;
+  }
+
+  .process-active-edge {
+    stroke-width: 2.35;
+    opacity: 0.28;
+  }
+
+  .process-graph-labels text {
+    font-size: 14px;
   }
 
   .research-card-header {

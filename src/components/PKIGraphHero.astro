@@ -349,7 +349,7 @@ function linkPath(fromId: NodeId, toId: NodeId) {
 <style>
   .pki-hero {
     position: relative;
-    min-height: 220vh;
+    min-height: 200vh;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     background:
       radial-gradient(circle at 68% 30%, rgba(100, 135, 185, 0.12), transparent 22%),
@@ -361,6 +361,7 @@ function linkPath(fromId: NodeId, toId: NodeId) {
   .pki-hero-track {
     position: relative;
     min-height: 100vh;
+    overflow: clip;
   }
 
   .pki-hero-backdrop,
@@ -445,7 +446,7 @@ function linkPath(fromId: NodeId, toId: NodeId) {
     background:
       radial-gradient(circle at 50% 72%, rgba(222, 239, 255, 0.17) 0%, rgba(164, 204, 245, 0.1) 24%, rgba(94, 136, 184, 0.05) 48%, rgba(8, 12, 20, 0) 80%),
       linear-gradient(180deg, rgba(226, 239, 255, 0) 0%, rgba(187, 214, 243, 0.04) 58%, rgba(214, 232, 255, 0.1) 100%);
-    filter: blur(58px);
+    filter: blur(34px);
     mix-blend-mode: screen;
     transform: translate3d(0, 0, 0);
   }
@@ -539,6 +540,7 @@ function linkPath(fromId: NodeId, toId: NodeId) {
     min-height: 620px;
     margin-top: 28px;
     margin-left: 8px;
+    contain: paint;
   }
 
   .pki-hero-graph {
@@ -571,7 +573,7 @@ function linkPath(fromId: NodeId, toId: NodeId) {
     stroke-width: 2.5;
     stroke-linecap: round;
     opacity: 0;
-    filter: drop-shadow(0 0 10px rgba(210, 230, 255, 0.28));
+    filter: drop-shadow(0 0 4px rgba(210, 230, 255, 0.18));
   }
 
   .pki-node {
@@ -580,7 +582,7 @@ function linkPath(fromId: NodeId, toId: NodeId) {
 
   .pki-node-ambient {
     fill: rgba(231, 237, 246, 0.74);
-    filter: drop-shadow(0 0 10px rgba(227, 235, 246, 0.2));
+    filter: drop-shadow(0 0 4px rgba(227, 235, 246, 0.14));
   }
 
   .pki-node-ambient.is-tiny {
@@ -593,12 +595,12 @@ function linkPath(fromId: NodeId, toId: NodeId) {
 
   .pki-node-primary {
     fill: rgba(213, 226, 241, 0.72);
-    filter: drop-shadow(0 0 12px rgba(205, 225, 245, 0.18));
+    filter: drop-shadow(0 0 6px rgba(205, 225, 245, 0.14));
   }
 
   .pki-node-primary.is-anchor {
     fill: rgba(241, 247, 255, 0.82);
-    filter: drop-shadow(0 0 18px rgba(219, 235, 255, 0.34));
+    filter: drop-shadow(0 0 10px rgba(219, 235, 255, 0.24));
   }
 
   .pki-node-halo {
@@ -613,7 +615,7 @@ function linkPath(fromId: NodeId, toId: NodeId) {
     font-size: 16px;
     font-weight: 500;
     letter-spacing: 0.01em;
-    filter: drop-shadow(0 2px 10px rgba(7, 11, 18, 0.85));
+    filter: drop-shadow(0 2px 6px rgba(7, 11, 18, 0.72));
   }
 
   .pki-node-cards {
@@ -633,9 +635,9 @@ function linkPath(fromId: NodeId, toId: NodeId) {
     padding: 10px 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 16px;
-    background: rgba(15, 20, 31, 0.34);
-    backdrop-filter: blur(14px);
-    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.18);
+    background: rgba(15, 20, 31, 0.46);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
     opacity: 0;
     transform: translate(-50%, -50%) translateY(18px);
   }
@@ -651,17 +653,17 @@ function linkPath(fromId: NodeId, toId: NodeId) {
   }
 
   .pki-node-card.is-bridge {
-    --card-offset-x: 50px;
+    --card-offset-x: 30px;
     --card-offset-y: 150px;
   }
 
   .pki-node-card.is-external {
-    --card-offset-x: 80px;
+    --card-offset-x: 55px;
     --card-offset-y: -82px;
   }
 
   .pki-node-card.is-anchor {
-    --card-offset-x: 120px;
+    --card-offset-x: 80px;
     --card-offset-y: 82px;
   }
 
@@ -699,7 +701,7 @@ function linkPath(fromId: NodeId, toId: NodeId) {
 
   @media (max-width: 1080px) {
     .pki-hero {
-      min-height: 190vh;
+      min-height: 172vh;
     }
 
     .pki-hero-shell {
@@ -741,6 +743,7 @@ function linkPath(fromId: NodeId, toId: NodeId) {
 
     .pki-hero-mobile-sweep {
       display: block;
+      filter: blur(24px);
     }
 
     .pki-hero-shell {
@@ -751,6 +754,14 @@ function linkPath(fromId: NodeId, toId: NodeId) {
     .pki-hero-overlay {
       background:
         linear-gradient(180deg, rgba(6, 10, 17, 0.84) 0%, rgba(7, 11, 18, 0.7) 34%, rgba(8, 12, 20, 0.16) 66%, rgba(8, 12, 20, 0) 100%);
+    }
+
+    .pki-hero-backdrop {
+      opacity: 0.16;
+    }
+
+    .pki-hero-starfield {
+      opacity: 0.2;
     }
 
     .pki-hero-copy {
@@ -800,7 +811,7 @@ function linkPath(fromId: NodeId, toId: NodeId) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       grid-auto-flow: row;
       gap: 10px;
-      margin-top: 18px;
+      margin-top: 30px;
       width: 100%;
       padding-right: 0;
     }
@@ -815,6 +826,9 @@ function linkPath(fromId: NodeId, toId: NodeId) {
       margin: 0;
       padding: 10px 10px;
       box-sizing: border-box;
+      background: rgba(15, 20, 31, 0.74);
+      backdrop-filter: none;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
       transform: none;
       border-radius: 14px;
     }
@@ -849,11 +863,27 @@ function linkPath(fromId: NodeId, toId: NodeId) {
 
     .pki-node-label text {
       font-size: 13px;
+      filter: none;
     }
 
     .pki-ambient-links .pki-link.is-dim,
     .pki-ambient-nodes .pki-node-ambient.is-tiny {
-      opacity: 0.42;
+      display: none;
+    }
+
+    .pki-ambient-links .pki-link.is-structural {
+      opacity: 0.36;
+    }
+
+    .pki-node-ambient.is-small {
+      opacity: 0.52;
+      filter: none;
+    }
+
+    .pki-primary-link,
+    .pki-node-primary,
+    .pki-node-primary.is-anchor {
+      filter: none;
     }
   }
 
@@ -872,236 +902,291 @@ function linkPath(fromId: NodeId, toId: NodeId) {
     gsap.registerPlugin(ScrollTrigger);
 
     const section = document.querySelector(".pki-hero");
-    const track = document.querySelector(".pki-hero-track");
-    const graphWrap = document.querySelector(".pki-hero-graph-wrap");
-    const graph = document.querySelector("#pki-hero-graph");
-    const ambientNodes = graph?.querySelectorAll(".pki-node-ambient");
-    const primaryNodes = graph?.querySelectorAll("[data-path-node]");
-    const primaryLinks = graph?.querySelectorAll("[data-path-link]");
-    const halos = graph?.querySelectorAll("[data-node-halo]");
-    const cards = document.querySelectorAll("[data-node-card]");
-    const mobileSweep = section?.querySelector(".pki-hero-mobile-sweep");
+    if (section instanceof HTMLElement) {
+      const track = section.querySelector(".pki-hero-track");
+      const graphWrap = section.querySelector(".pki-hero-graph-wrap");
+      const graph = section.querySelector("#pki-hero-graph");
+      const ambientNodes = Array.from(section.querySelectorAll(".pki-node-ambient"));
+      const primaryNodes = Array.from(section.querySelectorAll("[data-path-node]"));
+      const primaryLinks = Array.from(section.querySelectorAll("[data-path-link]"));
+      const halos = Array.from(section.querySelectorAll("[data-node-halo]"));
+      const cards = Array.from(section.querySelectorAll("[data-node-card]"));
+      const mobileSweep = section.querySelector(".pki-hero-mobile-sweep");
 
-    if (section && track && graphWrap && ambientNodes && primaryNodes && primaryLinks && halos && cards.length) {
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const isCompactViewport = window.matchMedia("(max-width: 760px)").matches;
+      if (
+        track instanceof HTMLElement &&
+        graphWrap instanceof HTMLElement &&
+        graph instanceof SVGSVGElement &&
+        primaryNodes.length &&
+        primaryLinks.length &&
+        halos.length &&
+        cards.length
+      ) {
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const motionTargets = [...primaryNodes, ...halos, ...cards];
 
-      if (!isCompactViewport) {
-        ambientNodes.forEach((node) => {
-          gsap.to(node, {
-            opacity: "+=0.18",
-            duration: 2.8 + Math.random() * 2.2,
-            yoyo: true,
-            repeat: -1,
-            ease: "sine.inOut",
-          });
-        });
-      }
-
-      primaryLinks.forEach((link) => {
-        const path = link;
-        if (path instanceof SVGPathElement) {
-          const length = path.getTotalLength();
-          path.style.strokeDasharray = `${length}`;
-          path.style.strokeDashoffset = `${length}`;
-        }
-      });
-
-      gsap.set(primaryNodes, {
-        opacity: 0.7,
-        scale: 1,
-        transformOrigin: "center center",
-      });
-
-      gsap.set(halos, {
-        opacity: 0,
-        scale: 0.55,
-        transformOrigin: "center center",
-      });
-
-      gsap.set(cards, {
-        opacity: 0,
-        y: 18,
-      });
-
-      if (prefersReducedMotion) {
-        if (mobileSweep instanceof HTMLElement && isCompactViewport) {
-          gsap.set(mobileSweep, {
-            opacity: 0.16,
-            yPercent: -18,
-            scale: 1,
-          });
-        }
-
-        gsap.set(primaryLinks, {
-          opacity: 1,
-          strokeDashoffset: 0,
+        primaryLinks.forEach((link) => {
+          if (link instanceof SVGPathElement) {
+            const length = link.getTotalLength();
+            link.style.strokeDasharray = `${length}`;
+            link.style.strokeDashoffset = `${length}`;
+          }
         });
 
-        primaryNodes.forEach((node, index) => {
-          gsap.set(node, {
-            opacity: 1,
-            scale: index === primaryNodes.length - 1 ? 1.28 : 1.16,
-          });
+        gsap.set(primaryNodes, {
+          opacity: 0.72,
+          scale: 1,
+          transformOrigin: "center center",
         });
 
-        halos.forEach((halo, index) => {
-          gsap.set(halo, {
-            opacity: index === primaryNodes.length - 1 ? 0.9 : 0.68,
-            scale: index === primaryNodes.length - 1 ? 1.24 : 1.08,
-          });
+        gsap.set(halos, {
+          opacity: 0,
+          scale: 0.62,
+          transformOrigin: "center center",
         });
 
         gsap.set(cards, {
-          opacity: 1,
-          y: 0,
-        });
-      } else if (isCompactViewport) {
-        const mobileTimeline = gsap.timeline({
-          defaults: { ease: "power2.out" },
-          scrollTrigger: {
-            trigger: graph,
-            start: "top 54%",
-            end: "bottom 28%",
-            scrub: 0.75,
-          },
+          opacity: 0,
+          y: 16,
         });
 
-        if (mobileSweep instanceof HTMLElement) {
-          gsap.set(mobileSweep, {
-            opacity: 0.05,
-            yPercent: 22,
-            scale: 0.94,
-            transformOrigin: "center center",
+        const clearMotionHints = () => {
+          gsap.set(motionTargets, {
+            clearProps: "willChange",
+          });
+        };
+
+        if (prefersReducedMotion) {
+          if (mobileSweep instanceof HTMLElement) {
+            gsap.set(mobileSweep, {
+              opacity: 0.14,
+              yPercent: -12,
+              scale: 1,
+            });
+          }
+
+          gsap.set(primaryLinks, {
+            opacity: 1,
+            strokeDashoffset: 0,
           });
 
-          gsap.timeline({
-            defaults: { ease: "none" },
-            scrollTrigger: {
-              trigger: section,
-              start: "top 94%",
-              end: "bottom top",
-              scrub: 1.4,
-            },
-          }).to(
-            mobileSweep,
+          primaryNodes.forEach((node, index) => {
+            gsap.set(node, {
+              opacity: 1,
+              scale: index === primaryNodes.length - 1 ? 1.24 : 1.12,
+            });
+          });
+
+          halos.forEach((halo, index) => {
+            gsap.set(halo, {
+              opacity: index === primaryNodes.length - 1 ? 0.82 : 0.62,
+              scale: index === primaryNodes.length - 1 ? 1.18 : 1.04,
+            });
+          });
+
+          gsap.set(cards, {
+            opacity: 1,
+            y: 0,
+          });
+
+          clearMotionHints();
+        } else {
+          const mm = gsap.matchMedia();
+
+          mm.add(
             {
-              opacity: 0.48,
-              yPercent: -104,
-              scale: 1.08,
-              ease: "none",
-              duration: 0.82,
+              light: "(max-width: 760px), (pointer: coarse)",
+              desktop: "(min-width: 761px) and (pointer: fine)",
             },
-            0
-          ).to(
-            mobileSweep,
-            {
-              opacity: 0.08,
-              ease: "sine.out",
-              duration: 0.18,
-            },
-            0.64
+            ({ conditions }) => {
+              const isLightViewport = Boolean(conditions?.light);
+
+              gsap.set(motionTargets, {
+                willChange: "transform, opacity",
+              });
+
+              if (isLightViewport) {
+                const mobileTimeline = gsap.timeline({
+                  defaults: { ease: "power1.out" },
+                  scrollTrigger: {
+                    trigger: graphWrap,
+                    start: "top 70%",
+                    end: "bottom 81%",
+                    scrub: 0.45,
+                    invalidateOnRefresh: true,
+                  },
+                });
+
+                if (mobileSweep instanceof HTMLElement) {
+                  gsap.set(mobileSweep, {
+                    opacity: 0.05,
+                    yPercent: 18,
+                    scale: 0.96,
+                    transformOrigin: "center center",
+                  });
+
+                  mobileTimeline
+                    .to(
+                      mobileSweep,
+                      {
+                        opacity: 0.18,
+                        yPercent: -28,
+                        scale: 1.01,
+                        duration: 0.26,
+                      },
+                      0
+                    )
+                    .to(
+                      mobileSweep,
+                      {
+                        opacity: 0.05,
+                        duration: 0.12,
+                      },
+                      0.18
+                    );
+                }
+
+                primaryNodes.forEach((node, index) => {
+                  mobileTimeline.to(
+                    node,
+                    {
+                      opacity: 1,
+                      scale: index === primaryNodes.length - 1 ? 1.2 : 1.1,
+                      duration: 0.12,
+                    },
+                    index === 0 ? 0.04 : ">"
+                  );
+
+                  mobileTimeline.to(
+                    halos[index],
+                    {
+                      opacity: index === primaryNodes.length - 1 ? 0.78 : 0.58,
+                      scale: index === primaryNodes.length - 1 ? 1.16 : 1.04,
+                      duration: 0.12,
+                    },
+                    "<"
+                  );
+
+                  mobileTimeline.to(
+                    cards[index],
+                    {
+                      opacity: 1,
+                      y: 0,
+                      duration: 0.14,
+                    },
+                    "<+0.03"
+                  );
+
+                  if (index < primaryLinks.length) {
+                    mobileTimeline.to(
+                      primaryLinks[index],
+                      {
+                        opacity: 1,
+                        strokeDashoffset: 0,
+                        duration: 0.14,
+                      },
+                      "<+0.02"
+                    );
+                  }
+                });
+
+                mobileTimeline.eventCallback("onComplete", clearMotionHints);
+                mobileTimeline.eventCallback("onReverseComplete", clearMotionHints);
+                return;
+              }
+
+              const ambientPulseNodes = ambientNodes
+                .filter((node) => node.classList.contains("is-small"))
+                .filter((_, index) => index % 2 === 0)
+                .slice(0, 8);
+
+              if (ambientPulseNodes.length) {
+                gsap.set(ambientPulseNodes, {
+                  willChange: "transform, opacity",
+                  transformOrigin: "center center",
+                });
+
+                gsap.to(ambientPulseNodes, {
+                  opacity: 0.92,
+                  scale: 1.06,
+                  duration: 2.6,
+                  ease: "sine.inOut",
+                  yoyo: true,
+                  repeat: -1,
+                  stagger: {
+                    each: 0.18,
+                    from: "random",
+                  },
+                });
+              }
+
+              if (mobileSweep instanceof HTMLElement) {
+                gsap.set(mobileSweep, {
+                  opacity: 0,
+                  yPercent: 0,
+                  scale: 1,
+                });
+              }
+
+              const timeline = gsap.timeline({
+                defaults: { ease: "power2.out" },
+                scrollTrigger: {
+                  trigger: section,
+                  start: "top top",
+                  end: "+=1320",
+                  scrub: 0.85,
+                  pin: track,
+                  anticipatePin: 1,
+                  invalidateOnRefresh: true,
+                },
+              });
+
+              primaryNodes.forEach((node, index) => {
+                timeline.to(
+                  node,
+                  {
+                    opacity: 1,
+                    scale: index === primaryNodes.length - 1 ? 1.3 : 1.18,
+                    duration: 0.24,
+                  },
+                  index === 0 ? 0.14 : ">"
+                );
+
+                timeline.to(
+                  halos[index],
+                  {
+                    opacity: index === primaryNodes.length - 1 ? 0.9 : 0.7,
+                    scale: index === primaryNodes.length - 1 ? 1.26 : 1.12,
+                    duration: 0.24,
+                  },
+                  "<"
+                );
+
+                timeline.to(
+                  cards[index],
+                  {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.28,
+                  },
+                  "<+0.05"
+                );
+
+                if (index < primaryLinks.length) {
+                  timeline.to(
+                    primaryLinks[index],
+                    {
+                      opacity: 1,
+                      strokeDashoffset: 0,
+                      duration: 0.34,
+                    },
+                    "<+0.02"
+                  );
+                }
+              });
+            }
           );
         }
-
-        primaryNodes.forEach((node, index) => {
-          mobileTimeline.to(
-            node,
-            {
-              opacity: 1,
-              scale: index === primaryNodes.length - 1 ? 1.28 : 1.16,
-              duration: 0.16,
-            },
-            index === 0 ? 0 : ">"
-          );
-
-          mobileTimeline.to(
-            halos[index],
-            {
-              opacity: index === primaryNodes.length - 1 ? 0.9 : 0.68,
-              scale: index === primaryNodes.length - 1 ? 1.24 : 1.08,
-              duration: 0.16,
-            },
-            "<"
-          );
-
-          mobileTimeline.to(
-            cards[index],
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.18,
-            },
-            "<+0.04"
-          );
-
-          if (index < primaryLinks.length) {
-            mobileTimeline.to(
-              primaryLinks[index],
-              {
-                opacity: 1,
-                strokeDashoffset: 0,
-                duration: 0.24,
-              },
-              ">"
-            );
-          }
-        });
-      } else {
-        const timeline = gsap.timeline({
-          defaults: { ease: "power2.out" },
-          scrollTrigger: {
-            trigger: section,
-            start: "top top",
-            end: "+=1800",
-            scrub: 1.1,
-            pin: track,
-          },
-        });
-
-        primaryNodes.forEach((node, index) => {
-          timeline.to(
-            node,
-            {
-              opacity: 1,
-              scale: index === primaryNodes.length - 1 ? 1.34 : 1.22,
-              duration: 0.28,
-            },
-            index === 0 ? 0.18 : ">"
-          );
-
-          timeline.to(
-            halos[index],
-            {
-              opacity: index === primaryNodes.length - 1 ? 1 : 0.78,
-              scale: index === primaryNodes.length - 1 ? 1.32 : 1.18,
-              duration: 0.3,
-            },
-            "<"
-          );
-
-          timeline.to(
-            cards[index],
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.34,
-            },
-            "<+0.06"
-          );
-
-          if (index < primaryLinks.length) {
-            timeline.to(
-              primaryLinks[index],
-              {
-                opacity: 1,
-                strokeDashoffset: 0,
-                duration: 0.48,
-              },
-              ">"
-            );
-          }
-        });
       }
     }
   }
