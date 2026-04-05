@@ -4,8 +4,8 @@
       <span class="section-kicker">Research</span>
       <h2>Formalizing federated PKI as a governed weighted graph.</h2>
       <p>
-        The proposal focuses on controlled interoperability between multidomain PKIs,
-        representing certification authorities and federation links as a directed,
+        The proposal introduces a formal layer above PKIX semantics, representing
+        certification authorities and governed federation relationships as a directed,
         weighted graph that can be queried for valid and optimal certification paths.
       </p>
     </div>
@@ -13,16 +13,16 @@
     <div class="research-grid">
       <article class="research-card">
         <div class="research-card-header">
-          <h3>Multidomain PKI complexity</h3>
+          <h3>Governed trust graph</h3>
         </div>
         <p>
-          Traditional cross-certification and mesh-like trust structures become hard to
-          govern as domains, policies, and interoperability constraints increase.
+          Instead of inheriting trust from entire hierarchies, PolarisChain models
+          trust as explicit graph edges between governed certification authorities.
         </p>
         <ul>
-          <li>RFC 4158 highlights the intrinsic difficulty of path building in dense trust topologies.</li>
-          <li>Bridge CAs and trust lists reduce friction, but not always deterministic route selection.</li>
-          <li>The model targets explicit governance of inter-domain trust relationships.</li>
+          <li>Vertices represent trust anchors, bridge CAs, issuing CAs, and other governed trust points.</li>
+          <li>Edges encode admissible inter-domain relationships instead of broad hierarchy inheritance.</li>
+          <li>The model preserves PKIX validation while making federation semantics explicit and queryable.</li>
         </ul>
       </article>
 
@@ -52,39 +52,102 @@
           <h3>Topology growth observation</h3>
           <p>
             As the number of federation links grows, candidate certification paths
-            increase and exhaustive exploration becomes less manageable.
+            grow rapidly, making uncontrolled exploration harder to govern and justify.
           </p>
         </div>
       </article>
 
       <article class="research-card">
         <div class="research-card-header">
-          <h3>Weighted path selection</h3>
+          <h3>Optimal path semantics</h3>
         </div>
         <p>
-          The proposal introduces a multicriteria weighting function over federation
-          edges to prioritize cryptographic robustness, compatibility, and structural
-          efficiency during certification path selection.
+          The proposal defines a multicriteria cost over federation edges so path
+          selection becomes an optimization problem rather than a heuristic search.
         </p>
         <ul>
-          <li>Edge weights capture algorithm, crypto profile, key strength, and logical distance.</li>
-          <li>Dijkstra is proposed to compute deterministic optimal paths over the graph.</li>
-          <li>The target is explainable route selection between issuer CA and governed trust points.</li>
+          <li>Edge weights capture cryptographic profile, algorithm family, key strength, and structural distance.</li>
+          <li>Dijkstra-based traversal computes a deterministic minimum-cost route over admissible paths.</li>
+          <li>The result is an explainable certification chain between issuer-side entities and governed trust points.</li>
         </ul>
       </article>
+    </div>
+
+    <div class="model-section" aria-labelledby="mathematical-model-heading">
+      <div class="model-heading">
+        <span class="note-label">Mathematical model</span>
+        <h3 id="mathematical-model-heading">A compact formalization of federation and cost.</h3>
+        <p>
+          The graph abstracts federated PKI into a structure that can be validated,
+          scored, and optimized without changing underlying certificate semantics.
+        </p>
+      </div>
+
+      <div class="model-grid">
+        <article class="research-card model-card model-card-formula">
+          <span class="model-card-label">Topological model</span>
+          <div class="equation-stack equation-stack-paper" aria-label="Graph equations">
+            <p class="equation-intro">
+              Federated PKI is formalized as a directed weighted graph, where each
+              admissible trust relation receives a multicriteria cost:
+            </p>
+
+            <div class="paper-equation" aria-label="G equals open parenthesis V comma E comma w close parenthesis, where w maps E to non-negative real numbers, and w of e equals f of crypto of e, alg of e, key of e, and dist of e">
+              <span class="paper-equation-term">
+                <span class="math-var">G</span> = (<span class="math-var">V</span>, <span class="math-var">E</span>, <span class="math-var">w</span>)
+              </span>
+              <span class="paper-equation-word">where</span>
+              <span class="paper-equation-term">
+                <span class="math-var">w</span> : <span class="math-var">E</span> &rarr; ℝ<sub>&ge;0</sub>,
+              </span>
+              <span class="paper-equation-term">
+                <span class="math-var">w</span>(<span class="math-var">e</span>) = <span class="math-var">f</span>(<span class="math-var">crypto</span>(<span class="math-var">e</span>), <span class="math-var">alg</span>(<span class="math-var">e</span>), <span class="math-var">key</span>(<span class="math-var">e</span>), <span class="math-var">dist</span>(<span class="math-var">e</span>))
+              </span>
+              <span class="paper-equation-number">(1)</span>
+            </div>
+          </div>
+          <p>
+            Vertices represent governed trust entities, edges represent admissible
+            trust relationships, and the weight function assigns a comparable cost to
+            traversing each relationship.
+          </p>
+        </article>
+
+        <article class="research-card model-card">
+          <h3>Weight components</h3>
+          <dl class="model-terms">
+            <div>
+              <dt>crypto(e)</dt>
+              <dd>Classical, hybrid, or post-quantum cryptographic profile assigned to the edge.</dd>
+            </div>
+            <div>
+              <dt>alg(e)</dt>
+              <dd>Algorithm family used by the relationship, such as RSA, ECDSA, or ML-DSA.</dd>
+            </div>
+            <div>
+              <dt>key(e)</dt>
+              <dd>Security strength associated with the keys and resulting assurance level.</dd>
+            </div>
+            <div>
+              <dt>dist(e)</dt>
+              <dd>Structural complexity introduced by traversing between PKI domains or governance zones.</dd>
+            </div>
+          </dl>
+        </article>
+      </div>
     </div>
 
     <div class="research-notes">
       <div>
         <span class="note-label">Research problem</span>
         <p>
-          Exhaustive trust-path discovery does not scale well in dense multidomain PKI federations.
+          Certification path discovery becomes increasingly difficult as multidomain PKI federations grow denser.
         </p>
       </div>
       <div>
         <span class="note-label">Methodological lens</span>
         <p>
-          Directed weighted graphs, Dijkstra traversal, and policy-aware trust modelling.
+          Directed weighted graphs, deterministic shortest-path computation, and policy-aware trust modelling.
         </p>
       </div>
       <div id="interoperability">
@@ -96,3 +159,208 @@
     </div>
   </div>
 </section>
+
+<style>
+  .model-section {
+    margin-top: 42px;
+  }
+
+  .model-heading {
+    max-width: 760px;
+  }
+
+  .model-heading h3 {
+    margin: 12px 0 0;
+    color: #1e1b17;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-weight: 400;
+    line-height: 0.98;
+  }
+
+  .model-heading p {
+    margin: 18px 0 0;
+    color: var(--ink-soft);
+    line-height: 1.84;
+  }
+
+  .model-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .model-card {
+    height: 100%;
+  }
+
+  .model-card-formula {
+    display: grid;
+    align-content: start;
+    gap: 18px;
+  }
+
+  .model-card-label {
+    color: rgba(77, 70, 59, 0.68);
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .equation-stack {
+    display: grid;
+    gap: 12px;
+    padding: 20px;
+    border-radius: 18px;
+    background: rgba(247, 244, 238, 0.9);
+    border: 1px solid rgba(62, 56, 48, 0.08);
+  }
+
+  .equation-stack-paper {
+    gap: 18px;
+    padding: 24px 22px;
+  }
+
+  .equation-intro {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+    line-height: 1.74;
+  }
+
+  .paper-equation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+    color: #1f1c17;
+    text-align: center;
+  }
+
+  .paper-equation-term,
+  .paper-equation-number {
+    color: #27231d;
+    font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+    font-size: clamp(1.42rem, 2.2vw, 2rem);
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .paper-equation-word {
+    color: rgba(77, 70, 59, 0.88);
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+  }
+
+  .paper-equation-number {
+    font-size: clamp(1.14rem, 1.6vw, 1.36rem);
+  }
+
+  .paper-equation sub {
+    font-size: 0.62em;
+    vertical-align: -0.34em;
+  }
+
+  .math-equation {
+    margin: 0;
+    color: #27231d;
+    font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+    font-size: clamp(1.28rem, 1.9vw, 1.7rem);
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .math-var {
+    font-style: italic;
+  }
+
+  .model-terms {
+    margin: 22px 0 0;
+    display: grid;
+    gap: 14px;
+  }
+
+  .model-terms div {
+    display: grid;
+    gap: 4px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(52, 46, 39, 0.08);
+  }
+
+  .model-terms div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .model-terms dt {
+    color: #1e1b17;
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .model-terms dd {
+    margin: 0;
+    color: var(--ink-soft);
+    line-height: 1.72;
+  }
+
+  @media (max-width: 1080px) {
+    .model-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .model-section {
+      margin-top: 34px;
+    }
+
+    .model-heading h3 {
+      line-height: 1.04;
+    }
+
+    .equation-stack {
+      padding: 18px;
+    }
+
+    .equation-stack-paper {
+      padding: 20px 18px;
+    }
+
+    .math-equation {
+      font-size: 1.22rem;
+      line-height: 1.56;
+    }
+
+    .equation-intro {
+      font-size: 0.94rem;
+      line-height: 1.68;
+    }
+
+    .paper-equation {
+      justify-content: flex-start;
+      text-align: left;
+      gap: 0.35rem 0.75rem;
+    }
+
+    .paper-equation-term,
+    .paper-equation-number {
+      white-space: normal;
+      font-size: 1.24rem;
+      line-height: 1.5;
+    }
+
+    .paper-equation-word {
+      font-size: 0.92rem;
+    }
+  }
+</style>

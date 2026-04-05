@@ -1,0 +1,105 @@
+<section id="federation-limits" class="paper-section">
+  <div class="container paper-shell">
+    <div class="section-heading">
+      <span class="section-kicker">Problem framing</span>
+      <h2>Why current PKI federation falls short.</h2>
+      <p>
+        Existing federation mechanisms can establish cross-domain trust, but they do
+        not provide a formal, governed way to reason about path quality as PKI
+        topologies grow denser and cryptographic transitions become more demanding.
+      </p>
+    </div>
+
+    <div class="limits-grid">
+      <article class="limit-card">
+        <h3>Complexity explosion</h3>
+        <p>
+          Mesh PKI and dense cross-certification cause the number of admissible
+          certification paths to grow rapidly, making validation and governance
+          increasingly difficult across many domains.
+        </p>
+      </article>
+
+      <article class="limit-card">
+        <h3>Heuristic validation</h3>
+        <p>
+          Many path-building approaches rely on tree traversal, local preferences, and
+          heuristics that stop at a valid route instead of proving that the selected
+          route is globally optimal.
+        </p>
+      </article>
+
+      <article class="limit-card">
+        <h3>Lack of trust governance</h3>
+        <p>
+          Trust is commonly inherited from hierarchies or broad anchors, rather than
+          being selectively defined between issuing CAs and governed federation points.
+        </p>
+      </article>
+
+      <article class="limit-card">
+        <h3>No crypto agility awareness</h3>
+        <p>
+          Traditional federation models rarely score or prioritize paths according to
+          classical, hybrid, and post-quantum cryptographic transitions, leaving
+          crypto-agile interoperability under-specified.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .limits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 42px;
+  }
+
+  .limit-card {
+    min-height: 100%;
+    padding: 26px 24px;
+    background: rgba(255, 255, 255, 0.54);
+    border: 1px solid var(--paper-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-paper);
+  }
+
+  .limit-card h3 {
+    margin: 0;
+    color: #1e1b17;
+    font-family: "Playfair Display", serif;
+    font-size: 1.9rem;
+    font-weight: 400;
+    line-height: 0.98;
+  }
+
+  .limit-card p {
+    margin: 18px 0 0;
+    color: var(--ink-soft);
+    line-height: 1.8;
+  }
+
+  @media (max-width: 1180px) {
+    .limits-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 760px) {
+    .limits-grid {
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin-top: 34px;
+    }
+
+    .limit-card {
+      padding: 22px;
+    }
+
+    .limit-card h3 {
+      font-size: 2.1rem;
+    }
+  }
+</style>
