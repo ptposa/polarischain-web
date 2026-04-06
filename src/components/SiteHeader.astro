@@ -1,19 +1,38 @@
 ---
+import {
+  headerBrandClasses,
+  headerBrandImageClasses,
+  headerBrandTextClasses,
+  headerCtaClasses,
+  headerFrameClasses,
+  headerNavClasses,
+  headerNavLinkClasses,
+  headerShellClasses,
+} from "../lib/ui";
+
 const { ctaHref = "/app", ctaLabel = "Launch app" } = Astro.props;
 ---
 
-<header class="site-header">
-  <div class="container header-shell">
-    <a href="/" class="brand" aria-label="PolarisChain home">
-      <img src="/logo.svg" alt="PolarisChain" />
-      <span>PolarisChain</span>
+<header class={headerFrameClasses}>
+  <div class={headerShellClasses}>
+    <a
+      href="/"
+      class={headerBrandClasses}
+      aria-label="PolarisChain home"
+    >
+      <img class={headerBrandImageClasses} src="/logo.svg" alt="PolarisChain" />
+      <span class={headerBrandTextClasses}>
+        PolarisChain
+      </span>
     </a>
 
-    <nav class="nav nav-right" aria-label="Primary">
-      <a href="/#research">Research</a>
-      <a href="/#interoperability">Interoperability</a>
-      <a href="/#how-it-works">How it works</a>
-      <a href={ctaHref} class="cta">{ctaLabel}</a>
+    <nav class={headerNavClasses} aria-label="Primary">
+      <a href="/#research" class={headerNavLinkClasses}>Research</a>
+      <a href="/#interoperability" class={headerNavLinkClasses}>
+        Interoperability
+      </a>
+      <a href="/#how-it-works" class={headerNavLinkClasses}>How it works</a>
+      <a href={ctaHref} class={headerCtaClasses}>{ctaLabel}</a>
     </nav>
   </div>
 </header>

@@ -1,3 +1,12 @@
+---
+import {
+  actionRowClasses,
+  buttonBaseClasses,
+  buttonPaperClasses,
+  buttonPaperSecondaryClasses,
+} from "../lib/ui";
+---
+
 <section id="open-science" class="paper-section paper-section-bottom">
   <div class="container paper-shell open-shell">
     <div class="section-heading section-heading-narrow">
@@ -42,9 +51,14 @@
         <span class="note-label">Academic projection</span>
         <p>Publications, technical reports, and future doctoral dissemination.</p>
       </div>
-      <div class="open-actions">
-        <a class="btn btn-paper" href="/docs">Read documentation</a>
-        <a class="btn btn-paper btn-paper-secondary" href="https://github.com" target="_blank" rel="noreferrer">
+      <div class={actionRowClasses}>
+        <a class={`${buttonBaseClasses} ${buttonPaperClasses}`} href="/docs">Read documentation</a>
+        <a
+          class={`${buttonBaseClasses} ${buttonPaperSecondaryClasses}`}
+          href="https://github.com"
+          target="_blank"
+          rel="noreferrer"
+        >
           View GitHub
         </a>
       </div>

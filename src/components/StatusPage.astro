@@ -1,4 +1,11 @@
 ---
+import {
+  actionRowClasses,
+  buttonBaseClasses,
+  buttonPrimaryClasses,
+  buttonSecondaryClasses,
+} from "../lib/ui";
+
 interface Props {
   eyebrow: string;
   title: string;
@@ -50,11 +57,13 @@ const hasSecondary = Boolean(secondaryHref && secondaryLabel);
         <p class="status-lead">{description}</p>
         {note && <p class="status-note">{note}</p>}
 
-        <div class="status-actions open-actions">
-          <a class="btn btn-primary" href={primaryHref}>{primaryLabel}</a>
+        <div class={`status-actions ${actionRowClasses}`}>
+          <a class={`${buttonBaseClasses} ${buttonPrimaryClasses}`} href={primaryHref}>
+            {primaryLabel}
+          </a>
           {
             hasSecondary && (
-              <a class="btn btn-secondary" href={secondaryHref}>
+              <a class={`${buttonBaseClasses} ${buttonSecondaryClasses}`} href={secondaryHref}>
                 {secondaryLabel}
               </a>
             )

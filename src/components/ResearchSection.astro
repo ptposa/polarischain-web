@@ -1,3 +1,110 @@
+---
+const formalDefinitions = [
+  {
+    termHtml: '<span class="math-var">V</span>',
+    description: "is the set of certification authorities and governed trust points in the federated ecosystem.",
+  },
+  {
+    termHtml:
+      '<span class="math-var">E</span> &sube; <span class="math-var">V</span> &times; <span class="math-var">V</span>',
+    description: "is the set of admissible federation relations between certification authorities.",
+  },
+  {
+    termHtml:
+      '<span class="math-var">w</span> : <span class="math-var">E</span> &rarr; ℝ<sub>&ge;0</sub>',
+    description: "is the edge cost function.",
+  },
+  {
+    termHtml:
+      '&Phi; : <span class="math-var">E</span> &rarr; <span class="math-var">C</span>',
+    description: "assigns to each edge a set of governance constraints.",
+  },
+];
+
+const costComponents = [
+  {
+    termHtml: '<span class="math-var">crypto</span>(<span class="math-var">e</span>)',
+    description: "cryptographic posture of the relation, such as classical, hybrid, or post-quantum.",
+  },
+  {
+    termHtml: '<span class="math-var">alg</span>(<span class="math-var">e</span>)',
+    description: "algorithm family used by the relation, including interoperability implications.",
+  },
+  {
+    termHtml: '<span class="math-var">key</span>(<span class="math-var">e</span>)',
+    description: "key strength or associated technical assurance level.",
+  },
+  {
+    termHtml: '<span class="math-var">dist</span>(<span class="math-var">e</span>)',
+    description: "structural distance introduced when traversing domains, bridges, or governance boundaries.",
+  },
+];
+
+const governanceComponents = [
+  {
+    termHtml: '<span class="math-var">prop</span>(<span class="math-var">e</span>)',
+    relationHtml:
+      '<span class="math-var">prop</span>(<span class="math-var">e</span>) &isin; &#123;none, limited, full&#125;',
+    description:
+      "This determines whether trust may stop at the current relation, propagate in a bounded way, or be fully reusable across further federation steps.",
+  },
+  {
+    termHtml: '<span class="math-var">depth</span>(<span class="math-var">e</span>)',
+    relationHtml:
+      '<span class="math-var">depth</span>(<span class="math-var">e</span>) &isin; ℕ',
+    description:
+      "This bounds how many additional federation steps may be traversed after the relation is used.",
+  },
+  {
+    termHtml: '<span class="math-var">scope</span>(<span class="math-var">e</span>)',
+    description:
+      "This specifies the operational context in which the relation may be reused, such as TLS, authentication, code signing, or document signing.",
+  },
+  {
+    termHtml: '<span class="math-var">pol</span><sup>+</sup>(<span class="math-var">e</span>)',
+    description:
+      "These identify certification policies that are admissible for route construction through the relation.",
+  },
+  {
+    termHtml: '<span class="math-var">pol</span><sup>-</sup>(<span class="math-var">e</span>)',
+    description:
+      "These identify certification policies that must exclude the relation from candidate paths.",
+  },
+  {
+    termHtml: '<span class="math-var">name</span>(<span class="math-var">e</span>)',
+    description:
+      "These restrict the naming space over which trust may apply, for example DNS domains, email namespaces, X.500 subtrees, or specific organizations.",
+  },
+  {
+    termHtml: '<span class="math-var">ku</span>(<span class="math-var">e</span>)',
+    description:
+      "These restrict which key usage semantics remain valid when traversing the relation.",
+  },
+  {
+    termHtml: '<span class="math-var">eku</span>(<span class="math-var">e</span>)',
+    description:
+      "These restrict which application-level purposes remain admissible, such as server authentication or code signing.",
+  },
+  {
+    termHtml: '<span class="math-var">time</span>(<span class="math-var">e</span>)',
+    relationHtml:
+      '<span class="math-var">time</span>(<span class="math-var">e</span>) = [<span class="math-var">t</span><sub>from</sub>(<span class="math-var">e</span>), <span class="math-var">t</span><sub>to</sub>(<span class="math-var">e</span>)]',
+    description:
+      "This expresses the governance time interval during which the trust relation is considered admissible, independently of whether underlying certificates remain syntactically valid under PKIX.",
+  },
+];
+
+const admissibleConditions = [
+  "trust transitivity rules,",
+  "maximum permitted propagation depth,",
+  "required functional scope,",
+  "allowed and non-denied certification policies,",
+  "namespace restrictions,",
+  "Key Usage and Extended Key Usage restrictions,",
+  "and the governed trust validity window.",
+];
+---
+
 <section id="research" class="paper-section">
   <div class="container paper-shell">
     <div class="section-heading">
@@ -26,37 +133,6 @@
         </ul>
       </article>
 
-      <article class="research-card research-card-figure">
-        <div class="mini-chart" aria-hidden="true">
-          <div class="mini-chart-toolbar">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-          <svg viewBox="0 0 320 180" class="mini-chart-svg">
-            <defs>
-              <linearGradient id="chartArea" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stop-color="rgba(90, 122, 166, 0.24)" />
-                <stop offset="100%" stop-color="rgba(90, 122, 166, 0)" />
-              </linearGradient>
-            </defs>
-            <path d="M18 150 L18 18 L302 18" class="mini-chart-axis"></path>
-            <path d="M18 150 C60 145, 85 132, 110 98 S170 42, 204 62 S266 86, 302 54" class="mini-chart-line"></path>
-            <path d="M18 150 C60 145, 85 132, 110 98 S170 42, 204 62 S266 86, 302 54 L302 150 Z" class="mini-chart-area"></path>
-            <circle cx="110" cy="98" r="4" class="mini-chart-point"></circle>
-            <circle cx="204" cy="62" r="4" class="mini-chart-point"></circle>
-            <circle cx="302" cy="54" r="4" class="mini-chart-point"></circle>
-          </svg>
-        </div>
-        <div class="figure-caption">
-          <h3>Topology growth observation</h3>
-          <p>
-            As the number of federation links grows, candidate certification paths
-            grow rapidly, making uncontrolled exploration harder to govern and justify.
-          </p>
-        </div>
-      </article>
-
       <article class="research-card">
         <div class="research-card-header">
           <h3>Optimal path semantics</h3>
@@ -76,63 +152,179 @@
     <div class="model-section" aria-labelledby="mathematical-model-heading">
       <div class="model-heading">
         <span class="note-label">Mathematical model</span>
-        <h3 id="mathematical-model-heading">A compact formalization of federation and cost.</h3>
+        <h3 id="mathematical-model-heading">A compact formalization of governed federation and path cost.</h3>
         <p>
-          The graph abstracts federated PKI into a structure that can be validated,
-          scored, and optimized without changing underlying certificate semantics.
+          PKIX certificate validation remains intact. The graph layer makes admissible
+          trust propagation explicit, separates technical edge cost from hard
+          governance constraints, and selects routes only among policy-compliant
+          federation paths.
         </p>
       </div>
 
       <div class="model-grid">
-        <article class="research-card model-card model-card-formula">
-          <span class="model-card-label">Topological model</span>
-          <div class="equation-stack equation-stack-paper" aria-label="Graph equations">
-            <p class="equation-intro">
-              Federated PKI is formalized as a directed weighted graph, where each
-              admissible trust relation receives a multicriteria cost:
-            </p>
+        <article class="research-card model-story-card">
+          <div class="model-story-flow">
+            <section class="model-step" aria-labelledby="model-formal-definition">
+              <div class="model-step-header model-step-header-cost">
+                <span class="model-step-marker">01</span>
+                <h4 id="model-formal-definition">Formal definition</h4>
+                <p>
+                  The federated PKI ecosystem is modeled as a governed weighted graph:
+                </p>
+                <div class="model-math-display" aria-label="G equals open parenthesis V comma E comma w comma Phi close parenthesis">
+                  <p class="math-line math-line-display">
+                    <span class="math-piece"><span class="math-var">G</span> = (<span class="math-var">V</span>, <span class="math-var">E</span>, <span class="math-var">w</span>, &Phi;)</span>
+                  </p>
+                </div>
+              </div>
+              <div class="model-step-body">
+                <p class="model-step-label">where:</p>
+                <dl class="model-definition-list">
+                  {formalDefinitions.map((item) => (
+                    <div class="model-definition-item">
+                      <dt>
+                        <span class="model-definition-term" set:html={item.termHtml}></span>
+                      </dt>
+                      <dd>{item.description}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </section>
 
-            <div class="paper-equation" aria-label="G equals open parenthesis V comma E comma w close parenthesis, where w maps E to non-negative real numbers, and w of e equals f of crypto of e, alg of e, key of e, and dist of e">
-              <span class="paper-equation-term">
-                <span class="math-var">G</span> = (<span class="math-var">V</span>, <span class="math-var">E</span>, <span class="math-var">w</span>)
-              </span>
-              <span class="paper-equation-word">where</span>
-              <span class="paper-equation-term">
-                <span class="math-var">w</span> : <span class="math-var">E</span> &rarr; ℝ<sub>&ge;0</sub>,
-              </span>
-              <span class="paper-equation-term">
-                <span class="math-var">w</span>(<span class="math-var">e</span>) = <span class="math-var">f</span>(<span class="math-var">crypto</span>(<span class="math-var">e</span>), <span class="math-var">alg</span>(<span class="math-var">e</span>), <span class="math-var">key</span>(<span class="math-var">e</span>), <span class="math-var">dist</span>(<span class="math-var">e</span>))
-              </span>
-              <span class="paper-equation-number">(1)</span>
-            </div>
+            <section class="model-step model-step-cost" aria-labelledby="model-cost-function">
+              <div class="model-step-header">
+                <span class="model-step-marker">02</span>
+                <h4 id="model-cost-function">Cost function</h4>
+                <p>
+                  As a natural evolution of the original formulation, technical and
+                  structural cost remains explicitly separated from governance
+                  constraints:
+                </p>
+                <div class="model-math-display" aria-label="w of e equals f of crypto of e, alg of e, key of e, dist of e">
+                  <p class="math-line math-line-display">
+                    <span class="math-piece"><span class="math-var">w</span>(<span class="math-var">e</span>) = <span class="math-var">f</span>(</span>
+                    <span class="math-piece"><span class="math-var">crypto</span>(<span class="math-var">e</span>),</span>
+                    <span class="math-piece"><span class="math-var">alg</span>(<span class="math-var">e</span>),</span>
+                    <span class="math-piece"><span class="math-var">key</span>(<span class="math-var">e</span>),</span>
+                    <span class="math-piece"><span class="math-var">dist</span>(<span class="math-var">e</span>))</span>
+                  </p>
+                </div>
+              </div>
+              <div class="model-step-body">
+                <p class="model-step-label">where:</p>
+                <dl class="model-definition-list">
+                  {costComponents.map((item) => (
+                    <div class="model-definition-item">
+                      <dt>
+                        <span class="model-definition-term" set:html={item.termHtml}></span>
+                      </dt>
+                      <dd>{item.description}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </section>
+
+            <section class="model-step" aria-labelledby="model-governance-per-edge">
+              <div class="model-step-header">
+                <span class="model-step-marker">03</span>
+                <h4 id="model-governance-per-edge">Governance constraints<br />per edge</h4>
+                <p>
+                  For each edge <span class="math-var">e</span> &isin; <span class="math-var">E</span>, the governance layer defines the hard constraints that determine whether trust may propagate through that relation at all:
+                </p>
+                <div class="model-math-display" aria-label="Phi of e equals trans of e, depth of e, scope of e, pol plus of e, pol minus of e, name of e, ku of e, eku of e, time of e">
+                  <p class="math-line math-line-display">
+                    <span class="math-piece">&Phi;(<span class="math-var">e</span>) = (<span class="math-var">prop</span>(<span class="math-var">e</span>), <span class="math-var">depth</span>(<span class="math-var">e</span>), <span class="math-var">scope</span>(<span class="math-var">e</span>),</span>
+                  </p>
+                  <p class="math-line math-line-display math-line-indent">
+                    <span class="math-piece"><span class="math-var">pol</span><sup>+</sup>(<span class="math-var">e</span>), <span class="math-var">pol</span><sup>-</sup>(<span class="math-var">e</span>), <span class="math-var">name</span>(<span class="math-var">e</span>), <span class="math-var">ku</span>(<span class="math-var">e</span>), <span class="math-var">eku</span>(<span class="math-var">e</span>), <span class="math-var">time</span>(<span class="math-var">e</span>))</span>
+                  </p>
+                </div>
+              </div>
+              <div class="model-step-body">
+                <p class="model-step-label">where:</p>
+                <dl class="model-definition-list model-definition-list-governance">
+                  {governanceComponents.map((item) => (
+                    <div class="model-definition-item model-definition-item-governance">
+                      <dt>
+                        <span class="model-definition-term" set:html={item.termHtml}></span>
+                        {item.relationHtml && (
+                          <span class="model-definition-relation" set:html={item.relationHtml}></span>
+                        )}
+                      </dt>
+                      <dd>{item.description}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </section>
+
+            <section class="model-step" aria-labelledby="model-admissible-paths">
+              <div class="model-step-header">
+                <span class="model-step-marker">04</span>
+                <h4 id="model-admissible-paths">Admissible paths</h4>
+                <p>For a candidate path:</p>
+                <div class="model-math-display" aria-label="P equals e 1, e 2, ellipsis, e k">
+                  <p class="math-line math-line-display">
+                    <span class="math-piece"><span class="math-var">P</span> = (</span>
+                    <span class="math-piece"><span class="math-var">e</span><sub>1</sub>,</span>
+                    <span class="math-piece"><span class="math-var">e</span><sub>2</sub>,</span>
+                    <span class="math-piece">&hellip;,</span>
+                    <span class="math-piece"><span class="math-var">e</span><sub>k</sub>)</span>
+                  </p>
+                </div>
+                <p class="model-step-text">the set of admissible paths is defined as:</p>
+                <div class="model-math-display" aria-label="P adm equals set of P in script P such that P satisfies Phi">
+                  <p class="math-line math-line-display">
+                    <span class="math-piece"><span class="math-var">P</span><sub>adm</sub> = &#123;</span>
+                    <span class="math-piece"><span class="math-var">P</span> &isin; 𝒫</span>
+                    <span class="math-piece">|</span>
+                    <span class="math-piece"><span class="math-var">P</span> &#8872; &Phi;</span>
+                    <span class="math-piece">&#125;</span>
+                  </p>
+                </div>
+              </div>
+              <div class="model-step-body">
+                <p class="model-step-text">
+                  Here, <span class="math-var">P</span> &#8872; &Phi; means that the path satisfies all governance constraints simultaneously.
+                </p>
+                <ol class="model-condition-list">
+                  {admissibleConditions.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ol>
+              </div>
+            </section>
+
+            <section class="model-step" aria-labelledby="model-optimal-path">
+              <div class="model-step-header">
+                <span class="model-step-marker">05</span>
+                <h4 id="model-optimal-path">Optimal path</h4>
+                <p>
+                  The optimal route is therefore not computed over all connected
+                  paths, but only over those that are admissible under governance
+                  policy:
+                </p>
+                <div class="model-math-display" aria-label="P star equals arg min over P in P adm of sum over e in P of w of e">
+                  <p class="math-line math-line-display">
+                    <span class="math-piece"><span class="math-var">P</span><sup>*</sup> = arg min<sub><span class="math-var">P</span> &isin; <span class="math-var">P</span><sub>adm</sub></sub></span>
+                  </p>
+                  <p class="math-line math-line-display math-line-indent">
+                    <span class="math-piece">&Sigma;<sub><span class="math-var">e</span> &isin; <span class="math-var">P</span></sub> <span class="math-var">w</span>(<span class="math-var">e</span>)</span>
+                  </p>
+                </div>
+              </div>
+              <div class="model-step-body">
+                <p class="model-step-text">
+                  This formulation ensures that non-admissible relations do not compete as merely expensive alternatives. They are excluded from the search space altogether. Route optimization therefore occurs only after governance, scope, policy, and propagation constraints have already been enforced.
+                </p>
+                <p class="model-step-conclusion">
+                  PKIX validation semantics remain unchanged. The graph layer does not replace certificate validation; it governs admissible trust propagation and computes the minimum-cost route only across policy-compliant federation paths.
+                </p>
+              </div>
+            </section>
           </div>
-          <p>
-            Vertices represent governed trust entities, edges represent admissible
-            trust relationships, and the weight function assigns a comparable cost to
-            traversing each relationship.
-          </p>
-        </article>
-
-        <article class="research-card model-card">
-          <h3>Weight components</h3>
-          <dl class="model-terms">
-            <div>
-              <dt>crypto(e)</dt>
-              <dd>Classical, hybrid, or post-quantum cryptographic profile assigned to the edge.</dd>
-            </div>
-            <div>
-              <dt>alg(e)</dt>
-              <dd>Algorithm family used by the relationship, such as RSA, ECDSA, or ML-DSA.</dd>
-            </div>
-            <div>
-              <dt>key(e)</dt>
-              <dd>Security strength associated with the keys and resulting assurance level.</dd>
-            </div>
-            <div>
-              <dt>dist(e)</dt>
-              <dd>Structural complexity introduced by traversing between PKI domains or governance zones.</dd>
-            </div>
-          </dl>
         </article>
       </div>
     </div>
@@ -162,11 +354,16 @@
 
 <style>
   .model-section {
-    margin-top: 42px;
+    margin-top: 30px;
+    --model-math-ink: #3a2f24;
+    --model-heading-ink: #1f1a15;
+    --model-muted-ink: #62584b;
+    --model-border: rgba(70, 60, 45, 0.08);
+    --model-surface: linear-gradient(180deg, rgba(241, 233, 220, 0.9) 0%, rgba(232, 222, 206, 0.96) 100%);
   }
 
   .model-heading {
-    max-width: 760px;
+    max-width: 860px;
   }
 
   .model-heading h3 {
@@ -179,188 +376,340 @@
   }
 
   .model-heading p {
-    margin: 18px 0 0;
+    margin: 12px 0 0;
     color: var(--ink-soft);
-    line-height: 1.84;
+    line-height: 1.72;
   }
 
   .model-grid {
+    display: block;
+    margin-top: 18px;
+  }
+
+  .model-story-card {
+    padding: clamp(22px, 2.2vw, 30px);
+    background: var(--model-surface);
+    border-color: var(--model-border);
+    overflow: hidden;
+  }
+
+  .model-story-flow {
     display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-    gap: 24px;
-    margin-top: 24px;
+    gap: 0;
   }
 
-  .model-card {
-    height: 100%;
+  .model-step {
+    display: grid;
+    grid-template-columns: minmax(440px, 0.62fr) minmax(0, 1fr);
+    gap: 28px;
+    padding: 14px 0;
+    border-top: 1px solid rgba(70, 60, 45, 0.08);
   }
 
-  .model-card-formula {
+  .model-step:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .model-step:last-child {
+    padding-bottom: 0;
+  }
+
+  .model-step-header,
+  .model-step-body {
     display: grid;
     align-content: start;
-    gap: 18px;
+    gap: 14px;
+    min-width: 0;
   }
 
-  .model-card-label {
-    color: rgba(77, 70, 59, 0.68);
-    font-size: 0.76rem;
-    letter-spacing: 0.12em;
+  .model-step-header {
+    padding-right: 10px;
+  }
+
+  .model-step-body {
+    padding-top: 62px;
+  }
+
+  .model-step-cost {
+    padding-bottom: 28px;
+  }
+
+  .model-step-cost .model-math-display {
+    padding-bottom: 26px;
+  }
+
+  .model-step-marker {
+    display: inline-block;
+    color: rgba(95, 81, 62, 0.66);
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
-  .equation-stack {
-    display: grid;
-    gap: 12px;
-    padding: 20px;
-    border-radius: 18px;
-    background: rgba(247, 244, 238, 0.9);
-    border: 1px solid rgba(62, 56, 48, 0.08);
-  }
-
-  .equation-stack-paper {
-    gap: 18px;
-    padding: 24px 22px;
-  }
-
-  .equation-intro {
+  .model-step-header h4 {
     margin: 0;
-    color: var(--ink-soft);
-    font-size: 0.98rem;
-    line-height: 1.74;
+    color: var(--model-heading-ink);
+    font-family: "Playfair Display", serif;
+    font-size: clamp(1.7rem, 2.4vw, 2.15rem);
+    font-weight: 400;
+    line-height: 0.98;
   }
 
-  .paper-equation {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: center;
-    gap: 0.5rem 1rem;
-    color: #1f1c17;
-    text-align: center;
+  .model-step-header p,
+  .model-step-text,
+  .model-step-conclusion {
+    margin: 0;
+    color: var(--model-muted-ink);
+    font-size: 0.92rem;
+    line-height: 1.56;
   }
 
-  .paper-equation-term,
-  .paper-equation-number {
-    color: #27231d;
-    font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
-    font-size: clamp(1.42rem, 2.2vw, 2rem);
-    line-height: 1.45;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-  }
-
-  .paper-equation-word {
-    color: rgba(77, 70, 59, 0.88);
-    font-family: "Inter", system-ui, sans-serif;
-    font-size: 1rem;
-    line-height: 1.4;
+  .model-step-label {
+    margin: 0;
+    color: rgba(88, 75, 58, 0.78);
+    font-size: 0.82rem;
+    font-weight: 600;
     letter-spacing: 0.02em;
   }
 
-  .paper-equation-number {
-    font-size: clamp(1.14rem, 1.6vw, 1.36rem);
+  .model-math-display {
+    display: grid;
+    gap: 0;
+    min-width: 0;
+    padding-top: 18px;
+    justify-items: center;
+    align-content: start;
+    justify-content: center;
+    min-height: 0;
+    text-align: center;
   }
 
-  .paper-equation sub {
-    font-size: 0.62em;
+  .model-math-display .math-line {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.16em 0.4em;
+    color: var(--model-math-ink);
+    font-family: "STIX Two Text", "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+    font-size: clamp(0.78rem, 0.9vw, 0.9rem);
+    font-weight: 500;
+    line-height: 1.22;
+    letter-spacing: 0.01em;
+    text-rendering: optimizeLegibility;
+    overflow-wrap: anywhere;
+  }
+
+  .model-math-display .math-line-display {
+    font-size: clamp(0.98rem, 1.18vw, 1.08rem);
+    line-height: 1.1;
+  }
+
+  .math-line-indent {
+    padding-left: clamp(0px, 0.55vw, 6px);
+  }
+
+  .math-piece {
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .math-line sub,
+  .math-line sup,
+  .model-definition-term sub,
+  .model-definition-term sup,
+  .model-definition-relation sub,
+  .model-definition-relation sup {
+    font-size: 0.66em;
+    line-height: 0;
+  }
+
+  .math-line sub,
+  .model-definition-term sub,
+  .model-definition-relation sub {
     vertical-align: -0.34em;
   }
 
-  .math-equation {
-    margin: 0;
-    color: #27231d;
-    font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
-    font-size: clamp(1.28rem, 1.9vw, 1.7rem);
-    line-height: 1.5;
-    letter-spacing: 0.01em;
-    white-space: normal;
-    word-break: break-word;
+  .math-line sup,
+  .model-definition-term sup,
+  .model-definition-relation sup {
+    vertical-align: 0.42em;
   }
 
   .math-var {
     font-style: italic;
   }
 
-  .model-terms {
-    margin: 22px 0 0;
+  .model-definition-list {
+    margin: 0;
     display: grid;
-    gap: 14px;
+    gap: 0;
+    border-top: 1px solid rgba(70, 60, 45, 0.09);
   }
 
-  .model-terms div {
+  .model-definition-item {
     display: grid;
-    gap: 4px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid rgba(52, 46, 39, 0.08);
+    grid-template-columns: minmax(160px, 0.34fr) minmax(0, 1fr);
+    gap: 6px 10px;
+    padding: 1px 0;
+    border-bottom: 1px solid rgba(70, 60, 45, 0.09);
   }
 
-  .model-terms div:last-child {
-    padding-bottom: 0;
+  .model-definition-item:last-child {
     border-bottom: 0;
   }
 
-  .model-terms dt {
-    color: #1e1b17;
-    font-family: "Inter", system-ui, sans-serif;
-    font-size: 0.92rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-
-  .model-terms dd {
+  .model-definition-item dt {
     margin: 0;
-    color: var(--ink-soft);
-    line-height: 1.72;
+    display: grid;
+    gap: 3px;
+    align-content: start;
   }
 
-  @media (max-width: 1080px) {
-    .model-grid {
-      grid-template-columns: 1fr;
-    }
+  .model-definition-item dd {
+    margin: 0;
+    color: var(--model-muted-ink);
+    font-size: 0.8rem;
+    line-height: 1.24;
+  }
+
+  .model-definition-term,
+  .model-definition-relation {
+    color: var(--model-math-ink);
+    font-family: "STIX Two Text", "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+    line-height: 1.28;
+    letter-spacing: 0.01em;
+    text-rendering: optimizeLegibility;
+  }
+
+  .model-definition-term {
+    font-size: clamp(0.88rem, 0.88vw, 0.96rem);
+  }
+
+  .model-definition-relation {
+    color: rgba(76, 63, 48, 0.84);
+    font-size: clamp(0.82rem, 0.82vw, 0.9rem);
+  }
+
+  .model-condition-list {
+    margin: 0;
+    padding-left: 1.05rem;
+    color: var(--model-muted-ink);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    display: grid;
+    gap: 3px;
+  }
+
+  .model-step-conclusion {
+    padding-top: 8px;
+    border-top: 1px solid rgba(70, 60, 45, 0.08);
   }
 
   @media (max-width: 760px) {
     .model-section {
-      margin-top: 34px;
+      margin-top: 24px;
     }
 
     .model-heading h3 {
       line-height: 1.04;
     }
 
-    .equation-stack {
-      padding: 18px;
+    .model-story-card {
+      padding: 16px;
     }
 
-    .equation-stack-paper {
-      padding: 20px 18px;
+    .model-step {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 12px 0;
     }
 
-    .math-equation {
-      font-size: 1.22rem;
-      line-height: 1.56;
+    .model-step-header {
+      padding-right: 0;
     }
 
-    .equation-intro {
-      font-size: 0.94rem;
-      line-height: 1.68;
+    .model-step-header,
+    .model-step-body {
+      gap: 9px;
     }
 
-    .paper-equation {
-      justify-content: flex-start;
-      text-align: left;
-      gap: 0.35rem 0.75rem;
+    .model-step-body {
+      padding-top: 0;
     }
 
-    .paper-equation-term,
-    .paper-equation-number {
+    .model-step-cost {
+      padding-bottom: 20px;
+    }
+
+    .model-step-cost .model-math-display {
+      padding-bottom: 18px;
+    }
+
+    .model-math-display .math-line {
+      font-size: 0.72rem;
+      line-height: 1.22;
+    }
+
+    .model-math-display .math-line-display {
+      font-size: 0.86rem;
+      line-height: 1.04;
+    }
+
+    .model-math-display {
+      padding-top: 14px;
+      min-height: 0;
+    }
+
+    .math-line-indent {
+      padding-left: 0;
+    }
+
+    .model-step-header h4 {
+      font-size: 1.28rem;
+      line-height: 1.04;
+    }
+
+    .model-step-header p,
+    .model-step-text,
+    .model-step-conclusion {
+      font-size: 0.84rem;
+    }
+
+    .model-definition-item {
+      grid-template-columns: 1fr;
+      gap: 3px;
+      padding: 3px 0;
+    }
+
+    .model-definition-item dd,
+    .model-condition-list {
+      font-size: 0.76rem;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .model-math-display .math-line {
+      font-size: 0.66rem;
+    }
+
+    .model-math-display .math-line-display {
+      font-size: 0.78rem;
+    }
+
+    .math-piece {
       white-space: normal;
-      font-size: 1.24rem;
-      line-height: 1.5;
     }
 
-    .paper-equation-word {
-      font-size: 0.92rem;
+    .model-step-header p,
+    .model-step-text,
+    .model-step-conclusion,
+    .model-definition-item dd,
+    .model-condition-list {
+      font-size: 0.72rem;
     }
   }
 </style>

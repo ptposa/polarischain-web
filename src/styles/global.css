@@ -1,10 +1,14 @@
+@import "tailwindcss";
+
 :root {
   --bg: #0a0e17;
   --bg-deep: #070b12;
   --bg-panel: rgba(10, 14, 23, 0.82);
-  --paper: #d6cfc2;
-  --paper-strong: #cbc3b4;
-  --paper-border: rgba(54, 49, 41, 0.12);
+  --paper: #d0c5b4;
+  --paper-strong: #bfb29f;
+  --paper-border: rgba(62, 56, 48, 0.16);
+  --paper-card: rgba(236, 226, 209, 0.822);
+  --paper-card-strong: rgba(223, 213, 196, 0.92);
   --text: #f2eee6;
   --text-soft: #c1b8aa;
   --ink: #221f1a;
@@ -74,101 +78,6 @@ svg {
   margin: 0 auto;
 }
 
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  backdrop-filter: blur(14px);
-  background: rgba(7, 11, 18, 0.68);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.header-shell {
-  min-height: 60px;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 20px;
-}
-
-.brand {
-  justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  line-height: 0;
-}
-
-.brand img {
-  display: block;
-  height: 30px;
-  width: auto;
-}
-
-.brand span {
-  font-family: "Playfair Display", serif;
-  font-size: 1.48rem;
-  line-height: 1;
-  letter-spacing: 0.01em;
-  color: #ffffff;
-}
-
-.brand-mark {
-  width: 15px;
-  height: 15px;
-  position: relative;
-  transform: rotate(45deg);
-  border: 1px solid rgba(255, 255, 255, 0.82);
-  box-shadow: 0 0 18px rgba(193, 223, 255, 0.2);
-}
-
-.brand-mark::before,
-.brand-mark::after {
-  content: "";
-  position: absolute;
-  inset: 50% auto auto 50%;
-  background: rgba(255, 255, 255, 0.82);
-  transform: translate(-50%, -50%);
-}
-
-.brand-mark::before {
-  width: 1px;
-  height: 19px;
-}
-
-.brand-mark::after {
-  width: 19px;
-  height: 1px;
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  min-width: 0;
-}
-
-.nav-right {
-  justify-content: flex-end;
-}
-
-.nav a {
-  color: rgba(237, 231, 221, 0.82);
-  font-size: 0.89rem;
-  letter-spacing: 0.01em;
-}
-
-.nav a:hover {
-  color: #ffffff;
-}
-
-.nav .cta {
-  padding: 8px 13px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
-}
-
 .section-kicker,
 .note-label {
   display: inline-block;
@@ -183,52 +92,6 @@ svg {
   font-family: "Playfair Display", serif;
   font-weight: 400;
   letter-spacing: -0.03em;
-}
-
-.open-actions {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.btn {
-  min-height: 48px;
-  padding: 0 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-}
-
-.btn-primary {
-  background: rgba(241, 239, 234, 0.08);
-  border-color: rgba(241, 239, 234, 0.22);
-  color: var(--text);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
-}
-
-.btn-secondary {
-  background: transparent;
-  border-color: rgba(241, 239, 234, 0.14);
-  color: var(--text-soft);
-}
-
-.btn-paper {
-  background: #1a1c23;
-  border-color: #1a1c23;
-  color: #f7f2e9;
-}
-
-.btn-paper-secondary {
-  background: transparent;
-  color: var(--ink);
-  border-color: rgba(34, 31, 26, 0.16);
 }
 
 .status-page {
@@ -448,7 +311,7 @@ svg {
 .paper-section {
   position: relative;
   background:
-    radial-gradient(circle at 16% 0%, rgba(255, 255, 255, 0.5), transparent 14%),
+    radial-gradient(circle at 16% 0%, rgba(248, 242, 232, 0.42), transparent 14%),
     linear-gradient(180deg, var(--paper) 0%, var(--paper-strong) 100%);
   color: var(--ink);
 }
@@ -459,6 +322,15 @@ svg {
 
 #federation-limits .paper-shell {
   padding-top: 56px;
+}
+
+#federation-limits .section-heading {
+  max-width: 920px;
+}
+
+#federation-limits .section-heading p {
+  max-width: 920px;
+  line-height: 1.48;
 }
 
 .section-heading {
@@ -484,20 +356,20 @@ svg {
   margin: 18px 0 0;
   max-width: 66ch;
   color: var(--ink-soft);
-  line-height: 1.86;
+  line-height: 1.62;
   font-size: 1.02rem;
 }
 
 .research-grid {
   display: grid;
-  grid-template-columns: 1fr 1.05fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
   margin-top: 42px;
 }
 
 .research-card,
 .open-card {
-  background: rgba(255, 255, 255, 0.54);
+  background: linear-gradient(180deg, var(--paper-card) 0%, var(--paper-card-strong) 100%);
   border: 1px solid var(--paper-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-paper);
@@ -515,7 +387,6 @@ svg {
 }
 
 .research-card h3,
-.figure-caption h3,
 .open-card h3 {
   margin: 0;
   font-family: "Playfair Display", serif;
@@ -525,7 +396,6 @@ svg {
 }
 
 .research-card p,
-.figure-caption p,
 .open-card p,
 .research-notes p,
 .open-footer p,
@@ -542,53 +412,6 @@ svg {
 
 .research-card ul li + li {
   margin-top: 10px;
-}
-
-.research-card-figure {
-  display: grid;
-  gap: 22px;
-}
-
-.mini-chart {
-  padding: 18px;
-  background: rgba(247, 244, 238, 0.88);
-  border-radius: 18px;
-  border: 1px solid rgba(62, 56, 48, 0.08);
-}
-
-.mini-chart-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.mini-chart-toolbar span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(57, 54, 49, 0.18);
-}
-
-.mini-chart-axis {
-  fill: none;
-  stroke: rgba(60, 55, 49, 0.28);
-  stroke-width: 1.4;
-}
-
-.mini-chart-line {
-  fill: none;
-  stroke: rgba(84, 108, 132, 0.86);
-  stroke-width: 3;
-  stroke-linecap: round;
-}
-
-.mini-chart-area {
-  fill: url(#chartArea);
-}
-
-.mini-chart-point {
-  fill: rgba(84, 108, 132, 0.96);
 }
 
 .research-notes,
@@ -958,18 +781,6 @@ svg {
 }
 
 @media (max-width: 1080px) {
-  .header-shell {
-    grid-template-columns: 1fr auto;
-  }
-
-  .brand {
-    justify-self: start;
-  }
-
-  .nav-right {
-    justify-self: end;
-  }
-
   .research-grid,
   .open-grid,
   .research-notes {
@@ -1009,37 +820,6 @@ svg {
 
   .container {
     width: min(var(--max), calc(100% - 28px));
-  }
-
-  .site-header {
-    backdrop-filter: blur(10px);
-    background: rgba(7, 11, 18, 0.8);
-  }
-
-  .header-shell {
-    min-height: 56px;
-    grid-template-columns: auto auto;
-    gap: 12px;
-  }
-
-  .brand {
-    gap: 8px;
-  }
-
-  .brand img {
-    height: 24px;
-  }
-
-  .brand span {
-    font-size: 1.24rem;
-  }
-
-  .nav {
-    gap: 14px;
-  }
-
-  .nav a:not(.cta) {
-    display: none;
   }
 
   .paper-shell,

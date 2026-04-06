@@ -1,4 +1,17 @@
 ---
+import {
+  academicCardItemClasses,
+  floatingAcademicCardLayoutClasses,
+  academicCardListClasses,
+  academicCardTermClasses,
+  academicCardTitleClasses,
+  academicCardValueClasses,
+  buttonBaseClasses,
+  buttonPrimaryClasses,
+  buttonSecondaryClasses,
+  floatingAcademicCardClasses,
+} from "../lib/ui";
+
 type PrimaryNodeId = "target" | "issuing" | "bridge" | "external" | "anchor";
 type AmbientNodeId = `a${number}`;
 type NodeId = PrimaryNodeId | AmbientNodeId;
@@ -199,6 +212,19 @@ function linkPath(fromId: NodeId, toId: NodeId) {
   const to = nodeMap[toId];
   return `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
 }
+
+const cardOffsets: Record<PrimaryNodeId, { x: number; y: number }> = {
+  target: { x: 28, y: -170 },
+  issuing: { x: 57, y: -10 },
+  bridge: { x: 30, y: 150 },
+  external: { x: 55, y: -82 },
+  anchor: { x: 80, y: 82 },
+};
+
+function cardStyle(node: PrimaryNode) {
+  const offset = cardOffsets[node.type];
+  return `--card-x:${(((node.card?.x ?? node.x) - graphFrame.x) / graphFrame.width) * 100}%; --card-y:${(((node.card?.y ?? node.y) - graphFrame.y) / graphFrame.height) * 100}%; --card-offset-x:${offset.x}px; --card-offset-y:${offset.y}px;`;
+}
 ---
 
 <section class="pki-hero" id="top">
@@ -212,9 +238,7 @@ function linkPath(fromId: NodeId, toId: NodeId) {
       <div class="pki-hero-copy">
         <h1>Navigating trust across federated PKI ecosystems</h1>
         <p class="pki-hero-lead">
-          A research-driven platform for formal graph-based modeling of governed
-          trust, enabling optimal trust path discovery and crypto-agile
-          interoperability and validation across federated PKI ecosystems.
+          A research-driven platform for formal graph-based modeling of governed trust, enabling optimal trust path discovery and crypto-agile interoperability across federated PKI ecosystems.
         </p>
         <p class="pki-hero-body">
           PolarisChain formalizes certification authorities and federation
@@ -224,8 +248,12 @@ function linkPath(fromId: NodeId, toId: NodeId) {
         </p>
 
         <div class="pki-hero-actions">
-          <a class="btn btn-primary" href="#research">Explore research</a>
-          <a class="btn btn-secondary" href="/docs">Read documentation</a>
+          <a class={`${buttonBaseClasses} ${buttonPrimaryClasses}`} href="#research">
+            Explore research
+          </a>
+          <a class={`${buttonBaseClasses} ${buttonSecondaryClasses}`} href="/docs">
+            Read documentation
+          </a>
         </div>
 
         <div class="pki-hero-byline" aria-label="Author and academic context">
@@ -316,28 +344,28 @@ function linkPath(fromId: NodeId, toId: NodeId) {
           </g>
         </svg>
 
-        <div class="pki-node-cards" aria-hidden="true">
+        <div class={`pki-node-cards ${floatingAcademicCardLayoutClasses}`} aria-hidden="true">
           {primaryNodes.map((node, index) => (
             <article
-              class={`pki-node-card is-${node.type}`}
+              class={floatingAcademicCardClasses}
               data-node-card
               data-step={index + 1}
-              style={`--card-x:${(((node.card?.x ?? node.x) - graphFrame.x) / graphFrame.width) * 100}%; --card-y:${(((node.card?.y ?? node.y) - graphFrame.y) / graphFrame.height) * 100}%;`}
+              style={cardStyle(node)}
             >
-              <span class="pki-node-card-title">{node.label[0]}</span>
-              {node.label[1] ? <span class="pki-node-card-title">{node.label[1]}</span> : null}
-              <dl>
-                <div>
-                  <dt>Policy</dt>
-                  <dd>{node.meta.policy}</dd>
+              <span class={academicCardTitleClasses}>{node.label[0]}</span>
+              {node.label[1] ? <span class={academicCardTitleClasses}>{node.label[1]}</span> : null}
+              <dl class={academicCardListClasses}>
+                <div class={academicCardItemClasses}>
+                  <dt class={academicCardTermClasses}>Policy</dt>
+                  <dd class={academicCardValueClasses}>{node.meta.policy}</dd>
                 </div>
-                <div>
-                  <dt>Crypto</dt>
-                  <dd>{node.meta.crypto}</dd>
+                <div class={academicCardItemClasses}>
+                  <dt class={academicCardTermClasses}>Crypto</dt>
+                  <dd class={academicCardValueClasses}>{node.meta.crypto}</dd>
                 </div>
-                <div>
-                  <dt>Trust score</dt>
-                  <dd>{node.meta.score}</dd>
+                <div class={academicCardItemClasses}>
+                  <dt class={academicCardTermClasses}>Trust score</dt>
+                  <dd class={academicCardValueClasses}>{node.meta.score}</dd>
                 </div>
               </dl>
             </article>
@@ -620,87 +648,6 @@ function linkPath(fromId: NodeId, toId: NodeId) {
     filter: drop-shadow(0 2px 6px rgba(7, 11, 18, 0.72));
   }
 
-  .pki-node-cards {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
-  .pki-node-card {
-    --card-offset-x: 0px;
-    --card-offset-y: 0px;
-    position: absolute;
-    left: calc(var(--card-x) + var(--card-offset-x));
-    top: calc(var(--card-y) + var(--card-offset-y));
-    min-width: 158px;
-    max-width: 172px;
-    padding: 10px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    background: rgba(15, 20, 31, 0.46);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
-    opacity: 0;
-    transform: translate(-50%, -50%) translateY(18px);
-  }
-
-  .pki-node-card.is-target {
-    --card-offset-x: 28px;
-    --card-offset-y: -170px;
-  }
-
-  .pki-node-card.is-issuing {
-    --card-offset-x: 57px;
-    --card-offset-y: -10px;
-  }
-
-  .pki-node-card.is-bridge {
-    --card-offset-x: 30px;
-    --card-offset-y: 150px;
-  }
-
-  .pki-node-card.is-external {
-    --card-offset-x: 55px;
-    --card-offset-y: -82px;
-  }
-
-  .pki-node-card.is-anchor {
-    --card-offset-x: 80px;
-    --card-offset-y: 82px;
-  }
-
-  .pki-node-card-title {
-    display: block;
-    color: #f4efe5;
-    font-family: "Playfair Display", serif;
-    font-size: 1rem;
-    line-height: 1;
-  }
-
-  .pki-node-card dl {
-    margin: 8px 0 0;
-    display: grid;
-    gap: 6px;
-  }
-
-  .pki-node-card dl div {
-    display: grid;
-    gap: 2px;
-  }
-
-  .pki-node-card dt {
-    color: rgba(186, 179, 169, 0.7);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-  }
-
-  .pki-node-card dd {
-    margin: 0;
-    color: rgba(236, 232, 225, 0.94);
-    font-size: 0.8rem;
-    line-height: 1.32;
-  }
-
   @media (max-width: 1080px) {
     .pki-hero {
       min-height: 172vh;
@@ -731,11 +678,6 @@ function linkPath(fromId: NodeId, toId: NodeId) {
       margin: 0 -18px 0 0;
     }
 
-    .pki-node-card {
-      min-width: 140px;
-      max-width: 154px;
-      padding: 9px 10px;
-    }
   }
 
   @media (max-width: 760px) {
@@ -806,63 +748,6 @@ function linkPath(fromId: NodeId, toId: NodeId) {
       margin: 0;
     }
 
-    .pki-node-cards {
-      position: relative;
-      inset: auto;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-auto-flow: row;
-      gap: 10px;
-      margin-top: 30px;
-      width: 100%;
-      padding-right: 0;
-    }
-
-    .pki-node-card {
-      position: static;
-      left: unset;
-      top: unset;
-      min-width: 0;
-      max-width: none;
-      width: 100%;
-      margin: 0;
-      padding: 10px 10px;
-      box-sizing: border-box;
-      background: rgba(15, 20, 31, 0.74);
-      backdrop-filter: none;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
-      transform: none;
-      border-radius: 14px;
-    }
-
-    .pki-node-card-title {
-      font-size: 0.9rem;
-      line-height: 0.98;
-    }
-
-    .pki-node-card dl {
-      margin-top: 7px;
-      gap: 4px;
-    }
-
-    .pki-node-card dt {
-      font-size: 0.64rem;
-      letter-spacing: 0.1em;
-    }
-
-    .pki-node-card dd {
-      font-size: 0.72rem;
-      line-height: 1.22;
-    }
-
-    .pki-node-card.is-target,
-    .pki-node-card.is-issuing,
-    .pki-node-card.is-bridge,
-    .pki-node-card.is-external,
-    .pki-node-card.is-anchor {
-      transform: none;
-    }
-
     .pki-node-label text {
       font-size: 13px;
       filter: none;
@@ -886,12 +771,6 @@ function linkPath(fromId: NodeId, toId: NodeId) {
     .pki-node-primary,
     .pki-node-primary.is-anchor {
       filter: none;
-    }
-  }
-
-  @media (max-width: 340px) {
-    .pki-node-cards {
-      grid-template-columns: 1fr;
     }
   }
 </style>
