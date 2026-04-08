@@ -3,13 +3,21 @@
     <div class="section-heading">
       <span class="section-kicker">Research motivation</span>
       <h2>Challenges in federated PKI environments.</h2>
+      <p class="limits-subtitle">
+        From structural limitations to emerging scalability and operational challenges.
+      </p>
       <p>
         Existing mechanisms for establishing trust across PKI domains, such as cross-certification and bridge CAs, among others, have enabled interoperability for years. However, as trust topologies become denser and cryptographic transitions more demanding, path discovery, trust governance, and route selection remain difficult to reason about in a formal, deterministic, and crypto-aware way.
       </p>
     </div>
 
-    <div class="limits-grid">
-      <article class="limit-card">
+    <div class="limits-group">
+      <div class="limits-group-heading">
+        <span class="limits-group-label">Core challenges</span>
+      </div>
+
+      <div class="limits-grid limits-grid-primary">
+        <article class="limit-card">
         <div class="limit-card-chart" aria-hidden="true">
           <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
             <defs>
@@ -48,105 +56,357 @@
         </div>
         <h3>Growing complexity of trust topologies</h3>
         <p>
-          As trust relationships expand across multiple domains, PKI ecosystems evolve into highly interconnected trust topologies where the number of admissible certification paths grows rapidly, increasing the difficulty of path discovery, governance, and explainable route selection.
+          Expanding trust relationships across domains turns PKI ecosystems into dense, interconnected structures, where the number of certification paths grows rapidly and complicates discovery, governance, and validation.
         </p>
-      </article>
+        </article>
 
-      <article class="limit-card">
+        <article class="limit-card">
         <div class="limit-card-chart" aria-hidden="true">
           <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
             <defs>
-              <linearGradient id="limitHeuristicSelected" x1="0" x2="1" y1="0" y2="1">
-                <stop offset="0%" stop-color="rgba(94, 113, 142, 0.95)" />
-                <stop offset="100%" stop-color="rgba(122, 143, 171, 0.78)" />
-              </linearGradient>
-              <linearGradient id="limitHeuristicHint" x1="0" x2="1" y1="0" y2="1">
-                <stop offset="0%" stop-color="rgba(182, 144, 82, 0.28)" />
-                <stop offset="100%" stop-color="rgba(182, 144, 82, 0.08)" />
-              </linearGradient>
+              <radialGradient id="limitHeuristicGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(94, 113, 142, 0.18)" />
+                <stop offset="100%" stop-color="rgba(94, 113, 142, 0)" />
+              </radialGradient>
             </defs>
 
-            <path d="M34 66 L94 34" class="limit-card-path limit-card-path-muted"></path>
-            <path d="M34 66 L94 66" class="limit-card-path limit-card-path-selected"></path>
-            <path d="M34 66 L94 98" class="limit-card-path limit-card-path-hint"></path>
+            <ellipse cx="130" cy="66" rx="72" ry="42" class="limit-card-surface-glow" style="fill: url(#limitHeuristicGlow);"></ellipse>
 
-            <path d="M94 34 L152 22" class="limit-card-path limit-card-path-muted"></path>
-            <path d="M94 34 L152 50" class="limit-card-path limit-card-path-muted"></path>
-
-            <path d="M94 66 L152 50" class="limit-card-path limit-card-path-selected"></path>
-            <path d="M152 50 L212 34" class="limit-card-path limit-card-path-selected"></path>
-
-            <path d="M94 98 L152 78" class="limit-card-path limit-card-path-hint"></path>
-            <path d="M152 78 L212 22" class="limit-card-path limit-card-path-hint"></path>
-            <path d="M94 98 L152 106" class="limit-card-path limit-card-path-muted"></path>
-            <path d="M152 106 L212 92" class="limit-card-path limit-card-path-muted"></path>
+            <path d="M34 66 L78 28 L126 50 L174 28 L214 66" class="limit-card-path limit-card-path-muted"></path>
+            <path d="M34 66 L84 42 L136 30 L182 42 L214 66" class="limit-card-path limit-card-path-hint"></path>
+            <path d="M34 66 L82 64 L126 72 L170 74 L214 66" class="limit-card-path limit-card-path-selected"></path>
+            <path d="M34 66 L86 94 L132 100 L176 92 L214 66" class="limit-card-path limit-card-path-muted"></path>
+            <path d="M34 66 L88 60 L132 48 L170 54 L214 66" class="limit-card-path limit-card-path-faded"></path>
 
             <circle cx="34" cy="66" r="5.5" class="limit-card-node limit-card-node-root"></circle>
-            <circle cx="94" cy="34" r="4.2" class="limit-card-node limit-card-node-muted"></circle>
-            <circle cx="94" cy="66" r="4.5" class="limit-card-node limit-card-node-selected"></circle>
-            <circle cx="94" cy="98" r="4.2" class="limit-card-node limit-card-node-hint"></circle>
-            <circle cx="152" cy="22" r="3.9" class="limit-card-node limit-card-node-muted"></circle>
-            <circle cx="152" cy="50" r="4.4" class="limit-card-node limit-card-node-selected"></circle>
-            <circle cx="152" cy="78" r="4" class="limit-card-node limit-card-node-hint"></circle>
-            <circle cx="152" cy="106" r="3.9" class="limit-card-node limit-card-node-muted"></circle>
-            <circle cx="212" cy="34" r="4.8" class="limit-card-node limit-card-node-selected"></circle>
-            <circle cx="212" cy="22" r="4.2" class="limit-card-node limit-card-node-hint"></circle>
-            <circle cx="212" cy="92" r="3.9" class="limit-card-node limit-card-node-muted"></circle>
+            <circle cx="214" cy="66" r="5.5" class="limit-card-node limit-card-node-root"></circle>
+
+            <circle cx="78" cy="28" r="3.7" class="limit-card-node limit-card-node-muted"></circle>
+            <circle cx="126" cy="50" r="3.7" class="limit-card-node limit-card-node-muted"></circle>
+            <circle cx="174" cy="28" r="3.7" class="limit-card-node limit-card-node-muted"></circle>
+
+            <circle cx="84" cy="42" r="4.1" class="limit-card-node limit-card-node-hint"></circle>
+            <circle cx="136" cy="30" r="4.1" class="limit-card-node limit-card-node-hint"></circle>
+            <circle cx="182" cy="42" r="4.1" class="limit-card-node limit-card-node-hint"></circle>
+
+            <circle cx="82" cy="64" r="4.5" class="limit-card-node limit-card-node-selected"></circle>
+            <circle cx="126" cy="72" r="4.5" class="limit-card-node limit-card-node-selected"></circle>
+            <circle cx="170" cy="74" r="4.5" class="limit-card-node limit-card-node-selected"></circle>
+
+            <circle cx="86" cy="94" r="3.7" class="limit-card-node limit-card-node-muted"></circle>
+            <circle cx="132" cy="100" r="3.7" class="limit-card-node limit-card-node-muted"></circle>
+            <circle cx="176" cy="92" r="3.7" class="limit-card-node limit-card-node-muted"></circle>
+
+            <circle cx="88" cy="60" r="3.5" class="limit-card-node limit-card-node-faded"></circle>
+            <circle cx="132" cy="48" r="3.5" class="limit-card-node limit-card-node-faded"></circle>
+            <circle cx="170" cy="54" r="3.5" class="limit-card-node limit-card-node-faded"></circle>
 
             <text x="34" y="84" text-anchor="middle" class="limit-card-annotation">
-              End-entity
+              End-Entity
             </text>
-            <text x="176" y="14" text-anchor="middle" class="limit-card-annotation limit-card-annotation-hint">
-              better path
+            <text x="150" y="20" text-anchor="middle" class="limit-card-annotation limit-card-annotation-hint">
+              Alternative
             </text>
-            <text x="172" y="64" text-anchor="middle" class="limit-card-annotation">
-              selected
+            <text x="142" y="92" text-anchor="middle" class="limit-card-annotation">
+              Selected
             </text>
-            <text x="212" y="48" text-anchor="middle" class="limit-card-annotation">
-              Trust anchor
+            <text x="214" y="84" text-anchor="middle" class="limit-card-annotation">
+              Trust Anchor
             </text>
           </svg>
         </div>
         <h3>Heuristic validation</h3>
         <p>
-          Many certification path-building approaches rely on heuristic traversal strategies, local preferences, and early stopping conditions to find a valid certification chain.
+          Heuristic path-building approaches do not explore the full space of admissible paths, potentially missing valid certification chains and leading to inconsistent or non-deterministic validation across federated PKI domains.
         </p>
-        <p>
-          While effective in practice, these methods may fail to consistently discover all admissible paths or may depend on implementation-specific behavior to find a valid route at all.
-        </p>
-      </article>
+        </article>
 
-      <article class="limit-card">
-        <h3>Lack of trust governance</h3>
-        <p>
-          Trust is commonly inherited from hierarchies or broad anchors, rather than
-          being selectively defined between issuing CAs and governed federation points.
-        </p>
-      </article>
+        <article class="limit-card">
+          <div class="limit-card-chart" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+              <defs>
+                <linearGradient id="limitGovernanceFade" x1="0" x2="1" y1="0.2" y2="0.8">
+                  <stop offset="0%" stop-color="rgba(110, 128, 155, 0.3)" />
+                  <stop offset="100%" stop-color="rgba(110, 128, 155, 0.08)" />
+                </linearGradient>
+              </defs>
+              <path d="M42 66 L98 40" class="limit-card-path limit-card-path-muted"></path>
+              <path d="M42 66 L98 92" class="limit-card-path limit-card-path-muted"></path>
+              <path d="M98 40 L150 40" class="limit-card-path limit-card-path-faded"></path>
+              <path d="M98 92 L150 92" class="limit-card-path limit-card-path-faded"></path>
+              <path d="M160 40 L214 66" class="limit-card-path limit-card-path-muted"></path>
+              <path d="M160 92 L214 66" class="limit-card-path limit-card-path-muted"></path>
+              <path d="M150 40 L160 40" class="limit-card-path limit-card-path-broken"></path>
+              <path d="M150 92 L160 92" class="limit-card-path limit-card-path-broken"></path>
+              <circle cx="42" cy="66" r="5.2" class="limit-card-node limit-card-node-root"></circle>
+              <circle cx="98" cy="40" r="4.2" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="98" cy="92" r="4.2" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="150" cy="40" r="4" class="limit-card-node limit-card-node-faded"></circle>
+              <circle cx="150" cy="92" r="4" class="limit-card-node limit-card-node-faded"></circle>
+              <circle cx="160" cy="40" r="4" class="limit-card-node limit-card-node-muted"></circle>
+              <circle cx="160" cy="92" r="4" class="limit-card-node limit-card-node-muted"></circle>
+              <circle cx="214" cy="66" r="5.2" class="limit-card-node limit-card-node-root"></circle>
+              <ellipse cx="154" cy="66" rx="38" ry="46" class="limit-card-haze"></ellipse>
+              <path d="M116 24 C138 34, 170 34, 192 24" class="limit-card-haze-stroke"></path>
+              <path d="M116 108 C138 98, 170 98, 192 108" class="limit-card-haze-stroke"></path>
+            </svg>
+          </div>
+          <h3>Lack of trust governance</h3>
+          <p>
+            Trust is commonly inherited from hierarchies or broad anchors rather than being selectively defined between issuing CAs.
+          </p>
+          <p>
+            This limits fine-grained control over how trust propagates across domains and increases the risk of unintended trust relationships.
+          </p>
+        </article>
 
-      <article class="limit-card">
-        <h3>No crypto agility awareness</h3>
-        <p>
-          Traditional federation models rarely score or prioritize paths according to
-          classical, hybrid, and post-quantum cryptographic transitions, leaving
-          crypto-agile interoperability under-specified.
-        </p>
-      </article>
+        <article class="limit-card">
+          <div class="limit-card-chart" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+              <defs>
+                <linearGradient id="limitCryptoShift" x1="0" x2="1" y1="0.3" y2="0.7">
+                  <stop offset="0%" stop-color="rgba(170, 145, 92, 0.16)" />
+                  <stop offset="100%" stop-color="rgba(92, 116, 148, 0.18)" />
+                </linearGradient>
+              </defs>
+              <rect x="42" y="34" width="48" height="28" rx="14" class="limit-card-chip"></rect>
+              <rect x="106" y="52" width="48" height="28" rx="14" class="limit-card-chip limit-card-chip-mixed"></rect>
+              <rect x="170" y="28" width="48" height="28" rx="14" class="limit-card-chip limit-card-chip-future"></rect>
+              <path d="M90 48 C104 48, 100 64, 106 66" class="limit-card-path limit-card-path-selected"></path>
+              <path d="M154 66 C166 66, 162 46, 170 42" class="limit-card-path limit-card-path-hint"></path>
+              <path d="M58 94 C90 82, 122 82, 150 96 S200 108, 222 92" class="limit-card-path limit-card-path-faded"></path>
+              <circle cx="60" cy="48" r="4.2" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="74" cy="48" r="3.2" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="122" cy="66" r="4.2" class="limit-card-node limit-card-node-hint"></circle>
+              <circle cx="136" cy="66" r="3.2" class="limit-card-node limit-card-node-hint"></circle>
+              <polygon points="184,42 190,35 198,35 204,42 198,49 190,49" class="limit-card-hex"></polygon>
+              <polygon points="198,42 204,35 212,35 218,42 212,49 204,49" class="limit-card-hex limit-card-hex-muted"></polygon>
+              <rect x="36" y="20" width="188" height="88" rx="24" class="limit-card-surface-glow" style="fill: url(#limitCryptoShift);"></rect>
+            </svg>
+          </div>
+          <h3>No crypto agility awareness</h3>
+          <p>
+            Traditional federation models rarely prioritize certification paths based on cryptographic posture.
+          </p>
+          <p>
+            As hybrid and post-quantum transitions emerge, the inability to reason about algorithm agility limits long-term trust resilience.
+          </p>
+        </article>
+      </div>
+    </div>
+
+    <div class="limits-group limits-group-emerging">
+      <div class="limits-group-heading">
+        <span class="limits-group-label">Emerging challenges</span>
+      </div>
+
+      <div class="limits-grid limits-grid-secondary">
+        <article class="limit-card limit-card-emerging">
+          <span class="limit-card-tag">Emerging challenge</span>
+          <div class="limit-card-chart" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+              <defs>
+                <linearGradient id="limitLifecycleLoop" x1="0" x2="1" y1="0.1" y2="0.9">
+                  <stop offset="0%" stop-color="rgba(95, 114, 141, 0.2)" />
+                  <stop offset="100%" stop-color="rgba(169, 137, 88, 0.16)" />
+                </linearGradient>
+              </defs>
+              <circle cx="130" cy="66" r="38" class="limit-card-ring"></circle>
+              <path d="M130 20 A46 46 0 0 1 186 60" class="limit-card-path limit-card-path-selected"></path>
+              <path d="M190 60 L184 52" class="limit-card-path limit-card-path-selected"></path>
+              <path d="M190 60 L180 62" class="limit-card-path limit-card-path-selected"></path>
+              <path d="M130 112 A46 46 0 0 1 74 72" class="limit-card-path limit-card-path-hint"></path>
+              <path d="M70 72 L78 78" class="limit-card-path limit-card-path-hint"></path>
+              <path d="M70 72 L80 70" class="limit-card-path limit-card-path-hint"></path>
+              <circle cx="130" cy="28" r="4.2" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="174" cy="50" r="4.2" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="170" cy="90" r="4.2" class="limit-card-node limit-card-node-hint"></circle>
+              <circle cx="128" cy="104" r="4.2" class="limit-card-node limit-card-node-hint"></circle>
+              <circle cx="88" cy="84" r="4.2" class="limit-card-node limit-card-node-muted"></circle>
+              <circle cx="90" cy="44" r="4.2" class="limit-card-node limit-card-node-muted"></circle>
+              <path d="M94 36 L166 36" class="limit-card-path limit-card-path-faded"></path>
+              <path d="M88 86 L172 86" class="limit-card-path limit-card-path-faded"></path>
+              <rect x="58" y="18" width="144" height="96" rx="28" class="limit-card-surface-glow" style="fill: url(#limitLifecycleLoop);"></rect>
+            </svg>
+          </div>
+          <h3>Operational lifecycle fatigue</h3>
+          <p>
+            Short-lived certificates, frequent renewals, revocations, and cross-domain policy updates introduce operational overhead that becomes difficult to sustain consistently across federated environments.
+          </p>
+        </article>
+
+        <article class="limit-card limit-card-emerging">
+          <span class="limit-card-tag">Emerging challenge</span>
+          <div class="limit-card-chart" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+              <defs>
+                <linearGradient id="limitDensityField" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(95, 114, 141, 0.22)" />
+                  <stop offset="100%" stop-color="rgba(182, 144, 82, 0.12)" />
+                </linearGradient>
+              </defs>
+              <path d="M44 78 C78 34, 120 28, 158 50 S212 88, 222 44" class="limit-card-path limit-card-path-faded"></path>
+              <path d="M50 98 C86 72, 122 70, 156 86 S200 112, 222 82" class="limit-card-path limit-card-path-muted"></path>
+              <path d="M70 36 L122 66 L168 32 L214 62" class="limit-card-path limit-card-path-muted"></path>
+              <path d="M82 96 L132 34 L182 92" class="limit-card-path limit-card-path-hint"></path>
+              <circle cx="44" cy="78" r="4.4" class="limit-card-node limit-card-node-root"></circle>
+              <circle cx="70" cy="36" r="3.8" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="82" cy="96" r="3.8" class="limit-card-node limit-card-node-hint"></circle>
+              <circle cx="98" cy="58" r="3.6" class="limit-card-node limit-card-node-muted"></circle>
+              <circle cx="122" cy="66" r="4.4" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="132" cy="34" r="3.8" class="limit-card-node limit-card-node-hint"></circle>
+              <circle cx="148" cy="88" r="3.6" class="limit-card-node limit-card-node-muted"></circle>
+              <circle cx="168" cy="32" r="4" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="182" cy="92" r="4" class="limit-card-node limit-card-node-hint"></circle>
+              <circle cx="194" cy="58" r="3.8" class="limit-card-node limit-card-node-muted"></circle>
+              <circle cx="214" cy="62" r="4.4" class="limit-card-node limit-card-node-root"></circle>
+              <circle cx="102" cy="84" r="18" class="limit-card-cluster"></circle>
+              <circle cx="172" cy="58" r="24" class="limit-card-cluster limit-card-cluster-alt"></circle>
+            </svg>
+          </div>
+          <h3>Machine &amp; AI identity explosion</h3>
+          <p>
+            The rapid growth of machine, workload, and AI agent identities introduces high-density trust graphs with continuously changing nodes.
+          </p>
+          <p>
+            This scale challenges traditional validation approaches and requires efficient, graph-based path discovery mechanisms.
+          </p>
+        </article>
+
+        <article class="limit-card limit-card-emerging">
+          <span class="limit-card-tag">Emerging challenge</span>
+          <div class="limit-card-chart" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+              <defs>
+                <linearGradient id="limitVisibilityMask" x1="0" x2="1" y1="0" y2="0">
+                  <stop offset="0%" stop-color="rgba(235, 228, 218, 0.86)" />
+                  <stop offset="55%" stop-color="rgba(235, 228, 218, 0.38)" />
+                  <stop offset="100%" stop-color="rgba(235, 228, 218, 0.06)" />
+                </linearGradient>
+              </defs>
+              <path d="M44 92 L92 42 L140 76 L186 30 L222 62" class="limit-card-path limit-card-path-selected"></path>
+              <path d="M44 40 L92 66 L140 42 L186 94 L222 82" class="limit-card-path limit-card-path-muted"></path>
+              <path d="M92 42 L92 66" class="limit-card-path limit-card-path-faded"></path>
+              <path d="M140 42 L140 76" class="limit-card-path limit-card-path-faded"></path>
+              <path d="M186 30 L186 94" class="limit-card-path limit-card-path-faded"></path>
+              <circle cx="44" cy="92" r="4.2" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="44" cy="40" r="4" class="limit-card-node limit-card-node-muted"></circle>
+              <circle cx="92" cy="42" r="4.2" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="92" cy="66" r="4" class="limit-card-node limit-card-node-muted"></circle>
+              <circle cx="140" cy="42" r="4" class="limit-card-node limit-card-node-muted"></circle>
+              <circle cx="140" cy="76" r="4.2" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="186" cy="30" r="4.2" class="limit-card-node limit-card-node-selected"></circle>
+              <circle cx="186" cy="94" r="4" class="limit-card-node limit-card-node-muted"></circle>
+              <circle cx="222" cy="62" r="4.8" class="limit-card-node limit-card-node-root"></circle>
+              <circle cx="222" cy="82" r="4" class="limit-card-node limit-card-node-muted"></circle>
+              <rect x="34" y="18" width="124" height="96" rx="18" class="limit-card-veil"></rect>
+            </svg>
+          </div>
+          <h3>Real-time visibility gap</h3>
+          <p>
+            As trust relationships evolve dynamically across domains, organizations lack real-time visibility into active trust paths, policy constraints, and validation behavior.
+          </p>
+          <p>
+            This limits auditability and slows incident response.
+          </p>
+        </article>
+
+        <article class="limit-card limit-card-emerging">
+          <span class="limit-card-tag">Emerging challenge</span>
+          <div class="limit-card-chart" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+              <defs>
+                <linearGradient id="limitSupplyIntegrity" x1="0" x2="1" y1="0.2" y2="0.8">
+                  <stop offset="0%" stop-color="rgba(95, 114, 141, 0.18)" />
+                  <stop offset="100%" stop-color="rgba(171, 139, 90, 0.12)" />
+                </linearGradient>
+              </defs>
+              <rect x="52" y="34" width="92" height="54" rx="16" class="limit-card-container"></rect>
+              <path d="M66 50 L130 50" class="limit-card-path limit-card-path-muted"></path>
+              <path d="M66 64 L130 64" class="limit-card-path limit-card-path-muted"></path>
+              <path d="M66 78 L112 78" class="limit-card-path limit-card-path-faded"></path>
+              <path d="M144 60 L176 60" class="limit-card-path limit-card-path-selected"></path>
+              <path d="M176 60 C188 60, 190 42, 202 42" class="limit-card-path limit-card-path-selected"></path>
+              <path d="M176 60 C188 60, 190 88, 202 88" class="limit-card-path limit-card-path-hint"></path>
+              <path d="M202 34 L222 44 L218 74 C216 88, 210 96, 202 100 C194 96, 188 88, 186 74 L182 44 Z" class="limit-card-shield"></path>
+              <path d="M194 68 L200 74 L212 58" class="limit-card-check"></path>
+              <rect x="42" y="22" width="180" height="88" rx="24" class="limit-card-surface-glow" style="fill: url(#limitSupplyIntegrity);"></rect>
+            </svg>
+          </div>
+          <h3>Software supply chain integrity</h3>
+          <p>
+            Modern software distribution requires verifiable provenance and immutable cryptographic signatures.
+          </p>
+          <p>
+            Federated environments struggle to validate signed artifacts across domains without relying on implicit trust in external repositories.
+          </p>
+        </article>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
+  .section-heading p {
+    margin-top: 14px;
+    line-height: 1.42;
+  }
+
+  .limits-subtitle {
+    margin: 12px 0 0;
+    color: rgba(58, 51, 42, 0.8);
+    font-family: "Playfair Display", serif;
+    font-size: clamp(1.18rem, 1.8vw, 1.44rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+  }
+
+  .limits-group {
+    margin-top: 30px;
+  }
+
+  .limits-group-emerging {
+    margin-top: 28px;
+  }
+
+  .limits-group-heading {
+    margin-bottom: 16px;
+  }
+
+  .limits-group-label {
+    display: inline-block;
+    color: rgba(77, 70, 59, 0.72);
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
   .limits-grid {
+    gap: 22px;
+  }
+
+  .limits-grid-primary {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 24px;
-    margin-top: 42px;
+  }
+
+  .limits-grid-secondary {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: nowrap;
+  }
+
+  .limits-grid-secondary .limit-card {
+    flex: 0 1 calc((100% - 72px) / 4);
   }
 
   .limit-card {
+    display: flex;
+    flex-direction: column;
     min-height: 100%;
-    padding: 26px 24px;
+    padding: 24px 22px;
     background: linear-gradient(180deg, var(--paper-card) 0%, var(--paper-card-strong) 100%);
     border: 1px solid var(--paper-border);
     border-radius: var(--radius-lg);
@@ -157,21 +417,56 @@
     margin: 0;
     color: #1e1b17;
     font-family: "Playfair Display", serif;
-    font-size: 1.9rem;
+    font-size: clamp(1.72rem, 2vw, 1.84rem);
     font-weight: 400;
-    line-height: 0.98;
+    line-height: 1.02;
+    text-wrap: balance;
   }
 
   .limit-card p {
     margin: 18px 0 0;
     color: var(--ink-soft);
-    line-height: 1.52;
+    font-size: 0.98rem;
+    line-height: 1.42;
+  }
+
+  .limit-card p + p {
+    margin-top: 14px;
+  }
+
+  .limit-card-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    min-height: 24px;
+    margin-bottom: 16px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(142, 108, 62, 0.22);
+    background: rgba(244, 233, 214, 0.72);
+    color: rgba(121, 88, 47, 0.86);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .limit-card-tag::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(162, 122, 66, 0.72);
+    box-shadow: 0 0 0 3px rgba(162, 122, 66, 0.1);
   }
 
   .limit-card-chart {
     display: grid;
-    margin-bottom: 18px;
-    padding: 14px 14px 12px;
+    margin-bottom: 20px;
+    padding: 13px 13px 11px;
+    min-height: 150px;
+    align-items: center;
     border-radius: var(--radius-lg);
     background: rgba(239, 233, 223, 0.82);
     border: 1px solid rgba(62, 56, 48, 0.1);
@@ -229,12 +524,24 @@
   }
 
   .limit-card-path-selected {
-    stroke: url(#limitHeuristicSelected);
-    stroke-width: 3.2;
+    stroke: rgba(94, 113, 142, 0.86);
+    stroke-width: 3;
+  }
+
+  .limit-card-path-faded {
+    stroke: rgba(94, 113, 142, 0.3);
+    stroke-width: 2.1;
+    stroke-dasharray: 4 6;
+  }
+
+  .limit-card-path-broken {
+    stroke: rgba(162, 122, 66, 0.55);
+    stroke-width: 2.4;
+    stroke-dasharray: 3 10;
   }
 
   .limit-card-path-hint {
-    stroke: url(#limitHeuristicHint);
+    stroke: rgba(171, 139, 90, 0.42);
     stroke-width: 2.5;
     stroke-dasharray: 5 5;
   }
@@ -259,6 +566,97 @@
     fill: rgba(182, 144, 82, 0.32);
   }
 
+  .limit-card-node-faded {
+    fill: rgba(120, 111, 101, 0.14);
+  }
+
+  .limit-card-haze {
+    fill: url(#limitGovernanceFade);
+  }
+
+  .limit-card-haze-stroke {
+    fill: none;
+    stroke: rgba(92, 83, 72, 0.18);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-dasharray: 3 7;
+  }
+
+  .limit-card-chip {
+    fill: rgba(238, 232, 223, 0.9);
+    stroke: rgba(94, 113, 142, 0.34);
+    stroke-width: 1.4;
+  }
+
+  .limit-card-chip-mixed {
+    fill: rgba(236, 229, 218, 0.9);
+    stroke: rgba(162, 122, 66, 0.34);
+  }
+
+  .limit-card-chip-future {
+    fill: rgba(234, 230, 224, 0.94);
+    stroke: rgba(79, 97, 126, 0.42);
+  }
+
+  .limit-card-hex {
+    fill: rgba(95, 114, 141, 0.18);
+    stroke: rgba(95, 114, 141, 0.46);
+    stroke-width: 1.2;
+  }
+
+  .limit-card-hex-muted {
+    fill: rgba(171, 139, 90, 0.14);
+    stroke: rgba(171, 139, 90, 0.32);
+  }
+
+  .limit-card-surface-glow {
+    fill: rgba(95, 114, 141, 0.12);
+    opacity: 0.7;
+    stroke: rgba(95, 114, 141, 0.08);
+    stroke-width: 1;
+  }
+
+  .limit-card-ring {
+    fill: none;
+    stroke: rgba(94, 113, 142, 0.16);
+    stroke-width: 18;
+  }
+
+  .limit-card-cluster {
+    fill: rgba(94, 113, 142, 0.1);
+  }
+
+  .limit-card-cluster-alt {
+    fill: rgba(171, 139, 90, 0.08);
+  }
+
+  .limit-card-veil {
+    fill: url(#limitVisibilityMask);
+    stroke: rgba(236, 229, 219, 0.5);
+    stroke-width: 1;
+  }
+
+  .limit-card-container {
+    fill: rgba(236, 231, 223, 0.94);
+    stroke: rgba(88, 80, 71, 0.18);
+    stroke-width: 1.4;
+  }
+
+  .limit-card-shield {
+    fill: rgba(95, 114, 141, 0.16);
+    stroke: rgba(95, 114, 141, 0.44);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+
+  .limit-card-check {
+    fill: none;
+    stroke: rgba(171, 139, 90, 0.7);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
   .limit-card-annotation {
     fill: rgba(92, 83, 72, 0.72);
     font-family: "Inter", system-ui, sans-serif;
@@ -273,29 +671,58 @@
   }
 
   @media (max-width: 1180px) {
-    .limits-grid {
+    .limits-group {
+      margin-top: 30px;
+    }
+
+    .limits-grid-primary,
+    .limits-grid-secondary {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      display: grid;
+    }
+
+    .limits-grid-secondary .limit-card {
+      flex: initial;
     }
   }
 
   @media (max-width: 760px) {
-    .limits-grid {
+    .limits-subtitle {
+      margin-top: 12px;
+      line-height: 1.16;
+    }
+
+    .limits-group {
+      margin-top: 24px;
+    }
+
+    .limits-group-heading {
+      margin-bottom: 14px;
+    }
+
+    .limits-grid-primary,
+    .limits-grid-secondary {
       grid-template-columns: 1fr;
+      display: grid;
       gap: 18px;
-      margin-top: 34px;
     }
 
     .limit-card {
-      padding: 22px;
+      padding: 20px;
     }
 
     .limit-card-chart {
-      margin-bottom: 16px;
-      padding: 12px 12px 10px;
+      margin-bottom: 18px;
+      padding: 11px 11px 10px;
     }
 
     .limit-card h3 {
-      font-size: 2.1rem;
+      font-size: 1.94rem;
+    }
+
+    .limit-card-tag {
+      margin-bottom: 12px;
+      gap: 7px;
     }
   }
 </style>

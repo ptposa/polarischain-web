@@ -50,13 +50,13 @@ const graphFrame = { x: 150, y: 110, width: 880, height: 310 };
 const primaryNodes: PrimaryNode[] = [
   {
     id: "target",
-    label: ["Target certificate"],
+    label: ["End-entity", "certificate"],
     x: 220,
     y: 314,
     type: "target",
     meta: {
       policy: "Leaf authentication policy",
-      crypto: "End-entity RSA-3072",
+      crypto: "RSA-2048",
       score: "N/A",
     },
     card: { x: 232, y: 344 },
@@ -123,20 +123,16 @@ const ambientNodes: AmbientNode[] = [
   { id: "a9", x: 466, y: 258, size: "tiny" },
   { id: "a10", x: 492, y: 392, size: "tiny" },
   { id: "a11", x: 522, y: 130, size: "small" },
-  { id: "a12", x: 586, y: 150, size: "tiny" },
   { id: "a13", x: 610, y: 364, size: "small" },
-  { id: "a14", x: 646, y: 120, size: "tiny" },
-  { id: "a15", x: 652, y: 240, size: "small" },
   { id: "a16", x: 684, y: 380, size: "tiny" },
   { id: "a17", x: 748, y: 148, size: "small" },
   { id: "a18", x: 754, y: 332, size: "small" },
-  { id: "a19", x: 806, y: 270, size: "tiny" },
   { id: "a20", x: 832, y: 362, size: "small" },
   { id: "a21", x: 890, y: 236, size: "small" },
   { id: "a22", x: 926, y: 144, size: "tiny" },
   { id: "a23", x: 952, y: 314, size: "small" },
   { id: "a24", x: 998, y: 200, size: "tiny" },
-  { id: "a25", x: 1018, y: 292, size: "small" },
+  { id: "a31", x: 1038, y: 176, size: "tiny" },
   { id: "a26", x: 1042, y: 126, size: "tiny" },
   { id: "a27", x: 1060, y: 356, size: "tiny" },
   { id: "a28", x: 1106, y: 228, size: "small" },
@@ -152,7 +148,6 @@ const ambientNodes: AmbientNode[] = [
   { id: "a49", x: 702, y: 240, size: "tiny" },
   { id: "a51", x: 762, y: 194, size: "tiny" },
   { id: "a53", x: 824, y: 132, size: "tiny" },
-  { id: "a54", x: 846, y: 214, size: "tiny" },
   { id: "a57", x: 950, y: 352, size: "tiny" },
   { id: "a59", x: 1012, y: 238, size: "tiny" },
   { id: "a63", x: 1144, y: 134, size: "tiny" },
@@ -163,37 +158,31 @@ const nodeMap: Record<NodeId, GraphNode> = Object.fromEntries(
  ) as Record<NodeId, GraphNode>;
 
 const ambientLinks: GraphLink[] = [
-  ["a1", "target"],
+  ["a1", "issuing"],
+  ["a2", "a4"],
   ["a3", "issuing"],
-  ["a3", "a7"],
-  ["a4", "target"],
   ["a4", "a8"],
-  ["a5", "a7"],
+  ["a5", "issuing"],
   ["a6", "a4"],
   ["a7", "issuing"],
   ["a7", "bridge"],
   ["a8", "bridge"],
+  ["a8", "external"],
   ["a8", "a13"],
   ["a9", "bridge"],
   ["a10", "a13"],
   ["a11", "bridge"],
-  ["a11", "a14"],
-  ["a12", "external"],
   ["a13", "external"],
-  ["a14", "external"],
-  ["a15", "external"],
   ["a16", "a20"],
-  ["a17", "anchor"],
-  ["a17", "a21"],
-  ["a18", "anchor"],
+  ["a17", "external"],
+  ["external", "a21"],
+  ["a18", "a21"],
   ["a18", "a23"],
-  ["a19", "anchor"],
   ["a20", "a23"],
+  ["anchor", "a21"],
+  ["a21", "a22"],
+  ["a21", "a23"],
   ["a21", "a24"],
-  ["a22", "a24"],
-  ["a23", "a25"],
-  ["a24", "a28"],
-  ["a25", "a28"],
   ["a26", "a29"],
   ["a27", "a30"],
   ["a28", "a29"],
@@ -258,9 +247,20 @@ function cardStyle(node: PrimaryNode) {
 
         <div class="pki-hero-byline" aria-label="Author and academic context">
           <p><span>Author:</span> Jorge Pablo Trías Posa</p>
+          <p>
+            <span>ORCID:</span>
+            <a
+              class="pki-hero-byline-link"
+              href="https://orcid.org/0009-0005-8226-8071"
+              target="_blank"
+              rel="noreferrer"
+            >
+              0009-0005-8226-8071
+            </a>
+          </p>
           <p><span>Email:</span> jptripos@etsinf.upv.es</p>
           <p><span>Institution:</span> Polytechnic University of Valencia</p>
-          <p><span>Thesis supervisor:</span> Mario Aragonés Lozano</p>
+          <p><span>Thesis supervisor:</span> PhD Mario Aragonés Lozano</p>
           <p><span>Thesis supervisor email:</span> maragones@teleco.upv.es</p>
           <p><span>Academic context:</span> Master’s thesis with progress toward a PhD</p>
         </div>
@@ -285,6 +285,12 @@ function cardStyle(node: PrimaryNode) {
             {ambientLinks.map(([from, to]) => (
               <path
                 class={`pki-link ${from.startsWith("a") && to.startsWith("a") ? "is-dim" : "is-structural"}`}
+                d={linkPath(from, to)}
+              />
+            ))}
+            {primaryLinks.map(([from, to]) => (
+              <path
+                class="pki-link is-route-base"
                 d={linkPath(from, to)}
               />
             ))}
@@ -332,8 +338,8 @@ function cardStyle(node: PrimaryNode) {
                 <g class="pki-node-label">
                   {node.label.map((line, lineIndex) => (
                     <text
-                      x={node.x + (node.type === "target" ? -50 : node.type === "anchor" ? -34 : -28)}
-                      y={node.y + (node.type === "target" ? 38 : node.type === "anchor" ? -22 : -22) + lineIndex * 20}
+                      x={node.x + (node.type === "target" ? -50 : node.type === "anchor" ? -34 : node.type === "bridge" ? -34 : node.type === "external" ? -30 : -28)}
+                      y={node.y + (node.type === "target" ? 38 : node.type === "anchor" ? -22 : node.type === "bridge" ? -40 : node.type === "external" ? -42 : -22) + lineIndex * 20}
                     >
                       {line}
                     </text>
@@ -362,10 +368,6 @@ function cardStyle(node: PrimaryNode) {
                 <div class={academicCardItemClasses}>
                   <dt class={academicCardTermClasses}>Crypto</dt>
                   <dd class={academicCardValueClasses}>{node.meta.crypto}</dd>
-                </div>
-                <div class={academicCardItemClasses}>
-                  <dt class={academicCardTermClasses}>Trust score</dt>
-                  <dd class={academicCardValueClasses}>{node.meta.score}</dd>
                 </div>
               </dl>
             </article>
@@ -519,7 +521,7 @@ function cardStyle(node: PrimaryNode) {
   }
 
   .pki-hero-lead {
-    margin: 30px 0 0;
+    margin: 22px 0 0;
     max-width: 54ch;
     color: rgba(242, 236, 227, 0.95);
     font-family: "Playfair Display", serif;
@@ -528,12 +530,12 @@ function cardStyle(node: PrimaryNode) {
   }
 
   .pki-hero-body {
-    margin: 24px 0 0;
+    margin: 20px 0 0;
     max-width: 54ch;
     color: rgba(211, 203, 191, 0.82);
     font-family: "Inter", system-ui, sans-serif;
     font-size: 1.03rem;
-    line-height: 1.82;
+    line-height: 1.66;
   }
 
   .pki-hero-actions {
@@ -565,6 +567,31 @@ function cardStyle(node: PrimaryNode) {
     margin-right: 4px;
   }
 
+  .pki-hero-byline-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(214, 227, 244, 0.82);
+    text-decoration: none;
+    transition: color 180ms ease, opacity 180ms ease;
+  }
+
+  .pki-hero-byline-link::before {
+    content: "";
+    width: 0.62rem;
+    height: 0.62rem;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.85) 0 18%, transparent 19%),
+      #a6ce39;
+    box-shadow: 0 0 10px rgba(166, 206, 57, 0.18);
+    flex: 0 0 auto;
+  }
+
+  .pki-hero-byline-link:hover {
+    color: rgba(238, 244, 252, 0.96);
+  }
+
   .pki-hero-graph-wrap {
     position: relative;
     min-height: 620px;
@@ -594,6 +621,12 @@ function cardStyle(node: PrimaryNode) {
   }
 
   .pki-link.is-structural {
+    opacity: 0.8;
+  }
+
+  .pki-link.is-route-base {
+    stroke: rgba(189, 205, 223, 0.16);
+    stroke-width: 1.2;
     opacity: 0.8;
   }
 
@@ -718,14 +751,15 @@ function cardStyle(node: PrimaryNode) {
     }
 
     .pki-hero-lead {
-      margin-top: 34px;
+      margin-top: 26px;
       font-size: 1.42rem;
       line-height: 1.15;
     }
 
     .pki-hero-body {
       font-size: 1rem;
-      line-height: 1.72;
+      line-height: 1.58;
+      margin-top: 18px;
     }
 
     .pki-hero-byline {
