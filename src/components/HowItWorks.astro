@@ -90,7 +90,6 @@ const links: ProcessLink[] = [
   { id: "a-root-c-root", from: "a-root", to: "c-root", kind: "cross" },
   { id: "a-intermediate-1-c-bridge-nw", from: "a-intermediate-1", to: "c-bridge-nw", kind: "cross" },
   { id: "a-intermediate-2-c-mesh-west", from: "a-intermediate-2", to: "c-mesh-west", kind: "cross" },
-  { id: "a-intermediate-2-c-mesh-center", from: "a-intermediate-2", to: "c-mesh-center", kind: "cross" },
   { id: "a-issuing-c-bridge-south", from: "a-issuing", to: "c-bridge-south", kind: "cross" },
   { id: "a-issuing-c-exit-south", from: "a-issuing", to: "c-exit-south", kind: "cross" },
   { id: "c-policy-b-root", from: "c-policy", to: "b-root", kind: "cross" },
@@ -197,6 +196,141 @@ function linkBehaviorClass(link: ProcessLink) {
 
   return "";
 }
+
+const mobileLeafPoint = { id: "leaf" as const, x: 118, y: 108 };
+const mobileNodeRadius = 7;
+
+const mobileNodes: ProcessNode[] = [
+  { id: "a-root", domain: "a", title: "Root CA", x: 286, y: 154, r: mobileNodeRadius, kind: "root", showLabel: true },
+  { id: "a-intermediate-1", domain: "a", title: "Intermediate CA", x: 246, y: 154, r: mobileNodeRadius, kind: "intermediate", showLabel: true },
+  { id: "a-intermediate-2", domain: "a", title: "Intermediate CA", x: 206, y: 154, r: mobileNodeRadius, kind: "intermediate", showLabel: true },
+  { id: "a-issuing", domain: "a", title: "Issuing CA", x: 166, y: 154, r: mobileNodeRadius, kind: "issuing", emphasis: "issuer", showLabel: true },
+  { id: "c-root", domain: "c", title: "Entry node", x: 294, y: 306, r: mobileNodeRadius, kind: "root" },
+  { id: "c-bridge-nw", domain: "c", title: "Cross-cert node", x: 230, y: 334, r: mobileNodeRadius, kind: "relation" },
+  { id: "c-mesh-west", domain: "c", title: "Mesh node", x: 170, y: 366, r: mobileNodeRadius, kind: "relation" },
+  { id: "c-mesh-east", domain: "c", title: "Mesh node", x: 236, y: 398, r: mobileNodeRadius, kind: "intermediate" },
+  { id: "c-mesh-center", domain: "c", title: "Trust relation", x: 192, y: 432, r: mobileNodeRadius, kind: "relation" },
+  { id: "c-policy", domain: "c", title: "Policy node", x: 276, y: 422, r: mobileNodeRadius, kind: "relation" },
+  { id: "c-bridge-south", domain: "c", title: "Detour node", x: 136, y: 450, r: mobileNodeRadius, kind: "relation" },
+  { id: "c-exit-south", domain: "c", title: "Exit node", x: 200, y: 470, r: mobileNodeRadius, kind: "intermediate" },
+  { id: "c-exit-north", domain: "c", title: "Exit node", x: 282, y: 462, r: mobileNodeRadius, kind: "intermediate" },
+  { id: "c-dead-end", domain: "c", title: "Dead end", x: 244, y: 484, r: mobileNodeRadius, kind: "relation" },
+  { id: "b-root", domain: "b", title: "Trust Anchor", x: 286, y: 624, r: mobileNodeRadius, kind: "anchor", emphasis: "anchor", showLabel: true },
+  { id: "b-intermediate-1", domain: "b", title: "Intermediate CA", x: 242, y: 624, r: mobileNodeRadius, kind: "intermediate", showLabel: true },
+  { id: "b-intermediate-2", domain: "b", title: "Intermediate CA", x: 198, y: 624, r: mobileNodeRadius, kind: "intermediate", showLabel: true },
+  { id: "b-issuing", domain: "b", title: "Issuing CA", x: 154, y: 624, r: mobileNodeRadius, kind: "issuing", showLabel: true },
+];
+
+const mobileLinks: ProcessLink[] = [
+  { id: "leaf-a-issuing", from: "leaf", to: "a-issuing", kind: "leaf" },
+  { id: "a-root-a-intermediate-1", from: "a-root", to: "a-intermediate-1", kind: "intra" },
+  { id: "a-intermediate-1-a-intermediate-2", from: "a-intermediate-1", to: "a-intermediate-2", kind: "intra" },
+  { id: "a-intermediate-2-a-issuing", from: "a-intermediate-2", to: "a-issuing", kind: "intra" },
+  { id: "c-root-c-bridge-nw", from: "c-root", to: "c-bridge-nw", kind: "intra" },
+  { id: "c-root-c-policy", from: "c-root", to: "c-policy", kind: "intra" },
+  { id: "c-bridge-nw-c-mesh-west", from: "c-bridge-nw", to: "c-mesh-west", kind: "intra" },
+  { id: "c-bridge-nw-c-mesh-east", from: "c-bridge-nw", to: "c-mesh-east", kind: "intra" },
+  { id: "c-mesh-west-c-mesh-center", from: "c-mesh-west", to: "c-mesh-center", kind: "intra" },
+  { id: "c-mesh-west-c-bridge-south", from: "c-mesh-west", to: "c-bridge-south", kind: "intra" },
+  { id: "c-mesh-east-c-mesh-center", from: "c-mesh-east", to: "c-mesh-center", kind: "intra" },
+  { id: "c-mesh-east-c-policy", from: "c-mesh-east", to: "c-policy", kind: "intra" },
+  { id: "c-mesh-center-c-policy", from: "c-mesh-center", to: "c-policy", kind: "intra" },
+  { id: "c-mesh-center-c-exit-south", from: "c-mesh-center", to: "c-exit-south", kind: "intra" },
+  { id: "c-mesh-center-c-exit-north", from: "c-mesh-center", to: "c-exit-north", kind: "intra" },
+  { id: "c-policy-c-exit-north", from: "c-policy", to: "c-exit-north", kind: "intra" },
+  { id: "c-bridge-south-c-exit-south", from: "c-bridge-south", to: "c-exit-south", kind: "intra" },
+  { id: "c-exit-south-c-exit-north", from: "c-exit-south", to: "c-exit-north", kind: "intra" },
+  { id: "c-exit-south-c-dead-end", from: "c-exit-south", to: "c-dead-end", kind: "intra" },
+  { id: "b-root-b-intermediate-1", from: "b-root", to: "b-intermediate-1", kind: "intra" },
+  { id: "b-intermediate-1-b-intermediate-2", from: "b-intermediate-1", to: "b-intermediate-2", kind: "intra" },
+  { id: "b-intermediate-2-b-issuing", from: "b-intermediate-2", to: "b-issuing", kind: "intra" },
+  { id: "a-root-c-root", from: "a-root", to: "c-root", kind: "cross" },
+  { id: "a-intermediate-1-c-bridge-nw", from: "a-intermediate-1", to: "c-bridge-nw", kind: "cross" },
+  { id: "a-intermediate-2-c-mesh-west", from: "a-intermediate-2", to: "c-mesh-west", kind: "cross" },
+  { id: "a-issuing-c-bridge-south", from: "a-issuing", to: "c-bridge-south", kind: "cross" },
+  { id: "a-issuing-c-exit-south", from: "a-issuing", to: "c-exit-south", kind: "cross" },
+  { id: "c-mesh-west-b-root", from: "c-mesh-west", to: "b-root", kind: "cross" },
+  { id: "c-exit-north-b-root", from: "c-exit-north", to: "b-root", kind: "cross" },
+  { id: "c-exit-north-b-intermediate-1", from: "c-exit-north", to: "b-intermediate-1", kind: "cross" },
+  { id: "c-mesh-center-b-intermediate-2", from: "c-mesh-center", to: "b-intermediate-2", kind: "cross" },
+  { id: "c-exit-south-b-intermediate-2", from: "c-exit-south", to: "b-intermediate-2", kind: "cross" },
+  { id: "a-issuing-b-intermediate-2", from: "a-issuing", to: "b-intermediate-2", kind: "cross" },
+];
+
+const mobilePathNodeOrder: NodeId[] = [
+  "a-issuing",
+  "a-intermediate-2",
+  "c-mesh-west",
+  "c-mesh-center",
+  "c-exit-north",
+  "b-intermediate-1",
+  "b-root",
+];
+
+const mobilePathLinkOrder = [
+  "leaf-a-issuing",
+  "a-intermediate-2-a-issuing",
+  "a-intermediate-2-c-mesh-west",
+  "c-mesh-west-c-mesh-center",
+  "c-mesh-center-c-exit-north",
+  "c-exit-north-b-intermediate-1",
+  "b-root-b-intermediate-1",
+] as const;
+
+const mobilePathNodeOrderMap = new Map(mobilePathNodeOrder.map((id, index) => [id, index + 1]));
+const mobilePathLinkOrderMap = new Map(mobilePathLinkOrder.map((id, index) => [id, index + 1]));
+const mobilePathNodeIdSet = new Set(mobilePathNodeOrder);
+const mobileDeadEndLinkIds = new Set(["c-bridge-south-c-exit-south", "c-exit-south-c-dead-end", "a-issuing-c-bridge-south"]);
+const mobileDetourLinkIds = new Set(["c-exit-south-c-exit-north", "a-issuing-c-exit-south", "c-exit-north-b-root"]);
+const mobileShortcutLinkIds = new Set(["a-issuing-b-intermediate-2"]);
+const mobileHintLinkIds = new Set([...mobileDeadEndLinkIds, ...mobileDetourLinkIds, ...mobileShortcutLinkIds]);
+const mobileHintNodeIds = new Set<NodeId>(["c-exit-south", "c-exit-north", "c-dead-end"]);
+
+const mobilePointMap = Object.fromEntries(
+  [mobileLeafPoint, ...mobileNodes].map((point) => [point.id, point]),
+) as Record<PointId, { x: number; y: number }>;
+
+const mobileSelectedLinks = mobilePathLinkOrder
+  .map((id) => mobileLinks.find((link) => link.id === id))
+  .filter(Boolean) as ProcessLink[];
+
+const mobileLabelPlacement = {
+  "a-root": { x: 286, y: 126, anchor: "middle" },
+  "a-intermediate-1": { x: 246, y: 184, anchor: "middle" },
+  "a-intermediate-2": { x: 206, y: 126, anchor: "middle" },
+  "a-issuing": { x: 166, y: 184, anchor: "middle" },
+  "b-root": { x: 286, y: 592, anchor: "middle" },
+  "b-intermediate-1": { x: 242, y: 652, anchor: "middle" },
+  "b-intermediate-2": { x: 198, y: 592, anchor: "middle" },
+  "b-issuing": { x: 154, y: 652, anchor: "middle" },
+} as const satisfies Partial<Record<NodeId, { x: number; y: number; anchor: "start" | "middle" | "end"; rotate?: number }>>;
+
+function mobileLabelLines(title: string) {
+  return title.split(" ");
+}
+
+function mobileLinkPath(fromId: PointId, toId: PointId) {
+  const from = mobilePointMap[fromId];
+  const to = mobilePointMap[toId];
+  const fromX = fromId === "leaf" ? from.x + 14 : from.x;
+  return `M ${fromX} ${from.y} L ${to.x} ${to.y}`;
+}
+
+function mobileLinkBehaviorClass(link: ProcessLink) {
+  if (mobileShortcutLinkIds.has(link.id)) {
+    return "is-shortcut";
+  }
+
+  if (mobileDeadEndLinkIds.has(link.id)) {
+    return "is-dead-end";
+  }
+
+  if (mobileDetourLinkIds.has(link.id)) {
+    return "is-detour";
+  }
+
+  return "";
+}
 ---
 
 <section id="how-it-works" class="process-section">
@@ -293,7 +427,8 @@ function linkBehaviorClass(link: ProcessLink) {
       <svg
         id="federated-process-graph"
         viewBox="0 0 1240 420"
-        class="federation-graph"
+        class="federation-graph federation-graph-desktop"
+        data-process-graph
         role="img"
         aria-label="Three PKI domains with multiple cross-domain certification paths and one highlighted trust chain"
       >
@@ -478,11 +613,191 @@ function linkBehaviorClass(link: ProcessLink) {
         </g>
         </g>
       </svg>
+
+      <svg
+        id="federated-process-graph-mobile"
+        viewBox="78 20 258 704"
+        class="federation-graph federation-graph-mobile"
+        data-process-graph
+        role="img"
+        aria-label="Vertical mobile view of federated trust graph with stacked PKI domains and selected trust chain"
+      >
+        <g class="process-mobile-shell" transform="translate(0 8)">
+          <rect class="process-domain-zone is-a" x="92" y="38" width="238" height="188" rx="7" />
+
+          <rect class="process-domain-zone is-b" x="92" y="516" width="238" height="188" rx="7" />
+
+          <g class="process-mobile-card-headings" aria-hidden="true">
+            <text class="process-mobile-domain-title is-a" x="108" y="64" text-anchor="start">Domain A</text>
+            <text class="process-mobile-domain-subtitle" x="108" y="80" text-anchor="start">certificate origin</text>
+            <text class="process-mobile-domain-title is-c" x="108" y="284" text-anchor="start">Cross-domain trust graph</text>
+            <text class="process-mobile-domain-subtitle" x="108" y="300" text-anchor="start">federated trust space</text>
+            <text class="process-mobile-domain-title is-b" x="108" y="542" text-anchor="start">Domain B</text>
+            <text class="process-mobile-domain-subtitle" x="108" y="558" text-anchor="start">validation / trust anchor</text>
+          </g>
+
+          <g class="process-background-grid process-background-grid-mobile" aria-hidden="true">
+            <path d="M110 78 H318" />
+            <path d="M110 152 H318" />
+            <path d="M110 226 H318" />
+            <path d="M110 320 H318" />
+            <path d="M110 414 H318" />
+            <path d="M110 508 H318" />
+            <path d="M110 602 H318" />
+            <path d="M110 676 H318" />
+          </g>
+
+          <g class="process-trust-space-mesh process-trust-space-mesh-mobile" aria-hidden="true">
+            <path d="M148 326 L222 302 L294 318" class="is-frame" />
+            <path d="M132 444 L196 420 L294 448" class="is-frame" />
+            <path d="M170 366 L188 430 L202 470" class="is-mesh" />
+            <path d="M230 334 L236 398 L276 422" class="is-mesh" />
+            <path d="M294 306 L282 462 L286 624" class="is-mesh" />
+          </g>
+
+          <g class="process-ambient-points process-ambient-points-mobile" aria-hidden="true">
+            <circle cx="110" cy="70" r="2.2" />
+            <circle cx="314" cy="72" r="2.2" />
+            <circle cx="118" cy="210" r="2.2" />
+            <circle cx="314" cy="212" r="2.2" />
+            <circle cx="112" cy="292" r="2.2" />
+            <circle cx="314" cy="294" r="2.2" />
+            <circle cx="118" cy="470" r="2.2" />
+            <circle cx="316" cy="472" r="2.2" />
+            <circle cx="112" cy="550" r="2.2" />
+            <circle cx="314" cy="552" r="2.2" />
+            <circle cx="116" cy="706" r="2.2" />
+            <circle cx="314" cy="708" r="2.2" />
+          </g>
+
+          <g class="federation-links" aria-hidden="true">
+            {mobileLinks.map((link) => (
+              <path
+                class={`process-link is-${link.kind} ${link.kind === "cross" ? "is-candidate" : ""} ${link.id === "a-intermediate-2-c-mesh-west" ? "is-mobile-bridge" : ""} ${mobileLinkBehaviorClass(link)}`}
+                data-hint-edge={mobileHintLinkIds.has(link.id) || undefined}
+                d={mobileLinkPath(link.from, link.to)}
+              />
+            ))}
+          </g>
+
+          <g class="federation-links federation-links-active" aria-hidden="true">
+            {mobileSelectedLinks.map((link) => (
+              <path
+                class={`process-active-edge ${selectedEdgeTone(link)}`}
+                data-path-edge
+                data-step={mobilePathLinkOrderMap.get(link.id)}
+                d={mobileLinkPath(link.from, link.to)}
+              />
+            ))}
+          </g>
+
+          <g
+            class="process-certificate-origin process-cert-icon"
+            data-origin-cert
+            data-path-point
+            data-step="0"
+            data-point-x={mobileLeafPoint.x}
+            data-point-y={mobileLeafPoint.y}
+            transform={`translate(${mobileLeafPoint.x} ${mobileLeafPoint.y})`}
+            aria-hidden="true"
+          >
+            <ellipse class="process-cert-shadow" cx="0" cy="0" rx="11" ry="7" />
+            <rect x="-10" y="-12" width="20" height="24" rx="3" />
+            <path d="M-5 -4 H5" />
+            <path d="M-5 1 H5" />
+            <path d="M-5 6 H2" />
+            <circle cx="5.5" cy="7" r="3" />
+            <path d="M4 10.5 L3.2 15 L5.5 13.6 L7.8 15 L7 10.5" />
+          </g>
+
+          <g class="federation-nodes">
+            {mobileNodes.map((node) => {
+              const isOnPath = mobilePathNodeIdSet.has(node.id);
+              const isAnchor = node.emphasis === "anchor";
+              const labelClass = node.emphasis === "issuer" || isAnchor ? "is-emphasis" : "";
+              const showLabel = Boolean(node.showLabel);
+              const label = mobileLabelPlacement[node.id];
+
+              return (
+                <g
+                  class={`process-node-group is-${node.domain} ${isOnPath ? "is-on-path" : ""} ${isAnchor ? "is-anchor" : ""}`}
+                  data-point-x={node.x}
+                  data-point-y={node.y}
+                  data-hint-node={mobileHintNodeIds.has(node.id) || undefined}
+                  data-path-node={isOnPath || undefined}
+                  data-path-point={isOnPath || undefined}
+                  data-step={isOnPath ? mobilePathNodeOrderMap.get(node.id) : undefined}
+                >
+                  <circle
+                    class={`process-node-halo is-${node.domain} ${isAnchor ? "is-anchor" : ""}`}
+                    data-node-halo={isOnPath || undefined}
+                    data-step={isOnPath ? mobilePathNodeOrderMap.get(node.id) : undefined}
+                    cx={node.x}
+                    cy={node.y}
+                    r={isAnchor ? 14 : 11}
+                  />
+                  {node.kind === "root" || node.kind === "anchor" ? (
+                    <circle
+                      class={`process-node-marker is-${node.kind} is-${node.domain}`}
+                      cx={node.x}
+                      cy={node.y}
+                      r={node.r + 2}
+                    />
+                  ) : null}
+                  <circle
+                    class={`process-graph-node is-${node.domain} is-${node.kind} ${node.emphasis === "issuer" ? "is-issuer" : ""} ${isAnchor ? "is-anchor" : ""}`}
+                    cx={node.x}
+                    cy={node.y}
+                    r={node.r}
+                  />
+                  <circle class={`process-node-core is-${node.kind}`} cx={node.x} cy={node.y} r={Math.max(1.8, node.r * 0.22)} />
+                  {showLabel && label ? (
+                    <text
+                      class={`process-node-caption process-node-caption-mobile is-${node.domain} ${labelClass}`}
+                      x={label.x}
+                      y={label.y}
+                      text-anchor={label.anchor}
+                    >
+                      {mobileLabelLines(node.title).map((line, index) => (
+                        <tspan x={label.x} dy={index === 0 ? 0 : 9}>
+                          {line}
+                        </tspan>
+                      ))}
+                    </text>
+                  ) : null}
+                </g>
+              );
+            })}
+          </g>
+
+          <g class="process-graph-labels process-graph-labels-mobile" aria-hidden="true">
+            <text x="118" y="134" text-anchor="middle" class="is-mobile-light is-mobile-entity">
+              <tspan x="118" dy="0">End-Entity</tspan>
+              <tspan x="118" dy="8">certificate</tspan>
+            </text>
+          </g>
+
+          <g class="process-moving-cert process-cert-icon" data-moving-cert aria-hidden="true">
+            <ellipse class="process-cert-trail" data-cert-trail cx="-2" cy="0" rx="18" ry="10" />
+            <rect x="-13" y="-16" width="26" height="32" rx="4" />
+            <path d="M-6 -6 H6" />
+            <path d="M-6 0 H6" />
+            <path d="M-6 6 H3" />
+            <circle cx="7" cy="9" r="3.8" />
+            <path d="M5 13 L4 19 L7 17 L10 19 L9 13" />
+          </g>
+        </g>
+      </svg>
     </div>
   </div>
 </section>
 
 <style>
+  .process-section,
+  .process-shell-wide {
+    position: relative;
+  }
+
   .federation-graph-card {
     position: relative;
     overflow: hidden;
@@ -493,7 +808,7 @@ function linkBehaviorClass(link: ProcessLink) {
       radial-gradient(circle at 50% 42%, rgba(203, 216, 233, 0.08), transparent 18%),
       radial-gradient(circle at 84% 44%, rgba(228, 187, 96, 0.12), transparent 22%),
       linear-gradient(180deg, rgba(10, 16, 30, 0.86), rgba(8, 13, 24, 0.92));
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: none;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.26);
     contain: paint;
   }
@@ -502,6 +817,94 @@ function linkBehaviorClass(link: ProcessLink) {
     display: block;
     width: 100%;
     height: auto;
+  }
+
+  .federation-graph-mobile {
+    display: none;
+  }
+
+  .process-mobile-domain-title {
+    font-family: "Playfair Display", serif;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+  }
+
+  .process-mobile-domain-title.is-a {
+    fill: rgba(225, 238, 255, 0.96);
+  }
+
+  .process-mobile-domain-title.is-c {
+    fill: rgba(236, 240, 246, 0.92);
+  }
+
+  .process-mobile-domain-title.is-b {
+    fill: rgba(250, 227, 177, 0.98);
+  }
+
+  .process-mobile-domain-subtitle {
+    fill: rgba(189, 199, 214, 0.62);
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .process-mobile-card {
+    stroke-width: 1.15;
+  }
+
+  .process-mobile-card.is-a {
+    fill: rgba(14, 23, 40, 0.96);
+    stroke: rgba(120, 181, 247, 0.14);
+  }
+
+  .process-mobile-card.is-c {
+    fill: rgba(9, 15, 28, 0.98);
+    stroke: rgba(255, 255, 255, 0.08);
+  }
+
+  .process-background-grid-mobile path {
+    stroke: rgba(128, 145, 170, 0.16);
+    stroke-width: 0.9;
+  }
+
+  .process-trust-space-mesh-mobile path {
+    stroke-width: 0.9;
+    opacity: 0.9;
+  }
+
+  .process-node-caption-mobile {
+    font-size: 15.9px;
+    letter-spacing: 0.005em;
+  }
+
+  .process-node-caption-mobile tspan {
+    dominant-baseline: hanging;
+  }
+
+  .process-node-caption-mobile.is-a {
+    fill: rgba(220, 232, 248, 0.84);
+  }
+
+  .process-node-caption-mobile.is-b {
+    fill: rgba(235, 220, 184, 0.86);
+  }
+
+  .process-node-caption-mobile.is-c {
+    fill: rgba(220, 228, 239, 0.46);
+  }
+
+  .process-graph-labels-mobile text {
+    font-size: 10px;
+  }
+
+  .process-graph-labels-mobile text.is-mobile-light {
+    fill: rgba(223, 230, 240, 0.74);
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  .process-graph-labels-mobile text.is-mobile-entity {
+    font-size: 7.25px;
   }
 
   .process-background-grid path {
@@ -623,7 +1026,7 @@ function linkBehaviorClass(link: ProcessLink) {
 
   .process-active-edge {
     fill: none;
-    stroke-width: 2.6;
+    stroke-width: 2.15;
     stroke-linecap: round;
     stroke-linejoin: round;
     opacity: 0.2;
@@ -792,9 +1195,42 @@ function linkBehaviorClass(link: ProcessLink) {
   }
 
   @media (max-width: 760px) {
+    .process-section::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 100vw;
+      transform: translateX(-50%);
+      background:
+        radial-gradient(circle at 30% 72%, rgba(88, 132, 198, 0.14), transparent 12%),
+        radial-gradient(circle at 80% 74%, rgba(228, 187, 96, 0.15), transparent 12%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .process-heading,
+    .process-shell-wide,
     .federation-graph-card {
-      padding: 10px 6px;
-      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.22);
+      position: relative;
+      z-index: 1;
+    }
+
+    .federation-graph-card {
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      overflow: visible;
+    }
+
+    .federation-graph-desktop {
+      display: none;
+    }
+
+    .federation-graph-mobile {
+      display: block;
     }
 
     .process-background-grid,
@@ -804,20 +1240,72 @@ function linkBehaviorClass(link: ProcessLink) {
       display: none;
     }
 
-    .process-domain-title {
-      font-size: 16px;
+    .federation-graph-mobile .process-link.is-intra {
+      stroke: rgba(101, 118, 142, 0.36);
+      stroke-width: 1.45;
+      opacity: 0.9;
     }
 
-    .process-domain-subtitle {
-      font-size: 11px;
+    .federation-graph-mobile .process-link.is-cross {
+      stroke: rgba(112, 129, 154, 0.26);
+      stroke-width: 1.3;
+      opacity: 0.78;
     }
 
-    .process-node-caption {
-      font-size: 10.5px;
+    .federation-graph-mobile .process-link.is-leaf {
+      stroke: rgba(76, 92, 117, 0.54);
+      stroke-width: 1.6;
+      opacity: 0.92;
     }
 
-    .process-graph-labels text {
-      font-size: 12px;
+    .federation-graph-mobile .process-link.is-mobile-bridge {
+      stroke: rgba(128, 151, 183, 0.42);
+      stroke-width: 1.45;
+      opacity: 0.94;
+    }
+
+    .federation-graph-mobile .process-link.is-dead-end,
+    .federation-graph-mobile .process-link.is-detour,
+    .federation-graph-mobile .process-link.is-shortcut {
+      opacity: 0.26;
+    }
+
+    .federation-graph-mobile .process-active-edge {
+      stroke-width: 2.2;
+      opacity: 0.96;
+    }
+
+    .federation-graph-mobile .process-node-halo.is-a,
+    .federation-graph-mobile .process-node-halo.is-b {
+      fill: rgba(82, 103, 132, 0.14);
+    }
+
+    .federation-graph-mobile .process-node-halo.is-c {
+      fill: rgba(214, 229, 246, 0.08);
+    }
+
+    .federation-graph-mobile .process-node-caption-mobile.is-a,
+    .federation-graph-mobile .process-node-caption-mobile.is-b,
+    .federation-graph-mobile .process-node-caption-mobile.is-a.is-emphasis,
+    .federation-graph-mobile .process-node-caption-mobile.is-b.is-emphasis,
+    .federation-graph-mobile .process-node-group.is-anchor .process-node-caption-mobile {
+      fill: inherit;
+    }
+
+    .federation-graph-mobile .process-node-caption-mobile.is-a,
+    .federation-graph-mobile .process-node-caption-mobile.is-a.is-emphasis {
+      fill: rgba(220, 232, 248, 0.84);
+    }
+
+    .federation-graph-mobile .process-node-caption-mobile.is-b,
+    .federation-graph-mobile .process-node-caption-mobile.is-b.is-emphasis,
+    .federation-graph-mobile .process-node-group.is-anchor .process-node-caption-mobile {
+      fill: rgba(235, 220, 184, 0.86);
+    }
+
+    .federation-graph-mobile .process-node-caption-mobile {
+      font-size: 8px;
+      letter-spacing: 0;
     }
 
     .process-active-edge,
@@ -828,8 +1316,8 @@ function linkBehaviorClass(link: ProcessLink) {
       filter: none;
     }
 
-    .process-active-edge {
-      stroke-width: 2.45;
+    .federation-graph-desktop .process-active-edge {
+      stroke-width: 1.55;
     }
   }
 </style>
@@ -840,10 +1328,7 @@ function linkBehaviorClass(link: ProcessLink) {
 
   if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
-
-    const graph = document.querySelector("#federated-process-graph");
-
-    if (graph instanceof SVGSVGElement) {
+    const initGraph = (graph) => {
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const compactMotion = window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;
       const selectedEdges = Array.from(graph.querySelectorAll("[data-path-edge]"));
@@ -1180,6 +1665,12 @@ function linkBehaviorClass(link: ProcessLink) {
           timeline.eventCallback("onComplete", clearMotionHints);
         }
       }
-    }
+    };
+
+    document.querySelectorAll("[data-process-graph]").forEach((graph) => {
+      if (graph instanceof SVGSVGElement) {
+        initGraph(graph);
+      }
+    });
   }
 </script>
