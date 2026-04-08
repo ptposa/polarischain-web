@@ -1,3 +1,201 @@
+---
+type DomainId = "a" | "b" | "c";
+type NodeId = `${DomainId}-${string}`;
+type PointId = NodeId | "leaf";
+type LinkKind = "intra" | "cross" | "leaf";
+
+type DomainZone = {
+  id: DomainId;
+  title: string;
+  subtitle: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+type ProcessNode = {
+  id: NodeId;
+  domain: DomainId;
+  title: string;
+  x: number;
+  y: number;
+  r: number;
+  emphasis?: "issuer" | "anchor";
+  showLabel?: boolean;
+};
+
+type ProcessLink = {
+  id: string;
+  from: PointId;
+  to: PointId;
+  kind: LinkKind;
+};
+
+const leafPoint = { id: "leaf" as const, x: 134, y: 296 };
+
+const zones: DomainZone[] = [
+  { id: "a", title: "Domain A", subtitle: "certificate origin", x: 66, y: 58, width: 298, height: 304 },
+  { id: "c", title: "Cross-domain trust graph", subtitle: "federated trust space", x: 468, y: 58, width: 304, height: 304 },
+  { id: "b", title: "Domain B", subtitle: "validation / trust anchor", x: 870, y: 58, width: 304, height: 304 },
+];
+
+const nodes: ProcessNode[] = [
+  { id: "a-root", domain: "a", title: "Root CA", x: 236, y: 98, r: 11, showLabel: true },
+  { id: "a-intermediate-1", domain: "a", title: "Intermediate CA", x: 236, y: 160, r: 10, showLabel: true },
+  { id: "a-intermediate-2", domain: "a", title: "Intermediate CA", x: 236, y: 224, r: 10, showLabel: true },
+  { id: "a-issuing", domain: "a", title: "Issuing CA", x: 236, y: 296, r: 11, emphasis: "issuer", showLabel: true },
+  { id: "c-root", domain: "c", title: "Root CA", x: 540, y: 102, r: 10 },
+  { id: "c-bridge-nw", domain: "c", title: "Cross-cert node", x: 610, y: 126, r: 9.5 },
+  { id: "c-policy", domain: "c", title: "Policy node", x: 690, y: 110, r: 9.5 },
+  { id: "c-mesh-west", domain: "c", title: "Intermediate CA", x: 548, y: 190, r: 10 },
+  { id: "c-mesh-center", domain: "c", title: "Trust relation", x: 626, y: 198, r: 10.5 },
+  { id: "c-mesh-east", domain: "c", title: "Relay CA", x: 706, y: 188, r: 9.5 },
+  { id: "c-bridge-south", domain: "c", title: "Cross-cert node", x: 574, y: 284, r: 9.5 },
+  { id: "c-exit-south", domain: "c", title: "Exit CA", x: 650, y: 288, r: 9.5 },
+  { id: "c-exit-north", domain: "c", title: "Exit CA", x: 724, y: 258, r: 9.5 },
+  { id: "c-dead-end", domain: "c", title: "Dead end", x: 682, y: 338, r: 8.5 },
+  { id: "b-root", domain: "b", title: "Trust Anchor", x: 1010, y: 98, r: 13, emphasis: "anchor", showLabel: true },
+  { id: "b-intermediate-1", domain: "b", title: "Intermediate CA", x: 1010, y: 162, r: 10, showLabel: true },
+  { id: "b-intermediate-2", domain: "b", title: "Intermediate CA", x: 1010, y: 228, r: 10, showLabel: true },
+  { id: "b-issuing", domain: "b", title: "Issuing CA", x: 1010, y: 296, r: 10, showLabel: true },
+];
+
+const links: ProcessLink[] = [
+  { id: "leaf-a-issuing", from: "leaf", to: "a-issuing", kind: "leaf" },
+  { id: "a-root-a-intermediate-1", from: "a-root", to: "a-intermediate-1", kind: "intra" },
+  { id: "a-intermediate-1-a-intermediate-2", from: "a-intermediate-1", to: "a-intermediate-2", kind: "intra" },
+  { id: "a-intermediate-2-a-issuing", from: "a-intermediate-2", to: "a-issuing", kind: "intra" },
+  { id: "c-root-c-bridge-nw", from: "c-root", to: "c-bridge-nw", kind: "intra" },
+  { id: "c-root-c-mesh-west", from: "c-root", to: "c-mesh-west", kind: "intra" },
+  { id: "c-bridge-nw-c-policy", from: "c-bridge-nw", to: "c-policy", kind: "intra" },
+  { id: "c-bridge-nw-c-mesh-center", from: "c-bridge-nw", to: "c-mesh-center", kind: "intra" },
+  { id: "c-policy-c-mesh-east", from: "c-policy", to: "c-mesh-east", kind: "intra" },
+  { id: "c-policy-c-exit-north", from: "c-policy", to: "c-exit-north", kind: "intra" },
+  { id: "c-mesh-west-c-mesh-center", from: "c-mesh-west", to: "c-mesh-center", kind: "intra" },
+  { id: "c-mesh-west-c-bridge-south", from: "c-mesh-west", to: "c-bridge-south", kind: "intra" },
+  { id: "c-mesh-center-c-mesh-east", from: "c-mesh-center", to: "c-mesh-east", kind: "intra" },
+  { id: "c-mesh-center-c-bridge-south", from: "c-mesh-center", to: "c-bridge-south", kind: "intra" },
+  { id: "c-mesh-center-c-exit-south", from: "c-mesh-center", to: "c-exit-south", kind: "intra" },
+  { id: "c-mesh-center-c-exit-north", from: "c-mesh-center", to: "c-exit-north", kind: "intra" },
+  { id: "c-mesh-east-c-exit-north", from: "c-mesh-east", to: "c-exit-north", kind: "intra" },
+  { id: "c-bridge-south-c-exit-south", from: "c-bridge-south", to: "c-exit-south", kind: "intra" },
+  { id: "c-exit-south-c-exit-north", from: "c-exit-south", to: "c-exit-north", kind: "intra" },
+  { id: "c-exit-south-c-dead-end", from: "c-exit-south", to: "c-dead-end", kind: "intra" },
+  { id: "b-root-b-intermediate-1", from: "b-root", to: "b-intermediate-1", kind: "intra" },
+  { id: "b-intermediate-1-b-intermediate-2", from: "b-intermediate-1", to: "b-intermediate-2", kind: "intra" },
+  { id: "b-intermediate-2-b-issuing", from: "b-intermediate-2", to: "b-issuing", kind: "intra" },
+  { id: "a-root-c-root", from: "a-root", to: "c-root", kind: "cross" },
+  { id: "a-intermediate-1-c-bridge-nw", from: "a-intermediate-1", to: "c-bridge-nw", kind: "cross" },
+  { id: "a-intermediate-2-c-mesh-west", from: "a-intermediate-2", to: "c-mesh-west", kind: "cross" },
+  { id: "a-intermediate-2-c-mesh-center", from: "a-intermediate-2", to: "c-mesh-center", kind: "cross" },
+  { id: "a-issuing-c-bridge-south", from: "a-issuing", to: "c-bridge-south", kind: "cross" },
+  { id: "a-issuing-c-exit-south", from: "a-issuing", to: "c-exit-south", kind: "cross" },
+  { id: "c-policy-b-root", from: "c-policy", to: "b-root", kind: "cross" },
+  { id: "c-exit-north-b-root", from: "c-exit-north", to: "b-root", kind: "cross" },
+  { id: "c-exit-north-b-intermediate-1", from: "c-exit-north", to: "b-intermediate-1", kind: "cross" },
+  { id: "c-mesh-east-b-intermediate-1", from: "c-mesh-east", to: "b-intermediate-1", kind: "cross" },
+  { id: "c-mesh-center-b-intermediate-2", from: "c-mesh-center", to: "b-intermediate-2", kind: "cross" },
+  { id: "c-exit-south-b-intermediate-2", from: "c-exit-south", to: "b-intermediate-2", kind: "cross" },
+  { id: "a-issuing-b-intermediate-2", from: "a-issuing", to: "b-intermediate-2", kind: "cross" },
+];
+
+const pathNodeOrder: NodeId[] = [
+  "a-issuing",
+  "a-intermediate-2",
+  "c-mesh-west",
+  "c-mesh-center",
+  "c-exit-north",
+  "b-intermediate-1",
+  "b-root",
+];
+
+const pathLinkOrder = [
+  "leaf-a-issuing",
+  "a-intermediate-2-a-issuing",
+  "a-intermediate-2-c-mesh-west",
+  "c-mesh-west-c-mesh-center",
+  "c-mesh-center-c-exit-north",
+  "c-exit-north-b-intermediate-1",
+  "b-root-b-intermediate-1",
+] as const;
+
+const pathNodeOrderMap = new Map(pathNodeOrder.map((id, index) => [id, index + 1]));
+const pathLinkOrderMap = new Map(pathLinkOrder.map((id, index) => [id, index + 1]));
+const pathNodeIdSet = new Set(pathNodeOrder);
+const deadEndLinkIds = new Set(["a-issuing-c-bridge-south", "c-bridge-south-c-exit-south", "c-exit-south-c-dead-end"]);
+const detourLinkIds = new Set(["a-issuing-c-exit-south", "c-exit-south-c-exit-north", "c-exit-north-b-root"]);
+const shortcutLinkIds = new Set(["a-issuing-b-intermediate-2"]);
+const hintLinkIds = new Set([...deadEndLinkIds, ...detourLinkIds, ...shortcutLinkIds]);
+const hintNodeIds = new Set<NodeId>(["c-exit-south", "c-dead-end", "c-exit-north"]);
+
+const pointMap = Object.fromEntries(
+  [leafPoint, ...nodes].map((point) => [point.id, point]),
+) as Record<PointId, { x: number; y: number }>;
+
+const selectedLinks = pathLinkOrder
+  .map((id) => links.find((link) => link.id === id))
+  .filter(Boolean) as ProcessLink[];
+
+const ambientPoints = [
+  { x: 88, y: 94, r: 2.4 },
+  { x: 108, y: 330, r: 2.8 },
+  { x: 342, y: 82, r: 2.6 },
+  { x: 350, y: 338, r: 2.2 },
+  { x: 508, y: 82, r: 2.2 },
+  { x: 540, y: 320, r: 2.4 },
+  { x: 736, y: 86, r: 2.6 },
+  { x: 754, y: 336, r: 2.2 },
+  { x: 904, y: 84, r: 2.2 },
+  { x: 1138, y: 118, r: 2.6 },
+  { x: 1156, y: 330, r: 2.4 },
+  { x: 1186, y: 222, r: 2.2 },
+];
+
+const ambientLines = [
+  "M 86 104 L 126 132",
+  "M 322 92 L 364 132",
+  "M 498 96 L 550 128",
+  "M 702 102 L 756 140",
+  "M 908 98 L 962 130",
+  "M 1118 138 L 1174 172",
+];
+
+function linkPath(fromId: PointId, toId: PointId) {
+  const from = pointMap[fromId];
+  const to = pointMap[toId];
+  return `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
+}
+
+function selectedEdgeTone(link: ProcessLink) {
+  if (link.to.startsWith("b-") || link.from.startsWith("b-")) {
+    return "is-warm";
+  }
+
+  if (link.from === "leaf" || link.from.startsWith("a-") || link.to.startsWith("a-")) {
+    return "is-cool";
+  }
+
+  return "is-neutral";
+}
+
+function linkBehaviorClass(link: ProcessLink) {
+  if (shortcutLinkIds.has(link.id)) {
+    return "is-shortcut";
+  }
+
+  if (deadEndLinkIds.has(link.id)) {
+    return "is-dead-end";
+  }
+
+  if (detourLinkIds.has(link.id)) {
+    return "is-detour";
+  }
+
+  return "";
+}
+---
+
 <section id="how-it-works" class="process-section">
   <div class="container process-shell-wide">
     <div class="process-heading">
@@ -5,9 +203,10 @@
       <h2>Certification path building over a federated graph of CAs.</h2>
       <p>
         PolarisChain does not replace PKIX validation. It provides a formal layer for
-        modelling federation relationships, discovering viable routes, and selecting an
-        optimal path between the issuer side of a certificate request and governed trust
-        points across multidomain PKI environments.
+        modelling federation relationships without introducing a central federation
+        authority, discovering viable routes, and selecting an optimal path between the
+        issuer side of a certificate request and governed trust points across
+        multidomain PKI environments.
       </p>
     </div>
 
@@ -87,169 +286,574 @@
       </div>
     </div>
 
-    <div class="federation-graph-card" aria-label="Federated trust graph with optimal chain animation">
-      <svg id="federated-process-graph" viewBox="0 0 1240 420" class="federation-graph" role="img">
+    <div class="federation-graph-card" aria-label="Federated trust graph with a selected cross-domain validation path">
+      <svg
+        id="federated-process-graph"
+        viewBox="0 0 1240 420"
+        class="federation-graph"
+        role="img"
+        aria-label="Three PKI domains with multiple cross-domain certification paths and one highlighted trust chain"
+      >
         <defs>
-          <radialGradient id="processStarGlow" cx="50%" cy="50%" r="60%">
-            <stop offset="0%" stop-color="rgba(255, 248, 220, 0.42)" />
-            <stop offset="100%" stop-color="rgba(255, 248, 220, 0)" />
+          <radialGradient id="processDomainAGlow" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stop-color="#72b7ff" stop-opacity="0.2" />
+            <stop offset="100%" stop-color="#72b7ff" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="processDomainCGlow" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stop-color="#c8d4e2" stop-opacity="0.14" />
+            <stop offset="100%" stop-color="#c8d4e2" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="processDomainBGlow" cx="50%" cy="50%" r="72%">
+            <stop offset="0%" stop-color="#ffd887" stop-opacity="0.22" />
+            <stop offset="100%" stop-color="#ffd887" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="processNodeBlueGlow" cx="50%" cy="50%" r="64%">
+            <stop offset="0%" stop-color="#c7e4ff" stop-opacity="0.48" />
+            <stop offset="100%" stop-color="#c7e4ff" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="processNodeNeutralGlow" cx="50%" cy="50%" r="64%">
+            <stop offset="0%" stop-color="#dce4ed" stop-opacity="0.34" />
+            <stop offset="100%" stop-color="#dce4ed" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="processNodeGoldGlow" cx="50%" cy="50%" r="68%">
+            <stop offset="0%" stop-color="#ffe3a3" stop-opacity="0.55" />
+            <stop offset="100%" stop-color="#ffe3a3" stop-opacity="0" />
           </radialGradient>
         </defs>
 
-        <g class="process-background-grid">
-          <path d="M120 56 H1140"></path>
-          <path d="M120 140 H1140"></path>
-          <path d="M120 224 H1140"></path>
-          <path d="M120 308 H1140"></path>
+        <g class="process-background-grid" aria-hidden="true">
+          <path d="M74 102 H1160"></path>
+          <path d="M74 194 H1160"></path>
+          <path d="M74 286 H1160"></path>
         </g>
 
-        <g class="incoming-certs">
-          <g transform="translate(28 286)" class="incoming-cert cert-small">
-            <rect x="0" y="0" width="30" height="36" rx="4"></rect>
-            <path d="M8 10 H22"></path>
-            <path d="M8 16 H22"></path>
-            <circle cx="24" cy="24" r="4"></circle>
-          </g>
-          <g transform="translate(58 262)" class="incoming-cert cert-medium">
-            <rect x="0" y="0" width="38" height="46" rx="5"></rect>
-            <path d="M10 13 H28"></path>
-            <path d="M10 19 H28"></path>
-            <path d="M10 25 H24"></path>
-            <circle cx="30" cy="31" r="5"></circle>
-          </g>
-          <g transform="translate(102 232)" class="incoming-cert cert-large">
-            <rect x="0" y="0" width="48" height="58" rx="6"></rect>
-            <path d="M12 16 H34"></path>
-            <path d="M12 23 H34"></path>
-            <path d="M12 30 H31"></path>
-            <circle cx="38" cy="40" r="6"></circle>
-            <path d="M35 45 L34 56 L38 53 L42 56 L41 45"></path>
-          </g>
-          <g transform="translate(160 194)" class="incoming-cert cert-large">
-            <rect x="0" y="0" width="50" height="60" rx="6"></rect>
-            <path d="M13 16 H36"></path>
-            <path d="M13 24 H36"></path>
-            <path d="M13 32 H32"></path>
-            <circle cx="40" cy="41" r="6"></circle>
-            <path d="M37 46 L36 58 L40 55 L44 58 L43 46"></path>
-          </g>
+        <g class="process-domain-zones" aria-hidden="true">
+          {zones.map((zone) => (
+            <>
+              {zone.id === "c" ? null : (
+                <rect
+                  class={`process-domain-zone is-${zone.id}`}
+                  x={zone.x}
+                  y={zone.y}
+                  width={zone.width}
+                  height={zone.height}
+                  rx="34"
+                />
+              )}
+              <ellipse
+                class={`process-domain-orbit is-${zone.id}`}
+                cx={zone.x + zone.width / 2}
+                cy={zone.y + zone.height / 2}
+                rx={zone.width * 0.45}
+                ry={zone.height * 0.42}
+              />
+            </>
+          ))}
         </g>
 
-        <g class="federation-links">
-          <path d="M182 230 L254 176" />
-          <path d="M182 230 L272 268" />
-          <path d="M182 230 L318 220" />
-          <path d="M254 176 L318 220" />
-          <path d="M254 176 L340 124" />
-          <path d="M272 268 L318 220" />
-          <path d="M272 268 L356 306" />
-          <path d="M318 220 L340 124" />
-          <path d="M318 220 L412 184" />
-          <path d="M318 220 L426 248" />
-          <path d="M340 124 L412 184" />
-          <path d="M340 124 L448 110" />
-          <path d="M356 306 L426 248" />
-          <path d="M356 306 L470 330" />
-          <path d="M412 184 L426 248" />
-          <path d="M412 184 L530 170" />
-          <path d="M426 248 L530 170" />
-          <path d="M426 248 L552 242" />
-          <path d="M448 110 L530 170" />
-          <path d="M448 110 L610 92" />
-          <path d="M470 330 L552 242" />
-          <path d="M470 330 L634 326" />
-          <path d="M530 170 L552 242" />
-          <path d="M530 170 L636 154" />
-          <path d="M552 242 L636 154" />
-          <path d="M552 242 L716 210" />
-          <path d="M610 92 L636 154" />
-          <path d="M610 92 L742 114" />
-          <path d="M634 326 L716 210" />
-          <path d="M634 326 L786 326" />
-          <path d="M636 154 L716 210" />
-          <path d="M636 154 L762 188" />
-          <path d="M716 210 L762 188" />
-          <path d="M716 210 L844 150" />
-          <path d="M716 210 L852 244" />
-          <path d="M742 114 L844 150" />
-          <path d="M742 114 L914 98" />
-          <path d="M762 188 L844 150" />
-          <path d="M762 188 L852 244" />
-          <path d="M786 326 L852 244" />
-          <path d="M786 326 L926 324" />
-          <path d="M844 150 L914 98" />
-          <path d="M844 150 L960 192" />
-          <path d="M852 244 L960 192" />
-          <path d="M852 244 L1008 264" />
-          <path d="M914 98 L960 192" />
-          <path d="M914 98 L1060 128" />
-          <path d="M926 324 L1008 264" />
-          <path d="M960 192 L1008 264" />
-          <path d="M960 192 L1060 128" />
-          <path d="M960 192 L1108 198" />
-          <path d="M1008 264 L1108 198" />
-          <path d="M1060 128 L1108 198" />
+        <g class="process-trust-space-mesh" aria-hidden="true">
+          <ellipse cx="620" cy="208" rx="172" ry="112" class="process-trust-space-cloud is-outer" />
+          <ellipse cx="632" cy="204" rx="128" ry="84" class="process-trust-space-cloud is-inner" />
+          <path d="M492 138 C556 108, 696 108, 756 156" />
+          <path d="M486 256 C560 208, 680 224, 768 286" />
+          <path d="M540 330 C604 286, 684 286, 736 244" />
         </g>
 
-        <g class="federation-links federation-links-active">
-          <path class="process-active-edge" data-step="1" d="M182 230 L318 220" />
-          <path class="process-active-edge" data-step="2" d="M318 220 L426 248" />
-          <path class="process-active-edge" data-step="3" d="M426 248 L552 242" />
-          <path class="process-active-edge" data-step="4" d="M552 242 L716 210" />
-          <path class="process-active-edge" data-step="5" d="M716 210 L852 244" />
-          <path class="process-active-edge" data-step="6" d="M852 244 L960 192" />
-          <path class="process-active-edge" data-step="7" d="M960 192 L1108 198" />
+        <g class="process-domain-headings">
+          {zones.map((zone) => (
+            <>
+              <text class={`process-domain-title is-${zone.id}`} x={zone.x + 18} y={zone.y - 14}>
+                {zone.title}
+              </text>
+              <text class="process-domain-subtitle" x={zone.x + 18} y={zone.y + 10}>
+                {zone.subtitle}
+              </text>
+            </>
+          ))}
+        </g>
+
+        <g class="process-ambient-lines" aria-hidden="true">
+          {ambientLines.map((path) => (
+            <path d={path} />
+          ))}
+        </g>
+
+        <g class="process-ambient-points" aria-hidden="true">
+          {ambientPoints.map((point) => (
+            <circle cx={point.x} cy={point.y} r={point.r} />
+          ))}
+        </g>
+
+        <g class="federation-links" aria-hidden="true">
+          {links.map((link) => (
+            <path
+              class={`process-link is-${link.kind} ${link.kind === "cross" ? "is-candidate" : ""} ${linkBehaviorClass(link)}`}
+              data-hint-edge={hintLinkIds.has(link.id) || undefined}
+              d={linkPath(link.from, link.to)}
+            />
+          ))}
+        </g>
+
+        <g class="federation-links federation-links-active" aria-hidden="true">
+          {selectedLinks.map((link) => (
+            <path
+              class={`process-active-edge ${selectedEdgeTone(link)}`}
+              data-path-edge
+              data-step={pathLinkOrderMap.get(link.id)}
+              d={linkPath(link.from, link.to)}
+            />
+          ))}
+        </g>
+
+        <g
+          class="process-certificate-origin process-cert-icon"
+          data-origin-cert
+          data-path-point
+          data-step="0"
+          data-point-x={leafPoint.x}
+          data-point-y={leafPoint.y}
+          transform={`translate(${leafPoint.x} ${leafPoint.y})`}
+          aria-hidden="true"
+        >
+          <ellipse class="process-cert-shadow" cx="0" cy="0" rx="18" ry="12" />
+          <rect x="-15" y="-18" width="30" height="36" rx="5" />
+          <path d="M-7 -7 H7" />
+          <path d="M-7 -1 H7" />
+          <path d="M-7 5 H4" />
+          <circle cx="8" cy="10" r="4.4" />
+          <path d="M6 14 L5 21 L8 19 L11 21 L10 14" />
         </g>
 
         <g class="federation-nodes">
-          <circle cx="182" cy="230" r="10" class="process-graph-node is-issuer"></circle>
-          <circle cx="254" cy="176" r="9" class="process-graph-node"></circle>
-          <circle cx="272" cy="268" r="8" class="process-graph-node"></circle>
-          <circle cx="318" cy="220" r="12" class="process-graph-node is-highlight"></circle>
-          <circle cx="340" cy="124" r="10" class="process-graph-node"></circle>
-          <circle cx="356" cy="306" r="8" class="process-graph-node"></circle>
-          <circle cx="412" cy="184" r="9" class="process-graph-node"></circle>
-          <circle cx="426" cy="248" r="10" class="process-graph-node is-highlight"></circle>
-          <circle cx="448" cy="110" r="8" class="process-graph-node"></circle>
-          <circle cx="470" cy="330" r="7" class="process-graph-node"></circle>
-          <circle cx="530" cy="170" r="11" class="process-graph-node"></circle>
-          <circle cx="552" cy="242" r="10" class="process-graph-node is-highlight"></circle>
-          <circle cx="610" cy="92" r="8" class="process-graph-node"></circle>
-          <circle cx="634" cy="326" r="8" class="process-graph-node"></circle>
-          <circle cx="636" cy="154" r="10" class="process-graph-node"></circle>
-          <circle cx="716" cy="210" r="11" class="process-graph-node is-highlight"></circle>
-          <circle cx="742" cy="114" r="8" class="process-graph-node"></circle>
-          <circle cx="762" cy="188" r="10" class="process-graph-node"></circle>
-          <circle cx="786" cy="326" r="7" class="process-graph-node"></circle>
-          <circle cx="844" cy="150" r="10" class="process-graph-node"></circle>
-          <circle cx="852" cy="244" r="12" class="process-graph-node is-highlight"></circle>
-          <circle cx="914" cy="98" r="9" class="process-graph-node"></circle>
-          <circle cx="926" cy="324" r="8" class="process-graph-node"></circle>
-          <circle cx="960" cy="192" r="14" class="process-graph-node is-highlight"></circle>
-          <circle cx="1008" cy="264" r="8" class="process-graph-node"></circle>
-          <circle cx="1060" cy="128" r="11" class="process-graph-node"></circle>
-          <circle cx="1108" cy="198" r="15" class="process-graph-node is-anchor"></circle>
+          {nodes.map((node) => {
+            const isOnPath = pathNodeIdSet.has(node.id);
+            const isAnchor = node.emphasis === "anchor";
+            const labelClass = node.emphasis === "issuer" || isAnchor ? "is-emphasis" : "";
+            const showLabel = Boolean(node.showLabel);
+
+            return (
+              <g
+                class={`process-node-group is-${node.domain} ${isOnPath ? "is-on-path" : ""} ${isAnchor ? "is-anchor" : ""}`}
+                data-point-x={node.x}
+                data-point-y={node.y}
+                data-hint-node={hintNodeIds.has(node.id) || undefined}
+                data-path-node={isOnPath || undefined}
+                data-path-point={isOnPath || undefined}
+                data-step={isOnPath ? pathNodeOrderMap.get(node.id) : undefined}
+              >
+                <circle
+                  class={`process-node-halo is-${node.domain} ${isAnchor ? "is-anchor" : ""}`}
+                  data-node-halo={isOnPath || undefined}
+                  data-step={isOnPath ? pathNodeOrderMap.get(node.id) : undefined}
+                  cx={node.x}
+                  cy={node.y}
+                  r={isAnchor ? 40 : 30}
+                />
+                <circle
+                  class={`process-graph-node is-${node.domain} ${node.emphasis === "issuer" ? "is-issuer" : ""} ${isAnchor ? "is-anchor" : ""}`}
+                  cx={node.x}
+                  cy={node.y}
+                  r={node.r}
+                />
+                <circle class="process-node-core" cx={node.x} cy={node.y} r={Math.max(2.8, node.r * 0.28)} />
+                {showLabel ? (
+                  <text
+                    class={`process-node-caption ${labelClass}`}
+                    x={node.x}
+                    y={node.y + node.r + 20}
+                    text-anchor="middle"
+                  >
+                    {node.title}
+                  </text>
+                ) : null}
+              </g>
+            );
+          })}
         </g>
 
-        <g class="process-active-halos">
-          <circle cx="182" cy="230" r="28" class="process-halo"></circle>
-          <circle cx="552" cy="242" r="28" class="process-halo"></circle>
-          <circle cx="852" cy="244" r="32" class="process-halo"></circle>
-          <circle cx="1108" cy="198" r="42" class="process-halo process-halo-anchor"></circle>
+        <g class="process-graph-labels" aria-hidden="true">
+          <text x="84" y="338">End-Entity certificate</text>
+          <text x="330" y="168">Cross-domain edge</text>
+          <text x="520" y="348">Cross-domain trust graph</text>
+          <text x="954" y="78">Trust Anchor</text>
         </g>
 
-        <g class="process-graph-labels">
-          <text x="164" y="258">Issuer CA</text>
-          <text x="396" y="277">Cross-certified</text>
-          <text x="408" y="299">domain edge</text>
-          <text x="825" y="277">Bridge / trust</text>
-          <text x="848" y="299">federation zone</text>
-          <text x="1062" y="238">Trust Anchor</text>
+        <g class="process-moving-cert process-cert-icon" data-moving-cert aria-hidden="true">
+          <ellipse class="process-cert-trail" data-cert-trail cx="-2" cy="0" rx="20" ry="12" />
+          <rect x="-15" y="-18" width="30" height="36" rx="5" />
+          <path d="M-7 -7 H7" />
+          <path d="M-7 -1 H7" />
+          <path d="M-7 5 H4" />
+          <circle cx="8" cy="10" r="4.4" />
+          <path d="M6 14 L5 21 L8 19 L11 21 L10 14" />
         </g>
       </svg>
     </div>
   </div>
 </section>
+
+<style>
+  .federation-graph-card {
+    position: relative;
+    overflow: hidden;
+    padding: 18px 12px 8px;
+    border-radius: var(--radius-xl);
+    background:
+      radial-gradient(circle at 20% 48%, rgba(94, 146, 216, 0.12), transparent 22%),
+      radial-gradient(circle at 50% 42%, rgba(203, 216, 233, 0.08), transparent 18%),
+      radial-gradient(circle at 84% 44%, rgba(228, 187, 96, 0.12), transparent 22%),
+      linear-gradient(180deg, rgba(10, 16, 30, 0.86), rgba(8, 13, 24, 0.92));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.26);
+    contain: paint;
+  }
+
+  .federation-graph {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .process-background-grid path {
+    stroke: rgba(255, 255, 255, 0.04);
+    stroke-width: 1;
+  }
+
+  .process-domain-zone {
+    stroke-width: 1.2;
+  }
+
+  .process-domain-zone.is-a {
+    fill: rgba(88, 142, 210, 0.07);
+    stroke: rgba(120, 181, 247, 0.18);
+  }
+
+  .process-domain-zone.is-c {
+    fill: rgba(194, 205, 219, 0.04);
+    stroke: rgba(213, 225, 236, 0.12);
+  }
+
+  .process-domain-zone.is-b {
+    fill: rgba(205, 162, 81, 0.07);
+    stroke: rgba(243, 208, 132, 0.18);
+  }
+
+  .process-trust-space-mesh {
+    mix-blend-mode: screen;
+  }
+
+  .process-trust-space-cloud {
+    fill: rgba(186, 203, 225, 0.04);
+    stroke: rgba(208, 220, 235, 0.06);
+    stroke-width: 1;
+  }
+
+  .process-trust-space-cloud.is-inner {
+    fill: rgba(198, 212, 230, 0.05);
+    stroke: rgba(220, 229, 239, 0.08);
+  }
+
+  .process-trust-space-mesh path {
+    fill: none;
+    stroke: rgba(206, 219, 235, 0.08);
+    stroke-width: 1.1;
+    stroke-linecap: round;
+  }
+
+  .process-domain-orbit {
+    opacity: 0.9;
+    mix-blend-mode: screen;
+  }
+
+  .process-domain-orbit.is-a {
+    fill: url(#processDomainAGlow);
+  }
+
+  .process-domain-orbit.is-c {
+    fill: url(#processDomainCGlow);
+    opacity: 0.64;
+  }
+
+  .process-domain-orbit.is-b {
+    fill: url(#processDomainBGlow);
+  }
+
+  .process-domain-title {
+    font-family: "Playfair Display", serif;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+  }
+
+  .process-domain-title.is-a {
+    fill: rgba(219, 236, 255, 0.92);
+  }
+
+  .process-domain-title.is-c {
+    fill: rgba(226, 234, 241, 0.82);
+  }
+
+  .process-domain-title.is-b {
+    fill: rgba(251, 231, 184, 0.95);
+  }
+
+  .process-domain-subtitle {
+    fill: rgba(211, 219, 230, 0.56);
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .process-ambient-lines path {
+    fill: none;
+    stroke: rgba(209, 220, 236, 0.08);
+    stroke-linecap: round;
+    stroke-width: 1;
+  }
+
+  .process-ambient-points circle {
+    fill: rgba(223, 233, 245, 0.64);
+    filter: drop-shadow(0 0 4px rgba(221, 234, 249, 0.12));
+  }
+
+  .federation-links path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .process-link.is-leaf {
+    stroke: rgba(116, 177, 244, 0.28);
+    stroke-width: 1.6;
+  }
+
+  .process-link.is-intra {
+    stroke: rgba(177, 198, 223, 0.26);
+    stroke-width: 1.8;
+  }
+
+  .process-link.is-cross {
+    stroke: rgba(198, 212, 229, 0.14);
+    stroke-width: 1.45;
+  }
+
+  .process-link.is-dead-end {
+    stroke: rgba(176, 193, 214, 0.11);
+  }
+
+  .process-link.is-detour {
+    stroke: rgba(193, 208, 226, 0.18);
+  }
+
+  .process-link.is-shortcut {
+    stroke: rgba(228, 214, 182, 0.1);
+    stroke-width: 1.15;
+  }
+
+  .process-link.is-candidate {
+    opacity: 0.88;
+  }
+
+  .process-active-edge {
+    fill: none;
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.16;
+  }
+
+  .process-active-edge.is-cool {
+    stroke: rgba(213, 234, 255, 0.98);
+    filter: drop-shadow(0 0 6px rgba(133, 187, 245, 0.26));
+  }
+
+  .process-active-edge.is-neutral {
+    stroke: rgba(234, 241, 248, 0.94);
+    filter: drop-shadow(0 0 6px rgba(214, 226, 239, 0.18));
+  }
+
+  .process-active-edge.is-warm {
+    stroke: rgba(255, 229, 164, 0.96);
+    filter: drop-shadow(0 0 8px rgba(255, 220, 145, 0.26));
+  }
+
+  .process-node-halo {
+    opacity: 0;
+    transform-origin: center;
+  }
+
+  .process-node-halo.is-a {
+    fill: url(#processNodeBlueGlow);
+  }
+
+  .process-node-halo.is-c {
+    fill: url(#processNodeNeutralGlow);
+  }
+
+  .process-node-halo.is-b {
+    fill: url(#processNodeGoldGlow);
+  }
+
+  .process-graph-node {
+    stroke: rgba(255, 255, 255, 0.4);
+    stroke-width: 1.15;
+    transform-origin: center;
+  }
+
+  .process-graph-node.is-a {
+    fill: rgba(110, 176, 245, 0.84);
+    filter: drop-shadow(0 0 8px rgba(113, 179, 247, 0.18));
+  }
+
+  .process-graph-node.is-c {
+    fill: rgba(182, 196, 213, 0.5);
+    filter: drop-shadow(0 0 7px rgba(206, 218, 232, 0.1));
+  }
+
+  .process-node-group[data-hint-node] .process-graph-node.is-c {
+    fill: rgba(176, 190, 208, 0.42);
+  }
+
+  .process-graph-node.is-b {
+    fill: rgba(226, 187, 103, 0.88);
+    filter: drop-shadow(0 0 8px rgba(241, 202, 117, 0.18));
+  }
+
+  .process-graph-node.is-issuer {
+    fill: rgba(132, 194, 255, 0.95);
+    stroke: rgba(231, 244, 255, 0.68);
+  }
+
+  .process-graph-node.is-anchor {
+    fill: rgba(255, 225, 150, 0.98);
+    stroke: rgba(255, 244, 213, 0.92);
+    filter: drop-shadow(0 0 12px rgba(255, 224, 150, 0.3));
+  }
+
+  .process-node-core {
+    fill: rgba(255, 255, 255, 0.92);
+    pointer-events: none;
+  }
+
+  .process-node-caption {
+    fill: rgba(220, 228, 239, 0.62);
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+
+  .process-node-caption.is-emphasis {
+    fill: rgba(237, 244, 252, 0.92);
+  }
+
+  .process-node-group.is-anchor .process-node-caption {
+    fill: rgba(255, 231, 180, 0.96);
+  }
+
+  .process-graph-labels text {
+    fill: rgba(224, 213, 195, 0.82);
+    font-family: "Playfair Display", serif;
+    font-size: 16px;
+    letter-spacing: 0.01em;
+  }
+
+  .process-cert-icon {
+    transform-origin: center;
+  }
+
+  .process-cert-icon rect {
+    fill: rgba(246, 241, 231, 0.92);
+    stroke: rgba(84, 74, 61, 0.22);
+    stroke-width: 1.1;
+  }
+
+  .process-cert-icon path {
+    fill: none;
+    stroke: rgba(92, 80, 63, 0.48);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.6;
+  }
+
+  .process-cert-icon circle {
+    fill: rgba(220, 196, 139, 0.96);
+    stroke: rgba(110, 83, 44, 0.56);
+    stroke-width: 1.1;
+  }
+
+  .process-certificate-origin {
+    opacity: 0.3;
+  }
+
+  .process-cert-shadow {
+    fill: rgba(106, 159, 232, 0.14);
+    filter: blur(14px);
+  }
+
+  .process-moving-cert {
+    opacity: 0;
+  }
+
+  .process-cert-trail {
+    fill: rgba(134, 190, 255, 0.28);
+    filter: blur(12px);
+    opacity: 0.3;
+  }
+
+  @media (max-width: 900px) {
+    .process-domain-title {
+      font-size: 18px;
+    }
+
+    .process-domain-subtitle {
+      font-size: 12px;
+    }
+
+    .process-node-caption {
+      font-size: 12px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .federation-graph-card {
+      padding: 10px 6px 2px;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.22);
+    }
+
+    .process-background-grid,
+    .process-ambient-lines,
+    .process-ambient-points,
+    .process-trust-space-mesh {
+      display: none;
+    }
+
+    .process-domain-title {
+      font-size: 16px;
+    }
+
+    .process-domain-subtitle {
+      font-size: 11px;
+    }
+
+    .process-node-caption {
+      font-size: 10.5px;
+    }
+
+    .process-graph-labels text {
+      font-size: 12px;
+    }
+
+    .process-active-edge,
+    .process-graph-node,
+    .process-graph-node.is-anchor {
+      filter: none;
+    }
+
+    .process-active-edge {
+      stroke-width: 2.45;
+    }
+  }
+</style>
 
 <script>
   import { gsap } from "gsap";
@@ -258,195 +862,343 @@
   if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
 
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const lightMotion = window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;
     const graph = document.querySelector("#federated-process-graph");
-    const activeEdges = Array.from(graph?.querySelectorAll(".process-active-edge") ?? []);
-    const allNodes = Array.from(graph?.querySelectorAll(".process-graph-node") ?? []);
-    const highlightNodes = Array.from(
-      graph?.querySelectorAll(".process-graph-node.is-highlight, .process-graph-node.is-anchor, .process-graph-node.is-issuer") ?? [],
-    );
-    const halos = Array.from(graph?.querySelectorAll(".process-halo") ?? []);
-    const incoming = Array.from(graph?.querySelectorAll(".incoming-cert") ?? []);
-    const incomingActive = lightMotion ? incoming.slice(-2) : incoming;
-    const motionTargets = [...highlightNodes, ...halos, ...incomingActive];
 
-    if (graph instanceof SVGSVGElement && activeEdges.length && allNodes.length && highlightNodes.length && halos.length) {
-      activeEdges.forEach((edge) => {
-        if (edge instanceof SVGPathElement) {
-          const len = edge.getTotalLength();
-          edge.style.strokeDasharray = `${len}`;
-          edge.style.strokeDashoffset = `${len}`;
-        }
-      });
+    if (graph instanceof SVGSVGElement) {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const compactMotion = window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;
+      const selectedEdges = Array.from(graph.querySelectorAll("[data-path-edge]"));
+      const hintEdges = Array.from(graph.querySelectorAll("[data-hint-edge]"));
+      const pathNodes = Array.from(graph.querySelectorAll("[data-path-node]"));
+      const halos = Array.from(graph.querySelectorAll("[data-node-halo]"));
+      const hintNodes = Array.from(graph.querySelectorAll("[data-hint-node]"));
+      const movingCert = graph.querySelector("[data-moving-cert]");
+      const originCert = graph.querySelector("[data-origin-cert]");
+      const certTrail = graph.querySelector("[data-cert-trail]");
+      const pathPoints = Array.from(graph.querySelectorAll("[data-path-point]"))
+        .sort((a, b) => Number(a.getAttribute("data-step")) - Number(b.getAttribute("data-step")))
+        .map((point) => ({
+          x: Number(point.getAttribute("data-point-x")),
+          y: Number(point.getAttribute("data-point-y")),
+        }));
 
-      if (prefersReducedMotion) {
-        gsap.set(allNodes, {
-          opacity: 1,
-          scale: 1,
-          transformOrigin: "center center",
-        });
+      const orderedNodes = pathNodes.sort(
+        (a, b) => Number(a.getAttribute("data-step")) - Number(b.getAttribute("data-step")),
+      );
 
-        gsap.set(activeEdges, {
-          opacity: 1,
-          strokeDashoffset: 0,
-        });
+      const orderedHalos = halos.sort(
+        (a, b) => Number(a.getAttribute("data-step")) - Number(b.getAttribute("data-step")),
+      );
 
-        gsap.set(halos, {
-          opacity: 0.72,
-          scale: 1.04,
-          transformOrigin: "center center",
-        });
+      const orderedEdges = selectedEdges.sort(
+        (a, b) => Number(a.getAttribute("data-step")) - Number(b.getAttribute("data-step")),
+      );
 
-        if (incomingActive.length) {
-          gsap.set(incomingActive, {
-            opacity: 0.92,
-            x: 0,
-          });
-        }
-      } else {
-        gsap.set(allNodes, {
-          opacity: lightMotion ? 0.68 : 0.42,
-          scale: lightMotion ? 1 : 0.92,
-          transformOrigin: "center center",
-        });
-
-        gsap.set(highlightNodes, {
-          willChange: "transform, opacity",
-        });
-
-        gsap.set(halos, {
-          opacity: 0,
-          scale: lightMotion ? 0.82 : 0.5,
-          transformOrigin: "center center",
-          willChange: "transform, opacity",
-        });
-
-        if (incomingActive.length) {
-          gsap.set(incomingActive, {
-            opacity: lightMotion ? 0.5 : 0.35,
-            x: lightMotion ? -4 : -10,
-            willChange: "transform, opacity",
-          });
-        }
-
-        const clearMotionHints = () => {
-          if (motionTargets.length) {
-            gsap.set(motionTargets, {
-              clearProps: "willChange",
-            });
+      if (
+        movingCert instanceof SVGGElement &&
+        originCert instanceof SVGGElement &&
+        certTrail instanceof SVGEllipseElement &&
+        pathPoints.length &&
+        orderedNodes.length &&
+        orderedEdges.length &&
+        orderedHalos.length
+      ) {
+        orderedEdges.forEach((edge) => {
+          if (edge instanceof SVGPathElement) {
+            const length = edge.getTotalLength();
+            edge.style.strokeDasharray = `${length}`;
+            edge.style.strokeDashoffset = `${length}`;
           }
+        });
+
+        const startPoint = pathPoints[0];
+        const endPoint = pathPoints[pathPoints.length - 1];
+        const stepDuration = compactMotion ? 0.48 : 0.68;
+        const motionTargets = [movingCert, certTrail, ...orderedNodes, ...orderedHalos, ...hintNodes];
+
+        gsap.set(movingCert, {
+          x: startPoint.x,
+          y: startPoint.y,
+          opacity: 0,
+          scale: 0.94,
+          transformOrigin: "center center",
+        });
+
+        gsap.set(certTrail, {
+          opacity: 0.22,
+          scale: 0.82,
+          transformOrigin: "center center",
+        });
+
+        gsap.set(orderedNodes, {
+          opacity: compactMotion ? 0.88 : 0.76,
+          scale: 0.98,
+          transformOrigin: "center center",
+        });
+
+        gsap.set(orderedHalos, {
+          opacity: 0,
+          scale: 0.76,
+          transformOrigin: "center center",
+        });
+
+        if (hintEdges.length) {
+          gsap.set(hintEdges, {
+            opacity: (index) => (index === hintEdges.length - 1 ? 0.07 : 0.12),
+          });
+        }
+
+        if (hintNodes.length) {
+          gsap.set(hintNodes, {
+            opacity: 0.72,
+            scale: 0.96,
+            transformOrigin: "center center",
+          });
+        }
+
+        const resetEdges = () => {
+          orderedEdges.forEach((edge) => {
+            if (edge instanceof SVGPathElement) {
+              edge.style.strokeDashoffset = edge.getTotalLength().toString();
+            }
+          });
+
+          gsap.set(orderedEdges, {
+            opacity: 0.16,
+          });
         };
 
-        const tl = gsap.timeline({
-          paused: true,
-          repeat: lightMotion ? 0 : -1,
-          repeatDelay: lightMotion ? 0 : 1.35,
-          defaults: { ease: "power2.out" },
-          onComplete: () => {
-            if (lightMotion) {
-              clearMotionHints();
-            }
-          },
-        });
-
-        if (incomingActive.length) {
-          tl.to(incomingActive, {
-            opacity: 0.88,
-            x: 0,
-            duration: lightMotion ? 0.36 : 0.76,
-            stagger: lightMotion ? 0.08 : 0.16,
+        const clearMotionHints = () => {
+          gsap.set(motionTargets, {
+            clearProps: "willChange",
           });
-        }
+        };
 
-        tl.to(
-          activeEdges,
-          {
-            strokeDashoffset: 0,
+        if (prefersReducedMotion) {
+          gsap.set(orderedEdges, {
             opacity: 1,
-            duration: lightMotion ? 0.44 : 0.9,
-            stagger: lightMotion ? 0.14 : 0.32,
-          },
-          incomingActive.length ? "-=0.08" : 0,
-        )
-          .to(
-            highlightNodes,
-            {
-              opacity: 1,
-              scale: lightMotion ? 1.08 : 1.14,
-              duration: lightMotion ? 0.26 : 0.48,
-              stagger: lightMotion ? 0.08 : 0.26,
-            },
-            lightMotion ? "-=1.0" : "-=3.4",
-          )
-          .to(
-            halos,
-            {
-              opacity: lightMotion ? 0.68 : 0.92,
-              scale: lightMotion ? 1.04 : 1.16,
-              duration: lightMotion ? 0.34 : 0.68,
-              stagger: lightMotion ? 0.16 : 0.9,
-              yoyo: !lightMotion,
-              repeat: lightMotion ? 0 : 1,
-            },
-            lightMotion ? "<" : "-=2.8",
-          );
-
-        if (!lightMotion) {
-          tl.to(
-            activeEdges,
-            {
-              opacity: 0.22,
-              strokeDashoffset: (_, target) => {
-                if (target instanceof SVGPathElement) {
-                  return target.getTotalLength();
-                }
-
-                return 0;
-              },
-              duration: 0.01,
-              stagger: 0,
-            },
-            "+=0.35",
-          )
-            .to(
-              highlightNodes,
-              {
-                opacity: 0.72,
-                scale: 1,
-                duration: 0.2,
-                stagger: 0,
-              },
-              "<",
-            )
-            .to(
-              incomingActive,
-              {
-                opacity: 0.35,
-                duration: 0.2,
-                stagger: 0,
-              },
-              "<",
-            );
-        }
-
-        if (lightMotion) {
-          ScrollTrigger.create({
-            trigger: graph,
-            start: "top 80%",
-            once: true,
-            onEnter: () => tl.play(0),
+            strokeDashoffset: 0,
           });
+
+          gsap.set(orderedNodes, {
+            opacity: 1,
+            scale: (index) => (index === orderedNodes.length - 1 ? 1.16 : 1.06),
+          });
+
+          gsap.set(orderedHalos, {
+            opacity: (index) => (index === orderedHalos.length - 1 ? 0.92 : 0.52),
+            scale: (index) => (index === orderedHalos.length - 1 ? 1.18 : 1.04),
+          });
+
+          gsap.set(originCert, {
+            opacity: 0.18,
+          });
+
+          gsap.set(movingCert, {
+            x: endPoint.x,
+            y: endPoint.y,
+            opacity: 0.92,
+            scale: 1.04,
+          });
+
+          gsap.set(certTrail, {
+            opacity: 0.36,
+            scale: 1,
+          });
+
+          if (hintEdges.length) {
+            gsap.set(hintEdges, {
+              opacity: 0.16,
+            });
+          }
+
+          clearMotionHints();
         } else {
+          gsap.set(motionTargets, {
+            willChange: "transform, opacity",
+          });
+
+          const timeline = gsap.timeline({
+            paused: true,
+            repeat: -1,
+            repeatDelay: compactMotion ? 0.6 : 1.05,
+            defaults: { ease: "power2.inOut" },
+            onRepeat: () => {
+              resetEdges();
+            },
+          });
+
+          timeline
+            .set(movingCert, {
+              x: startPoint.x,
+              y: startPoint.y,
+              opacity: 0,
+              scale: 0.94,
+            })
+            .set(certTrail, {
+              opacity: 0.22,
+              scale: 0.82,
+            })
+            .set(originCert, {
+              opacity: 0.32,
+            })
+            .to(originCert, {
+              opacity: 0.18,
+              duration: 0.28,
+            }, 0)
+            .to(movingCert, {
+              opacity: 0.98,
+              scale: 1,
+              duration: 0.26,
+            }, 0.04);
+
+          if (hintEdges.length) {
+            timeline
+              .to(hintEdges.slice(0, 3), {
+                opacity: 0.24,
+                duration: 0.16,
+                stagger: 0.05,
+              }, 0.18)
+              .to(hintNodes.slice(0, 2), {
+                opacity: 0.88,
+                scale: 1.02,
+                duration: 0.18,
+                stagger: 0.06,
+              }, "<")
+              .to(hintEdges.slice(0, 3), {
+                opacity: 0.1,
+                duration: 0.2,
+                stagger: 0.04,
+              }, ">")
+              .to(hintNodes.slice(0, 2), {
+                opacity: 0.72,
+                scale: 0.96,
+                duration: 0.2,
+              }, "<");
+          }
+
+          orderedEdges.forEach((edge, index) => {
+            const targetNode = orderedNodes[index];
+            const targetHalo = orderedHalos[index];
+            const targetPoint = pathPoints[index + 1];
+            const isFinal = index === orderedEdges.length - 1;
+            const addPause = index === 3;
+
+            timeline
+              .to(edge, {
+                opacity: 1,
+                strokeDashoffset: 0,
+                duration: stepDuration * 0.72,
+              }, ">")
+              .to(movingCert, {
+                x: targetPoint.x,
+                y: targetPoint.y,
+                duration: stepDuration,
+              }, "<")
+              .to(certTrail, {
+                opacity: isFinal ? 0.52 : 0.44,
+                scale: isFinal ? 1.08 : 1.02,
+                duration: stepDuration * 0.58,
+                yoyo: true,
+                repeat: 1,
+              }, "<")
+              .to(targetNode, {
+                opacity: 1,
+                scale: isFinal ? 1.2 : 1.1,
+                duration: 0.26,
+              }, `<+${stepDuration * 0.48}`)
+              .to(targetHalo, {
+                opacity: isFinal ? 0.96 : 0.56,
+                scale: isFinal ? 1.26 : 1.06,
+                duration: 0.34,
+              }, "<")
+              .to(targetNode, {
+                scale: isFinal ? 1.14 : 1.05,
+                duration: 0.24,
+              }, ">-0.06");
+
+            if (addPause && hintEdges.length > 3) {
+              timeline
+                .to(hintEdges.slice(3), {
+                  opacity: 0.2,
+                  duration: 0.18,
+                  stagger: 0.05,
+                }, ">-0.06")
+                .to(hintNodes.slice(2), {
+                  opacity: 0.84,
+                  scale: 1.01,
+                  duration: 0.18,
+                  stagger: 0.05,
+                }, "<")
+                .to({}, { duration: compactMotion ? 0.08 : 0.14 })
+                .to(hintEdges.slice(3), {
+                  opacity: (hintIndex) => (hintIndex === hintEdges.slice(3).length - 1 ? 0.07 : 0.1),
+                  duration: 0.22,
+                  stagger: 0.04,
+                })
+                .to(hintNodes.slice(2), {
+                  opacity: 0.72,
+                  scale: 0.96,
+                  duration: 0.2,
+                }, "<");
+            }
+          });
+
+          timeline
+            .to(orderedHalos[orderedHalos.length - 1], {
+              opacity: 1,
+              scale: 1.34,
+              duration: compactMotion ? 0.3 : 0.44,
+              yoyo: true,
+              repeat: 1,
+            }, ">-0.02")
+            .to(movingCert, {
+              scale: 1.08,
+              duration: 0.18,
+              yoyo: true,
+              repeat: 1,
+            }, "<")
+            .to(movingCert, {
+              opacity: 0.14,
+              duration: 0.22,
+            }, "+=0.34")
+            .to(orderedEdges, {
+              opacity: 0.22,
+              duration: 0.24,
+              stagger: 0.03,
+            }, "<")
+            .to(orderedHalos.slice(0, -1), {
+              opacity: 0.16,
+              scale: 0.94,
+              duration: 0.24,
+              stagger: 0.04,
+            }, "<")
+            .to(orderedHalos[orderedHalos.length - 1], {
+              opacity: 0.22,
+              scale: 0.96,
+              duration: 0.28,
+            }, "<")
+            .to(orderedNodes, {
+              scale: 0.98,
+              duration: 0.24,
+              stagger: 0.03,
+            }, "<")
+            .to(originCert, {
+              opacity: 0.3,
+              duration: 0.18,
+            }, "<");
+
           ScrollTrigger.create({
             trigger: graph,
-            start: "top 78%",
-            end: "bottom 24%",
-            onEnter: () => tl.play(0),
-            onEnterBack: () => tl.play(0),
-            onLeave: () => tl.pause(0),
-            onLeaveBack: () => tl.pause(0),
+            start: "top 82%",
+            end: "bottom 18%",
+            onEnter: () => timeline.play(0),
+            onEnterBack: () => timeline.play(0),
+            onLeave: () => timeline.pause(0),
+            onLeaveBack: () => timeline.pause(0),
           });
+
+          timeline.eventCallback("onComplete", clearMotionHints);
         }
       }
     }
