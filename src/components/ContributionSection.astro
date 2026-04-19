@@ -1,5 +1,5 @@
 <section id="contribution" class="paper-section">
-  <div class="container paper-shell contribution-shell">
+  <div class="container paper-shell pb-[84px]">
     <div class="section-heading">
       <span class="section-kicker">Contribution</span>
       <h2>What this work contributes.</h2>
@@ -10,83 +10,31 @@
       </p>
     </div>
 
-    <div class="contribution-grid">
-      <article class="contribution-card">
-        <h3>Formalization</h3>
-        <p>PKI federation is modeled as a graph whose vertices and edges capture governed trust relationships.</p>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-6 mt-10 max-[760px]:gap-[18px] max-[760px]:mt-[34px]">
+      <article class="min-h-full p-6 bg-white/[0.54] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] max-[760px]:p-[22px]">
+        <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[1.82rem] font-normal leading-[0.98] max-[760px]:text-[2rem]">Formalization</h3>
+        <p class="mt-4 mb-0 text-[var(--ink-soft)] leading-[1.76]">PKI federation is modeled as a graph whose vertices and edges capture governed trust relationships.</p>
       </article>
 
-      <article class="contribution-card">
-        <h3>Optimization</h3>
-        <p>Path selection moves from simply finding a valid chain to computing the optimal one.</p>
+      <article class="min-h-full p-6 bg-white/[0.54] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] max-[760px]:p-[22px]">
+        <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[1.82rem] font-normal leading-[0.98] max-[760px]:text-[2rem]">Optimization</h3>
+        <p class="mt-4 mb-0 text-[var(--ink-soft)] leading-[1.76]">Path selection moves from simply finding a valid chain to computing the optimal one.</p>
       </article>
 
-      <article class="contribution-card">
-        <h3>Trust governance</h3>
-        <p>Selective trust points are defined explicitly instead of inheriting trust from full hierarchies.</p>
+      <article class="min-h-full p-6 bg-white/[0.54] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] max-[760px]:p-[22px]">
+        <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[1.82rem] font-normal leading-[0.98] max-[760px]:text-[2rem]">Trust governance</h3>
+        <p class="mt-4 mb-0 text-[var(--ink-soft)] leading-[1.76]">Selective trust points are defined explicitly instead of inheriting trust from full hierarchies.</p>
       </article>
 
-      <article class="contribution-card">
-        <h3>Crypto agility</h3>
-        <p>Classical, hybrid, and post-quantum environments can be represented and scored within the same model.</p>
+      <article class="min-h-full p-6 bg-white/[0.54] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] max-[760px]:p-[22px]">
+        <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[1.82rem] font-normal leading-[0.98] max-[760px]:text-[2rem]">Crypto agility</h3>
+        <p class="mt-4 mb-0 text-[var(--ink-soft)] leading-[1.76]">Classical, hybrid, and post-quantum environments can be represented and scored within the same model.</p>
       </article>
 
-      <article class="contribution-card">
-        <h3>Research contribution</h3>
-        <p>The proposal adds a formal layer on top of PKIX for analysis, governance, and optimization rather than replacing existing validation standards.</p>
+      <article class="min-h-full p-6 bg-white/[0.54] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] max-[760px]:p-[22px]">
+        <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[1.82rem] font-normal leading-[0.98] max-[760px]:text-[2rem]">Research contribution</h3>
+        <p class="mt-4 mb-0 text-[var(--ink-soft)] leading-[1.76]">The proposal adds a formal layer on top of PKIX for analysis, governance, and optimization rather than replacing existing validation standards.</p>
       </article>
     </div>
   </div>
 </section>
-
-<style>
-  .contribution-shell {
-    padding-bottom: 84px;
-  }
-
-  .contribution-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 24px;
-    margin-top: 40px;
-  }
-
-  .contribution-card {
-    min-height: 100%;
-    padding: 24px;
-    background: rgba(255, 255, 255, 0.54);
-    border: 1px solid var(--paper-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-paper);
-  }
-
-  .contribution-card h3 {
-    margin: 0;
-    color: #1e1b17;
-    font-family: "Playfair Display", serif;
-    font-size: 1.82rem;
-    font-weight: 400;
-    line-height: 0.98;
-  }
-
-  .contribution-card p {
-    margin: 16px 0 0;
-    color: var(--ink-soft);
-    line-height: 1.76;
-  }
-
-  @media (max-width: 760px) {
-    .contribution-grid {
-      gap: 18px;
-      margin-top: 34px;
-    }
-
-    .contribution-card {
-      padding: 22px;
-    }
-
-    .contribution-card h3 {
-      font-size: 2rem;
-    }
-  }
-</style>

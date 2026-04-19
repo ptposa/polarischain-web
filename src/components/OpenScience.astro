@@ -7,9 +7,9 @@ import {
 } from "../lib/ui";
 ---
 
-<section id="open-science" class="paper-section paper-section-bottom">
-  <div class="container paper-shell open-shell">
-    <div class="section-heading section-heading-narrow">
+<section id="open-science" class="paper-section paper-section-bottom border-t border-[rgba(50,44,39,0.08)]">
+  <div class="container paper-shell open-shell pb-20">
+    <div class="section-heading section-heading-narrow [&>h2]:max-w-[12ch]">
       <span class="section-kicker">Open science & academic contribution</span>
       <h2>From TFM to doctoral research infrastructure.</h2>
       <p>
@@ -19,25 +19,25 @@ import {
       </p>
     </div>
 
-    <div class="open-grid">
-      <article class="open-card">
-        <span class="open-card-icon">◎</span>
+    <div class="open-grid grid grid-cols-3 gap-6 mt-[38px] max-[1080px]:grid-cols-1">
+      <article class="open-card p-[26px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] [&>h3]:m-0 [&>h3]:[font-family:'Playfair_Display',serif] [&>h3]:font-normal [&>h3]:text-[2rem] [&>h3]:leading-none [&>p]:text-[var(--ink-soft)] [&>p]:leading-[1.8]">
+        <span class="open-card-icon inline-grid place-items-center w-[38px] h-[38px] mb-[18px] rounded-full bg-[rgba(29,28,34,0.08)] text-[rgba(33,30,24,0.78)] text-[1.1rem]">◎</span>
         <h3>Master's thesis</h3>
         <p>
           Initial work formalizes the problem space, visual narrative, and experimental
           basis for trust path optimization in federated PKI ecosystems.
         </p>
       </article>
-      <article class="open-card">
-        <span class="open-card-icon">◇</span>
+      <article class="open-card p-[26px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] [&>h3]:m-0 [&>h3]:[font-family:'Playfair_Display',serif] [&>h3]:font-normal [&>h3]:text-[2rem] [&>h3]:leading-none [&>p]:text-[var(--ink-soft)] [&>p]:leading-[1.8]">
+        <span class="open-card-icon inline-grid place-items-center w-[38px] h-[38px] mb-[18px] rounded-full bg-[rgba(29,28,34,0.08)] text-[rgba(33,30,24,0.78)] text-[1.1rem]">◇</span>
         <h3>Future PhD research</h3>
         <p>
           The same framework can evolve toward publications on traversal heuristics,
           scoring explainability, and validation interoperability.
         </p>
       </article>
-      <article class="open-card">
-        <span class="open-card-icon">▣</span>
+      <article class="open-card p-[26px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] [&>h3]:m-0 [&>h3]:[font-family:'Playfair_Display',serif] [&>h3]:font-normal [&>h3]:text-[2rem] [&>h3]:leading-none [&>p]:text-[var(--ink-soft)] [&>p]:leading-[1.8]">
+        <span class="open-card-icon inline-grid place-items-center w-[38px] h-[38px] mb-[18px] rounded-full bg-[rgba(29,28,34,0.08)] text-[rgba(33,30,24,0.78)] text-[1.1rem]">▣</span>
         <h3>Open-source project</h3>
         <p>
           Public repositories, technical documentation, and reproducible assets help the
@@ -46,7 +46,7 @@ import {
       </article>
     </div>
 
-    <div id="publications" class="open-footer">
+    <div id="publications" class="open-footer mt-[30px] pt-[26px] border-t border-[rgba(52,46,39,0.12)] grid grid-cols-[1fr_auto] gap-6 items-center max-[1080px]:grid-cols-1">
       <div>
         <span class="note-label">Academic projection</span>
         <p>Publications, technical reports, and future doctoral dissemination.</p>

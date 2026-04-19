@@ -3,23 +3,23 @@
     <div class="section-heading">
       <span class="section-kicker">Research motivation</span>
       <h2>Challenges in federated PKI environments.</h2>
-      <p class="limits-subtitle">
+      <p class="limits-subtitle mt-[12px] text-[rgba(58,51,42,0.8)] [font-family:'Playfair_Display',serif] text-[clamp(1.18rem,1.8vw,1.44rem)] leading-[1.12] tracking-[-0.01em] max-[760px]:mt-[12px] max-[760px]:leading-[1.16]">
         From structural limitations to emerging scalability and operational challenges.
       </p>
-      <p>
+      <p class="mt-[14px] leading-[1.42]">
         Existing mechanisms for establishing trust across PKI domains, such as cross-certification and bridge CAs, among others, have enabled interoperability for years. However, as trust topologies become denser and cryptographic transitions more demanding, path discovery, trust governance, and route selection remain difficult to reason about in a formal, deterministic, and crypto-aware way.
       </p>
     </div>
 
-    <div class="limits-group">
-      <div class="limits-group-heading">
-        <span class="limits-group-label">Core challenges</span>
+    <div class="limits-group mt-[30px] max-[1180px]:mt-[30px] max-[760px]:mt-[24px]">
+      <div class="limits-group-heading mb-[16px] max-[760px]:mb-[14px]">
+        <span class="limits-group-label inline-block text-[rgba(77,70,59,0.72)] text-[0.76rem] font-semibold tracking-[0.14em] uppercase">Core challenges</span>
       </div>
 
-      <div class="limits-grid limits-grid-primary">
-        <article class="limit-card">
-        <div class="limit-card-chart" aria-hidden="true">
-          <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+      <div class="limits-grid limits-grid-primary gap-[22px] grid grid-cols-4 max-[1180px]:grid-cols-2 max-[760px]:grid-cols-1 max-[760px]:gap-[18px]">
+        <article class="limit-card flex flex-col min-h-full p-[24px_22px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] max-[760px]:p-[20px]">
+        <div class="limit-card-chart grid mb-[20px] p-[13px_13px_11px] min-h-[150px] items-center rounded-[var(--radius-lg)] bg-[rgba(239,233,223,0.82)] border border-[rgba(62,56,48,0.1)] max-[760px]:mb-[18px] max-[760px]:p-[11px_11px_10px]" aria-hidden="true">
+          <svg viewBox="0 0 260 132" class="limit-card-chart-svg block w-full h-auto rounded-[var(--radius-lg)] bg-gradient-to-b from-[rgba(245,240,232,0.82)] to-[rgba(236,230,219,0.66)]">
             <defs>
               <linearGradient id="limitGrowthArea" x1="0" x2="0" y1="0" y2="1">
                 <stop offset="0%" stop-color="rgba(102, 122, 152, 0.26)" />
@@ -54,15 +54,15 @@
             </text>
           </svg>
         </div>
-        <h3>Growing complexity of trust topologies</h3>
-        <p>
+        <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[clamp(1.72rem,2vw,1.84rem)] font-normal leading-[1.02] text-wrap-balance max-[760px]:text-[1.94rem]">Growing complexity of trust topologies</h3>
+        <p class="mt-[18px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
           Expanding trust relationships across domains turns PKI ecosystems into dense, interconnected structures, where the number of certification paths grows rapidly and complicates discovery, governance, and validation.
         </p>
         </article>
 
-        <article class="limit-card">
-        <div class="limit-card-chart" aria-hidden="true">
-          <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+        <article class="limit-card flex flex-col min-h-full p-[24px_22px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] max-[760px]:p-[20px]">
+        <div class="limit-card-chart grid mb-[20px] p-[13px_13px_11px] min-h-[150px] items-center rounded-[var(--radius-lg)] bg-[rgba(239,233,223,0.82)] border border-[rgba(62,56,48,0.1)] max-[760px]:mb-[18px] max-[760px]:p-[11px_11px_10px]" aria-hidden="true">
+          <svg viewBox="0 0 260 132" class="limit-card-chart-svg block w-full h-auto rounded-[var(--radius-lg)] bg-gradient-to-b from-[rgba(245,240,232,0.82)] to-[rgba(236,230,219,0.66)]">
             <defs>
               <radialGradient id="limitHeuristicGlow" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stop-color="rgba(94, 113, 142, 0.18)" />
@@ -115,15 +115,15 @@
             </text>
           </svg>
         </div>
-        <h3>Heuristic validation</h3>
-        <p>
+        <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[clamp(1.72rem,2vw,1.84rem)] font-normal leading-[1.02] text-wrap-balance max-[760px]:text-[1.94rem]">Heuristic validation</h3>
+        <p class="mt-[18px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
           Heuristic path-building approaches do not explore the full space of admissible paths, potentially missing valid certification chains and leading to inconsistent or non-deterministic validation across federated PKI domains.
         </p>
         </article>
 
-        <article class="limit-card">
-          <div class="limit-card-chart" aria-hidden="true">
-            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+        <article class="limit-card flex flex-col min-h-full p-[24px_22px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] max-[760px]:p-[20px]">
+          <div class="limit-card-chart grid mb-[20px] p-[13px_13px_11px] min-h-[150px] items-center rounded-[var(--radius-lg)] bg-[rgba(239,233,223,0.82)] border border-[rgba(62,56,48,0.1)] max-[760px]:mb-[18px] max-[760px]:p-[11px_11px_10px]" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg block w-full h-auto rounded-[var(--radius-lg)] bg-gradient-to-b from-[rgba(245,240,232,0.82)] to-[rgba(236,230,219,0.66)]">
               <defs>
                 <linearGradient id="limitGovernanceFade" x1="0" x2="1" y1="0.2" y2="0.8">
                   <stop offset="0%" stop-color="rgba(110, 128, 155, 0.3)" />
@@ -151,18 +151,18 @@
               <path d="M116 108 C138 98, 170 98, 192 108" class="limit-card-haze-stroke"></path>
             </svg>
           </div>
-          <h3>Lack of trust governance</h3>
-          <p>
+          <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[clamp(1.72rem,2vw,1.84rem)] font-normal leading-[1.02] text-wrap-balance max-[760px]:text-[1.94rem]">Lack of trust governance</h3>
+          <p class="mt-[18px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
             Trust is commonly inherited from hierarchies or broad anchors rather than being selectively defined between issuing CAs.
           </p>
-          <p>
+          <p class="mt-[14px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
             This limits fine-grained control over how trust propagates across domains and increases the risk of unintended trust relationships.
           </p>
         </article>
 
-        <article class="limit-card">
-          <div class="limit-card-chart" aria-hidden="true">
-            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+        <article class="limit-card flex flex-col min-h-full p-[24px_22px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] max-[760px]:p-[20px]">
+          <div class="limit-card-chart grid mb-[20px] p-[13px_13px_11px] min-h-[150px] items-center rounded-[var(--radius-lg)] bg-[rgba(239,233,223,0.82)] border border-[rgba(62,56,48,0.1)] max-[760px]:mb-[18px] max-[760px]:p-[11px_11px_10px]" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg block w-full h-auto rounded-[var(--radius-lg)] bg-gradient-to-b from-[rgba(245,240,232,0.82)] to-[rgba(236,230,219,0.66)]">
               <defs>
                 <linearGradient id="limitCryptoShift" x1="0" x2="1" y1="0.3" y2="0.7">
                   <stop offset="0%" stop-color="rgba(170, 145, 92, 0.16)" />
@@ -184,27 +184,27 @@
               <rect x="36" y="20" width="188" height="88" rx="24" class="limit-card-surface-glow" style="fill: url(#limitCryptoShift);"></rect>
             </svg>
           </div>
-          <h3>No crypto agility awareness</h3>
-          <p>
+          <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[clamp(1.72rem,2vw,1.84rem)] font-normal leading-[1.02] text-wrap-balance max-[760px]:text-[1.94rem]">No crypto agility awareness</h3>
+          <p class="mt-[18px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
             Traditional federation models rarely prioritize certification paths based on cryptographic posture.
           </p>
-          <p>
+          <p class="mt-[14px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
             As hybrid and post-quantum transitions emerge, the inability to reason about algorithm agility limits long-term trust resilience.
           </p>
         </article>
       </div>
     </div>
 
-    <div class="limits-group limits-group-emerging">
-      <div class="limits-group-heading">
-        <span class="limits-group-label">Emerging challenges</span>
+    <div class="limits-group limits-group-emerging mt-[28px] max-[1180px]:mt-[30px] max-[760px]:mt-[24px]">
+      <div class="limits-group-heading mb-[16px] max-[760px]:mb-[14px]">
+        <span class="limits-group-label inline-block text-[rgba(77,70,59,0.72)] text-[0.76rem] font-semibold tracking-[0.14em] uppercase">Emerging challenges</span>
       </div>
 
-      <div class="limits-grid limits-grid-secondary">
-        <article class="limit-card limit-card-emerging">
-          <span class="limit-card-tag">Emerging challenge</span>
-          <div class="limit-card-chart" aria-hidden="true">
-            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+      <div class="limits-grid limits-grid-secondary gap-[22px] flex justify-center items-stretch flex-nowrap max-[1180px]:grid max-[1180px]:grid-cols-2 max-[1180px]:flex-none max-[760px]:grid-cols-1 max-[760px]:gap-[18px]">
+        <article class="limit-card limit-card-emerging flex flex-col min-h-full p-[24px_22px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] basis-[calc((100%-72px)/4)] grow-0 shrink max-[1180px]:basis-auto max-[760px]:p-[20px]">
+          <span class="limit-card-tag inline-flex items-center gap-[8px] w-fit min-h-[24px] mb-[16px] px-[10px] py-[4px] rounded-[999px] border border-[rgba(142,108,62,0.22)] bg-[rgba(244,233,214,0.72)] text-[rgba(121,88,47,0.86)] text-[0.66rem] font-semibold tracking-[0.16em] uppercase max-[760px]:mb-[12px] max-[760px]:gap-[7px]">Emerging challenge</span>
+          <div class="limit-card-chart grid mb-[20px] p-[13px_13px_11px] min-h-[150px] items-center rounded-[var(--radius-lg)] bg-[rgba(239,233,223,0.82)] border border-[rgba(62,56,48,0.1)] max-[760px]:mb-[18px] max-[760px]:p-[11px_11px_10px]" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg block w-full h-auto rounded-[var(--radius-lg)] bg-gradient-to-b from-[rgba(245,240,232,0.82)] to-[rgba(236,230,219,0.66)]">
               <defs>
                 <linearGradient id="limitLifecycleLoop" x1="0" x2="1" y1="0.1" y2="0.9">
                   <stop offset="0%" stop-color="rgba(95, 114, 141, 0.2)" />
@@ -229,16 +229,16 @@
               <rect x="58" y="18" width="144" height="96" rx="28" class="limit-card-surface-glow" style="fill: url(#limitLifecycleLoop);"></rect>
             </svg>
           </div>
-          <h3>Operational lifecycle fatigue</h3>
-          <p>
+          <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[clamp(1.72rem,2vw,1.84rem)] font-normal leading-[1.02] text-wrap-balance max-[760px]:text-[1.94rem]">Operational lifecycle fatigue</h3>
+          <p class="mt-[18px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
             Short-lived certificates, frequent renewals, revocations, and cross-domain policy updates introduce operational overhead that becomes difficult to sustain consistently across federated environments.
           </p>
         </article>
 
-        <article class="limit-card limit-card-emerging">
-          <span class="limit-card-tag">Emerging challenge</span>
-          <div class="limit-card-chart" aria-hidden="true">
-            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+        <article class="limit-card limit-card-emerging flex flex-col min-h-full p-[24px_22px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] basis-[calc((100%-72px)/4)] grow-0 shrink max-[1180px]:basis-auto max-[760px]:p-[20px]">
+          <span class="limit-card-tag inline-flex items-center gap-[8px] w-fit min-h-[24px] mb-[16px] px-[10px] py-[4px] rounded-[999px] border border-[rgba(142,108,62,0.22)] bg-[rgba(244,233,214,0.72)] text-[rgba(121,88,47,0.86)] text-[0.66rem] font-semibold tracking-[0.16em] uppercase max-[760px]:mb-[12px] max-[760px]:gap-[7px]">Emerging challenge</span>
+          <div class="limit-card-chart grid mb-[20px] p-[13px_13px_11px] min-h-[150px] items-center rounded-[var(--radius-lg)] bg-[rgba(239,233,223,0.82)] border border-[rgba(62,56,48,0.1)] max-[760px]:mb-[18px] max-[760px]:p-[11px_11px_10px]" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg block w-full h-auto rounded-[var(--radius-lg)] bg-gradient-to-b from-[rgba(245,240,232,0.82)] to-[rgba(236,230,219,0.66)]">
               <defs>
                 <linearGradient id="limitDensityField" x1="0" x2="1" y1="0" y2="1">
                   <stop offset="0%" stop-color="rgba(95, 114, 141, 0.22)" />
@@ -264,19 +264,19 @@
               <circle cx="172" cy="58" r="24" class="limit-card-cluster limit-card-cluster-alt"></circle>
             </svg>
           </div>
-          <h3>Machine &amp; AI identity explosion</h3>
-          <p>
+          <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[clamp(1.72rem,2vw,1.84rem)] font-normal leading-[1.02] text-wrap-balance max-[760px]:text-[1.94rem]">Machine &amp; AI identity explosion</h3>
+          <p class="mt-[18px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
             The rapid growth of machine, workload, and AI agent identities introduces high-density trust graphs with continuously changing nodes.
           </p>
-          <p>
+          <p class="mt-[14px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
             This scale challenges traditional validation approaches and requires efficient, graph-based path discovery mechanisms.
           </p>
         </article>
 
-        <article class="limit-card limit-card-emerging">
-          <span class="limit-card-tag">Emerging challenge</span>
-          <div class="limit-card-chart" aria-hidden="true">
-            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+        <article class="limit-card limit-card-emerging flex flex-col min-h-full p-[24px_22px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] basis-[calc((100%-72px)/4)] grow-0 shrink max-[1180px]:basis-auto max-[760px]:p-[20px]">
+          <span class="limit-card-tag inline-flex items-center gap-[8px] w-fit min-h-[24px] mb-[16px] px-[10px] py-[4px] rounded-[999px] border border-[rgba(142,108,62,0.22)] bg-[rgba(244,233,214,0.72)] text-[rgba(121,88,47,0.86)] text-[0.66rem] font-semibold tracking-[0.16em] uppercase max-[760px]:mb-[12px] max-[760px]:gap-[7px]">Emerging challenge</span>
+          <div class="limit-card-chart grid mb-[20px] p-[13px_13px_11px] min-h-[150px] items-center rounded-[var(--radius-lg)] bg-[rgba(239,233,223,0.82)] border border-[rgba(62,56,48,0.1)] max-[760px]:mb-[18px] max-[760px]:p-[11px_11px_10px]" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg block w-full h-auto rounded-[var(--radius-lg)] bg-gradient-to-b from-[rgba(245,240,232,0.82)] to-[rgba(236,230,219,0.66)]">
               <defs>
                 <linearGradient id="limitVisibilityMask" x1="0" x2="1" y1="0" y2="0">
                   <stop offset="0%" stop-color="rgba(235, 228, 218, 0.86)" />
@@ -302,19 +302,19 @@
               <rect x="34" y="18" width="124" height="96" rx="18" class="limit-card-veil"></rect>
             </svg>
           </div>
-          <h3>Real-time visibility gap</h3>
-          <p>
+          <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[clamp(1.72rem,2vw,1.84rem)] font-normal leading-[1.02] text-wrap-balance max-[760px]:text-[1.94rem]">Real-time visibility gap</h3>
+          <p class="mt-[18px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
             As trust relationships evolve dynamically across domains, organizations lack real-time visibility into active trust paths, policy constraints, and validation behavior.
           </p>
-          <p>
+          <p class="mt-[14px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
             This limits auditability and slows incident response.
           </p>
         </article>
 
-        <article class="limit-card limit-card-emerging">
-          <span class="limit-card-tag">Emerging challenge</span>
-          <div class="limit-card-chart" aria-hidden="true">
-            <svg viewBox="0 0 260 132" class="limit-card-chart-svg">
+        <article class="limit-card limit-card-emerging flex flex-col min-h-full p-[24px_22px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] basis-[calc((100%-72px)/4)] grow-0 shrink max-[1180px]:basis-auto max-[760px]:p-[20px]">
+          <span class="limit-card-tag inline-flex items-center gap-[8px] w-fit min-h-[24px] mb-[16px] px-[10px] py-[4px] rounded-[999px] border border-[rgba(142,108,62,0.22)] bg-[rgba(244,233,214,0.72)] text-[rgba(121,88,47,0.86)] text-[0.66rem] font-semibold tracking-[0.16em] uppercase max-[760px]:mb-[12px] max-[760px]:gap-[7px]">Emerging challenge</span>
+          <div class="limit-card-chart grid mb-[20px] p-[13px_13px_11px] min-h-[150px] items-center rounded-[var(--radius-lg)] bg-[rgba(239,233,223,0.82)] border border-[rgba(62,56,48,0.1)] max-[760px]:mb-[18px] max-[760px]:p-[11px_11px_10px]" aria-hidden="true">
+            <svg viewBox="0 0 260 132" class="limit-card-chart-svg block w-full h-auto rounded-[var(--radius-lg)] bg-gradient-to-b from-[rgba(245,240,232,0.82)] to-[rgba(236,230,219,0.66)]">
               <defs>
                 <linearGradient id="limitSupplyIntegrity" x1="0" x2="1" y1="0.2" y2="0.8">
                   <stop offset="0%" stop-color="rgba(95, 114, 141, 0.18)" />
@@ -333,11 +333,11 @@
               <rect x="42" y="22" width="180" height="88" rx="24" class="limit-card-surface-glow" style="fill: url(#limitSupplyIntegrity);"></rect>
             </svg>
           </div>
-          <h3>Software supply chain integrity</h3>
-          <p>
+          <h3 class="m-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[clamp(1.72rem,2vw,1.84rem)] font-normal leading-[1.02] text-wrap-balance max-[760px]:text-[1.94rem]">Software supply chain integrity</h3>
+          <p class="mt-[18px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
             Modern software distribution requires verifiable provenance and immutable cryptographic signatures.
           </p>
-          <p>
+          <p class="mt-[14px] text-[var(--ink-soft)] text-[0.98rem] leading-[1.42]">
             Federated environments struggle to validate signed artifacts across domains without relying on implicit trust in external repositories.
           </p>
         </article>
@@ -347,111 +347,6 @@
 </section>
 
 <style>
-  .section-heading p {
-    margin-top: 14px;
-    line-height: 1.42;
-  }
-
-  .limits-subtitle {
-    margin: 12px 0 0;
-    color: rgba(58, 51, 42, 0.8);
-    font-family: "Playfair Display", serif;
-    font-size: clamp(1.18rem, 1.8vw, 1.44rem);
-    line-height: 1.12;
-    letter-spacing: -0.01em;
-  }
-
-  .limits-group {
-    margin-top: 30px;
-  }
-
-  .limits-group-emerging {
-    margin-top: 28px;
-  }
-
-  .limits-group-heading {
-    margin-bottom: 16px;
-  }
-
-  .limits-group-label {
-    display: inline-block;
-    color: rgba(77, 70, 59, 0.72);
-    font-size: 0.76rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
-  .limits-grid {
-    gap: 22px;
-  }
-
-  .limits-grid-primary {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .limits-grid-secondary {
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    flex-wrap: nowrap;
-  }
-
-  .limits-grid-secondary .limit-card {
-    flex: 0 1 calc((100% - 72px) / 4);
-  }
-
-  .limit-card {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-    padding: 24px 22px;
-    background: linear-gradient(180deg, var(--paper-card) 0%, var(--paper-card-strong) 100%);
-    border: 1px solid var(--paper-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-paper);
-  }
-
-  .limit-card h3 {
-    margin: 0;
-    color: #1e1b17;
-    font-family: "Playfair Display", serif;
-    font-size: clamp(1.72rem, 2vw, 1.84rem);
-    font-weight: 400;
-    line-height: 1.02;
-    text-wrap: balance;
-  }
-
-  .limit-card p {
-    margin: 18px 0 0;
-    color: var(--ink-soft);
-    font-size: 0.98rem;
-    line-height: 1.42;
-  }
-
-  .limit-card p + p {
-    margin-top: 14px;
-  }
-
-  .limit-card-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    width: fit-content;
-    min-height: 24px;
-    margin-bottom: 16px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(142, 108, 62, 0.22);
-    background: rgba(244, 233, 214, 0.72);
-    color: rgba(121, 88, 47, 0.86);
-    font-size: 0.66rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-
   .limit-card-tag::before {
     content: "";
     width: 6px;
@@ -459,25 +354,6 @@
     border-radius: 999px;
     background: rgba(162, 122, 66, 0.72);
     box-shadow: 0 0 0 3px rgba(162, 122, 66, 0.1);
-  }
-
-  .limit-card-chart {
-    display: grid;
-    margin-bottom: 20px;
-    padding: 13px 13px 11px;
-    min-height: 150px;
-    align-items: center;
-    border-radius: var(--radius-lg);
-    background: rgba(239, 233, 223, 0.82);
-    border: 1px solid rgba(62, 56, 48, 0.1);
-  }
-
-  .limit-card-chart-svg {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: var(--radius-lg);
-    background: linear-gradient(180deg, rgba(245, 240, 232, 0.82) 0%, rgba(236, 230, 219, 0.66) 100%);
   }
 
   .limit-card-axis {
@@ -668,61 +544,5 @@
 
   .limit-card-annotation-hint {
     fill: rgba(146, 114, 61, 0.56);
-  }
-
-  @media (max-width: 1180px) {
-    .limits-group {
-      margin-top: 30px;
-    }
-
-    .limits-grid-primary,
-    .limits-grid-secondary {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      display: grid;
-    }
-
-    .limits-grid-secondary .limit-card {
-      flex: initial;
-    }
-  }
-
-  @media (max-width: 760px) {
-    .limits-subtitle {
-      margin-top: 12px;
-      line-height: 1.16;
-    }
-
-    .limits-group {
-      margin-top: 24px;
-    }
-
-    .limits-group-heading {
-      margin-bottom: 14px;
-    }
-
-    .limits-grid-primary,
-    .limits-grid-secondary {
-      grid-template-columns: 1fr;
-      display: grid;
-      gap: 18px;
-    }
-
-    .limit-card {
-      padding: 20px;
-    }
-
-    .limit-card-chart {
-      margin-bottom: 18px;
-      padding: 11px 11px 10px;
-    }
-
-    .limit-card h3 {
-      font-size: 1.94rem;
-    }
-
-    .limit-card-tag {
-      margin-bottom: 12px;
-      gap: 7px;
-    }
   }
 </style>

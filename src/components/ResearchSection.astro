@@ -1,94 +1,94 @@
 ---
 const formalDefinitions = [
   {
-    termHtml: '<span class="math-var">V</span>',
+    termHtml: '<span class="math-var italic">V</span>',
     description: "is the set of certification authorities and governed trust points in the federated ecosystem.",
   },
   {
     termHtml:
-      '<span class="math-var">E</span> &sube; <span class="math-var">V</span> &times; <span class="math-var">V</span>',
+      '<span class="math-var italic">E</span> &sube; <span class="math-var italic">V</span> &times; <span class="math-var italic">V</span>',
     description: "is the set of admissible federation relations between certification authorities.",
   },
   {
     termHtml:
-      '<span class="math-var">w</span> : <span class="math-var">E</span> &rarr; ℝ<sub>&ge;0</sub>',
+      '<span class="math-var italic">w</span> : <span class="math-var italic">E</span> &rarr; ℝ<sub class="text-[0.66em] leading-[0] align-[-0.34em]">&ge;0</sub>',
     description: "is the edge cost function.",
   },
   {
     termHtml:
-      '&Phi; : <span class="math-var">E</span> &rarr; <span class="math-var">C</span>',
+      '&Phi; : <span class="math-var italic">E</span> &rarr; <span class="math-var italic">C</span>',
     description: "assigns to each edge a set of governance constraints.",
   },
 ];
 
 const costComponents = [
   {
-    termHtml: '<span class="math-var">crypto</span>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">crypto</span>(<span class="math-var italic">e</span>)',
     description: "cryptographic posture of the relation, such as classical, hybrid, or post-quantum.",
   },
   {
-    termHtml: '<span class="math-var">alg</span>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">alg</span>(<span class="math-var italic">e</span>)',
     description: "algorithm family used by the relation, including interoperability implications.",
   },
   {
-    termHtml: '<span class="math-var">key</span>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">key</span>(<span class="math-var italic">e</span>)',
     description: "key strength or associated technical assurance level.",
   },
   {
-    termHtml: '<span class="math-var">dist</span>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">dist</span>(<span class="math-var italic">e</span>)',
     description: "structural distance introduced when traversing domains, bridges, or governance boundaries.",
   },
 ];
 
 const governanceComponents = [
   {
-    termHtml: '<span class="math-var">prop</span>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">prop</span>(<span class="math-var italic">e</span>)',
     relationHtml:
-      '<span class="math-var">prop</span>(<span class="math-var">e</span>) &isin; &#123;none, limited, full&#125;',
+      '<span class="math-var italic">prop</span>(<span class="math-var italic">e</span>) &isin; &#123;none, limited, full&#125;',
     description:
       "This determines whether trust may stop at the current relation, propagate in a bounded way, or be fully reusable across further federation steps.",
   },
   {
-    termHtml: '<span class="math-var">depth</span>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">depth</span>(<span class="math-var italic">e</span>)',
     relationHtml:
-      '<span class="math-var">depth</span>(<span class="math-var">e</span>) &isin; ℕ',
+      '<span class="math-var italic">depth</span>(<span class="math-var italic">e</span>) &isin; ℕ',
     description:
       "This bounds how many additional federation steps may be traversed after the relation is used.",
   },
   {
-    termHtml: '<span class="math-var">scope</span>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">scope</span>(<span class="math-var italic">e</span>)',
     description:
       "This specifies the operational context in which the relation may be reused, such as TLS, authentication, code signing, or document signing.",
   },
   {
-    termHtml: '<span class="math-var">pol</span><sup>+</sup>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">pol</span><sup class="text-[0.66em] leading-[0] align-[0.42em]">+</sup>(<span class="math-var italic">e</span>)',
     description:
       "These identify certification policies that are admissible for route construction through the relation.",
   },
   {
-    termHtml: '<span class="math-var">pol</span><sup>-</sup>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">pol</span><sup class="text-[0.66em] leading-[0] align-[0.42em]">-</sup>(<span class="math-var italic">e</span>)',
     description:
       "These identify certification policies that must exclude the relation from candidate paths.",
   },
   {
-    termHtml: '<span class="math-var">name</span>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">name</span>(<span class="math-var italic">e</span>)',
     description:
       "These restrict the naming space over which trust may apply, for example DNS domains, email namespaces, X.500 subtrees, or specific organizations.",
   },
   {
-    termHtml: '<span class="math-var">ku</span>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">ku</span>(<span class="math-var italic">e</span>)',
     description:
       "These restrict which key usage semantics remain valid when traversing the relation.",
   },
   {
-    termHtml: '<span class="math-var">eku</span>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">eku</span>(<span class="math-var italic">e</span>)',
     description:
       "These restrict which application-level purposes remain admissible, such as server authentication or code signing.",
   },
   {
-    termHtml: '<span class="math-var">time</span>(<span class="math-var">e</span>)',
+    termHtml: '<span class="math-var italic">time</span>(<span class="math-var italic">e</span>)',
     relationHtml:
-      '<span class="math-var">time</span>(<span class="math-var">e</span>) = [<span class="math-var">t</span><sub>from</sub>(<span class="math-var">e</span>), <span class="math-var">t</span><sub>to</sub>(<span class="math-var">e</span>)]',
+      '<span class="math-var italic">time</span>(<span class="math-var italic">e</span>) = [<span class="math-var italic">t</span><sub class="text-[0.66em] leading-[0] align-[-0.34em]">from</sub>(<span class="math-var italic">e</span>), <span class="math-var italic">t</span><sub class="text-[0.66em] leading-[0] align-[-0.34em]">to</sub>(<span class="math-var italic">e</span>)]',
     description:
       "This expresses the governance time interval during which the trust relation is considered admissible, independently of whether underlying certificates remain syntactically valid under PKIX.",
   },
@@ -103,6 +103,18 @@ const admissibleConditions = [
   "Key Usage and Extended Key Usage restrictions,",
   "and the governed trust validity window.",
 ];
+
+// Shared Tailwind class strings for math typography
+const mathFontFamily = `[font-family:'STIX_Two_Text','Cambria_Math','STIX_Two_Math','Times_New_Roman',serif]`;
+const mathLineBase = `m-0 flex flex-wrap items-center justify-center gap-y-[0.16em] gap-x-[0.4em] text-[#3a2f24] ${mathFontFamily} text-[clamp(0.78rem,0.9vw,0.9rem)] font-medium leading-[1.22] tracking-[0.01em] [text-rendering:optimizeLegibility] [overflow-wrap:anywhere] max-[760px]:text-[0.72rem] max-[760px]:leading-[1.22] max-[420px]:text-[0.66rem]`;
+const mathLineDisplay = `text-[clamp(0.98rem,1.18vw,1.08rem)] leading-[1.1] max-[760px]:text-[0.86rem] max-[760px]:leading-[1.04] max-[420px]:text-[0.78rem]`;
+const mathPiece = `min-w-0 whitespace-nowrap max-[420px]:whitespace-normal`;
+const subClasses = `text-[0.66em] leading-[0] align-[-0.34em]`;
+const supClasses = `text-[0.66em] leading-[0] align-[0.42em]`;
+const stepHeaderPara = `m-0 text-[#62584b] text-[0.92rem] leading-[1.56] max-[760px]:text-[0.84rem] max-[420px]:text-[0.72rem]`;
+const stepTextPara = stepHeaderPara;
+const stepConclusionPara = `m-0 text-[#62584b] text-[0.92rem] leading-[1.56] pt-[8px] border-t border-[rgba(70,60,45,0.08)] max-[760px]:text-[0.84rem] max-[420px]:text-[0.72rem]`;
+const mathDisplayBase = `grid gap-0 min-w-0 pt-[18px] justify-items-center content-start justify-center min-h-0 text-center max-[760px]:pt-[14px] max-[760px]:min-h-0`;
 ---
 
 <section id="research" class="paper-section">
@@ -117,31 +129,31 @@ const admissibleConditions = [
       </p>
     </div>
 
-    <div class="research-grid">
-      <article class="research-card">
-        <div class="research-card-header">
-          <h3>Governed trust graph</h3>
+    <div class="research-grid grid grid-cols-2 gap-[24px] mt-[42px] max-[1080px]:grid-cols-1">
+      <article class="research-card p-[28px_26px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] max-[760px]:p-[22px]">
+        <div class="research-card-header flex items-baseline gap-[14px] mb-[18px] max-[760px]:items-start max-[760px]:gap-[16px]">
+          <h3 class="m-0 [font-family:'Playfair_Display',serif] font-normal text-[2rem] leading-none max-[760px]:text-[2.25rem] max-[760px]:leading-[0.98]">Governed trust graph</h3>
         </div>
-        <p>
+        <p class="text-[var(--ink-soft)] leading-[1.8]">
           Instead of inheriting trust from entire hierarchies, PolarisChain models
           trust as explicit graph edges between governed certification authorities.
         </p>
-        <ul>
+        <ul class="mt-[18px] mb-0 pl-[18px] text-[var(--ink-soft)] [&_li+li]:mt-[10px]">
           <li>Vertices represent trust anchors, bridge CAs, issuing CAs, and other governed trust points.</li>
           <li>Edges encode admissible inter-domain relationships instead of broad hierarchy inheritance.</li>
           <li>The model preserves PKIX validation while making federation semantics explicit and queryable.</li>
         </ul>
       </article>
 
-      <article class="research-card">
-        <div class="research-card-header">
-          <h3>Optimal path semantics</h3>
+      <article class="research-card p-[28px_26px] bg-gradient-to-b from-[var(--paper-card)] to-[var(--paper-card-strong)] border border-[var(--paper-border)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] max-[760px]:p-[22px]">
+        <div class="research-card-header flex items-baseline gap-[14px] mb-[18px] max-[760px]:items-start max-[760px]:gap-[16px]">
+          <h3 class="m-0 [font-family:'Playfair_Display',serif] font-normal text-[2rem] leading-none max-[760px]:text-[2.25rem] max-[760px]:leading-[0.98]">Optimal path semantics</h3>
         </div>
-        <p>
+        <p class="text-[var(--ink-soft)] leading-[1.8]">
           The proposal defines a multicriteria cost over federation edges so path
           selection becomes an optimization problem rather than a heuristic search.
         </p>
-        <ul>
+        <ul class="mt-[18px] mb-0 pl-[18px] text-[var(--ink-soft)] [&_li+li]:mt-[10px]">
           <li>Edge weights capture cryptographic profile, algorithm family, key strength, and structural distance.</li>
           <li>Dijkstra-based traversal computes a deterministic minimum-cost route over admissible paths.</li>
           <li>The result is an explainable certification chain between issuer-side entities and governed trust points.</li>
@@ -149,11 +161,11 @@ const admissibleConditions = [
       </article>
     </div>
 
-    <div class="model-section" aria-labelledby="mathematical-model-heading">
-      <div class="model-heading">
+    <div class="model-section mt-[30px] max-[760px]:mt-[24px]" aria-labelledby="mathematical-model-heading">
+      <div class="model-heading max-w-[860px]">
         <span class="note-label">Mathematical model</span>
-        <h3 id="mathematical-model-heading">A compact formalization of governed federation and path cost.</h3>
-        <p>
+        <h3 id="mathematical-model-heading" class="mt-[12px] mb-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[clamp(2rem,3vw,2.8rem)] font-normal leading-[0.98] max-[760px]:leading-[1.04]">A compact formalization of governed federation and path cost.</h3>
+        <p class="mt-[12px] mb-0 text-[var(--ink-soft)] leading-[1.72]">
           PKIX certificate validation remains intact. The graph layer makes admissible
           trust propagation explicit, separates technical edge cost from hard
           governance constraints, and selects routes only among policy-compliant
@@ -161,135 +173,135 @@ const admissibleConditions = [
         </p>
       </div>
 
-      <div class="model-grid">
-        <article class="research-card model-story-card">
-          <div class="model-story-flow">
-            <section class="model-step" aria-labelledby="model-formal-definition">
-              <div class="model-step-header model-step-header-cost">
-                <span class="model-step-marker">01</span>
-                <h4 id="model-formal-definition">Formal definition</h4>
-                <p>
+      <div class="model-grid block mt-[18px]">
+        <article class="research-card model-story-card p-[clamp(22px,2.2vw,30px)] bg-gradient-to-b from-[rgba(241,233,220,0.9)] to-[rgba(232,222,206,0.96)] border border-[rgba(70,60,45,0.08)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] overflow-hidden max-[760px]:p-[16px]">
+          <div class="model-story-flow grid gap-0">
+            <section class="model-step grid grid-cols-[minmax(440px,0.62fr)_minmax(0,1fr)] gap-[28px] py-[14px] border-t border-[rgba(70,60,45,0.08)] first:pt-0 first:border-t-0 last:pb-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[10px] max-[760px]:py-[12px]" aria-labelledby="model-formal-definition">
+              <div class="model-step-header model-step-header-cost grid content-start gap-[14px] min-w-0 pr-[10px] max-[760px]:pr-0 max-[760px]:gap-[9px]">
+                <span class="model-step-marker inline-block text-[rgba(95,81,62,0.66)] text-[0.74rem] font-semibold tracking-[0.16em] uppercase">01</span>
+                <h4 id="model-formal-definition" class="m-0 text-[#1f1a15] [font-family:'Playfair_Display',serif] text-[clamp(1.7rem,2.4vw,2.15rem)] font-normal leading-[0.98] max-[760px]:text-[1.28rem] max-[760px]:leading-[1.04]">Formal definition</h4>
+                <p class={stepHeaderPara}>
                   The federated PKI ecosystem is modeled as a governed weighted graph:
                 </p>
-                <div class="model-math-display" aria-label="G equals open parenthesis V comma E comma w comma Phi close parenthesis">
-                  <p class="math-line math-line-display">
-                    <span class="math-piece"><span class="math-var">G</span> = (<span class="math-var">V</span>, <span class="math-var">E</span>, <span class="math-var">w</span>, &Phi;)</span>
+                <div class={`model-math-display ${mathDisplayBase}`} aria-label="G equals open parenthesis V comma E comma w comma Phi close parenthesis">
+                  <p class={`math-line math-line-display ${mathLineBase} ${mathLineDisplay}`}>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">G</span> = (<span class="math-var italic">V</span>, <span class="math-var italic">E</span>, <span class="math-var italic">w</span>, &Phi;)</span>
                   </p>
                 </div>
               </div>
-              <div class="model-step-body">
-                <p class="model-step-label">where:</p>
-                <dl class="model-definition-list">
+              <div class="model-step-body grid content-start gap-[14px] min-w-0 pt-[62px] max-[760px]:pt-0 max-[760px]:gap-[9px]">
+                <p class="model-step-label m-0 text-[rgba(88,75,58,0.78)] text-[0.82rem] font-semibold tracking-[0.02em]">where:</p>
+                <dl class="model-definition-list m-0 grid gap-0 border-t border-[rgba(70,60,45,0.09)]">
                   {formalDefinitions.map((item) => (
-                    <div class="model-definition-item">
-                      <dt>
-                        <span class="model-definition-term" set:html={item.termHtml}></span>
+                    <div class="model-definition-item grid grid-cols-[minmax(160px,0.34fr)_minmax(0,1fr)] gap-y-[6px] gap-x-[10px] py-[1px] border-b border-[rgba(70,60,45,0.09)] last:border-b-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[3px] max-[760px]:py-[3px]">
+                      <dt class="m-0 grid gap-[3px] content-start">
+                        <span class={`model-definition-term text-[#3a2f24] [font-family:'STIX_Two_Text','Cambria_Math','STIX_Two_Math','Times_New_Roman',serif] leading-[1.28] tracking-[0.01em] [text-rendering:optimizeLegibility] text-[clamp(0.88rem,0.88vw,0.96rem)]`} set:html={item.termHtml}></span>
                       </dt>
-                      <dd>{item.description}</dd>
+                      <dd class="m-0 text-[#62584b] text-[0.8rem] leading-[1.24] max-[760px]:text-[0.76rem] max-[420px]:text-[0.72rem]">{item.description}</dd>
                     </div>
                   ))}
                 </dl>
               </div>
             </section>
 
-            <section class="model-step model-step-cost" aria-labelledby="model-cost-function">
-              <div class="model-step-header">
-                <span class="model-step-marker">02</span>
-                <h4 id="model-cost-function">Cost function</h4>
-                <p>
+            <section class="model-step model-step-cost grid grid-cols-[minmax(440px,0.62fr)_minmax(0,1fr)] gap-[28px] py-[14px] pb-[28px] border-t border-[rgba(70,60,45,0.08)] first:pt-0 first:border-t-0 last:pb-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[10px] max-[760px]:py-[12px] max-[760px]:pb-[20px]" aria-labelledby="model-cost-function">
+              <div class="model-step-header grid content-start gap-[14px] min-w-0 pr-[10px] max-[760px]:pr-0 max-[760px]:gap-[9px]">
+                <span class="model-step-marker inline-block text-[rgba(95,81,62,0.66)] text-[0.74rem] font-semibold tracking-[0.16em] uppercase">02</span>
+                <h4 id="model-cost-function" class="m-0 text-[#1f1a15] [font-family:'Playfair_Display',serif] text-[clamp(1.7rem,2.4vw,2.15rem)] font-normal leading-[0.98] max-[760px]:text-[1.28rem] max-[760px]:leading-[1.04]">Cost function</h4>
+                <p class={stepHeaderPara}>
                   As a natural evolution of the original formulation, technical and
                   structural cost remains explicitly separated from governance
                   constraints:
                 </p>
-                <div class="model-math-display" aria-label="w of e equals f of crypto of e, alg of e, key of e, dist of e">
-                  <p class="math-line math-line-display">
-                    <span class="math-piece"><span class="math-var">w</span>(<span class="math-var">e</span>) = <span class="math-var">f</span>(</span>
-                    <span class="math-piece"><span class="math-var">crypto</span>(<span class="math-var">e</span>),</span>
-                    <span class="math-piece"><span class="math-var">alg</span>(<span class="math-var">e</span>),</span>
-                    <span class="math-piece"><span class="math-var">key</span>(<span class="math-var">e</span>),</span>
-                    <span class="math-piece"><span class="math-var">dist</span>(<span class="math-var">e</span>))</span>
+                <div class={`model-math-display ${mathDisplayBase} pb-[26px] max-[760px]:pb-[18px]`} aria-label="w of e equals f of crypto of e, alg of e, key of e, dist of e">
+                  <p class={`math-line math-line-display ${mathLineBase} ${mathLineDisplay}`}>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">w</span>(<span class="math-var italic">e</span>) = <span class="math-var italic">f</span>(</span>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">crypto</span>(<span class="math-var italic">e</span>),</span>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">alg</span>(<span class="math-var italic">e</span>),</span>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">key</span>(<span class="math-var italic">e</span>),</span>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">dist</span>(<span class="math-var italic">e</span>))</span>
                   </p>
                 </div>
               </div>
-              <div class="model-step-body">
-                <p class="model-step-label">where:</p>
-                <dl class="model-definition-list">
+              <div class="model-step-body grid content-start gap-[14px] min-w-0 pt-[62px] max-[760px]:pt-0 max-[760px]:gap-[9px]">
+                <p class="model-step-label m-0 text-[rgba(88,75,58,0.78)] text-[0.82rem] font-semibold tracking-[0.02em]">where:</p>
+                <dl class="model-definition-list m-0 grid gap-0 border-t border-[rgba(70,60,45,0.09)]">
                   {costComponents.map((item) => (
-                    <div class="model-definition-item">
-                      <dt>
-                        <span class="model-definition-term" set:html={item.termHtml}></span>
+                    <div class="model-definition-item grid grid-cols-[minmax(160px,0.34fr)_minmax(0,1fr)] gap-y-[6px] gap-x-[10px] py-[1px] border-b border-[rgba(70,60,45,0.09)] last:border-b-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[3px] max-[760px]:py-[3px]">
+                      <dt class="m-0 grid gap-[3px] content-start">
+                        <span class={`model-definition-term text-[#3a2f24] [font-family:'STIX_Two_Text','Cambria_Math','STIX_Two_Math','Times_New_Roman',serif] leading-[1.28] tracking-[0.01em] [text-rendering:optimizeLegibility] text-[clamp(0.88rem,0.88vw,0.96rem)]`} set:html={item.termHtml}></span>
                       </dt>
-                      <dd>{item.description}</dd>
+                      <dd class="m-0 text-[#62584b] text-[0.8rem] leading-[1.24] max-[760px]:text-[0.76rem] max-[420px]:text-[0.72rem]">{item.description}</dd>
                     </div>
                   ))}
                 </dl>
               </div>
             </section>
 
-            <section class="model-step" aria-labelledby="model-governance-per-edge">
-              <div class="model-step-header">
-                <span class="model-step-marker">03</span>
-                <h4 id="model-governance-per-edge">Governance constraints<br />per edge</h4>
-                <p>
-                  For each edge <span class="math-var">e</span> &isin; <span class="math-var">E</span>, the governance layer defines the hard constraints that determine whether trust may propagate through that relation at all:
+            <section class="model-step grid grid-cols-[minmax(440px,0.62fr)_minmax(0,1fr)] gap-[28px] py-[14px] border-t border-[rgba(70,60,45,0.08)] first:pt-0 first:border-t-0 last:pb-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[10px] max-[760px]:py-[12px]" aria-labelledby="model-governance-per-edge">
+              <div class="model-step-header grid content-start gap-[14px] min-w-0 pr-[10px] max-[760px]:pr-0 max-[760px]:gap-[9px]">
+                <span class="model-step-marker inline-block text-[rgba(95,81,62,0.66)] text-[0.74rem] font-semibold tracking-[0.16em] uppercase">03</span>
+                <h4 id="model-governance-per-edge" class="m-0 text-[#1f1a15] [font-family:'Playfair_Display',serif] text-[clamp(1.7rem,2.4vw,2.15rem)] font-normal leading-[0.98] max-[760px]:text-[1.28rem] max-[760px]:leading-[1.04]">Governance constraints<br />per edge</h4>
+                <p class={stepHeaderPara}>
+                  For each edge <span class="math-var italic">e</span> &isin; <span class="math-var italic">E</span>, the governance layer defines the hard constraints that determine whether trust may propagate through that relation at all:
                 </p>
-                <div class="model-math-display" aria-label="Phi of e equals trans of e, depth of e, scope of e, pol plus of e, pol minus of e, name of e, ku of e, eku of e, time of e">
-                  <p class="math-line math-line-display">
-                    <span class="math-piece">&Phi;(<span class="math-var">e</span>) = (<span class="math-var">prop</span>(<span class="math-var">e</span>), <span class="math-var">depth</span>(<span class="math-var">e</span>), <span class="math-var">scope</span>(<span class="math-var">e</span>),</span>
+                <div class={`model-math-display ${mathDisplayBase}`} aria-label="Phi of e equals trans of e, depth of e, scope of e, pol plus of e, pol minus of e, name of e, ku of e, eku of e, time of e">
+                  <p class={`math-line math-line-display ${mathLineBase} ${mathLineDisplay}`}>
+                    <span class={`math-piece ${mathPiece}`}>&Phi;(<span class="math-var italic">e</span>) = (<span class="math-var italic">prop</span>(<span class="math-var italic">e</span>), <span class="math-var italic">depth</span>(<span class="math-var italic">e</span>), <span class="math-var italic">scope</span>(<span class="math-var italic">e</span>),</span>
                   </p>
-                  <p class="math-line math-line-display math-line-indent">
-                    <span class="math-piece"><span class="math-var">pol</span><sup>+</sup>(<span class="math-var">e</span>), <span class="math-var">pol</span><sup>-</sup>(<span class="math-var">e</span>), <span class="math-var">name</span>(<span class="math-var">e</span>), <span class="math-var">ku</span>(<span class="math-var">e</span>), <span class="math-var">eku</span>(<span class="math-var">e</span>), <span class="math-var">time</span>(<span class="math-var">e</span>))</span>
+                  <p class={`math-line math-line-display math-line-indent ${mathLineBase} ${mathLineDisplay} pl-[clamp(0px,0.55vw,6px)] max-[760px]:pl-0`}>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">pol</span><sup class={supClasses}>+</sup>(<span class="math-var italic">e</span>), <span class="math-var italic">pol</span><sup class={supClasses}>-</sup>(<span class="math-var italic">e</span>), <span class="math-var italic">name</span>(<span class="math-var italic">e</span>), <span class="math-var italic">ku</span>(<span class="math-var italic">e</span>), <span class="math-var italic">eku</span>(<span class="math-var italic">e</span>), <span class="math-var italic">time</span>(<span class="math-var italic">e</span>))</span>
                   </p>
                 </div>
               </div>
-              <div class="model-step-body">
-                <p class="model-step-label">where:</p>
-                <dl class="model-definition-list model-definition-list-governance">
+              <div class="model-step-body grid content-start gap-[14px] min-w-0 pt-[62px] max-[760px]:pt-0 max-[760px]:gap-[9px]">
+                <p class="model-step-label m-0 text-[rgba(88,75,58,0.78)] text-[0.82rem] font-semibold tracking-[0.02em]">where:</p>
+                <dl class="model-definition-list model-definition-list-governance m-0 grid gap-0 border-t border-[rgba(70,60,45,0.09)]">
                   {governanceComponents.map((item) => (
-                    <div class="model-definition-item model-definition-item-governance">
-                      <dt>
-                        <span class="model-definition-term" set:html={item.termHtml}></span>
+                    <div class="model-definition-item model-definition-item-governance grid grid-cols-[minmax(160px,0.34fr)_minmax(0,1fr)] gap-y-[6px] gap-x-[10px] py-[1px] border-b border-[rgba(70,60,45,0.09)] last:border-b-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[3px] max-[760px]:py-[3px]">
+                      <dt class="m-0 grid gap-[3px] content-start">
+                        <span class={`model-definition-term text-[#3a2f24] [font-family:'STIX_Two_Text','Cambria_Math','STIX_Two_Math','Times_New_Roman',serif] leading-[1.28] tracking-[0.01em] [text-rendering:optimizeLegibility] text-[clamp(0.88rem,0.88vw,0.96rem)]`} set:html={item.termHtml}></span>
                         {item.relationHtml && (
-                          <span class="model-definition-relation" set:html={item.relationHtml}></span>
+                          <span class={`model-definition-relation text-[rgba(76,63,48,0.84)] [font-family:'STIX_Two_Text','Cambria_Math','STIX_Two_Math','Times_New_Roman',serif] leading-[1.28] tracking-[0.01em] [text-rendering:optimizeLegibility] text-[clamp(0.82rem,0.82vw,0.9rem)]`} set:html={item.relationHtml}></span>
                         )}
                       </dt>
-                      <dd>{item.description}</dd>
+                      <dd class="m-0 text-[#62584b] text-[0.8rem] leading-[1.24] max-[760px]:text-[0.76rem] max-[420px]:text-[0.72rem]">{item.description}</dd>
                     </div>
                   ))}
                 </dl>
               </div>
             </section>
 
-            <section class="model-step" aria-labelledby="model-admissible-paths">
-              <div class="model-step-header">
-                <span class="model-step-marker">04</span>
-                <h4 id="model-admissible-paths">Admissible paths</h4>
-                <p>For a candidate path:</p>
-                <div class="model-math-display" aria-label="P equals e 1, e 2, ellipsis, e k">
-                  <p class="math-line math-line-display">
-                    <span class="math-piece"><span class="math-var">P</span> = (</span>
-                    <span class="math-piece"><span class="math-var">e</span><sub>1</sub>,</span>
-                    <span class="math-piece"><span class="math-var">e</span><sub>2</sub>,</span>
-                    <span class="math-piece">&hellip;,</span>
-                    <span class="math-piece"><span class="math-var">e</span><sub>k</sub>)</span>
+            <section class="model-step grid grid-cols-[minmax(440px,0.62fr)_minmax(0,1fr)] gap-[28px] py-[14px] border-t border-[rgba(70,60,45,0.08)] first:pt-0 first:border-t-0 last:pb-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[10px] max-[760px]:py-[12px]" aria-labelledby="model-admissible-paths">
+              <div class="model-step-header grid content-start gap-[14px] min-w-0 pr-[10px] max-[760px]:pr-0 max-[760px]:gap-[9px]">
+                <span class="model-step-marker inline-block text-[rgba(95,81,62,0.66)] text-[0.74rem] font-semibold tracking-[0.16em] uppercase">04</span>
+                <h4 id="model-admissible-paths" class="m-0 text-[#1f1a15] [font-family:'Playfair_Display',serif] text-[clamp(1.7rem,2.4vw,2.15rem)] font-normal leading-[0.98] max-[760px]:text-[1.28rem] max-[760px]:leading-[1.04]">Admissible paths</h4>
+                <p class={stepHeaderPara}>For a candidate path:</p>
+                <div class={`model-math-display ${mathDisplayBase}`} aria-label="P equals e 1, e 2, ellipsis, e k">
+                  <p class={`math-line math-line-display ${mathLineBase} ${mathLineDisplay}`}>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">P</span> = (</span>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">e</span><sub class={subClasses}>1</sub>,</span>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">e</span><sub class={subClasses}>2</sub>,</span>
+                    <span class={`math-piece ${mathPiece}`}>&hellip;,</span>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">e</span><sub class={subClasses}>k</sub>)</span>
                   </p>
                 </div>
-                <p class="model-step-text">the set of admissible paths is defined as:</p>
-                <div class="model-math-display" aria-label="P adm equals set of P in script P such that P satisfies Phi">
-                  <p class="math-line math-line-display">
-                    <span class="math-piece"><span class="math-var">P</span><sub>adm</sub> = &#123;</span>
-                    <span class="math-piece"><span class="math-var">P</span> &isin; 𝒫</span>
-                    <span class="math-piece">|</span>
-                    <span class="math-piece"><span class="math-var">P</span> &#8872; &Phi;</span>
-                    <span class="math-piece">&#125;</span>
+                <p class={`model-step-text ${stepTextPara}`}>the set of admissible paths is defined as:</p>
+                <div class={`model-math-display ${mathDisplayBase}`} aria-label="P adm equals set of P in script P such that P satisfies Phi">
+                  <p class={`math-line math-line-display ${mathLineBase} ${mathLineDisplay}`}>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">P</span><sub class={subClasses}>adm</sub> = &#123;</span>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">P</span> &isin; 𝒫</span>
+                    <span class={`math-piece ${mathPiece}`}>|</span>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">P</span> &#8872; &Phi;</span>
+                    <span class={`math-piece ${mathPiece}`}>&#125;</span>
                   </p>
                 </div>
               </div>
-              <div class="model-step-body">
-                <p class="model-step-text">
-                  Here, <span class="math-var">P</span> &#8872; &Phi; means that the path satisfies all governance constraints simultaneously.
+              <div class="model-step-body grid content-start gap-[14px] min-w-0 pt-[62px] max-[760px]:pt-0 max-[760px]:gap-[9px]">
+                <p class={`model-step-text ${stepTextPara}`}>
+                  Here, <span class="math-var italic">P</span> &#8872; &Phi; means that the path satisfies all governance constraints simultaneously.
                 </p>
-                <ol class="model-condition-list">
+                <ol class="model-condition-list m-0 pl-[1.05rem] text-[#62584b] text-[0.9rem] leading-[1.5] grid gap-[3px] max-[760px]:text-[0.76rem] max-[420px]:text-[0.72rem]">
                   {admissibleConditions.map((item) => (
                     <li>{item}</li>
                   ))}
@@ -297,29 +309,29 @@ const admissibleConditions = [
               </div>
             </section>
 
-            <section class="model-step" aria-labelledby="model-optimal-path">
-              <div class="model-step-header">
-                <span class="model-step-marker">05</span>
-                <h4 id="model-optimal-path">Optimal path</h4>
-                <p>
+            <section class="model-step grid grid-cols-[minmax(440px,0.62fr)_minmax(0,1fr)] gap-[28px] py-[14px] border-t border-[rgba(70,60,45,0.08)] first:pt-0 first:border-t-0 last:pb-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[10px] max-[760px]:py-[12px]" aria-labelledby="model-optimal-path">
+              <div class="model-step-header grid content-start gap-[14px] min-w-0 pr-[10px] max-[760px]:pr-0 max-[760px]:gap-[9px]">
+                <span class="model-step-marker inline-block text-[rgba(95,81,62,0.66)] text-[0.74rem] font-semibold tracking-[0.16em] uppercase">05</span>
+                <h4 id="model-optimal-path" class="m-0 text-[#1f1a15] [font-family:'Playfair_Display',serif] text-[clamp(1.7rem,2.4vw,2.15rem)] font-normal leading-[0.98] max-[760px]:text-[1.28rem] max-[760px]:leading-[1.04]">Optimal path</h4>
+                <p class={stepHeaderPara}>
                   The optimal route is therefore not computed over all connected
                   paths, but only over those that are admissible under governance
                   policy:
                 </p>
-                <div class="model-math-display" aria-label="P star equals arg min over P in P adm of sum over e in P of w of e">
-                  <p class="math-line math-line-display">
-                    <span class="math-piece"><span class="math-var">P</span><sup>*</sup> = arg min<sub><span class="math-var">P</span> &isin; <span class="math-var">P</span><sub>adm</sub></sub></span>
+                <div class={`model-math-display ${mathDisplayBase}`} aria-label="P star equals arg min over P in P adm of sum over e in P of w of e">
+                  <p class={`math-line math-line-display ${mathLineBase} ${mathLineDisplay}`}>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">P</span><sup class={supClasses}>*</sup> = arg min<sub class={subClasses}><span class="math-var italic">P</span> &isin; <span class="math-var italic">P</span><sub class={subClasses}>adm</sub></sub></span>
                   </p>
-                  <p class="math-line math-line-display math-line-indent">
-                    <span class="math-piece">&Sigma;<sub><span class="math-var">e</span> &isin; <span class="math-var">P</span></sub> <span class="math-var">w</span>(<span class="math-var">e</span>)</span>
+                  <p class={`math-line math-line-display math-line-indent ${mathLineBase} ${mathLineDisplay} pl-[clamp(0px,0.55vw,6px)] max-[760px]:pl-0`}>
+                    <span class={`math-piece ${mathPiece}`}>&Sigma;<sub class={subClasses}><span class="math-var italic">e</span> &isin; <span class="math-var italic">P</span></sub> <span class="math-var italic">w</span>(<span class="math-var italic">e</span>)</span>
                   </p>
                 </div>
               </div>
-              <div class="model-step-body">
-                <p class="model-step-text">
+              <div class="model-step-body grid content-start gap-[14px] min-w-0 pt-[62px] max-[760px]:pt-0 max-[760px]:gap-[9px]">
+                <p class={`model-step-text ${stepTextPara}`}>
                   This formulation ensures that non-admissible relations do not compete as merely expensive alternatives. They are excluded from the search space altogether. Route optimization therefore occurs only after governance, scope, policy, and propagation constraints have already been enforced.
                 </p>
-                <p class="model-step-conclusion">
+                <p class={`model-step-conclusion ${stepConclusionPara}`}>
                   PKIX validation semantics remain unchanged. The graph layer does not replace certificate validation; it governs admissible trust propagation and computes the minimum-cost route only across policy-compliant federation paths.
                 </p>
               </div>
@@ -329,7 +341,7 @@ const admissibleConditions = [
       </div>
     </div>
 
-    <div class="research-notes">
+    <div class="research-notes mt-[30px] pt-[26px] border-t border-[rgba(52,46,39,0.12)] grid grid-cols-3 gap-[24px] max-[1080px]:grid-cols-1">
       <div>
         <span class="note-label">Research problem</span>
         <p>
@@ -351,365 +363,3 @@ const admissibleConditions = [
     </div>
   </div>
 </section>
-
-<style>
-  .model-section {
-    margin-top: 30px;
-    --model-math-ink: #3a2f24;
-    --model-heading-ink: #1f1a15;
-    --model-muted-ink: #62584b;
-    --model-border: rgba(70, 60, 45, 0.08);
-    --model-surface: linear-gradient(180deg, rgba(241, 233, 220, 0.9) 0%, rgba(232, 222, 206, 0.96) 100%);
-  }
-
-  .model-heading {
-    max-width: 860px;
-  }
-
-  .model-heading h3 {
-    margin: 12px 0 0;
-    color: #1e1b17;
-    font-family: "Playfair Display", serif;
-    font-size: clamp(2rem, 3vw, 2.8rem);
-    font-weight: 400;
-    line-height: 0.98;
-  }
-
-  .model-heading p {
-    margin: 12px 0 0;
-    color: var(--ink-soft);
-    line-height: 1.72;
-  }
-
-  .model-grid {
-    display: block;
-    margin-top: 18px;
-  }
-
-  .model-story-card {
-    padding: clamp(22px, 2.2vw, 30px);
-    background: var(--model-surface);
-    border-color: var(--model-border);
-    overflow: hidden;
-  }
-
-  .model-story-flow {
-    display: grid;
-    gap: 0;
-  }
-
-  .model-step {
-    display: grid;
-    grid-template-columns: minmax(440px, 0.62fr) minmax(0, 1fr);
-    gap: 28px;
-    padding: 14px 0;
-    border-top: 1px solid rgba(70, 60, 45, 0.08);
-  }
-
-  .model-step:first-child {
-    padding-top: 0;
-    border-top: 0;
-  }
-
-  .model-step:last-child {
-    padding-bottom: 0;
-  }
-
-  .model-step-header,
-  .model-step-body {
-    display: grid;
-    align-content: start;
-    gap: 14px;
-    min-width: 0;
-  }
-
-  .model-step-header {
-    padding-right: 10px;
-  }
-
-  .model-step-body {
-    padding-top: 62px;
-  }
-
-  .model-step-cost {
-    padding-bottom: 28px;
-  }
-
-  .model-step-cost .model-math-display {
-    padding-bottom: 26px;
-  }
-
-  .model-step-marker {
-    display: inline-block;
-    color: rgba(95, 81, 62, 0.66);
-    font-size: 0.74rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-
-  .model-step-header h4 {
-    margin: 0;
-    color: var(--model-heading-ink);
-    font-family: "Playfair Display", serif;
-    font-size: clamp(1.7rem, 2.4vw, 2.15rem);
-    font-weight: 400;
-    line-height: 0.98;
-  }
-
-  .model-step-header p,
-  .model-step-text,
-  .model-step-conclusion {
-    margin: 0;
-    color: var(--model-muted-ink);
-    font-size: 0.92rem;
-    line-height: 1.56;
-  }
-
-  .model-step-label {
-    margin: 0;
-    color: rgba(88, 75, 58, 0.78);
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-
-  .model-math-display {
-    display: grid;
-    gap: 0;
-    min-width: 0;
-    padding-top: 18px;
-    justify-items: center;
-    align-content: start;
-    justify-content: center;
-    min-height: 0;
-    text-align: center;
-  }
-
-  .model-math-display .math-line {
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 0.16em 0.4em;
-    color: var(--model-math-ink);
-    font-family: "STIX Two Text", "Cambria Math", "STIX Two Math", "Times New Roman", serif;
-    font-size: clamp(0.78rem, 0.9vw, 0.9rem);
-    font-weight: 500;
-    line-height: 1.22;
-    letter-spacing: 0.01em;
-    text-rendering: optimizeLegibility;
-    overflow-wrap: anywhere;
-  }
-
-  .model-math-display .math-line-display {
-    font-size: clamp(0.98rem, 1.18vw, 1.08rem);
-    line-height: 1.1;
-  }
-
-  .math-line-indent {
-    padding-left: clamp(0px, 0.55vw, 6px);
-  }
-
-  .math-piece {
-    min-width: 0;
-    white-space: nowrap;
-  }
-
-  .math-line sub,
-  .math-line sup,
-  .model-definition-term sub,
-  .model-definition-term sup,
-  .model-definition-relation sub,
-  .model-definition-relation sup {
-    font-size: 0.66em;
-    line-height: 0;
-  }
-
-  .math-line sub,
-  .model-definition-term sub,
-  .model-definition-relation sub {
-    vertical-align: -0.34em;
-  }
-
-  .math-line sup,
-  .model-definition-term sup,
-  .model-definition-relation sup {
-    vertical-align: 0.42em;
-  }
-
-  .math-var {
-    font-style: italic;
-  }
-
-  .model-definition-list {
-    margin: 0;
-    display: grid;
-    gap: 0;
-    border-top: 1px solid rgba(70, 60, 45, 0.09);
-  }
-
-  .model-definition-item {
-    display: grid;
-    grid-template-columns: minmax(160px, 0.34fr) minmax(0, 1fr);
-    gap: 6px 10px;
-    padding: 1px 0;
-    border-bottom: 1px solid rgba(70, 60, 45, 0.09);
-  }
-
-  .model-definition-item:last-child {
-    border-bottom: 0;
-  }
-
-  .model-definition-item dt {
-    margin: 0;
-    display: grid;
-    gap: 3px;
-    align-content: start;
-  }
-
-  .model-definition-item dd {
-    margin: 0;
-    color: var(--model-muted-ink);
-    font-size: 0.8rem;
-    line-height: 1.24;
-  }
-
-  .model-definition-term,
-  .model-definition-relation {
-    color: var(--model-math-ink);
-    font-family: "STIX Two Text", "Cambria Math", "STIX Two Math", "Times New Roman", serif;
-    line-height: 1.28;
-    letter-spacing: 0.01em;
-    text-rendering: optimizeLegibility;
-  }
-
-  .model-definition-term {
-    font-size: clamp(0.88rem, 0.88vw, 0.96rem);
-  }
-
-  .model-definition-relation {
-    color: rgba(76, 63, 48, 0.84);
-    font-size: clamp(0.82rem, 0.82vw, 0.9rem);
-  }
-
-  .model-condition-list {
-    margin: 0;
-    padding-left: 1.05rem;
-    color: var(--model-muted-ink);
-    font-size: 0.9rem;
-    line-height: 1.5;
-    display: grid;
-    gap: 3px;
-  }
-
-  .model-step-conclusion {
-    padding-top: 8px;
-    border-top: 1px solid rgba(70, 60, 45, 0.08);
-  }
-
-  @media (max-width: 760px) {
-    .model-section {
-      margin-top: 24px;
-    }
-
-    .model-heading h3 {
-      line-height: 1.04;
-    }
-
-    .model-story-card {
-      padding: 16px;
-    }
-
-    .model-step {
-      grid-template-columns: 1fr;
-      gap: 10px;
-      padding: 12px 0;
-    }
-
-    .model-step-header {
-      padding-right: 0;
-    }
-
-    .model-step-header,
-    .model-step-body {
-      gap: 9px;
-    }
-
-    .model-step-body {
-      padding-top: 0;
-    }
-
-    .model-step-cost {
-      padding-bottom: 20px;
-    }
-
-    .model-step-cost .model-math-display {
-      padding-bottom: 18px;
-    }
-
-    .model-math-display .math-line {
-      font-size: 0.72rem;
-      line-height: 1.22;
-    }
-
-    .model-math-display .math-line-display {
-      font-size: 0.86rem;
-      line-height: 1.04;
-    }
-
-    .model-math-display {
-      padding-top: 14px;
-      min-height: 0;
-    }
-
-    .math-line-indent {
-      padding-left: 0;
-    }
-
-    .model-step-header h4 {
-      font-size: 1.28rem;
-      line-height: 1.04;
-    }
-
-    .model-step-header p,
-    .model-step-text,
-    .model-step-conclusion {
-      font-size: 0.84rem;
-    }
-
-    .model-definition-item {
-      grid-template-columns: 1fr;
-      gap: 3px;
-      padding: 3px 0;
-    }
-
-    .model-definition-item dd,
-    .model-condition-list {
-      font-size: 0.76rem;
-    }
-  }
-
-  @media (max-width: 420px) {
-    .model-math-display .math-line {
-      font-size: 0.66rem;
-    }
-
-    .model-math-display .math-line-display {
-      font-size: 0.78rem;
-    }
-
-    .math-piece {
-      white-space: normal;
-    }
-
-    .model-step-header p,
-    .model-step-text,
-    .model-step-conclusion,
-    .model-definition-item dd,
-    .model-condition-list {
-      font-size: 0.72rem;
-    }
-  }
-</style>

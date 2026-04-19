@@ -11,44 +11,44 @@
       </p>
     </div>
 
-    <div class="optimal-layout">
-      <article class="optimal-formula-card">
-        <span class="optimal-label">Objective function</span>
-        <div class="optimal-equation-wrap">
-          <p class="optimal-equation" aria-label="P star equals arg min over P in Paths of the sum over e in P of w of e">
-            <span class="math-var-light">P</span>* = <span class="math-var-light">argmin</span><sub><span class="math-var-light">P</span> &isin; <span class="math-var-light">Paths</span></sub>
-            <span class="math-sum">&Sigma;</span><sub><span class="math-var-light">e</span> &isin; <span class="math-var-light">P</span></sub>
-            <span class="math-var-light">w</span>(<span class="math-var-light">e</span>)
+    <div class="grid grid-cols-[minmax(0,0.96fr)_minmax(0,1.24fr)] gap-6 items-start max-[1180px]:grid-cols-[1fr]">
+      <article class="bg-[rgba(18,24,37,0.62)] border border-[rgba(255,255,255,0.08)] rounded-[var(--radius-lg)] shadow-[0_18px_38px_rgba(0,0,0,0.18)] backdrop-blur-[12px] px-[26px] py-[28px] max-[760px]:p-[22px]">
+        <span class="text-[rgba(196,188,175,0.72)] text-[0.76rem] tracking-[0.12em] uppercase">Objective function</span>
+        <div class="mt-[18px] px-[18px] py-[20px] rounded-[18px] bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.08)] max-[760px]:mt-[16px] max-[760px]:px-[14px] max-[760px]:py-[16px]">
+          <p class="block m-0 text-[#f5efe5] [font-family:'Cambria_Math','STIX_Two_Math','Times_New_Roman',serif] text-[clamp(1.34rem,1.9vw,1.72rem)] leading-[1.55] tracking-[0.01em] whitespace-normal break-words max-[760px]:text-[1.18rem] max-[760px]:leading-[1.5]" aria-label="P star equals arg min over P in Paths of the sum over e in P of w of e">
+            <span class="italic">P</span>* = <span class="italic">argmin</span><sub class="text-[0.62em] align-[-0.42em]"><span class="italic">P</span> &isin; <span class="italic">Paths</span></sub>
+            <span class="inline-block [transform:translateY(0.02em)]">&Sigma;</span><sub class="text-[0.62em] align-[-0.42em]"><span class="italic">e</span> &isin; <span class="italic">P</span></sub>
+            <span class="italic">w</span>(<span class="italic">e</span>)
           </p>
         </div>
-        <p>
+        <p class="mt-[18px] mb-0 mx-0 text-[rgba(215,206,193,0.78)] leading-[1.8]">
           Among all valid certification paths, the chosen route is the one with the
           minimum accumulated edge cost under the defined trust model.
         </p>
       </article>
 
-      <div class="optimal-grid">
-        <article class="optimal-card">
-          <h3>Deterministic optimization</h3>
-          <p>
+      <div class="grid grid-cols-[repeat(3,minmax(0,1fr))] gap-6 max-[1180px]:grid-cols-[1fr] max-[760px]:gap-[18px]">
+        <article class="bg-[rgba(18,24,37,0.62)] border border-[rgba(255,255,255,0.08)] rounded-[var(--radius-lg)] shadow-[0_18px_38px_rgba(0,0,0,0.18)] backdrop-blur-[12px] p-6 min-h-full max-[760px]:p-[22px]">
+          <h3 class="m-0 text-[#f3eee5] [font-family:'Playfair_Display',serif] text-[1.84rem] font-normal leading-[0.98] max-[760px]:text-[2.05rem]">Deterministic optimization</h3>
+          <p class="mt-[18px] mb-0 mx-0 text-[rgba(215,206,193,0.78)] leading-[1.8]">
             Dijkstra-based computation is applied over the governed weighted graph so
             the selected trust path is the mathematically optimal route under the cost
             model, not a heuristic guess.
           </p>
         </article>
 
-        <article class="optimal-card">
-          <h3>Multi-criteria scoring</h3>
-          <p>
+        <article class="bg-[rgba(18,24,37,0.62)] border border-[rgba(255,255,255,0.08)] rounded-[var(--radius-lg)] shadow-[0_18px_38px_rgba(0,0,0,0.18)] backdrop-blur-[12px] p-6 min-h-full max-[760px]:p-[22px]">
+          <h3 class="m-0 text-[#f3eee5] [font-family:'Playfair_Display',serif] text-[1.84rem] font-normal leading-[0.98] max-[760px]:text-[2.05rem]">Multi-criteria scoring</h3>
+          <p class="mt-[18px] mb-0 mx-0 text-[rgba(215,206,193,0.78)] leading-[1.8]">
             Edge weights can combine cryptographic profile, algorithm family, key
             strength, policy compatibility, and structural distance into a single
             comparable score.
           </p>
         </article>
 
-        <article class="optimal-card">
-          <h3>Explainable trust paths</h3>
-          <p>
+        <article class="bg-[rgba(18,24,37,0.62)] border border-[rgba(255,255,255,0.08)] rounded-[var(--radius-lg)] shadow-[0_18px_38px_rgba(0,0,0,0.18)] backdrop-blur-[12px] p-6 min-h-full max-[760px]:p-[22px]">
+          <h3 class="m-0 text-[#f3eee5] [font-family:'Playfair_Display',serif] text-[1.84rem] font-normal leading-[0.98] max-[760px]:text-[2.05rem]">Explainable trust paths</h3>
+          <p class="mt-[18px] mb-0 mx-0 text-[rgba(215,206,193,0.78)] leading-[1.8]">
             Because each path is evaluated through explicit edge costs, the selected
             chain can be justified in terms of governance, cryptographic quality, and
             structural efficiency.
@@ -58,125 +58,3 @@
     </div>
   </div>
 </section>
-
-<style>
-  .optimal-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.24fr);
-    gap: 24px;
-    align-items: start;
-  }
-
-  .optimal-formula-card,
-  .optimal-card {
-    background: rgba(18, 24, 37, 0.62);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-lg);
-    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.18);
-    backdrop-filter: blur(12px);
-  }
-
-  .optimal-formula-card {
-    padding: 28px 26px;
-  }
-
-  .optimal-label {
-    color: rgba(196, 188, 175, 0.72);
-    font-size: 0.76rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .optimal-equation {
-    display: block;
-    margin: 0;
-    color: #f5efe5;
-    font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
-    font-size: clamp(1.34rem, 1.9vw, 1.72rem);
-    line-height: 1.55;
-    letter-spacing: 0.01em;
-    white-space: normal;
-    word-break: break-word;
-  }
-
-  .optimal-equation-wrap {
-    margin-top: 18px;
-    padding: 20px 18px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .math-var-light {
-    font-style: italic;
-  }
-
-  .math-sum {
-    display: inline-block;
-    transform: translateY(0.02em);
-  }
-
-  .optimal-equation sub {
-    font-size: 0.62em;
-    vertical-align: -0.42em;
-  }
-
-  .optimal-formula-card p:not(.optimal-equation),
-  .optimal-card p {
-    margin: 18px 0 0;
-    color: rgba(215, 206, 193, 0.78);
-    line-height: 1.8;
-  }
-
-  .optimal-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
-  }
-
-  .optimal-card {
-    padding: 24px;
-    min-height: 100%;
-  }
-
-  .optimal-card h3 {
-    margin: 0;
-    color: #f3eee5;
-    font-family: "Playfair Display", serif;
-    font-size: 1.84rem;
-    font-weight: 400;
-    line-height: 0.98;
-  }
-
-  @media (max-width: 1180px) {
-    .optimal-layout,
-    .optimal-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 760px) {
-    .optimal-formula-card,
-    .optimal-card {
-      padding: 22px;
-    }
-
-    .optimal-equation {
-      font-size: 1.18rem;
-      line-height: 1.5;
-    }
-
-    .optimal-equation-wrap {
-      margin-top: 16px;
-      padding: 16px 14px;
-    }
-
-    .optimal-grid {
-      gap: 18px;
-    }
-
-    .optimal-card h3 {
-      font-size: 2.05rem;
-    }
-  }
-</style>

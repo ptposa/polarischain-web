@@ -604,12 +604,6 @@ svg {
   contain: paint;
 }
 
-.federation-graph {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
 .process-background-grid path {
   stroke: rgba(255, 255, 255, 0.04);
   stroke-width: 1;

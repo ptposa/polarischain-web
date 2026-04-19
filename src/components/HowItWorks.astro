@@ -345,8 +345,8 @@ function mobileLinkBehaviorClass(link: ProcessLink) {
 }
 ---
 
-<section id="how-it-works" class="process-section">
-  <div class="container process-shell-wide">
+<section id="how-it-works" class="process-section relative">
+  <div class="container process-shell-wide relative">
     <div class="process-heading">
       <span class="section-kicker">How it works</span>
       <h2>Certification path building over a federated graph of CAs.</h2>
@@ -439,7 +439,7 @@ function mobileLinkBehaviorClass(link: ProcessLink) {
       <svg
         id="federated-process-graph"
         viewBox="0 0 1240 420"
-        class="federation-graph federation-graph-desktop"
+        class="federation-graph federation-graph-desktop block w-full h-auto max-[760px]:hidden"
         data-process-graph
         role="img"
         aria-label="Three PKI domains with multiple cross-domain certification paths and one highlighted trust chain"
@@ -629,7 +629,7 @@ function mobileLinkBehaviorClass(link: ProcessLink) {
       <svg
         id="federated-process-graph-mobile"
         viewBox="78 20 258 704"
-        class="federation-graph federation-graph-mobile"
+        class="federation-graph federation-graph-mobile hidden w-full h-auto max-[760px]:block"
         data-process-graph
         role="img"
         aria-label="Vertical mobile view of federated trust graph with stacked PKI domains and selected trust chain"
@@ -805,11 +805,6 @@ function mobileLinkBehaviorClass(link: ProcessLink) {
 </section>
 
 <style>
-  .process-section,
-  .process-shell-wide {
-    position: relative;
-  }
-
   .federation-graph-card {
     position: relative;
     overflow: hidden;
@@ -823,16 +818,6 @@ function mobileLinkBehaviorClass(link: ProcessLink) {
     border: none;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.26);
     contain: paint;
-  }
-
-  .federation-graph {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  .federation-graph-mobile {
-    display: none;
   }
 
   .process-mobile-domain-title {
@@ -1235,14 +1220,6 @@ function mobileLinkBehaviorClass(link: ProcessLink) {
       box-shadow: none;
       border-radius: 0;
       overflow: visible;
-    }
-
-    .federation-graph-desktop {
-      display: none;
-    }
-
-    .federation-graph-mobile {
-      display: block;
     }
 
     .process-background-grid,
