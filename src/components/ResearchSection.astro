@@ -2,106 +2,256 @@
 const formalDefinitions = [
   {
     termHtml: '<span class="math-var italic">V</span>',
-    description: "is the set of certification authorities and governed trust points in the federated ecosystem.",
+    description:
+      "Set of certification authorities participating in the federated ecosystem. Each node v ∈ V represents an individual CA within an EJBCA instance. Multiple CAs with different algorithms may coexist in the same instance.",
   },
   {
     termHtml:
       '<span class="math-var italic">E</span> &sube; <span class="math-var italic">V</span> &times; <span class="math-var italic">V</span>',
-    description: "is the set of admissible federation relations between certification authorities.",
+    description:
+      "Set of admissible federation relations between CAs belonging to distinct administrative domains. An edge e = (u, v) ∈ E represents a cross-certificate issued by u towards v. Internal hierarchical relations within the same domain are not federation edges.",
   },
   {
     termHtml:
       '<span class="math-var italic">w</span> : <span class="math-var italic">E</span> &rarr; ℝ<sub class="text-[0.66em] leading-[0] align-[-0.34em]">&ge;0</sub>',
-    description: "is the edge cost function.",
+    description:
+      "Technical edge cost function. Quantifies the cryptographic robustness, compatibility, and structural complexity of the federation relation. A lower value indicates a preferred relation.",
   },
   {
     termHtml:
       '&Phi; : <span class="math-var italic">E</span> &rarr; <span class="math-var italic">C</span>',
-    description: "assigns to each edge a set of governance constraints.",
+    description:
+      "Governance constraint function. Assigns to each edge a set of hard constraints derived directly from the X.509 extensions of the cross-certificate per RFC 5280. An edge that is not admissible under Φ is excluded from the search space before optimisation.",
   },
 ];
 
 const costComponents = [
   {
-    termHtml: '<span class="math-var italic">crypto</span>(<span class="math-var italic">e</span>)',
-    description: "cryptographic posture of the relation, such as classical, hybrid, or post-quantum.",
+    termHtml:
+      '<span class="math-var italic">c</span><sub class="text-[0.66em] leading-[0] align-[-0.34em]">crypto</sub>(<span class="math-var italic">e</span>)',
+    range: "[0.0 – 1.0]",
+    description:
+      "Cryptographic posture of the relation according to the originating domain scheme.",
+    examples: "PQC = 0.0 · Hybrid = 0.3 · Classical = 1.0",
   },
   {
-    termHtml: '<span class="math-var italic">alg</span>(<span class="math-var italic">e</span>)',
-    description: "algorithm family used by the relation, including interoperability implications.",
+    termHtml:
+      '<span class="math-var italic">c</span><sub class="text-[0.66em] leading-[0] align-[-0.34em]">alg</sub>(<span class="math-var italic">e</span>)',
+    range: "[0.0 – 1.0]",
+    description:
+      "Penalty for the algorithm family and its interoperability implications.",
+    examples: "ML-DSA = 0.0 · ECDSA = 0.4 · RSA = 0.8",
   },
   {
-    termHtml: '<span class="math-var italic">key</span>(<span class="math-var italic">e</span>)',
-    description: "key strength or associated technical assurance level.",
+    termHtml:
+      '<span class="math-var italic">c</span><sub class="text-[0.66em] leading-[0] align-[-0.34em]">key</sub>(<span class="math-var italic">e</span>)',
+    range: "[0.0 – 1.0]",
+    description:
+      "Equivalent security level of the key. Greater strength yields lower cost.",
+    examples: "256-bit = 0.0 · 128-bit = 0.5 · 112-bit = 1.0",
   },
   {
-    termHtml: '<span class="math-var italic">dist</span>(<span class="math-var italic">e</span>)',
-    description: "structural distance introduced when traversing domains, bridges, or governance boundaries.",
+    termHtml:
+      '<span class="math-var italic">c</span><sub class="text-[0.66em] leading-[0] align-[-0.34em]">dist</sub>(<span class="math-var italic">e</span>)',
+    range: "[0.0 – 1.0]",
+    description:
+      "Structural distance: chain depth, inter-domain hops, and policy boundary crossings.",
+    examples: "same domain = 0.0 · bridge = 0.5 · indirect = 1.0",
+  },
+];
+
+const algorithmScores = [
+  {
+    algorithm: "ML-DSA-87",
+    domain: "C (PQC pure)",
+    crypto: "0.0",
+    alg: "0.0",
+    key: "0.0",
+    cost: "low",
+    costClass: "score-low-good",
+  },
+  {
+    algorithm: "ML-DSA-65",
+    domain: "C (PQC pure)",
+    crypto: "0.0",
+    alg: "0.1",
+    key: "0.1",
+    cost: "low",
+    costClass: "score-low-good",
+  },
+  {
+    algorithm: "ECDSA P-384 + ML-DSA-65",
+    domain: "B (hybrid)",
+    crypto: "0.3",
+    alg: "0.3",
+    key: "0.1",
+    cost: "medium",
+    costClass: "score-medium",
+  },
+  {
+    algorithm: "ECDSA P-256 + ML-DSA-44",
+    domain: "B (hybrid)",
+    crypto: "0.3",
+    alg: "0.4",
+    key: "0.3",
+    cost: "medium",
+    costClass: "score-medium",
+  },
+  {
+    algorithm: "ECDSA P-384",
+    domain: "A (classical)",
+    crypto: "1.0",
+    alg: "0.4",
+    key: "0.1",
+    cost: "high",
+    costClass: "score-high-bad",
+  },
+  {
+    algorithm: "RSA-4096",
+    domain: "A (classical)",
+    crypto: "1.0",
+    alg: "0.8",
+    key: "0.3",
+    cost: "high",
+    costClass: "score-high-bad",
   },
 ];
 
 const governanceComponents = [
   {
-    termHtml: '<span class="math-var italic">prop</span>(<span class="math-var italic">e</span>)',
+    termHtml:
+      '<span class="math-var italic">prop</span>(<span class="math-var italic">e</span>)',
     relationHtml:
       '<span class="math-var italic">prop</span>(<span class="math-var italic">e</span>) &isin; &#123;none, limited, full&#125;',
+    x509: "basicConstraints.pathLen",
     description:
-      "This determines whether trust may stop at the current relation, propagate in a bounded way, or be fully reusable across further federation steps.",
+      "Determines whether trust may stop at the current relation, propagate in a bounded way, or be fully reusable across further federation steps.",
   },
   {
-    termHtml: '<span class="math-var italic">depth</span>(<span class="math-var italic">e</span>)',
+    termHtml:
+      '<span class="math-var italic">depth</span>(<span class="math-var italic">e</span>)',
     relationHtml:
       '<span class="math-var italic">depth</span>(<span class="math-var italic">e</span>) &isin; ℕ',
+    x509: "pathLenConstraint (RFC 5280 §4.2.1.9)",
     description:
-      "This bounds how many additional federation steps may be traversed after the relation is used.",
+      "Bounds how many additional federation steps may be traversed after this relation is used. Decremented by one at each edge; if depth(e) = 0 no further edges may be appended.",
   },
   {
-    termHtml: '<span class="math-var italic">scope</span>(<span class="math-var italic">e</span>)',
+    termHtml:
+      '<span class="math-var italic">scope</span>(<span class="math-var italic">e</span>)',
+    x509: "extendedKeyUsage",
     description:
-      "This specifies the operational context in which the relation may be reused, such as TLS, authentication, code signing, or document signing.",
+      "Specifies the operational context in which the relation may be reused: TLS, authentication, code signing, or document signing.",
   },
   {
-    termHtml: '<span class="math-var italic">pol</span><sup class="text-[0.66em] leading-[0] align-[0.42em]">+</sup>(<span class="math-var italic">e</span>)',
+    termHtml:
+      '<span class="math-var italic">pol</span><sup class="text-[0.66em] leading-[0] align-[0.42em]">+</sup>(<span class="math-var italic">e</span>)',
+    x509: "policyMappings (RFC 5280 §4.2.1.5)",
     description:
-      "These identify certification policies that are admissible for route construction through the relation.",
+      "Identifies certification policies that must be present for the edge to be valid in the path.",
   },
   {
-    termHtml: '<span class="math-var italic">pol</span><sup class="text-[0.66em] leading-[0] align-[0.42em]">-</sup>(<span class="math-var italic">e</span>)',
+    termHtml:
+      '<span class="math-var italic">pol</span><sup class="text-[0.66em] leading-[0] align-[0.42em]">-</sup>(<span class="math-var italic">e</span>)',
+    x509: "inhibitAnyPolicy, policyConstraints",
     description:
-      "These identify certification policies that must exclude the relation from candidate paths.",
+      "Identifies certification policies that must exclude the relation from candidate paths.",
   },
   {
-    termHtml: '<span class="math-var italic">name</span>(<span class="math-var italic">e</span>)',
+    termHtml:
+      '<span class="math-var italic">name</span>(<span class="math-var italic">e</span>)',
+    x509: "nameConstraints (RFC 5280 §4.2.1.10)",
     description:
-      "These restrict the naming space over which trust may apply, for example DNS domains, email namespaces, X.500 subtrees, or specific organizations.",
+      "Restricts the naming space over which trust may apply: DNS domains, email namespaces, X.500 subtrees, or specific organisations. Accumulated by intersection along the path.",
   },
   {
-    termHtml: '<span class="math-var italic">ku</span>(<span class="math-var italic">e</span>)',
+    termHtml:
+      '<span class="math-var italic">ku</span>(<span class="math-var italic">e</span>)',
+    x509: "keyUsage",
     description:
-      "These restrict which key usage semantics remain valid when traversing the relation.",
+      "Restricts which key usage semantics remain valid when traversing the relation (keyCertSign, cRLSign, digitalSignature).",
   },
   {
-    termHtml: '<span class="math-var italic">eku</span>(<span class="math-var italic">e</span>)',
+    termHtml:
+      '<span class="math-var italic">eku</span>(<span class="math-var italic">e</span>)',
+    x509: "extendedKeyUsage",
     description:
-      "These restrict which application-level purposes remain admissible, such as server authentication or code signing.",
+      "Restricts which application-level purposes remain admissible, such as server authentication or code signing.",
   },
   {
-    termHtml: '<span class="math-var italic">time</span>(<span class="math-var italic">e</span>)',
+    termHtml:
+      '<span class="math-var italic">time</span>(<span class="math-var italic">e</span>)',
     relationHtml:
       '<span class="math-var italic">time</span>(<span class="math-var italic">e</span>) = [<span class="math-var italic">t</span><sub class="text-[0.66em] leading-[0] align-[-0.34em]">from</sub>(<span class="math-var italic">e</span>), <span class="math-var italic">t</span><sub class="text-[0.66em] leading-[0] align-[-0.34em]">to</sub>(<span class="math-var italic">e</span>)]',
+    x509: "certificate validity window",
     description:
-      "This expresses the governance time interval during which the trust relation is considered admissible, independently of whether underlying certificates remain syntactically valid under PKIX.",
+      "Governance time interval during which the trust relation is considered admissible, independently of whether underlying certificates remain syntactically valid under PKIX.",
+  },
+  {
+    termHtml:
+      '<span class="math-var italic">crypto_floor</span>(<span class="math-var italic">e</span>)',
+    relationHtml:
+      '<span class="math-var italic">crypto_floor</span>(<span class="math-var italic">e</span>) &isin; &#123;classical, hybrid, pqc&#125;',
+    x509: "domain governance policy",
+    isNew: true,
+    description:
+      "Minimum cryptographic level required by the verifying domain policy to admit this edge. Excludes relations whose c<sub class=\"text-[0.66em] leading-[0] align-[-0.34em]\">crypto</sub> exceeds the defined threshold, regardless of their technical cost.",
   },
 ];
 
 const admissibleConditions = [
   "trust transitivity rules,",
-  "maximum permitted propagation depth,",
+  "maximum permitted propagation depth (decremented per edge),",
   "required functional scope,",
   "allowed and non-denied certification policies,",
-  "namespace restrictions,",
+  "namespace restrictions (accumulated by intersection),",
   "Key Usage and Extended Key Usage restrictions,",
-  "and the governed trust validity window.",
+  "governed trust validity window,",
+  "and minimum cryptographic floor enforced by the verifying domain.",
+];
+
+const pathCompositionRules = [
+  {
+    label: "depth",
+    rule: "Decremented by 1 at each edge. If depth(eᵢ) = 0, no further edges may be appended.",
+  },
+  {
+    label: "name",
+    rule: "Intersected cumulatively along the path per RFC 5280 §6.",
+  },
+  {
+    label: "pol⁺ / pol⁻",
+    rule: "Evaluated individually at each edge.",
+  },
+  {
+    label: "time",
+    rule: "∀eᵢ ∈ P : t_now ∈ [t_from(eᵢ), t_to(eᵢ)]",
+  },
+  {
+    label: "crypto_floor",
+    rule: "∀eᵢ ∈ P : c_crypto(eᵢ) ≤ crypto_floor(eᵢ)",
+  },
+];
+
+const domains = [
+  {
+    name: "Domain A — Classical",
+    algo: "RSA-2048 / RSA-4096 / ECDSA P-256 / P-384",
+    detail: "1 EJBCA instance · 8 CAs · crypto_floor = classical",
+    colorClass: "domain-classical",
+  },
+  {
+    name: "Domain B — Hybrid",
+    algo: "ECDSA P-256/P-384 + ML-DSA-44/65 composite",
+    detail: "1 EJBCA instance · 8 CAs · crypto_floor = hybrid",
+    colorClass: "domain-hybrid",
+  },
+  {
+    name: "Domain C — PQC pure",
+    algo: "ML-DSA-44 / ML-DSA-65 / ML-DSA-87",
+    detail: "1 EJBCA instance · 8 CAs · crypto_floor = pqc",
+    colorClass: "domain-pqc",
+  },
 ];
 
 // Shared Tailwind class strings for math typography
@@ -125,7 +275,8 @@ const mathDisplayBase = `grid gap-0 min-w-0 pt-[18px] justify-items-center conte
       <p>
         The proposal introduces a formal layer above PKIX semantics, representing
         certification authorities and governed federation relationships as a directed,
-        weighted graph that can be queried for valid and optimal certification paths.
+        weighted graph that can be queried for valid and optimal certification paths
+        across classical, hybrid, and post-quantum domains.
       </p>
     </div>
 
@@ -136,12 +287,13 @@ const mathDisplayBase = `grid gap-0 min-w-0 pt-[18px] justify-items-center conte
         </div>
         <p class="text-[var(--ink-soft)] leading-[1.8]">
           Instead of inheriting trust from entire hierarchies, PolarisChain models
-          trust as explicit graph edges between governed certification authorities.
+          trust as explicit graph edges between governed certification authorities,
+          each carrying both a technical cost and hard governance constraints.
         </p>
         <ul class="mt-[18px] mb-0 pl-[18px] text-[var(--ink-soft)] [&_li+li]:mt-[10px]">
-          <li>Vertices represent trust anchors, bridge CAs, issuing CAs, and other governed trust points.</li>
-          <li>Edges encode admissible inter-domain relationships instead of broad hierarchy inheritance.</li>
-          <li>The model preserves PKIX validation while making federation semantics explicit and queryable.</li>
+          <li>Vertices represent individual CAs within independent EJBCA instances — one instance per administrative domain.</li>
+          <li>Edges encode admissible inter-domain cross-certificates; internal hierarchical relations within the same domain are not federation edges.</li>
+          <li>The model preserves PKIX validation while making federation semantics explicit, computable, and queryable.</li>
         </ul>
       </article>
 
@@ -150,13 +302,14 @@ const mathDisplayBase = `grid gap-0 min-w-0 pt-[18px] justify-items-center conte
           <h3 class="m-0 [font-family:'Playfair_Display',serif] font-normal text-[2rem] leading-none max-[760px]:text-[2.25rem] max-[760px]:leading-[0.98]">Optimal path semantics</h3>
         </div>
         <p class="text-[var(--ink-soft)] leading-[1.8]">
-          The proposal defines a multicriteria cost over federation edges so path
-          selection becomes an optimization problem rather than a heuristic search.
+          The proposal defines a normalised multicriteria cost over federation edges
+          so path selection becomes a deterministic optimisation problem rather than
+          an exhaustive heuristic search.
         </p>
         <ul class="mt-[18px] mb-0 pl-[18px] text-[var(--ink-soft)] [&_li+li]:mt-[10px]">
-          <li>Edge weights capture cryptographic profile, algorithm family, key strength, and structural distance.</li>
-          <li>Dijkstra-based traversal computes a deterministic minimum-cost route over admissible paths.</li>
-          <li>The result is an explainable certification chain between issuer-side entities and governed trust points.</li>
+          <li>Edge weights capture cryptographic posture, algorithm family, key strength, and structural distance — each normalised to [0, 1].</li>
+          <li>Dijkstra-based traversal operates exclusively over governance-admissible paths, not the full graph.</li>
+          <li>The result is an explainable, policy-compliant certification chain comparable against BFS as a non-weighted baseline.</li>
         </ul>
       </article>
     </div>
@@ -167,77 +320,130 @@ const mathDisplayBase = `grid gap-0 min-w-0 pt-[18px] justify-items-center conte
         <h3 id="mathematical-model-heading" class="mt-[12px] mb-0 text-[#1e1b17] [font-family:'Playfair_Display',serif] text-[clamp(2rem,3vw,2.8rem)] font-normal leading-[0.98] max-[760px]:leading-[1.04]">A compact formalization of governed federation and path cost.</h3>
         <p class="mt-[12px] mb-0 text-[var(--ink-soft)] leading-[1.72]">
           PKIX certificate validation remains intact. The graph layer makes admissible
-          trust propagation explicit, separates technical edge cost from hard
+          trust propagation explicit, separates normalised technical edge cost from hard
           governance constraints, and selects routes only among policy-compliant
-          federation paths.
+          federation paths. Edge attributes are derived automatically from X.509
+          extensions of real cross-certificates.
         </p>
       </div>
 
       <div class="model-grid block mt-[18px]">
         <article class="research-card model-story-card p-[clamp(22px,2.2vw,30px)] bg-gradient-to-b from-[rgba(241,233,220,0.9)] to-[rgba(232,222,206,0.96)] border border-[rgba(70,60,45,0.08)] rounded-[var(--radius-lg)] shadow-[var(--shadow-paper)] overflow-hidden max-[760px]:p-[16px]">
           <div class="model-story-flow grid gap-0">
+
+            <!-- 01 Formal definition -->
             <section class="model-step grid grid-cols-[minmax(440px,0.62fr)_minmax(0,1fr)] gap-[28px] py-[14px] border-t border-[rgba(70,60,45,0.08)] first:pt-0 first:border-t-0 last:pb-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[10px] max-[760px]:py-[12px]" aria-labelledby="model-formal-definition">
               <div class="model-step-header model-step-header-cost grid content-start gap-[14px] min-w-0 pr-[10px] max-[760px]:pr-0 max-[760px]:gap-[9px]">
                 <span class="model-step-marker inline-block text-[rgba(95,81,62,0.66)] text-[0.74rem] font-semibold tracking-[0.16em] uppercase">01</span>
                 <h4 id="model-formal-definition" class="m-0 text-[#1f1a15] [font-family:'Playfair_Display',serif] text-[clamp(1.7rem,2.4vw,2.15rem)] font-normal leading-[0.98] max-[760px]:text-[1.28rem] max-[760px]:leading-[1.04]">Formal definition</h4>
                 <p class={stepHeaderPara}>
-                  The federated PKI ecosystem is modeled as a governed weighted graph:
+                  The federated PKI ecosystem is modeled as a four-component governed weighted graph:
                 </p>
                 <div class={`model-math-display ${mathDisplayBase}`} aria-label="G equals open parenthesis V comma E comma w comma Phi close parenthesis">
                   <p class={`math-line math-line-display ${mathLineBase} ${mathLineDisplay}`}>
                     <span class={`math-piece ${mathPiece}`}><span class="math-var italic">G</span> = (<span class="math-var italic">V</span>, <span class="math-var italic">E</span>, <span class="math-var italic">w</span>, &Phi;)</span>
                   </p>
                 </div>
+                <p class={`${stepHeaderPara} mt-[4px] text-[0.82rem] italic`}>
+                  Domain distinction: an administrative domain groups CAs under a shared governance policy. In the lab, each EJBCA instance (Docker container) represents one domain. Edges E only exist between CAs of distinct containers.
+                </p>
               </div>
               <div class="model-step-body grid content-start gap-[14px] min-w-0 pt-[62px] max-[760px]:pt-0 max-[760px]:gap-[9px]">
                 <p class="model-step-label m-0 text-[rgba(88,75,58,0.78)] text-[0.82rem] font-semibold tracking-[0.02em]">where:</p>
                 <dl class="model-definition-list m-0 grid gap-0 border-t border-[rgba(70,60,45,0.09)]">
                   {formalDefinitions.map((item) => (
-                    <div class="model-definition-item grid grid-cols-[minmax(160px,0.34fr)_minmax(0,1fr)] gap-y-[6px] gap-x-[10px] py-[1px] border-b border-[rgba(70,60,45,0.09)] last:border-b-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[3px] max-[760px]:py-[3px]">
+                    <div class="model-definition-item grid grid-cols-[minmax(160px,0.34fr)_minmax(0,1fr)] gap-y-[6px] gap-x-[10px] py-[8px] border-b border-[rgba(70,60,45,0.09)] last:border-b-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[3px] max-[760px]:py-[6px]">
                       <dt class="m-0 grid gap-[3px] content-start">
                         <span class={`model-definition-term text-[#3a2f24] [font-family:'STIX_Two_Text','Cambria_Math','STIX_Two_Math','Times_New_Roman',serif] leading-[1.28] tracking-[0.01em] [text-rendering:optimizeLegibility] text-[clamp(0.88rem,0.88vw,0.96rem)]`} set:html={item.termHtml}></span>
                       </dt>
-                      <dd class="m-0 text-[#62584b] text-[0.8rem] leading-[1.24] max-[760px]:text-[0.76rem] max-[420px]:text-[0.72rem]">{item.description}</dd>
+                      <dd class="m-0 text-[#62584b] text-[0.8rem] leading-[1.44] max-[760px]:text-[0.76rem] max-[420px]:text-[0.72rem]">{item.description}</dd>
                     </div>
                   ))}
                 </dl>
               </div>
             </section>
 
+            <!-- 02 Cost function -->
             <section class="model-step model-step-cost grid grid-cols-[minmax(440px,0.62fr)_minmax(0,1fr)] gap-[28px] py-[14px] pb-[28px] border-t border-[rgba(70,60,45,0.08)] first:pt-0 first:border-t-0 last:pb-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[10px] max-[760px]:py-[12px] max-[760px]:pb-[20px]" aria-labelledby="model-cost-function">
               <div class="model-step-header grid content-start gap-[14px] min-w-0 pr-[10px] max-[760px]:pr-0 max-[760px]:gap-[9px]">
                 <span class="model-step-marker inline-block text-[rgba(95,81,62,0.66)] text-[0.74rem] font-semibold tracking-[0.16em] uppercase">02</span>
                 <h4 id="model-cost-function" class="m-0 text-[#1f1a15] [font-family:'Playfair_Display',serif] text-[clamp(1.7rem,2.4vw,2.15rem)] font-normal leading-[0.98] max-[760px]:text-[1.28rem] max-[760px]:leading-[1.04]">Cost function</h4>
                 <p class={stepHeaderPara}>
-                  As a natural evolution of the original formulation, technical and
-                  structural cost remains explicitly separated from governance
-                  constraints:
+                  Technical and structural cost is expressed as a normalised weighted sum,
+                  explicitly separated from governance constraints:
                 </p>
-                <div class={`model-math-display ${mathDisplayBase} pb-[26px] max-[760px]:pb-[18px]`} aria-label="w of e equals f of crypto of e, alg of e, key of e, dist of e">
+                <div class={`model-math-display ${mathDisplayBase} pb-[10px] max-[760px]:pb-[10px]`} aria-label="w of e equals alpha times c crypto plus beta times c alg plus gamma times c key plus delta times c dist">
                   <p class={`math-line math-line-display ${mathLineBase} ${mathLineDisplay}`}>
-                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">w</span>(<span class="math-var italic">e</span>) = <span class="math-var italic">f</span>(</span>
-                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">crypto</span>(<span class="math-var italic">e</span>),</span>
-                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">alg</span>(<span class="math-var italic">e</span>),</span>
-                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">key</span>(<span class="math-var italic">e</span>),</span>
-                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">dist</span>(<span class="math-var italic">e</span>))</span>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">w</span>(<span class="math-var italic">e</span>) = &alpha; &middot; <span class="math-var italic">c</span><sub class={subClasses}>crypto</sub>(<span class="math-var italic">e</span>)</span>
+                    <span class={`math-piece ${mathPiece}`}>+ &beta; &middot; <span class="math-var italic">c</span><sub class={subClasses}>alg</sub>(<span class="math-var italic">e</span>)</span>
+                    <span class={`math-piece ${mathPiece}`}>+ &gamma; &middot; <span class="math-var italic">c</span><sub class={subClasses}>key</sub>(<span class="math-var italic">e</span>)</span>
+                    <span class={`math-piece ${mathPiece}`}>+ &delta; &middot; <span class="math-var italic">c</span><sub class={subClasses}>dist</sub>(<span class="math-var italic">e</span>)</span>
+                  </p>
+                  <p class={`math-line ${mathLineBase} text-[clamp(0.82rem,0.9vw,0.88rem)] mt-[6px] opacity-80`}>
+                    <span class={`math-piece ${mathPiece}`}>&alpha; + &beta; + &gamma; + &delta; = 1,</span>
+                    <span class={`math-piece ${mathPiece}`}>each component <span class="math-var italic">c</span><sub class={subClasses}>x</sub>(<span class="math-var italic">e</span>) &isin; [0, 1]</span>
                   </p>
                 </div>
-              </div>
-              <div class="model-step-body grid content-start gap-[14px] min-w-0 pt-[62px] max-[760px]:pt-0 max-[760px]:gap-[9px]">
-                <p class="model-step-label m-0 text-[rgba(88,75,58,0.78)] text-[0.82rem] font-semibold tracking-[0.02em]">where:</p>
-                <dl class="model-definition-list m-0 grid gap-0 border-t border-[rgba(70,60,45,0.09)]">
-                  {costComponents.map((item) => (
-                    <div class="model-definition-item grid grid-cols-[minmax(160px,0.34fr)_minmax(0,1fr)] gap-y-[6px] gap-x-[10px] py-[1px] border-b border-[rgba(70,60,45,0.09)] last:border-b-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[3px] max-[760px]:py-[3px]">
-                      <dt class="m-0 grid gap-[3px] content-start">
-                        <span class={`model-definition-term text-[#3a2f24] [font-family:'STIX_Two_Text','Cambria_Math','STIX_Two_Math','Times_New_Roman',serif] leading-[1.28] tracking-[0.01em] [text-rendering:optimizeLegibility] text-[clamp(0.88rem,0.88vw,0.96rem)]`} set:html={item.termHtml}></span>
-                      </dt>
-                      <dd class="m-0 text-[#62584b] text-[0.8rem] leading-[1.24] max-[760px]:text-[0.76rem] max-[420px]:text-[0.72rem]">{item.description}</dd>
+
+                <!-- w(e) component cards -->
+                <div class="cost-component-grid grid grid-cols-2 gap-[10px] mt-[4px] max-[420px]:grid-cols-1">
+                  {costComponents.map((comp) => (
+                    <div class="cost-card p-[12px_14px] bg-[rgba(255,252,248,0.7)] border border-[rgba(70,60,45,0.1)] rounded-[8px]">
+                      <div class="cost-card-term text-[#3a2f24] [font-family:'STIX_Two_Text','Cambria_Math','STIX_Two_Math','Times_New_Roman',serif] text-[0.9rem] leading-[1.2]" set:html={comp.termHtml}></div>
+                      <div class="cost-card-range text-[rgba(88,75,58,0.6)] text-[0.72rem] font-mono mt-[2px] mb-[6px]">{comp.range}</div>
+                      <div class="cost-card-desc text-[#62584b] text-[0.78rem] leading-[1.38] mb-[6px]">{comp.description}</div>
+                      <div class="cost-card-examples text-[rgba(88,75,58,0.7)] text-[0.7rem] font-mono leading-[1.4]">{comp.examples}</div>
                     </div>
                   ))}
-                </dl>
+                </div>
+              </div>
+
+              <div class="model-step-body grid content-start gap-[14px] min-w-0 pt-[62px] max-[760px]:pt-0 max-[760px]:gap-[9px]">
+                <p class="model-step-label m-0 text-[rgba(88,75,58,0.78)] text-[0.82rem] font-semibold tracking-[0.02em] flex flex-wrap items-center gap-x-[8px] gap-y-[4px]">
+                  <span>Algorithm scoring table</span>
+                  <span class="px-[8px] py-[2px] bg-[rgba(60,120,80,0.12)] text-[rgba(40,90,55,0.9)] text-[0.68rem] font-semibold rounded-[4px] tracking-[0.02em]">derived from real X.509 extensions</span>
+                </p>
+                <div class="algo-table-wrap w-full -mx-[2px] min-w-0 max-[760px]:mx-0 max-[760px]:overflow-x-auto">
+                  <table class="algo-score-table w-full border-collapse">
+                    <colgroup>
+                      <col class="col-algo" />
+                      <col class="col-domain" />
+                      <col class="col-score" />
+                      <col class="col-score" />
+                      <col class="col-score" />
+                      <col class="col-cost" />
+                    </colgroup>
+                    <thead>
+                      <tr class="border-b border-[rgba(70,60,45,0.12)]">
+                        <th class="th-algo text-left py-[6px] px-[10px] text-[rgba(88,75,58,0.7)] font-semibold tracking-[0.02em]">Algorithm</th>
+                        <th class="th-domain text-left py-[6px] px-[10px] text-[rgba(88,75,58,0.7)] font-semibold tracking-[0.02em]">Domain</th>
+                        <th class="text-center py-[6px] px-[10px] text-[rgba(88,75,58,0.7)] font-semibold tracking-[0.02em]"><span class="[font-family:'STIX_Two_Text',serif] italic">c</span><sub class="text-[0.7em]">cry</sub></th>
+                        <th class="text-center py-[6px] px-[10px] text-[rgba(88,75,58,0.7)] font-semibold tracking-[0.02em]"><span class="[font-family:'STIX_Two_Text',serif] italic">c</span><sub class="text-[0.7em]">alg</sub></th>
+                        <th class="text-center py-[6px] px-[10px] text-[rgba(88,75,58,0.7)] font-semibold tracking-[0.02em]"><span class="[font-family:'STIX_Two_Text',serif] italic">c</span><sub class="text-[0.7em]">key</sub></th>
+                        <th class="text-center py-[6px] px-[10px] text-[rgba(88,75,58,0.7)] font-semibold tracking-[0.02em]"><span class="[font-family:'STIX_Two_Text',serif] italic">w</span>(<span class="[font-family:'STIX_Two_Text',serif] italic">e</span>)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {algorithmScores.map((row) => {
+                        const variant = row.costClass === 'score-low-good' ? 'good' : row.costClass === 'score-medium' ? 'mid' : 'bad';
+                        return (
+                          <tr class="border-b border-[rgba(70,60,45,0.07)] last:border-b-0">
+                            <td class="td-algo py-[7px] px-[10px] text-[#3a2f24] font-mono leading-[1.25]">{row.algorithm}</td>
+                            <td class="td-domain py-[7px] px-[10px] text-[#62584b] leading-[1.25]">{row.domain}</td>
+                            <td class="py-[7px] px-[10px] text-center"><span class={`score-pill score-pill-${variant} font-mono`}>{row.crypto}</span></td>
+                            <td class="py-[7px] px-[10px] text-center"><span class={`score-pill score-pill-${variant} font-mono`}>{row.alg}</span></td>
+                            <td class="py-[7px] px-[10px] text-center"><span class={`score-pill score-pill-${variant} font-mono`}>{row.key}</span></td>
+                            <td class="py-[7px] px-[10px] text-center"><span class={`score-pill score-pill-${variant}`}>{row.cost}</span></td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </section>
 
+            <!-- 03 Governance constraints per edge -->
             <section class="model-step grid grid-cols-[minmax(440px,0.62fr)_minmax(0,1fr)] gap-[28px] py-[14px] border-t border-[rgba(70,60,45,0.08)] first:pt-0 first:border-t-0 last:pb-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[10px] max-[760px]:py-[12px]" aria-labelledby="model-governance-per-edge">
               <div class="model-step-header grid content-start gap-[14px] min-w-0 pr-[10px] max-[760px]:pr-0 max-[760px]:gap-[9px]">
                 <span class="model-step-marker inline-block text-[rgba(95,81,62,0.66)] text-[0.74rem] font-semibold tracking-[0.16em] uppercase">03</span>
@@ -245,12 +451,15 @@ const mathDisplayBase = `grid gap-0 min-w-0 pt-[18px] justify-items-center conte
                 <p class={stepHeaderPara}>
                   For each edge <span class="math-var italic">e</span> &isin; <span class="math-var italic">E</span>, the governance layer defines the hard constraints that determine whether trust may propagate through that relation at all:
                 </p>
-                <div class={`model-math-display ${mathDisplayBase}`} aria-label="Phi of e equals trans of e, depth of e, scope of e, pol plus of e, pol minus of e, name of e, ku of e, eku of e, time of e">
+                <div class={`model-math-display ${mathDisplayBase}`} aria-label="Phi of e equals the tuple of all governance components">
                   <p class={`math-line math-line-display ${mathLineBase} ${mathLineDisplay}`}>
-                    <span class={`math-piece ${mathPiece}`}>&Phi;(<span class="math-var italic">e</span>) = (<span class="math-var italic">prop</span>(<span class="math-var italic">e</span>), <span class="math-var italic">depth</span>(<span class="math-var italic">e</span>), <span class="math-var italic">scope</span>(<span class="math-var italic">e</span>),</span>
+                    <span class={`math-piece ${mathPiece}`}>&Phi;(<span class="math-var italic">e</span>) = &langle;<span class="math-var italic">prop</span>(<span class="math-var italic">e</span>), <span class="math-var italic">depth</span>(<span class="math-var italic">e</span>), <span class="math-var italic">scope</span>(<span class="math-var italic">e</span>),</span>
                   </p>
                   <p class={`math-line math-line-display math-line-indent ${mathLineBase} ${mathLineDisplay} pl-[clamp(0px,0.55vw,6px)] max-[760px]:pl-0`}>
-                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">pol</span><sup class={supClasses}>+</sup>(<span class="math-var italic">e</span>), <span class="math-var italic">pol</span><sup class={supClasses}>-</sup>(<span class="math-var italic">e</span>), <span class="math-var italic">name</span>(<span class="math-var italic">e</span>), <span class="math-var italic">ku</span>(<span class="math-var italic">e</span>), <span class="math-var italic">eku</span>(<span class="math-var italic">e</span>), <span class="math-var italic">time</span>(<span class="math-var italic">e</span>))</span>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">pol</span><sup class={supClasses}>+</sup>(<span class="math-var italic">e</span>), <span class="math-var italic">pol</span><sup class={supClasses}>-</sup>(<span class="math-var italic">e</span>), <span class="math-var italic">name</span>(<span class="math-var italic">e</span>), <span class="math-var italic">ku</span>(<span class="math-var italic">e</span>), <span class="math-var italic">eku</span>(<span class="math-var italic">e</span>),</span>
+                  </p>
+                  <p class={`math-line math-line-display math-line-indent ${mathLineBase} ${mathLineDisplay} pl-[clamp(0px,0.55vw,6px)] max-[760px]:pl-0`}>
+                    <span class={`math-piece ${mathPiece}`}><span class="math-var italic">time</span>(<span class="math-var italic">e</span>), <span class="math-var italic">crypto_floor</span>(<span class="math-var italic">e</span>)&rangle;</span>
                   </p>
                 </div>
               </div>
@@ -258,20 +467,27 @@ const mathDisplayBase = `grid gap-0 min-w-0 pt-[18px] justify-items-center conte
                 <p class="model-step-label m-0 text-[rgba(88,75,58,0.78)] text-[0.82rem] font-semibold tracking-[0.02em]">where:</p>
                 <dl class="model-definition-list model-definition-list-governance m-0 grid gap-0 border-t border-[rgba(70,60,45,0.09)]">
                   {governanceComponents.map((item) => (
-                    <div class="model-definition-item model-definition-item-governance grid grid-cols-[minmax(160px,0.34fr)_minmax(0,1fr)] gap-y-[6px] gap-x-[10px] py-[1px] border-b border-[rgba(70,60,45,0.09)] last:border-b-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[3px] max-[760px]:py-[3px]">
+                    <div class="model-definition-item model-definition-item-governance grid grid-cols-[minmax(160px,0.34fr)_minmax(0,1fr)] gap-y-[6px] gap-x-[10px] py-[8px] border-b border-[rgba(70,60,45,0.09)] last:border-b-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[3px] max-[760px]:py-[6px]">
                       <dt class="m-0 grid gap-[3px] content-start">
                         <span class={`model-definition-term text-[#3a2f24] [font-family:'STIX_Two_Text','Cambria_Math','STIX_Two_Math','Times_New_Roman',serif] leading-[1.28] tracking-[0.01em] [text-rendering:optimizeLegibility] text-[clamp(0.88rem,0.88vw,0.96rem)]`} set:html={item.termHtml}></span>
                         {item.relationHtml && (
                           <span class={`model-definition-relation text-[rgba(76,63,48,0.84)] [font-family:'STIX_Two_Text','Cambria_Math','STIX_Two_Math','Times_New_Roman',serif] leading-[1.28] tracking-[0.01em] [text-rendering:optimizeLegibility] text-[clamp(0.82rem,0.82vw,0.9rem)]`} set:html={item.relationHtml}></span>
                         )}
+                        {item.x509 && (
+                          <span class="x509-source text-[rgba(88,75,58,0.55)] text-[0.68rem] font-mono leading-[1.3]">X.509: {item.x509}</span>
+                        )}
+                        {item.isNew && (
+                          <span class="new-badge inline-block px-[6px] py-[1px] bg-[rgba(60,120,80,0.12)] text-[rgba(40,90,55,0.9)] text-[0.65rem] font-semibold rounded-[3px] tracking-[0.02em] w-fit">new</span>
+                        )}
                       </dt>
-                      <dd class="m-0 text-[#62584b] text-[0.8rem] leading-[1.24] max-[760px]:text-[0.76rem] max-[420px]:text-[0.72rem]">{item.description}</dd>
+                      <dd class="m-0 text-[#62584b] text-[0.8rem] leading-[1.44] max-[760px]:text-[0.76rem] max-[420px]:text-[0.72rem]" set:html={item.description}></dd>
                     </div>
                   ))}
                 </dl>
               </div>
             </section>
 
+            <!-- 04 Admissible paths -->
             <section class="model-step grid grid-cols-[minmax(440px,0.62fr)_minmax(0,1fr)] gap-[28px] py-[14px] border-t border-[rgba(70,60,45,0.08)] first:pt-0 first:border-t-0 last:pb-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[10px] max-[760px]:py-[12px]" aria-labelledby="model-admissible-paths">
               <div class="model-step-header grid content-start gap-[14px] min-w-0 pr-[10px] max-[760px]:pr-0 max-[760px]:gap-[9px]">
                 <span class="model-step-marker inline-block text-[rgba(95,81,62,0.66)] text-[0.74rem] font-semibold tracking-[0.16em] uppercase">04</span>
@@ -306,17 +522,29 @@ const mathDisplayBase = `grid gap-0 min-w-0 pt-[18px] justify-items-center conte
                     <li>{item}</li>
                   ))}
                 </ol>
+                <div class="phi-composition mt-[8px] p-[14px_16px] bg-[rgba(255,252,248,0.6)] border border-[rgba(70,60,45,0.1)] rounded-[8px]">
+                  <p class="m-0 mb-[8px] text-[rgba(88,75,58,0.78)] text-[0.78rem] font-semibold tracking-[0.02em]">Φ composition along a path:</p>
+                  <dl class="m-0 grid gap-0">
+                    {pathCompositionRules.map((r) => (
+                      <div class="grid grid-cols-[80px_1fr] gap-x-[10px] py-[4px] border-b border-[rgba(70,60,45,0.07)] last:border-b-0">
+                        <dt class="m-0 text-[#3a2f24] [font-family:'STIX_Two_Text',serif] text-[0.8rem] leading-[1.4]">{r.label}</dt>
+                        <dd class="m-0 text-[#62584b] text-[0.76rem] leading-[1.4] font-mono">{r.rule}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
               </div>
             </section>
 
+            <!-- 05 Optimal path -->
             <section class="model-step grid grid-cols-[minmax(440px,0.62fr)_minmax(0,1fr)] gap-[28px] py-[14px] border-t border-[rgba(70,60,45,0.08)] first:pt-0 first:border-t-0 last:pb-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[10px] max-[760px]:py-[12px]" aria-labelledby="model-optimal-path">
               <div class="model-step-header grid content-start gap-[14px] min-w-0 pr-[10px] max-[760px]:pr-0 max-[760px]:gap-[9px]">
                 <span class="model-step-marker inline-block text-[rgba(95,81,62,0.66)] text-[0.74rem] font-semibold tracking-[0.16em] uppercase">05</span>
                 <h4 id="model-optimal-path" class="m-0 text-[#1f1a15] [font-family:'Playfair_Display',serif] text-[clamp(1.7rem,2.4vw,2.15rem)] font-normal leading-[0.98] max-[760px]:text-[1.28rem] max-[760px]:leading-[1.04]">Optimal path</h4>
                 <p class={stepHeaderPara}>
-                  The optimal route is therefore not computed over all connected
-                  paths, but only over those that are admissible under governance
-                  policy:
+                  The optimal route is computed only over admissible paths. Governance,
+                  scope, policy, and propagation constraints are enforced before
+                  optimisation begins:
                 </p>
                 <div class={`model-math-display ${mathDisplayBase}`} aria-label="P star equals arg min over P in P adm of sum over e in P of w of e">
                   <p class={`math-line math-line-display ${mathLineBase} ${mathLineDisplay}`}>
@@ -329,13 +557,47 @@ const mathDisplayBase = `grid gap-0 min-w-0 pt-[18px] justify-items-center conte
               </div>
               <div class="model-step-body grid content-start gap-[14px] min-w-0 pt-[62px] max-[760px]:pt-0 max-[760px]:gap-[9px]">
                 <p class={`model-step-text ${stepTextPara}`}>
-                  This formulation ensures that non-admissible relations do not compete as merely expensive alternatives. They are excluded from the search space altogether. Route optimization therefore occurs only after governance, scope, policy, and propagation constraints have already been enforced.
+                  Non-admissible relations do not compete as merely expensive alternatives — they are excluded from the search space altogether. Route optimisation therefore occurs only after governance, scope, policy, propagation, and cryptographic floor constraints have already been enforced.
                 </p>
                 <p class={`model-step-conclusion ${stepConclusionPara}`}>
-                  PKIX validation semantics remain unchanged. The graph layer does not replace certificate validation; it governs admissible trust propagation and computes the minimum-cost route only across policy-compliant federation paths.
+                  PKIX validation semantics remain unchanged. The graph layer does not replace certificate validation; it governs admissible trust propagation and computes the minimum-cost route only across policy-compliant federation paths. BFS over the full graph 𝒫 serves as the non-weighted evaluation baseline.
                 </p>
               </div>
             </section>
+
+            <!-- 06 Laboratory correspondence -->
+            <section class="model-step grid grid-cols-[minmax(440px,0.62fr)_minmax(0,1fr)] gap-[28px] py-[14px] border-t border-[rgba(70,60,45,0.08)] first:pt-0 first:border-t-0 last:pb-0 max-[760px]:grid-cols-[1fr] max-[760px]:gap-[10px] max-[760px]:py-[12px]" aria-labelledby="model-lab-correspondence">
+              <div class="model-step-header grid content-start gap-[14px] min-w-0 pr-[10px] max-[760px]:pr-0 max-[760px]:gap-[9px]">
+                <span class="model-step-marker inline-block text-[rgba(95,81,62,0.66)] text-[0.74rem] font-semibold tracking-[0.16em] uppercase">06</span>
+                <h4 id="model-lab-correspondence" class="m-0 text-[#1f1a15] [font-family:'Playfair_Display',serif] text-[clamp(1.7rem,2.4vw,2.15rem)] font-normal leading-[0.98] max-[760px]:text-[1.28rem] max-[760px]:leading-[1.04]">Model–laboratory correspondence</h4>
+                <p class={stepHeaderPara}>
+                  Each component of the formal model has a concrete realisation in the
+                  EJBCA CE infrastructure deployed over Docker containers on Proxmox.
+                  Three homogeneous domains provide cryptographic diversity at the
+                  federation layer without intra-domain heterogeneity.
+                </p>
+              </div>
+              <div class="model-step-body grid content-start gap-[14px] min-w-0 pt-[62px] max-[760px]:pt-0 max-[760px]:gap-[9px]">
+                <div class="domain-grid grid grid-cols-1 gap-[10px]">
+                  {domains.map((d) => (
+                    <div class={`domain-card p-[12px_16px] border border-[rgba(70,60,45,0.1)] rounded-[8px] domain-card-${d.colorClass}`}>
+                      <div class="domain-name text-[#3a2f24] text-[0.88rem] font-semibold leading-[1.2] mb-[4px]">{d.name}</div>
+                      <div class="domain-algo text-[rgba(88,75,58,0.8)] text-[0.75rem] font-mono mb-[4px]">{d.algo}</div>
+                      <div class="domain-detail text-[rgba(88,75,58,0.6)] text-[0.72rem]">{d.detail}</div>
+                    </div>
+                  ))}
+                  <div class="domain-card p-[12px_16px] border border-[rgba(70,60,45,0.1)] rounded-[8px] bg-[rgba(255,252,248,0.5)]">
+                    <div class="domain-name text-[#3a2f24] text-[0.88rem] font-semibold leading-[1.2] mb-[4px]">Bridges — Federation nodes</div>
+                    <div class="domain-algo text-[rgba(88,75,58,0.8)] text-[0.75rem] font-mono mb-[4px]">BridgeCA-AB (composite) · BridgeCA-BC (ML-DSA-65) · BridgeCA-AC (ML-DSA-65) · BridgeCA-Gov (RSA-4096)</div>
+                    <div class="domain-detail text-[rgba(88,75,58,0.6)] text-[0.72rem]">1 EJBCA instance · 4 Bridge CAs · individual crypto_floor per bridge policy</div>
+                  </div>
+                </div>
+                <p class={`${stepConclusionPara} mt-[4px]`}>
+                  Edge attributes w(e) and Φ(e) are derived automatically from the X.509 extensions of each cross-certificate via BouncyCastle .NET 2.5.0 (native ML-DSA support). The SQL Graph is populated without manual intervention. Federation topology is declared in <code class="font-mono text-[0.8em] bg-[rgba(70,60,45,0.07)] px-[4px] py-[1px] rounded-[3px]">federation-topology.yaml</code> and cross-certificates are issued through the EJBCA REST API.
+                </p>
+              </div>
+            </section>
+
           </div>
         </article>
       </div>
@@ -345,21 +607,135 @@ const mathDisplayBase = `grid gap-0 min-w-0 pt-[18px] justify-items-center conte
       <div>
         <span class="note-label">Research problem</span>
         <p>
-          Certification path discovery becomes increasingly difficult as multidomain PKI federations grow denser.
+          Certification path discovery becomes increasingly difficult as multidomain PKI federations grow denser and cryptographically heterogeneous.
         </p>
       </div>
       <div>
         <span class="note-label">Methodological lens</span>
         <p>
-          Directed weighted graphs, deterministic shortest-path computation, and policy-aware trust modelling.
+          Directed weighted graphs, normalised multicriteria cost, deterministic shortest-path computation, and policy-aware trust modelling over real X.509 infrastructure.
         </p>
       </div>
       <div id="interoperability">
         <span class="note-label">Interoperability objective</span>
         <p>
-          Support controlled interoperability across classical, hybrid, and post-quantum PKI domains.
+          Support controlled interoperability across classical, hybrid, and post-quantum PKI domains without requiring a shared trust root or modifying PKIX validation semantics.
         </p>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  .cost-card {
+    transition: border-color 0.15s;
+  }
+  .cost-card:hover {
+    border-color: rgba(70, 60, 45, 0.2);
+  }
+
+  .score-pill {
+    display: inline-block;
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .score-pill-good {
+    background: rgba(60, 120, 80, 0.12);
+    color: rgba(30, 90, 50, 0.95);
+  }
+  .score-pill-mid {
+    background: rgba(160, 100, 20, 0.12);
+    color: rgba(130, 80, 10, 0.95);
+  }
+  .score-pill-bad {
+    background: rgba(160, 50, 40, 0.12);
+    color: rgba(130, 35, 28, 0.95);
+  }
+
+  .x509-source {
+    display: block;
+  }
+  .new-badge {
+    display: inline-block;
+  }
+
+  .domain-card-domain-classical {
+    background: rgba(248, 245, 238, 0.7);
+  }
+  .domain-card-domain-hybrid {
+    background: rgba(255, 248, 230, 0.7);
+    border-color: rgba(160, 100, 20, 0.15);
+  }
+  .domain-card-domain-pqc {
+    background: rgba(235, 245, 255, 0.7);
+    border-color: rgba(40, 100, 160, 0.15);
+  }
+
+  .phi-composition {
+    font-size: 0.78rem;
+  }
+
+  .algo-score-table {
+    table-layout: fixed;
+    font-size: 0.78rem;
+  }
+  .col-algo  { width: 30%; }
+  .col-domain { width: 22%; }
+  .col-score { width: 11%; }
+  .col-cost  { width: 15%; }
+
+  .th-algo,
+  .th-domain {
+    white-space: normal;
+  }
+  .td-algo,
+  .td-domain {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .algo-score-table th,
+  .algo-score-table td {
+    vertical-align: middle;
+  }
+
+  @media (max-width: 760px) {
+    .algo-score-table {
+      font-size: 0.7rem;
+    }
+    .algo-score-table th,
+    .algo-score-table td {
+      padding: 6px 7px;
+    }
+    .col-algo  { width: 35%; }
+    .col-domain { width: 16%; }
+    .col-score { width: 11%; }
+    .col-cost  { width: 16%; }
+    .score-pill {
+      font-size: 0.64rem;
+      padding: 2px 5px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .algo-score-table {
+      font-size: 0.62rem;
+    }
+    .algo-score-table th,
+    .algo-score-table td {
+      padding: 5px 5px;
+    }
+    .col-algo  { width: 35%; }
+    .col-domain { width: 17%; }
+    .col-score { width: 10%; }
+    .col-cost  { width: 18%; }
+    .score-pill {
+      font-size: 0.56rem;
+      padding: 1px 4px;
+      letter-spacing: 0;
+    }
+  }
+</style>

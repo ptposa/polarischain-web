@@ -1,246 +1,20 @@
 ---
 import {
-  academicCardItemClasses,
-  floatingAcademicCardLayoutClasses,
-  academicCardListClasses,
-  academicCardTermClasses,
-  academicCardTitleClasses,
-  academicCardValueClasses,
   buttonBaseClasses,
   buttonPrimaryClasses,
   buttonSecondaryClasses,
-  floatingAcademicCardClasses,
 } from "../lib/ui";
-
-type PrimaryNodeId =
-  | "issuing"
-  | "intermediate"
-  | "federation"
-  | "cross-certified"
-  | "anchor";
-type AmbientNodeId = `a${number}`;
-type NodeId = PrimaryNodeId | AmbientNodeId;
-type DomainId = "a" | "federation" | "b";
-
-type NodeMeta = {
-  domain: string;
-  policy: string;
-  crypto: string;
-};
-
-type PrimaryNode = {
-  id: PrimaryNodeId;
-  label: string[];
-  x: number;
-  y: number;
-  type: PrimaryNodeId;
-  domain: DomainId;
-  collapsed?: boolean;
-  meta: NodeMeta;
-};
-
-type AmbientNode = {
-  id: AmbientNodeId;
-  x: number;
-  y: number;
-  size: "tiny" | "small";
-};
-
-type GraphNode = PrimaryNode | AmbientNode;
-type GraphLink = readonly [NodeId, NodeId];
-
-type DomainZone = {
-  id: DomainId;
-  title: string;
-  subtitle: string;
-  x: number;
-  width: number;
-};
-
-const graphFrame = { x: 150, y: 110, width: 880, height: 330 };
-
-const domainZones: DomainZone[] = [
-  { id: "a", title: "Domain A", subtitle: "certificate origin", x: 150, width: 288 },
-  { id: "federation", title: "Federation", subtitle: "cross-domain trust plane", x: 438, width: 288 },
-  { id: "b", title: "Domain B", subtitle: "relying party", x: 726, width: 304 },
-];
-
-// End-entity is the subject of validation — the target, not a CA node in the trust graph.
-// Rendered as a certificate icon that feeds into the issuing CA via a dashed entry link.
-const endEntity = { x: 188, y: 380 };
-
-const primaryNodes: PrimaryNode[] = [
-  {
-    id: "issuing",
-    label: ["Issuing CA", "Domain A"],
-    x: 300,
-    y: 318,
-    type: "issuing",
-    domain: "a",
-    meta: {
-      domain: "Domain A",
-      policy: "Enterprise issuance policy",
-      crypto: "RSA-4096",
-    },
-  },
-  {
-    id: "intermediate",
-    label: ["Intermediate CAs", "1–n · collapsed"],
-    x: 408,
-    y: 246,
-    type: "intermediate",
-    domain: "a",
-    collapsed: true,
-    meta: {
-      domain: "Domain A",
-      policy: "Subordinate chain policy",
-      crypto: "RSA-4096 · hybrid-ready",
-    },
-  },
-  {
-    id: "federation",
-    label: ["Federation node", "Bridge / policy mapping A ↔ B"],
-    x: 586,
-    y: 180,
-    type: "federation",
-    domain: "federation",
-    meta: {
-      domain: "Federation plane",
-      policy: "Cross-domain policy mapping",
-      crypto: "Hybrid RSA / ML-DSA",
-    },
-  },
-  {
-    id: "cross-certified",
-    label: ["Cross-certified CA", "Domain B"],
-    x: 788,
-    y: 270,
-    type: "cross-certified",
-    domain: "b",
-    meta: {
-      domain: "Domain B",
-      policy: "Federated validation policy",
-      crypto: "ML-DSA",
-    },
-  },
-  {
-    id: "anchor",
-    label: ["Trust Anchor", "Domain B · relying party"],
-    x: 932,
-    y: 194,
-    type: "anchor",
-    domain: "b",
-    meta: {
-      domain: "Domain B",
-      policy: "Root governance policy",
-      crypto: "PQC-Ready",
-    },
-  },
-];
-
-const ambientNodes: AmbientNode[] = [
-  { id: "a1", x: 170, y: 230, size: "tiny" },
-  { id: "a2", x: 206, y: 402, size: "tiny" },
-  { id: "a3", x: 252, y: 182, size: "small" },
-  { id: "a4", x: 286, y: 374, size: "small" },
-  { id: "a5", x: 318, y: 122, size: "tiny" },
-  { id: "a6", x: 336, y: 432, size: "tiny" },
-  { id: "a7", x: 430, y: 154, size: "small" },
-  { id: "a8", x: 452, y: 344, size: "small" },
-  { id: "a9", x: 506, y: 126, size: "tiny" },
-  { id: "a10", x: 522, y: 246, size: "tiny" },
-  { id: "a11", x: 548, y: 316, size: "tiny" },
-  { id: "a12", x: 624, y: 364, size: "small" },
-  { id: "a13", x: 660, y: 130, size: "tiny" },
-  { id: "a14", x: 684, y: 372, size: "tiny" },
-  { id: "a15", x: 748, y: 148, size: "small" },
-  { id: "a16", x: 754, y: 332, size: "small" },
-  { id: "a17", x: 832, y: 362, size: "small" },
-  { id: "a18", x: 874, y: 236, size: "small" },
-  { id: "a19", x: 892, y: 148, size: "tiny" },
-  { id: "a20", x: 950, y: 314, size: "small" },
-  { id: "a21", x: 986, y: 134, size: "tiny" },
-];
-
-const ambientLinks: GraphLink[] = [
-  ["a1", "issuing"],
-  ["a2", "a4"],
-  ["a3", "issuing"],
-  ["a5", "intermediate"],
-  ["a6", "a4"],
-  ["a7", "intermediate"],
-  ["a8", "a11"],
-  ["a9", "federation"],
-  ["a10", "federation"],
-  ["a11", "a12"],
-  ["a13", "federation"],
-  ["a14", "a16"],
-  ["a15", "cross-certified"],
-  ["a16", "cross-certified"],
-  ["a17", "a20"],
-  ["a18", "anchor"],
-  ["a19", "anchor"],
-  ["a20", "anchor"],
-  ["a21", "anchor"],
-];
-
-const primaryLinks: GraphLink[] = [
-  ["issuing", "intermediate"],
-  ["intermediate", "federation"],
-  ["federation", "cross-certified"],
-  ["cross-certified", "anchor"],
-];
-
-const nodeMap: Record<NodeId, GraphNode> = Object.fromEntries(
-  [...primaryNodes, ...ambientNodes].map((node) => [node.id, node]),
-) as Record<NodeId, GraphNode>;
-
-function linkPath(fromId: NodeId, toId: NodeId) {
-  const from = nodeMap[fromId];
-  const to = nodeMap[toId];
-  return `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
-}
-
-const issuingNode = primaryNodes[0];
-const entryLinkPath = `M ${endEntity.x + 10} ${endEntity.y - 4} L ${issuingNode.x} ${issuingNode.y}`;
-
-type LabelPlacement = { x: number; y: number; anchor: "start" | "middle" | "end" };
-const labelPlacements: Record<PrimaryNodeId, LabelPlacement> = {
-  issuing: { x: 0, y: 44, anchor: "middle" },
-  intermediate: { x: 0, y: -30, anchor: "middle" },
-  federation: { x: 0, y: -30, anchor: "middle" },
-  "cross-certified": { x: 0, y: 44, anchor: "middle" },
-  anchor: { x: 0, y: -26, anchor: "middle" },
-};
-
-const cardOffsets: Record<PrimaryNodeId, { x: number; y: number }> = {
-  issuing: { x: -4, y: 118 },
-  intermediate: { x: 0, y: -122 },
-  federation: { x: 0, y: 154 },
-  "cross-certified": { x: 0, y: -134 },
-  anchor: { x: 28, y: 110 },
-};
-
-function cardStyle(node: PrimaryNode) {
-  const offset = cardOffsets[node.type];
-  return `--card-x:${((node.x - graphFrame.x) / graphFrame.width) * 100}%; --card-y:${((node.y - graphFrame.y) / graphFrame.height) * 100}%; --card-offset-x:${offset.x}px; --card-offset-y:${offset.y}px;`;
-}
-
-// Path trust score: aggregate quality of the selected route, not a per-node attribute.
-// Positioned as a floating badge above the federation region — the visual "result" of path discovery.
-const pathTrustScore = "0.91";
-const pathScoreAnchor = primaryNodes[2]; // federation node
-const pathScoreStyle = `--score-x:${((pathScoreAnchor.x - graphFrame.x) / graphFrame.width) * 100}%; --score-y:${((pathScoreAnchor.y - graphFrame.y) / graphFrame.height) * 100}%;`;
 ---
 
-<section class="pki-hero relative min-h-[200vh] border-b border-white/[0.06] overflow-clip max-[1080px]:min-h-[172vh] max-[760px]:min-h-0" id="top">
-  <div class="pki-hero-track relative min-h-screen overflow-clip">
+<section class="pki-hero relative border-b border-white/[0.06] overflow-clip" id="top">
+  <div class="pki-hero-track relative">
     <div class="pki-hero-backdrop absolute inset-0 pointer-events-none max-[760px]:opacity-[0.16]" aria-hidden="true"></div>
     <div class="pki-hero-starfield absolute inset-0 pointer-events-none max-[760px]:opacity-20" aria-hidden="true"></div>
     <div class="pki-hero-overlay absolute inset-0 pointer-events-none" aria-hidden="true"></div>
-    <div class="pki-hero-mobile-sweep absolute inset-0 pointer-events-none" aria-hidden="true"></div>
 
     <div class="container pki-hero-shell relative z-[2] min-h-screen grid grid-cols-[minmax(0,1.08fr)_minmax(0,1.32fr)] items-center gap-[22px] pt-[90px] pb-[68px] max-[1080px]:grid-cols-1 max-[760px]:min-h-0 max-[760px]:pt-[42px] max-[760px]:pb-12">
+
+      <!-- ─── LEFT: hero copy (unchanged) ─── -->
       <div class="pki-hero-copy relative z-[3] max-w-[700px] max-[1080px]:max-w-none">
         <h1 class="m-0 max-w-[12ch] text-[#f4efe5] [font-family:'Playfair_Display',serif] text-[clamp(3.4rem,6.5vw,5.8rem)] font-normal leading-[1.02] tracking-[-0.03em] max-[1080px]:max-w-none max-[760px]:text-[clamp(2.95rem,13vw,4.4rem)] max-[760px]:leading-[1.03]">Navigating trust across federated PKI ecosystems</h1>
         <p class="pki-hero-lead mt-[22px] max-w-[54ch] text-[rgba(242,236,227,0.95)] [font-family:'Playfair_Display',serif] text-[clamp(1.55rem,2.2vw,2rem)] leading-[1.1] max-[1080px]:max-w-none max-[760px]:mt-[26px] max-[760px]:text-[1.42rem] max-[760px]:leading-[1.15]">
@@ -279,185 +53,70 @@ const pathScoreStyle = `--score-x:${((pathScoreAnchor.x - graphFrame.x) / graphF
           <p class="m-0 [font-family:'Inter',system-ui,sans-serif] text-[rgba(196,189,179,0.62)] text-[0.86rem] leading-[1.55] tracking-[0.01em] max-[760px]:text-[0.8rem] max-[760px]:leading-[1.5] [&>span]:text-[rgba(230,224,214,0.8)] [&>span]:mr-1"><span>Institution:</span> Polytechnic University of Valencia</p>
           <p class="m-0 [font-family:'Inter',system-ui,sans-serif] text-[rgba(196,189,179,0.62)] text-[0.86rem] leading-[1.55] tracking-[0.01em] max-[760px]:text-[0.8rem] max-[760px]:leading-[1.5] [&>span]:text-[rgba(230,224,214,0.8)] [&>span]:mr-1"><span>Thesis supervisor:</span> PhD Mario Aragonés Lozano</p>
           <p class="m-0 [font-family:'Inter',system-ui,sans-serif] text-[rgba(196,189,179,0.62)] text-[0.86rem] leading-[1.55] tracking-[0.01em] max-[760px]:text-[0.8rem] max-[760px]:leading-[1.5] [&>span]:text-[rgba(230,224,214,0.8)] [&>span]:mr-1"><span>Thesis supervisor email:</span> maragones@teleco.upv.es</p>
-          <p class="m-0 [font-family:'Inter',system-ui,sans-serif] text-[rgba(196,189,179,0.62)] text-[0.86rem] leading-[1.55] tracking-[0.01em] max-[760px]:text-[0.8rem] max-[760px]:leading-[1.5] [&>span]:text-[rgba(230,224,214,0.8)] [&>span]:mr-1"><span>Academic context:</span> Master’s thesis with progress toward a PhD</p>
+          <p class="m-0 [font-family:'Inter',system-ui,sans-serif] text-[rgba(196,189,179,0.62)] text-[0.86rem] leading-[1.55] tracking-[0.01em] max-[760px]:text-[0.8rem] max-[760px]:leading-[1.5] [&>span]:text-[rgba(230,224,214,0.8)] [&>span]:mr-1"><span>Academic context:</span> Master's thesis with progress toward a PhD</p>
         </div>
       </div>
 
-      <div class="pki-hero-graph-wrap relative min-h-[640px] mt-7 ml-2 [contain:paint] max-[1080px]:ml-0 max-[1080px]:min-h-[540px] max-[760px]:min-h-0 max-[760px]:mt-[34px]">
-        <svg
-          id="pki-hero-graph"
-          class="pki-hero-graph block w-[min(118%,1120px)] h-auto ml-0 -mr-[18px] overflow-visible max-[1080px]:w-[106%] max-[1080px]:m-0 max-[1080px]:-mr-[18px] max-[760px]:w-full max-[760px]:m-0"
-          viewBox={`${graphFrame.x} ${graphFrame.y} ${graphFrame.width} ${graphFrame.height}`}
-          role="img"
-          aria-label="Federated PKI graph with optimal trust path across Domain A, Federation, and Domain B"
-        >
-          <defs>
-            <radialGradient id="pkiPathGlow" cx="50%" cy="50%" r="55%">
-              <stop offset="0%" stop-color="rgba(212, 233, 255, 0.34)" />
-              <stop offset="100%" stop-color="rgba(212, 233, 255, 0)" />
-            </radialGradient>
-          </defs>
+      <!-- ─── RIGHT: animated graph ─── -->
+      <div class="pki-hero-graph-wrap relative mt-7 ml-2 [contain:paint] max-[1080px]:ml-0 max-[760px]:mt-[34px]" id="pkiGraphWrap">
 
-          <g class="pki-domain-zones" aria-hidden="true">
-            {domainZones.map((zone) => (
-              <rect
-                class={`pki-domain-zone is-${zone.id}`}
-                x={zone.x}
-                y={graphFrame.y + 18}
-                width={zone.width}
-                height={graphFrame.height - 28}
-                rx="14"
-              />
-            ))}
-          </g>
+        <!-- Canvas starfield -->
+        <canvas class="pki-graph-canvas" id="pkiStarfield" aria-hidden="true"></canvas>
 
-          <g class="pki-domain-headings" aria-hidden="true">
-            {domainZones.map((zone) => (
-              <>
-                <text
-                  class={`pki-domain-title is-${zone.id}`}
-                  x={zone.x + zone.width / 2}
-                  y={graphFrame.y + 6}
-                  text-anchor="middle"
-                >
-                  {zone.title}
-                </text>
-                <text
-                  class="pki-domain-subtitle"
-                  x={zone.x + zone.width / 2}
-                  y={graphFrame.y + 22}
-                  text-anchor="middle"
-                >
-                  {zone.subtitle}
-                </text>
-              </>
-            ))}
-          </g>
-
-          <g class="pki-ambient-links">
-            {ambientLinks.map(([from, to]) => (
-              <path
-                class={`pki-link ${from.startsWith("a") && to.startsWith("a") ? "is-dim" : "is-structural"}`}
-                d={linkPath(from, to)}
-              />
-            ))}
-            {primaryLinks.map(([from, to]) => (
-              <path class="pki-link is-route-base" d={linkPath(from, to)} />
-            ))}
-          </g>
-
-          <path class="pki-entry-link" data-entry-link d={entryLinkPath} />
-
-          <g class="pki-primary-links">
-            {primaryLinks.map(([from, to], index) => (
-              <path
-                class="pki-primary-link"
-                data-path-link
-                data-step={index + 1}
-                d={linkPath(from, to)}
-              />
-            ))}
-          </g>
-
-          <g class="pki-ambient-nodes">
-            {ambientNodes.map((node) => (
-              <circle
-                class={`pki-node pki-node-ambient ${node.size === "tiny" ? "is-tiny" : "is-small"}`}
-                cx={node.x}
-                cy={node.y}
-                r={node.size === "tiny" ? 2.9 : 5.2}
-              />
-            ))}
-          </g>
-
-          <g class="pki-end-entity" data-ee-group aria-hidden="true" transform={`translate(${endEntity.x} ${endEntity.y})`}>
-            <rect class="pki-ee-card" x="-14" y="-18" width="28" height="34" rx="4" />
-            <path class="pki-ee-line" d="M -7 -8 H 7" />
-            <path class="pki-ee-line" d="M -7 -2 H 7" />
-            <path class="pki-ee-line" d="M -7 4 H 3" />
-            <circle class="pki-ee-seal" cx="7" cy="10" r="3.6" />
-            <text class="pki-ee-label" x="0" y="28" text-anchor="middle">End-entity · Subject</text>
-          </g>
-
-          <g class="pki-primary-nodes">
-            {primaryNodes.map((node, index) => {
-              const placement = labelPlacements[node.type];
-              return (
-                <g class="pki-primary-node-group" data-path-node-group data-step={index + 1}>
-                  <circle
-                    class="pki-node-halo"
-                    data-node-halo
-                    cx={node.x}
-                    cy={node.y}
-                    r={node.type === "anchor" ? 32 : 24}
-                  />
-                  <circle
-                    class={`pki-node pki-node-primary is-${node.type} ${node.collapsed ? "is-collapsed" : ""}`}
-                    data-path-node
-                    cx={node.x}
-                    cy={node.y}
-                    r={node.type === "anchor" ? 9.5 : 8}
-                  />
-                  {node.collapsed ? (
-                    <text class="pki-node-collapsed-mark" x={node.x} y={node.y + 4} text-anchor="middle">…</text>
-                  ) : null}
-                  <g class="pki-node-label">
-                    {node.label.map((line, lineIndex) => (
-                      <text
-                        class={lineIndex === 0 ? "is-primary" : "is-secondary"}
-                        x={node.x + placement.x}
-                        y={node.y + placement.y + lineIndex * 16}
-                        text-anchor={placement.anchor}
-                      >
-                        {line}
-                      </text>
-                    ))}
-                  </g>
-                </g>
-              );
-            })}
-          </g>
-        </svg>
-
-        <div class="pki-path-score absolute left-[calc(var(--score-x)+12px)] top-[calc(var(--score-y)-96px)] -translate-x-1/2 pointer-events-auto grid gap-1 px-[18px] py-3 rounded-[18px] border border-[rgba(232,215,170,0.28)] bg-[rgba(20,18,14,0.56)] shadow-[0_10px_28px_rgba(0,0,0,0.28)] backdrop-blur-[6px] opacity-0 min-w-[180px] text-center z-[4] max-[760px]:static max-[760px]:transform-none max-[760px]:mx-auto max-[760px]:mt-[18px] max-[760px]:min-w-0 max-[760px]:w-[min(280px,100%)]" data-path-score style={pathScoreStyle}>
-          <span class="pki-path-score-kicker text-[rgba(232,215,170,0.78)] [font-family:'Inter',system-ui,sans-serif] text-[0.66rem] tracking-[0.2em] uppercase">Optimal path · trust score</span>
-          <span class="pki-path-score-value text-[#f4efe5] [font-family:'Playfair_Display',serif] text-[2.1rem] leading-none tracking-[-0.02em] max-[760px]:text-[1.8rem]">{pathTrustScore}</span>
-          <span class="pki-path-score-note text-[rgba(196,189,178,0.58)] [font-family:'Inter',system-ui,sans-serif] text-[0.7rem] leading-[1.35]">Aggregate over crypto, policy, length and context</span>
+        <!-- Domain lane pill labels -->
+        <div class="pki-lane-labels" aria-hidden="true">
+          <div class="pki-lane-label">
+            <span class="pki-lane-tag pki-tag-a">Domain A</span>
+            <div class="pki-lane-sublabel">CERTIFICATE ORIGIN</div>
+          </div>
+          <div></div>
+          <div class="pki-lane-label">
+            <span class="pki-lane-tag pki-tag-bridge">Federation</span>
+            <div class="pki-lane-sublabel">CROSS-DOMAIN</div>
+          </div>
+          <div></div>
+          <div class="pki-lane-label">
+            <span class="pki-lane-tag pki-tag-b">Domain B</span>
+            <div class="pki-lane-sublabel">TRUST ANCHOR</div>
+          </div>
         </div>
 
-        <div class={`pki-node-cards ${floatingAcademicCardLayoutClasses}`} aria-hidden="true">
-          {primaryNodes.map((node, index) => (
-            <article
-              class={floatingAcademicCardClasses}
-              data-node-card
-              data-step={index + 1}
-              style={cardStyle(node)}
-            >
-              <span class={academicCardTitleClasses}>{node.label[0]}</span>
-              {node.label[1] ? <span class={academicCardTitleClasses}>{node.label[1]}</span> : null}
-              <dl class={academicCardListClasses}>
-                <div class={academicCardItemClasses}>
-                  <dt class={academicCardTermClasses}>Domain</dt>
-                  <dd class={academicCardValueClasses}>{node.meta.domain}</dd>
-                </div>
-                <div class={academicCardItemClasses}>
-                  <dt class={academicCardTermClasses}>Policy</dt>
-                  <dd class={academicCardValueClasses}>{node.meta.policy}</dd>
-                </div>
-                <div class={academicCardItemClasses}>
-                  <dt class={academicCardTermClasses}>Crypto</dt>
-                  <dd class={academicCardValueClasses}>{node.meta.crypto}</dd>
-                </div>
-              </dl>
-            </article>
-          ))}
+        <!-- SVG graph + floating info-cards overlay -->
+        <div class="pki-graph-area">
+          <svg
+            class="pki-graph-svg"
+            id="pkiMainSvg"
+            viewBox="0 0 680 270"
+            role="img"
+            aria-label="Federated PKI trust graph: Domain A → Federation Bridge → Domain B"
+          ></svg>
+          <div class="pki-card-overlay" id="pkiCardOverlay"></div>
         </div>
+
+        <!-- Scroll hint (fades out after first interaction) -->
+        <div class="pki-scroll-hint" id="pkiScrollHint" aria-hidden="true">
+          <span class="pki-scroll-hint-icon">↕</span>
+          <span>scroll to reveal trust path</span>
+        </div>
+
+        <!-- Trust-score bar -->
+        <div class="pki-score-bar" id="pkiScoreBar">
+          <div class="pki-score-left">
+            <div class="pki-score-num" id="pkiScoreNum">0.00</div>
+            <div class="pki-score-lbl">Trust score</div>
+          </div>
+          <div class="pki-score-track">
+            <div class="pki-score-fill" id="pkiScoreFill"></div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 </section>
 
 <style>
+  /* ─── Hero shell ─── */
   .pki-hero {
     background:
       radial-gradient(circle at 68% 30%, rgba(100, 135, 185, 0.12), transparent 22%),
@@ -468,590 +127,719 @@ const pathScoreStyle = `--score-x:${((pathScoreAnchor.x - graphFrame.x) / graphF
   .pki-hero-backdrop {
     opacity: 0.24;
     background-image:
-      radial-gradient(circle at 8% 14%, rgba(255, 255, 255, 0.42) 0 1px, transparent 1.6px),
-      radial-gradient(circle at 12% 22%, rgba(255, 255, 255, 0.78) 0 1px, transparent 1.6px),
-      radial-gradient(circle at 22% 12%, rgba(255, 255, 255, 0.4) 0 1px, transparent 1.5px),
-      radial-gradient(circle at 28% 34%, rgba(255, 255, 255, 0.36) 0 1px, transparent 1.5px),
-      radial-gradient(circle at 42% 30%, rgba(255, 255, 255, 0.52) 0 1px, transparent 1.5px),
-      radial-gradient(circle at 56% 16%, rgba(255, 255, 255, 0.38) 0 1px, transparent 1.6px),
-      radial-gradient(circle at 74% 26%, rgba(255, 255, 255, 0.56) 0 1px, transparent 1.6px),
-      radial-gradient(circle at 82% 44%, rgba(255, 255, 255, 0.34) 0 1px, transparent 1.6px),
-      radial-gradient(circle at 88% 62%, rgba(255, 255, 255, 0.44) 0 1px, transparent 1.6px),
-      radial-gradient(circle at 94% 20%, rgba(255, 255, 255, 0.32) 0 1px, transparent 1.6px);
+      radial-gradient(circle at 8% 14%, rgba(255,255,255,0.42) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 12% 22%, rgba(255,255,255,0.78) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 22% 12%, rgba(255,255,255,0.40) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 28% 34%, rgba(255,255,255,0.36) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 42% 30%, rgba(255,255,255,0.52) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 56% 16%, rgba(255,255,255,0.38) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 74% 26%, rgba(255,255,255,0.56) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 82% 44%, rgba(255,255,255,0.34) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 88% 62%, rgba(255,255,255,0.44) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 94% 20%, rgba(255,255,255,0.32) 0 1px, transparent 1.6px);
     background-size:
-      320px 320px,
-      520px 520px,
-      360px 360px,
-      420px 420px,
-      640px 640px,
-      460px 460px,
-      700px 700px,
-      540px 540px,
-      760px 760px,
-      620px 620px;
+      320px 320px, 520px 520px, 360px 360px, 420px 420px, 640px 640px,
+      460px 460px, 700px 700px, 540px 540px, 760px 760px, 620px 620px;
   }
 
   .pki-hero-starfield {
     opacity: 0.34;
     background-image:
-      radial-gradient(circle at 8% 12%, rgba(255, 255, 255, 0.46) 0 1px, transparent 1.7px),
-      radial-gradient(circle at 14% 28%, rgba(255, 255, 255, 0.4) 0 1px, transparent 1.7px),
-      radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.62) 0 1px, transparent 1.7px),
-      radial-gradient(circle at 22% 44%, rgba(255, 255, 255, 0.34) 0 1px, transparent 1.7px),
-      radial-gradient(circle at 28% 14%, rgba(255, 255, 255, 0.36) 0 1px, transparent 1.7px),
-      radial-gradient(circle at 34% 58%, rgba(255, 255, 255, 0.42) 0 1px, transparent 1.8px),
-      radial-gradient(circle at 42% 32%, rgba(255, 255, 255, 0.32) 0 1px, transparent 1.8px),
-      radial-gradient(circle at 50% 16%, rgba(255, 255, 255, 0.28) 0 1px, transparent 1.8px),
-      radial-gradient(circle at 58% 24%, rgba(255, 255, 255, 0.48) 0 1px, transparent 1.8px),
-      radial-gradient(circle at 66% 52%, rgba(255, 255, 255, 0.3) 0 1px, transparent 1.8px),
-      radial-gradient(circle at 72% 72%, rgba(255, 255, 255, 0.36) 0 1px, transparent 1.8px),
-      radial-gradient(circle at 82% 22%, rgba(255, 255, 255, 0.28) 0 1px, transparent 1.8px),
-      radial-gradient(circle at 92% 34%, rgba(255, 255, 255, 0.4) 0 1px, transparent 1.8px);
+      radial-gradient(circle at 8% 12%, rgba(255,255,255,0.46) 0 1px, transparent 1.7px),
+      radial-gradient(circle at 14% 28%, rgba(255,255,255,0.40) 0 1px, transparent 1.7px),
+      radial-gradient(circle at 18% 18%, rgba(255,255,255,0.62) 0 1px, transparent 1.7px),
+      radial-gradient(circle at 22% 44%, rgba(255,255,255,0.34) 0 1px, transparent 1.7px),
+      radial-gradient(circle at 28% 14%, rgba(255,255,255,0.36) 0 1px, transparent 1.7px),
+      radial-gradient(circle at 34% 58%, rgba(255,255,255,0.42) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 42% 32%, rgba(255,255,255,0.32) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 50% 16%, rgba(255,255,255,0.28) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 58% 24%, rgba(255,255,255,0.48) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 66% 52%, rgba(255,255,255,0.30) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 72% 72%, rgba(255,255,255,0.36) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 82% 22%, rgba(255,255,255,0.28) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 92% 34%, rgba(255,255,255,0.40) 0 1px, transparent 1.8px);
     background-size:
-      120px 120px,
-      160px 160px,
-      220px 220px,
-      180px 180px,
-      240px 240px,
-      280px 280px,
-      320px 320px,
-      360px 360px,
-      420px 420px,
-      460px 460px,
-      520px 520px,
-      560px 560px,
-      620px 620px;
+      120px 120px, 160px 160px, 220px 220px, 180px 180px, 240px 240px,
+      280px 280px, 320px 320px, 360px 360px, 420px 420px, 460px 460px,
+      520px 520px, 560px 560px, 620px 620px;
     mix-blend-mode: screen;
   }
 
   .pki-hero-overlay {
     background:
-      linear-gradient(90deg, rgba(6, 10, 17, 0.9) 0%, rgba(7, 11, 18, 0.8) 22%, rgba(8, 12, 20, 0.5) 42%, rgba(8, 12, 20, 0.12) 62%, rgba(8, 12, 20, 0) 76%);
-  }
-
-  .pki-hero-mobile-sweep {
-    display: none;
-    z-index: 1;
-    inset: auto -30% -20% -30%;
-    height: 56%;
-    opacity: 0;
-    background:
-      radial-gradient(circle at 50% 72%, rgba(222, 239, 255, 0.17) 0%, rgba(164, 204, 245, 0.1) 24%, rgba(94, 136, 184, 0.05) 48%, rgba(8, 12, 20, 0) 80%),
-      linear-gradient(180deg, rgba(226, 239, 255, 0) 0%, rgba(187, 214, 243, 0.04) 58%, rgba(214, 232, 255, 0.1) 100%);
-    filter: blur(34px);
-    mix-blend-mode: screen;
-    transform: translate3d(0, 0, 0);
+      linear-gradient(90deg, rgba(6,10,17,0.9) 0%, rgba(7,11,18,0.8) 22%, rgba(8,12,20,0.5) 42%, rgba(8,12,20,0.12) 62%, rgba(8,12,20,0) 76%);
   }
 
   .pki-hero-byline-link::before {
     content: "";
-    width: 0.62rem;
-    height: 0.62rem;
+    width: 0.62rem; height: 0.62rem;
     border-radius: 999px;
     background:
-      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.85) 0 18%, transparent 19%),
+      radial-gradient(circle at 50% 50%, rgba(255,255,255,0.85) 0 18%, transparent 19%),
       #a6ce39;
-    box-shadow: 0 0 10px rgba(166, 206, 57, 0.18);
+    box-shadow: 0 0 10px rgba(166,206,57,0.18);
     flex: 0 0 auto;
   }
 
-  .pki-domain-zone {
-    fill: rgba(255, 255, 255, 0.012);
-    stroke: rgba(189, 205, 223, 0.08);
-    stroke-width: 1;
-    stroke-dasharray: 4 6;
+  /* ─── Graph wrap ─── */
+  .pki-hero-graph-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
 
-  .pki-domain-zone.is-a {
-    fill: rgba(120, 155, 210, 0.035);
+  /* Canvas starfield within the graph wrap */
+  .pki-graph-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.6;
   }
 
-  .pki-domain-zone.is-federation {
-    fill: rgba(205, 185, 120, 0.028);
-    stroke: rgba(220, 198, 140, 0.14);
+  /* ─── Lane labels ─── */
+  .pki-lane-labels {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr 40px 1fr;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 1rem;
   }
 
-  .pki-domain-zone.is-b {
-    fill: rgba(170, 200, 240, 0.038);
+  .pki-lane-label {
+    text-align: center;
   }
 
-  .pki-domain-title {
-    fill: rgba(231, 222, 208, 0.58);
+  .pki-lane-tag {
+    display: inline-block;
     font-family: "Inter", system-ui, sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    padding: 2px 9px;
+    border-radius: 20px;
+  }
+
+  .pki-tag-a {
+    background: rgba(55, 138, 221, 0.12);
+    color: #85B7EB;
+    border: 0.5px solid rgba(55, 138, 221, 0.25);
+  }
+
+  .pki-tag-bridge {
+    background: rgba(180, 178, 169, 0.10);
+    color: #B4B2A9;
+    border: 0.5px solid rgba(180, 178, 169, 0.20);
+  }
+
+  .pki-tag-b {
+    background: rgba(239, 159, 39, 0.12);
+    color: #FAC775;
+    border: 0.5px solid rgba(239, 159, 39, 0.25);
+  }
+
+  .pki-lane-sublabel {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.20);
+    text-align: center;
+    margin-top: 2px;
+    letter-spacing: 0.07em;
+  }
+
+  /* ─── Graph area ─── */
+  .pki-graph-area {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 680 / 270;
+    z-index: 2;
+  }
+
+  .pki-graph-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .pki-card-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* ─── Info cards (JS-created) ─── */
+  :global(.pki-info-card) {
+    background: rgba(8, 12, 24, 0.92);
+    border: 0.5px solid rgba(255, 255, 255, 0.10);
+    border-radius: 7px;
+    padding: 8px 11px;
+    width: 136px;
+    box-sizing: border-box;
+    opacity: 0;
+    transform: translateY(4px) scale(0.97);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+    position: absolute;
+    backdrop-filter: blur(6px);
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  :global(.pki-info-card.visible) {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  :global(.pki-ic-name) {
     font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 5px;
+    line-height: 1.2;
   }
 
-  .pki-domain-title.is-federation {
-    fill: rgba(232, 215, 170, 0.66);
+  :global(.pki-ic-row) {
+    margin-bottom: 3px;
   }
 
-  .pki-domain-subtitle {
-    fill: rgba(184, 176, 164, 0.42);
-    font-family: "Inter", system-ui, sans-serif;
+  :global(.pki-ic-lbl) {
+    font-size: 8px;
+    letter-spacing: 0.09em;
+    color: rgba(255, 255, 255, 0.28);
+    line-height: 1.3;
+  }
+
+  :global(.pki-ic-val) {
     font-size: 10px;
-    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.3;
   }
 
-  .pki-link {
-    fill: none;
-    stroke: rgba(189, 205, 223, 0.16);
-    stroke-width: 1.2;
-    stroke-linecap: round;
-  }
-
-  .pki-link.is-dim {
-    opacity: 0.55;
-  }
-
-  .pki-link.is-structural {
-    opacity: 0.8;
-  }
-
-  .pki-link.is-route-base {
-    stroke: rgba(189, 205, 223, 0.16);
-    stroke-width: 1.2;
-    opacity: 0.8;
-  }
-
-  .pki-entry-link {
-    fill: none;
-    stroke: rgba(223, 236, 255, 0.6);
-    stroke-width: 1.6;
-    stroke-linecap: round;
-    stroke-dasharray: 4 5;
-    opacity: 0;
-  }
-
-  .pki-primary-link {
-    fill: none;
-    stroke: rgba(223, 236, 255, 0.96);
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    opacity: 0;
-    filter: drop-shadow(0 0 4px rgba(210, 230, 255, 0.18));
-  }
-
-  .pki-node {
-    transform-origin: center;
-  }
-
-  .pki-node-ambient {
-    fill: rgba(231, 237, 246, 0.74);
-    filter: drop-shadow(0 0 4px rgba(227, 235, 246, 0.14));
-  }
-
-  .pki-node-ambient.is-tiny {
-    opacity: 0.72;
-  }
-
-  .pki-node-ambient.is-small {
-    opacity: 0.88;
-  }
-
-  .pki-node-primary {
-    fill: rgba(213, 226, 241, 0.72);
-    filter: drop-shadow(0 0 6px rgba(205, 225, 245, 0.14));
-  }
-
-  .pki-node-primary.is-federation {
-    fill: rgba(240, 224, 178, 0.86);
-    filter: drop-shadow(0 0 8px rgba(232, 210, 155, 0.24));
-  }
-
-  .pki-node-primary.is-anchor {
-    fill: rgba(241, 247, 255, 0.82);
-    filter: drop-shadow(0 0 10px rgba(219, 235, 255, 0.24));
-  }
-
-  .pki-node-primary.is-collapsed {
-    fill: rgba(213, 226, 241, 0.14);
-    stroke: rgba(213, 226, 241, 0.6);
-    stroke-width: 1.4;
-    stroke-dasharray: 3 3;
-  }
-
-  .pki-node-collapsed-mark {
-    fill: rgba(235, 241, 250, 0.82);
+  /* ─── Scroll hint ─── */
+  .pki-scroll-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 0.75rem;
     font-family: "Inter", system-ui, sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.22);
+    letter-spacing: 0.06em;
+    position: relative;
+    z-index: 2;
+    transition: opacity 0.5s ease;
+  }
+
+  .pki-scroll-hint.hidden {
+    opacity: 0;
     pointer-events: none;
   }
 
-  .pki-node-halo {
-    fill: url(#pkiPathGlow);
-    opacity: 0;
-    transform-origin: center;
-  }
-
-  .pki-node-label text {
-    font-family: "Inter", system-ui, sans-serif;
-    letter-spacing: 0.01em;
-    filter: drop-shadow(0 2px 6px rgba(7, 11, 18, 0.72));
-  }
-
-  .pki-node-label text.is-primary {
-    fill: rgba(242, 237, 227, 0.96);
-    font-size: 15px;
-    font-weight: 500;
-  }
-
-  .pki-node-label text.is-secondary {
-    fill: rgba(196, 188, 174, 0.74);
-    font-size: 12px;
-    font-weight: 400;
-  }
-
-  .pki-end-entity {
-    opacity: 0;
-  }
-
-  .pki-ee-card {
-    fill: rgba(246, 240, 228, 0.9);
-    stroke: rgba(62, 52, 42, 0.28);
-    stroke-width: 1;
-  }
-
-  .pki-ee-line {
-    stroke: rgba(72, 63, 52, 0.44);
-    stroke-width: 1.4;
-    stroke-linecap: round;
-    fill: none;
-  }
-
-  .pki-ee-seal {
-    fill: rgba(216, 190, 131, 0.92);
-    stroke: rgba(111, 83, 43, 0.55);
-    stroke-width: 0.8;
-  }
-
-  .pki-ee-label {
-    fill: rgba(225, 218, 206, 0.82);
-    font-family: "Inter", system-ui, sans-serif;
+  .pki-scroll-hint-icon {
     font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    opacity: 0.7;
+    animation: pkiScrollBounce 1.8s ease-in-out infinite;
   }
 
-  @media (max-width: 760px) {
-    .pki-hero-mobile-sweep {
-      display: block;
-      filter: blur(24px);
-    }
+  @keyframes pkiScrollBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
 
+  /* ─── Score bar ─── */
+  .pki-score-bar {
+    margin-top: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.6s;
+    position: relative;
+    z-index: 2;
+  }
+
+  .pki-score-bar.visible {
+    opacity: 1;
+  }
+
+  .pki-score-left {
+    flex-shrink: 0;
+  }
+
+  .pki-score-num {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.55);
+    white-space: nowrap;
+    min-width: 32px;
+  }
+
+  .pki-score-lbl {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  .pki-score-track {
+    flex: 1;
+    height: 1.5px;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .pki-score-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #378ADD, #EF9F27);
+    transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ─── Mobile adjustments ─── */
+  @media (max-width: 760px) {
     .pki-hero-overlay {
       background:
-        linear-gradient(180deg, rgba(6, 10, 17, 0.84) 0%, rgba(7, 11, 18, 0.7) 34%, rgba(8, 12, 20, 0.16) 66%, rgba(8, 12, 20, 0) 100%);
+        linear-gradient(180deg, rgba(6,10,17,0.84) 0%, rgba(7,11,18,0.7) 34%, rgba(8,12,20,0.16) 66%, rgba(8,12,20,0) 100%);
     }
 
-    .pki-domain-title {
+    .pki-graph-canvas {
+      opacity: 0.35;
+    }
+
+    .pki-lane-labels {
+      grid-template-columns: 1fr 20px 1fr 20px 1fr;
+      margin-bottom: 0.6rem;
+    }
+
+    :global(.pki-info-card) {
+      width: 108px;
+      padding: 6px 8px;
+    }
+
+    :global(.pki-ic-name) {
       font-size: 9px;
-      letter-spacing: 0.14em;
+      margin-bottom: 3px;
     }
 
-    .pki-domain-subtitle {
-      display: none;
+    :global(.pki-ic-lbl) {
+      font-size: 7px;
     }
 
-    .pki-node-label text.is-primary {
-      font-size: 13px;
-      filter: none;
+    :global(.pki-ic-val) {
+      font-size: 8px;
     }
 
-    .pki-node-label text.is-secondary {
-      font-size: 10px;
-      filter: none;
-    }
-
-    .pki-ambient-links .pki-link.is-dim,
-    .pki-ambient-nodes .pki-node-ambient.is-tiny {
-      display: none;
-    }
-
-    .pki-ambient-links .pki-link.is-structural {
-      opacity: 0.36;
-    }
-
-    .pki-node-ambient.is-small {
-      opacity: 0.52;
-      filter: none;
-    }
-
-    .pki-primary-link,
-    .pki-node-primary,
-    .pki-node-primary.is-anchor,
-    .pki-node-primary.is-federation {
-      filter: none;
+    .pki-scroll-hint {
+      font-size: 8px;
     }
   }
 </style>
 
 <script>
-  import { gsap } from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
-
   if (typeof window !== "undefined") {
-    gsap.registerPlugin(ScrollTrigger);
+    // ── Node definitions ───────────────────────────────────────────────────
+    const nodes = [
+      { id: "entity",   x: 60,  y: 210, r: 4,  col: "#378ADD", label: "End-entity",        domain: "Domain A",   role: "Cert subject",        crypto: "—",                lane: "a" },
+      { id: "issuingA", x: 130, y: 195, r: 6,  col: "#378ADD", label: "Issuing CA",         domain: "Domain A",   role: "End-entity issuance",  crypto: "RSA-4096",         lane: "a" },
+      { id: "intA",     x: 195, y: 125, r: 8,  col: "#378ADD", label: "Intermediate CA",    domain: "Domain A",   role: "Subordinate CA",       crypto: "RSA-4096 hybrid",  lane: "a" },
+      { id: "rootA",    x: 175, y: 42,  r: 6,  col: "#378ADD", label: "Root CA A",          domain: "Domain A",   role: "Internal trust root",  crypto: "RSA-4096",         lane: "a" },
+      { id: "bridge",   x: 340, y: 108, r: 9,  col: "#B4B2A9", label: "Federation Bridge",  domain: "Federation", role: "Cross-domain bridge",  crypto: "Hybrid RSA/ML-DSA",lane: "f" },
+      { id: "crossB",   x: 490, y: 158, r: 8,  col: "#EF9F27", label: "Cross-certified CA", domain: "Domain B",   role: "Federated gateway",    crypto: "ML-DSA-65",        lane: "b" },
+      { id: "intB",     x: 560, y: 75,  r: 5,  col: "#EF9F27", label: "Intermediate CA B",  domain: "Domain B",   role: "Chain bridging",       crypto: "ML-DSA-65",        lane: "b" },
+      { id: "anchor",   x: 640, y: 130, r: 10, col: "#EF9F27", label: "Trust Anchor",       domain: "Domain B",   role: "Root of trust · RP",   crypto: "PQC ML-DSA-87",    lane: "b" },
+    ] as const;
 
-    const section = document.querySelector(".pki-hero");
-    if (section instanceof HTMLElement) {
-      const track = section.querySelector(".pki-hero-track");
-      const graphWrap = section.querySelector(".pki-hero-graph-wrap");
-      const graph = section.querySelector("#pki-hero-graph");
-      const ambientNodes = Array.from(section.querySelectorAll(".pki-node-ambient"));
-      const primaryNodes = Array.from(section.querySelectorAll("[data-path-node]"));
-      const primaryLinks = Array.from(section.querySelectorAll("[data-path-link]"));
-      const halos = Array.from(section.querySelectorAll("[data-node-halo]"));
-      const cards = Array.from(section.querySelectorAll("[data-node-card]"));
-      const endEntity = section.querySelector("[data-ee-group]");
-      const entryLink = section.querySelector("[data-entry-link]");
-      const pathScore = section.querySelector("[data-path-score]");
-      const mobileSweep = section.querySelector(".pki-hero-mobile-sweep");
+    const bgEdges: [string, string][] = [
+      ["rootA", "intA"], ["entity", "issuingA"], ["issuingA", "intA"],
+      ["intA", "bridge"], ["bridge", "crossB"], ["bridge", "intB"],
+      ["crossB", "anchor"], ["intB", "anchor"],
+    ];
 
-      if (
-        track instanceof HTMLElement &&
-        graphWrap instanceof HTMLElement &&
-        graph instanceof SVGSVGElement &&
-        endEntity instanceof SVGGElement &&
-        entryLink instanceof SVGPathElement &&
-        pathScore instanceof HTMLElement &&
-        primaryNodes.length &&
-        primaryLinks.length &&
-        halos.length &&
-        cards.length
-      ) {
-        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const motionTargets = [endEntity, entryLink, pathScore, ...primaryNodes, ...halos, ...cards];
+    // Trust path — entity is r=4 so its card is invisible; skip it as first step
+    const trustPath = ["entity", "issuingA", "intA", "bridge", "crossB", "anchor"];
 
-        primaryLinks.forEach((link) => {
-          if (link instanceof SVGPathElement) {
-            const length = link.getTotalLength();
-            link.style.strokeDasharray = `${length}`;
-            link.style.strokeDashoffset = `${length}`;
-          }
+    const svgEl    = document.getElementById("pkiMainSvg") as SVGSVGElement | null;
+    const overlay  = document.getElementById("pkiCardOverlay") as HTMLDivElement | null;
+    const scoreBar = document.getElementById("pkiScoreBar") as HTMLElement | null;
+    const scoreFill= document.getElementById("pkiScoreFill") as HTMLElement | null;
+    const scoreNum = document.getElementById("pkiScoreNum") as HTMLElement | null;
+    const graphWrap= document.getElementById("pkiGraphWrap") as HTMLElement | null;
+    const scrollHint = document.getElementById("pkiScrollHint") as HTMLElement | null;
+
+    if (!svgEl || !overlay || !graphWrap) { /* bail silently */ }
+    else {
+
+    type NodeDef = typeof nodes[number];
+    function nodeById(id: string): NodeDef | undefined {
+      return (nodes as readonly NodeDef[]).find(n => n.id === id);
+    }
+
+    // ── Canvas starfield ──────────────────────────────────────────────────
+    function drawStarfield() {
+      const c = document.getElementById("pkiStarfield") as HTMLCanvasElement | null;
+      if (!c) return;
+      const wrap = c.parentElement;
+      if (!wrap) return;
+      const w = wrap.offsetWidth, h = wrap.offsetHeight;
+      c.width = w; c.height = h;
+      const ctx = c.getContext("2d");
+      if (!ctx) return;
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < 160; i++) {
+        const x = Math.random() * w, y = Math.random() * h;
+        const r = Math.random() * 1.1 + 0.2;
+        const alpha = Math.random() * 0.55 + 0.05;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`; ctx.fill();
+      }
+      for (let i = 0; i < 18; i++) {
+        const x = Math.random() * w, y = Math.random() * h;
+        const r = Math.random() * 0.7 + 0.6;
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+        const blue = Math.random() > 0.5;
+        ctx.fillStyle = blue ? "rgba(180,210,255,0.6)" : "rgba(255,240,200,0.5)";
+        ctx.fill();
+      }
+    }
+
+    // ── Build static SVG graph ────────────────────────────────────────────
+    function buildGraph() {
+      svgEl.innerHTML = "";
+      const NS = "http://www.w3.org/2000/svg";
+
+      const defs = document.createElementNS(NS, "defs");
+      defs.innerHTML = `
+        <filter id="pkiGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="pkiSoftglow" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="6" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="pkiPathglow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>`;
+      svgEl.appendChild(defs);
+
+      bgEdges.forEach(([a, b]) => {
+        const na = nodeById(a), nb = nodeById(b);
+        if (!na || !nb) return;
+        const line = document.createElementNS(NS, "line");
+        line.setAttribute("x1", String(na.x)); line.setAttribute("y1", String(na.y));
+        line.setAttribute("x2", String(nb.x)); line.setAttribute("y2", String(nb.y));
+        line.setAttribute("stroke", "rgba(255,255,255,0.055)");
+        line.setAttribute("stroke-width", "0.8");
+        svgEl.appendChild(line);
+      });
+
+      const pathGroup = document.createElementNS(NS, "g");
+      pathGroup.id = "pkiPathGroup";
+      svgEl.appendChild(pathGroup);
+
+      (nodes as readonly NodeDef[]).forEach(n => {
+        const g = document.createElementNS(NS, "g");
+        g.id = "pki-node-" + n.id;
+
+        if (n.r >= 6) {
+          const halo = document.createElementNS(NS, "circle");
+          halo.setAttribute("cx", String(n.x)); halo.setAttribute("cy", String(n.y));
+          halo.setAttribute("r", String(n.r + 4));
+          halo.setAttribute("fill", n.col + "08");
+          halo.id = "pki-halo-" + n.id;
+          g.appendChild(halo);
+        }
+
+        const circle = document.createElementNS(NS, "circle");
+        circle.setAttribute("cx", String(n.x)); circle.setAttribute("cy", String(n.y));
+        circle.setAttribute("r", String(n.r));
+        circle.setAttribute("fill", n.col + "22");
+        circle.setAttribute("stroke", n.col);
+        circle.setAttribute("stroke-width", "1");
+        (circle.style as CSSStyleDeclaration).transition = "all 0.4s";
+        circle.id = "pki-circle-" + n.id;
+        g.appendChild(circle);
+
+        const dot = document.createElementNS(NS, "circle");
+        dot.setAttribute("cx", String(n.x)); dot.setAttribute("cy", String(n.y));
+        dot.setAttribute("r", String(Math.max(1.5, n.r * 0.35)));
+        dot.setAttribute("fill", n.col); dot.setAttribute("opacity", "0.7");
+        g.appendChild(dot);
+
+        if (n.r >= 6) {
+          const text = document.createElementNS(NS, "text");
+          text.setAttribute("x", String(n.x)); text.setAttribute("y", String(n.y - n.r - 5));
+          text.setAttribute("text-anchor", "middle");
+          text.setAttribute("fill", "rgba(255,255,255,0.3)");
+          text.setAttribute("font-size", "8");
+          text.setAttribute("font-family", "Inter, system-ui, sans-serif");
+          text.setAttribute("letter-spacing", "0.04em");
+          text.textContent = n.label;
+          g.appendChild(text);
+        }
+
+        svgEl.appendChild(g);
+      });
+    }
+
+    // ── Card placement with collision detection ───────────────────────────
+    interface CardRect { l: number; t: number; r: number; b: number; }
+    const placedCards: CardRect[] = [];
+
+    function noOverlap(l: number, t: number, cw: number, ch: number): boolean {
+      return !placedCards.some(p =>
+        l < p.r && l + cw > p.l && t < p.b && t + ch > p.t
+      );
+    }
+
+    function inBounds(l: number, t: number, cw: number, ch: number, W: number, H: number): boolean {
+      return l >= 0 && t >= 0 && l + cw <= W && t + ch <= H;
+    }
+
+    function bestCardPosition(
+      cx: number, cy: number, nr: number,
+      W: number, H: number
+    ): { left: number; top: number } {
+      // Card dimensions adapt to overlay width (mobile vs desktop)
+      const cw = W < 420 ? 108 : 136;
+      const ch = W < 420 ? 72  : 90;
+      const G  = 9; // gap from node edge
+
+      // Candidate positions in preference order
+      const candidates = [
+        // above-center
+        { l: cx - cw / 2,      t: cy - nr - G - ch },
+        // above-right
+        { l: cx + nr + G,      t: cy - nr - G - ch },
+        // above-left
+        { l: cx - cw - nr - G, t: cy - nr - G - ch },
+        // right-center
+        { l: cx + nr + G,      t: cy - ch / 2 },
+        // left-center
+        { l: cx - cw - nr - G, t: cy - ch / 2 },
+        // below-center
+        { l: cx - cw / 2,      t: cy + nr + G },
+        // below-right
+        { l: cx + nr + G,      t: cy + nr + G },
+        // below-left
+        { l: cx - cw - nr - G, t: cy + nr + G },
+      ];
+
+      for (const { l, t } of candidates) {
+        if (inBounds(l, t, cw, ch, W, H) && noOverlap(l, t, cw, ch)) {
+          placedCards.push({ l, t, r: l + cw, b: t + ch });
+          return { left: l, top: t };
+        }
+      }
+
+      // Fallback: above-center, clamped within bounds
+      const fl = Math.max(0, Math.min(cx - cw / 2, W - cw));
+      const ft = Math.max(0, Math.min(cy - nr - G - ch, H - ch));
+      placedCards.push({ l: fl, t: ft, r: fl + cw, b: ft + ch });
+      return { left: fl, top: ft };
+    }
+
+    // ── Animation state ───────────────────────────────────────────────────
+    let currentStep  = -1;   // -1 = not started
+    let isAnimating  = false;
+    let isComplete   = false;
+
+    function clearCards() {
+      overlay.innerHTML = "";
+      placedCards.length = 0;
+      if (scoreBar)  scoreBar.classList.remove("visible");
+      if (scoreFill) scoreFill.style.width = "0";
+      if (scoreNum)  scoreNum.textContent = "0.00";
+    }
+
+    function clearPathLines() {
+      const pg = document.getElementById("pkiPathGroup");
+      if (pg) pg.innerHTML = "";
+      (nodes as readonly NodeDef[]).forEach(n => {
+        const c = document.getElementById("pki-circle-" + n.id);
+        if (c) {
+          c.setAttribute("fill", n.col + "22");
+          c.setAttribute("stroke", n.col);
+          c.setAttribute("stroke-width", "1");
+          c.removeAttribute("filter");
+        }
+        const h = document.getElementById("pki-halo-" + n.id);
+        if (h) h.setAttribute("fill", n.col + "08");
+      });
+    }
+
+    function animateSegment(fromNode: NodeDef, toNode: NodeDef, color: string, cb: () => void) {
+      const pg = document.getElementById("pkiPathGroup");
+      if (!pg) { cb(); return; }
+      const NS = "http://www.w3.org/2000/svg";
+
+      const glowLine = document.createElementNS(NS, "line");
+      glowLine.setAttribute("x1", String(fromNode.x)); glowLine.setAttribute("y1", String(fromNode.y));
+      glowLine.setAttribute("x2", String(fromNode.x)); glowLine.setAttribute("y2", String(fromNode.y));
+      glowLine.setAttribute("stroke", color); glowLine.setAttribute("stroke-width", "4");
+      glowLine.setAttribute("stroke-linecap", "round"); glowLine.setAttribute("opacity", "0.25");
+      glowLine.setAttribute("filter", "url(#pkiPathglow)");
+      pg.appendChild(glowLine);
+
+      const line = document.createElementNS(NS, "line");
+      line.setAttribute("x1", String(fromNode.x)); line.setAttribute("y1", String(fromNode.y));
+      line.setAttribute("x2", String(fromNode.x)); line.setAttribute("y2", String(fromNode.y));
+      line.setAttribute("stroke", color); line.setAttribute("stroke-width", "1.2");
+      line.setAttribute("stroke-linecap", "round"); line.setAttribute("opacity", "0.85");
+      pg.appendChild(line);
+
+      const dx = toNode.x - fromNode.x, dy = toNode.y - fromNode.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const dur = dist * 3;
+      const start = performance.now();
+
+      function tick(now: number) {
+        const t = Math.min((now - start) / dur, 1);
+        const ex = fromNode.x + dx * t, ey = fromNode.y + dy * t;
+        line.setAttribute("x2", String(ex));      line.setAttribute("y2", String(ey));
+        glowLine.setAttribute("x2", String(ex));  glowLine.setAttribute("y2", String(ey));
+        if (t < 1) requestAnimationFrame(tick);
+        else cb();
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function showCard(nodeId: string) {
+      const n = nodeById(nodeId);
+      if (!n || n.r < 5) return;
+
+      const svgRect  = svgEl.getBoundingClientRect();
+      const wrapRect = overlay.getBoundingClientRect();
+      const scaleX   = svgRect.width  / 680;
+      const scaleY   = svgRect.height / 270;
+      const cx = n.x * scaleX + (svgRect.left - wrapRect.left);
+      const cy = n.y * scaleY + (svgRect.top  - wrapRect.top);
+      const nr = n.r * Math.min(scaleX, scaleY);
+      const W  = overlay.offsetWidth;
+      const H  = overlay.offsetHeight;
+
+      const accentColor = n.lane === "a" ? "#85B7EB" : n.lane === "f" ? "#D3D1C7" : "#FAC775";
+
+      const card = document.createElement("div");
+      card.className = "pki-info-card";
+      card.style.borderColor = accentColor + "40";
+      card.innerHTML = `
+        <div class="pki-ic-name" style="color:${accentColor}">${n.label}</div>
+        <div class="pki-ic-row"><div class="pki-ic-lbl">DOMAIN</div><div class="pki-ic-val">${n.domain}</div></div>
+        <div class="pki-ic-row"><div class="pki-ic-lbl">ROLE</div><div class="pki-ic-val">${n.role}</div></div>
+        <div class="pki-ic-row"><div class="pki-ic-lbl">CRYPTO</div><div class="pki-ic-val">${n.crypto}</div></div>`;
+
+      const { left, top } = bestCardPosition(cx, cy, nr, W, H);
+      card.style.left = left + "px";
+      card.style.top  = top  + "px";
+      overlay.appendChild(card);
+      requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add("visible")));
+
+      const circle = document.getElementById("pki-circle-" + nodeId);
+      if (circle) {
+        circle.setAttribute("fill", n.col + "44");
+        circle.setAttribute("stroke-width", "1.5");
+        circle.setAttribute("filter", "url(#pkiSoftglow)");
+      }
+      const halo = document.getElementById("pki-halo-" + nodeId);
+      if (halo) halo.setAttribute("fill", n.col + "18");
+    }
+
+    function revealScore() {
+      if (!scoreBar || !scoreFill || !scoreNum) return;
+      scoreBar.classList.add("visible");
+      setTimeout(() => { scoreFill.style.width = "91%"; }, 80);
+      let v = 0;
+      const t = setInterval(() => {
+        v = Math.min(v + 0.025, 0.91);
+        scoreNum.textContent = v.toFixed(2);
+        if (v >= 0.91) clearInterval(t);
+      }, 35);
+    }
+
+    function runStep(idx: number) {
+      if (idx >= trustPath.length) { isAnimating = false; revealScore(); return; }
+      const nodeId = trustPath[idx];
+      if (idx > 0) {
+        const prev = nodeById(trustPath[idx - 1]);
+        const curr = nodeById(nodeId);
+        if (!prev || !curr) { isAnimating = false; return; }
+        const color = curr.lane === "b" ? "#EF9F27" : curr.lane === "f" ? "#cccccc" : "#378ADD";
+        isAnimating = true;
+        animateSegment(prev, curr, color, () => {
+          showCard(nodeId);
+          isAnimating = false;
         });
+      } else {
+        showCard(nodeId);
+        isAnimating = false;
+      }
+    }
 
-        const entryLength = entryLink.getTotalLength();
-        entryLink.style.strokeDasharray = `${entryLength}`;
-        entryLink.style.strokeDashoffset = `${entryLength}`;
+    // ── Scroll / touch-driven advance ─────────────────────────────────────
+    function hideScrollHint() {
+      scrollHint?.classList.add("hidden");
+    }
 
-        gsap.set(primaryNodes, {
-          opacity: 0.72,
-          scale: 1,
-          transformOrigin: "center center",
-        });
+    function advanceStep() {
+      if (isAnimating || isComplete) return;
 
-        gsap.set(halos, {
-          opacity: 0,
-          scale: 0.62,
-          transformOrigin: "center center",
-        });
+      hideScrollHint();
 
-        gsap.set(cards, { opacity: 0, y: 16 });
-        gsap.set(endEntity, { opacity: 0, scale: 0.92, transformOrigin: "center center" });
-        gsap.set(pathScore, { opacity: 0, y: 10 });
-
-        const clearMotionHints = () => {
-          gsap.set(motionTargets, { clearProps: "willChange" });
-        };
-
-        if (prefersReducedMotion) {
-          if (mobileSweep instanceof HTMLElement) {
-            gsap.set(mobileSweep, { opacity: 0.14, yPercent: -12, scale: 1 });
-          }
-
-          gsap.set(entryLink, { opacity: 0.85, strokeDashoffset: 0 });
-          gsap.set(endEntity, { opacity: 1, scale: 1 });
-          gsap.set(primaryLinks, { opacity: 1, strokeDashoffset: 0 });
-
-          primaryNodes.forEach((node, index) => {
-            gsap.set(node, {
-              opacity: 1,
-              scale: index === primaryNodes.length - 1 ? 1.24 : 1.12,
-            });
-          });
-
-          halos.forEach((halo, index) => {
-            gsap.set(halo, {
-              opacity: index === primaryNodes.length - 1 ? 0.82 : 0.62,
-              scale: index === primaryNodes.length - 1 ? 1.18 : 1.04,
-            });
-          });
-
-          gsap.set(cards, { opacity: 1, y: 0 });
-          gsap.set(pathScore, { opacity: 1, y: 0 });
-
-          clearMotionHints();
+      if (currentStep === -1) {
+        // First interaction: reset and start from step 1 (skip entity r=4)
+        clearCards(); clearPathLines();
+        currentStep = 1;
+        runStep(currentStep);
+      } else {
+        currentStep++;
+        if (currentStep >= trustPath.length) {
+          isComplete = true;
+          currentStep = trustPath.length - 1;
+          revealScore();
         } else {
-          const mm = gsap.matchMedia();
-
-          mm.add(
-            {
-              light: "(max-width: 760px), (pointer: coarse)",
-              desktop: "(min-width: 761px) and (pointer: fine)",
-            },
-            ({ conditions }) => {
-              const isLightViewport = Boolean(conditions?.light);
-
-              gsap.set(motionTargets, { willChange: "transform, opacity" });
-
-              if (isLightViewport) {
-                const mobileTimeline = gsap.timeline({
-                  defaults: { ease: "power1.out" },
-                  scrollTrigger: {
-                    trigger: graphWrap,
-                    start: "top 70%",
-                    end: "bottom 81%",
-                    scrub: 0.45,
-                    invalidateOnRefresh: true,
-                  },
-                });
-
-                if (mobileSweep instanceof HTMLElement) {
-                  gsap.set(mobileSweep, {
-                    opacity: 0.05,
-                    yPercent: 18,
-                    scale: 0.96,
-                    transformOrigin: "center center",
-                  });
-
-                  mobileTimeline
-                    .to(mobileSweep, { opacity: 0.18, yPercent: -28, scale: 1.01, duration: 0.26 }, 0)
-                    .to(mobileSweep, { opacity: 0.05, duration: 0.12 }, 0.18);
-                }
-
-                mobileTimeline
-                  .to(endEntity, { opacity: 1, scale: 1, duration: 0.12 }, 0)
-                  .to(entryLink, { opacity: 0.85, strokeDashoffset: 0, duration: 0.14 }, ">");
-
-                primaryNodes.forEach((node, index) => {
-                  mobileTimeline.to(
-                    node,
-                    {
-                      opacity: 1,
-                      scale: index === primaryNodes.length - 1 ? 1.2 : 1.1,
-                      duration: 0.12,
-                    },
-                    ">",
-                  );
-
-                  mobileTimeline.to(
-                    halos[index],
-                    {
-                      opacity: index === primaryNodes.length - 1 ? 0.78 : 0.58,
-                      scale: index === primaryNodes.length - 1 ? 1.16 : 1.04,
-                      duration: 0.12,
-                    },
-                    "<",
-                  );
-
-                  mobileTimeline.to(
-                    cards[index],
-                    { opacity: 1, y: 0, duration: 0.14 },
-                    "<+0.03",
-                  );
-
-                  if (index < primaryLinks.length) {
-                    mobileTimeline.to(
-                      primaryLinks[index],
-                      { opacity: 1, strokeDashoffset: 0, duration: 0.14 },
-                      "<+0.02",
-                    );
-                  }
-                });
-
-                mobileTimeline.to(pathScore, { opacity: 1, y: 0, duration: 0.18 }, ">-0.02");
-
-                mobileTimeline.eventCallback("onComplete", clearMotionHints);
-                mobileTimeline.eventCallback("onReverseComplete", clearMotionHints);
-                return;
-              }
-
-              const ambientPulseNodes = ambientNodes
-                .filter((node) => node.classList.contains("is-small"))
-                .filter((_, index) => index % 2 === 0)
-                .slice(0, 8);
-
-              if (ambientPulseNodes.length) {
-                gsap.set(ambientPulseNodes, {
-                  willChange: "transform, opacity",
-                  transformOrigin: "center center",
-                });
-
-                gsap.to(ambientPulseNodes, {
-                  opacity: 0.92,
-                  scale: 1.06,
-                  duration: 2.6,
-                  ease: "sine.inOut",
-                  yoyo: true,
-                  repeat: -1,
-                  stagger: { each: 0.18, from: "random" },
-                });
-              }
-
-              if (mobileSweep instanceof HTMLElement) {
-                gsap.set(mobileSweep, { opacity: 0, yPercent: 0, scale: 1 });
-              }
-
-              const timeline = gsap.timeline({
-                defaults: { ease: "power2.out" },
-                scrollTrigger: {
-                  trigger: section,
-                  start: "top top",
-                  end: "+=1320",
-                  scrub: 0.85,
-                  pin: track,
-                  anticipatePin: 1,
-                  invalidateOnRefresh: true,
-                },
-              });
-
-              timeline
-                .to(endEntity, { opacity: 1, scale: 1, duration: 0.22 }, 0.02)
-                .to(entryLink, { opacity: 0.85, strokeDashoffset: 0, duration: 0.3 }, ">-0.04");
-
-              primaryNodes.forEach((node, index) => {
-                timeline.to(
-                  node,
-                  {
-                    opacity: 1,
-                    scale: index === primaryNodes.length - 1 ? 1.3 : 1.18,
-                    duration: 0.24,
-                  },
-                  ">",
-                );
-
-                timeline.to(
-                  halos[index],
-                  {
-                    opacity: index === primaryNodes.length - 1 ? 0.9 : 0.7,
-                    scale: index === primaryNodes.length - 1 ? 1.26 : 1.12,
-                    duration: 0.24,
-                  },
-                  "<",
-                );
-
-                timeline.to(cards[index], { opacity: 1, y: 0, duration: 0.28 }, "<+0.05");
-
-                if (index < primaryLinks.length) {
-                  timeline.to(
-                    primaryLinks[index],
-                    { opacity: 1, strokeDashoffset: 0, duration: 0.34 },
-                    "<+0.02",
-                  );
-                }
-              });
-
-              timeline.to(pathScore, { opacity: 1, y: 0, duration: 0.32 }, ">-0.04");
-              timeline.eventCallback("onComplete", clearMotionHints);
-            },
-          );
+          runStep(currentStep);
         }
       }
     }
+
+    // Desktop: intercept wheel events when the cursor is over the graph wrap.
+    // Listening on the section element (not graphWrap) ensures we always catch
+    // the event even when SVG / canvas children absorb the pointer target.
+    const heroSection = svgEl.closest("section");
+    heroSection?.addEventListener("wheel", (e: WheelEvent) => {
+      if (isComplete) return; // animation done — let page scroll naturally
+      const rect = graphWrap.getBoundingClientRect();
+      const over = e.clientX >= rect.left && e.clientX <= rect.right
+                && e.clientY >= rect.top  && e.clientY <= rect.bottom;
+      if (!over) return; // cursor outside graph — let page scroll naturally
+      e.preventDefault();
+      if (isAnimating) return; // segment in progress — ignore until done
+      advanceStep();
+    }, { passive: false });
+
+    // Mobile: tap anywhere on the graph wrap
+    let touchStartY = 0;
+    graphWrap.addEventListener("touchstart", (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    graphWrap.addEventListener("touchend", (e: TouchEvent) => {
+      const dy = Math.abs(touchStartY - e.changedTouches[0].clientY);
+      if (dy < 12 && !isAnimating && !isComplete) {
+        advanceStep();
+      }
+    }, { passive: true });
+
+    // ── Init ──────────────────────────────────────────────────────────────
+    drawStarfield();
+    buildGraph();
+
+    window.addEventListener("resize", drawStarfield, { passive: true });
+
+    } // end if svgEl
   }
 </script>
