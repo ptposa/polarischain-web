@@ -1,0 +1,554 @@
+---
+// Inline port of the former `pki-graph-hero.html` iframe. The component's
+// own token bridge (originally a `:root` block, since it targeted a
+// standalone iframe document) is now scoped to the `.pki-graph-hero`
+// wrapper so it can't leak into the rest of the page.
+---
+
+<div class="pki-graph-hero">
+  <div class="pc-wrap">
+    <div class="pc-head">
+      <span>Federated path discovery</span>
+      <span class="pc-status" id="pcStatus"
+        ><span class="pc-dot"></span><span id="pcStatusText">searching…</span></span
+      >
+    </div>
+    <svg
+      id="pcSvg"
+      width="100%"
+      viewBox="0 0 680 780"
+      role="img"
+      preserveAspectRatio="xMidYMid meet"
+      font-family="var(--font-sans)"
+    >
+      <title>Federated PKI path discovery across three trust zones</title>
+      <desc
+        >An end-entity certificate issued in the origin domain D0 needs validation in the
+        relying-party domain Dn. The discovery algorithm explores candidate intermediate CAs through
+        federation transit domains; one candidate in D2 is rejected by policy Φ at evaluation time,
+        and the algorithm continues along an admissible trust path.</desc
+      >
+      <defs>
+        <pattern id="pcGrid" width="32" height="32" patternUnits="userSpaceOnUse">
+          <path
+            d="M32 0H0V32"
+            fill="none"
+            stroke="var(--color-border-tertiary)"
+            stroke-width="0.4"
+            opacity="0.4"></path>
+        </pattern>
+        <linearGradient id="pcGradBlueGray" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#7AB3E8"></stop>
+          <stop offset="100%" stop-color="#B8AA98"></stop>
+        </linearGradient>
+        <linearGradient id="pcGradGrayGold" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#B8AA98"></stop>
+          <stop offset="100%" stop-color="#E8C96A"></stop>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="680" height="780" fill="url(#pcGrid)" opacity="0.5"></rect>
+
+      <g>
+        <rect
+          x="20"
+          y="20"
+          width="640"
+          height="240"
+          rx="14"
+          fill="#5491C9"
+          fill-opacity="0.035"
+          stroke="#5491C9"
+          stroke-opacity="0.18"
+          stroke-width="0.6"></rect>
+        <g font-family="var(--font-mono)" font-size="11" letter-spacing="0.14em">
+          <text x="36" y="44" fill="#5491C9" fill-opacity="0.85" font-weight="500"
+            >ORIGIN DOMAIN · D₀</text
+          >
+          <text
+            x="36"
+            y="60"
+            fill="var(--color-text-tertiary)"
+            font-size="10"
+            letter-spacing="0.06em">Issuer of the end-entity certificate</text
+          >
+        </g>
+      </g>
+      <g>
+        <rect
+          x="20"
+          y="276"
+          width="640"
+          height="220"
+          rx="14"
+          fill="var(--color-text-tertiary)"
+          fill-opacity="0.04"
+          stroke="var(--color-border-secondary)"
+          stroke-opacity="0.6"
+          stroke-width="0.6"
+          stroke-dasharray="3 3"></rect>
+        <g font-family="var(--font-mono)" font-size="11" letter-spacing="0.14em">
+          <text x="36" y="300" fill="var(--color-text-secondary)" font-weight="500"
+            >FEDERATION TRANSIT · D₁ ‥ Dₙ₋₁</text
+          >
+          <text
+            x="36"
+            y="316"
+            fill="var(--color-text-tertiary)"
+            font-size="10"
+            letter-spacing="0.06em">Intermediate domains</text
+          >
+        </g>
+      </g>
+      <g>
+        <rect
+          x="20"
+          y="512"
+          width="640"
+          height="220"
+          rx="14"
+          fill="#B89642"
+          fill-opacity="0.04"
+          stroke="#B89642"
+          stroke-opacity="0.2"
+          stroke-width="0.6"></rect>
+        <g font-family="var(--font-mono)" font-size="11" letter-spacing="0.14em">
+          <text x="36" y="536" fill="#9C7E2A" fill-opacity="0.9" font-weight="500"
+            >RELYING-PARTY DOMAIN · Dₙ</text
+          >
+          <text
+            x="36"
+            y="552"
+            fill="var(--color-text-tertiary)"
+            font-size="10"
+            letter-spacing="0.06em">Validator of the certificate</text
+          >
+        </g>
+      </g>
+
+      <g
+        id="pcEdgesLatent"
+        stroke="var(--color-border-secondary)"
+        stroke-width="0.5"
+        fill="none"
+        opacity="0.28"></g>
+      <path
+        id="pcRejProbe"
+        d=""
+        fill="none"
+        stroke="var(--color-text-danger)"
+        stroke-width="1.4"
+        stroke-dasharray="4 4"
+        opacity="0"></path>
+      <g id="pcPath" fill="none" stroke-linecap="round" stroke-width="2"></g>
+
+      <g id="pcN_ee" class="pc-node-group">
+        <circle
+          id="pcEEHalo"
+          cx="0"
+          cy="0"
+          r="24"
+          fill="none"
+          stroke="#7AB3E8"
+          stroke-width="0.8"
+          opacity="0"></circle>
+        <g transform="translate(-14, -15)">
+          <rect
+            x="0"
+            y="0"
+            width="28"
+            height="22"
+            rx="2"
+            fill="var(--color-background-primary)"
+            stroke="#5491C9"
+            stroke-width="1.2"></rect>
+          <line x1="4" y1="6" x2="20" y2="6" stroke="#7AB3E8" stroke-width="0.8"></line>
+          <line x1="4" y1="10" x2="24" y2="10" stroke="#7AB3E8" stroke-width="0.8"></line>
+          <line x1="4" y1="14" x2="16" y2="14" stroke="#7AB3E8" stroke-width="0.8"></line>
+          <circle
+            cx="22"
+            cy="18"
+            r="3.5"
+            fill="var(--color-background-primary)"
+            stroke="#5491C9"
+            stroke-width="1"></circle>
+          <path d="M20 21 L20 26 L22 24 L24 26 L24 21" fill="#5491C9" stroke="none"></path>
+        </g>
+        <text
+          id="pcEELabel"
+          x="0"
+          y="-25"
+          text-anchor="middle"
+          font-family="var(--font-mono)"
+          font-size="11"
+          fill="var(--color-text-secondary)"></text>
+        <text
+          id="pcEESub"
+          x="0"
+          y="33"
+          text-anchor="middle"
+          font-family="var(--font-mono)"
+          font-size="10"
+          fill="var(--color-text-tertiary)"></text>
+      </g>
+      <g id="pcN_issuing" class="pc-node-group">
+        <circle
+          cx="0"
+          cy="0"
+          r="6"
+          fill="var(--color-background-primary)"
+          stroke="#7AB3E8"
+          stroke-width="1.2"></circle>
+        <circle cx="0" cy="0" r="2.5" fill="#7AB3E8"></circle>
+        <text id="pcIss_title" x="15" y="-15" font-size="14" font-weight="500" fill="#5491C9"
+        ></text>
+        <g font-family="var(--font-mono)" font-size="10" fill="var(--color-text-secondary)">
+          <text x="15" y="3"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">DOMAIN</tspan>{' '}
+            <tspan id="pcIss_dom"></tspan></text
+          >
+          <text x="15" y="17"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ROLE</tspan>{' '}
+            <tspan id="pcIss_role"></tspan></text
+          >
+          <text x="15" y="31"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ALG</tspan>{' '}
+            <tspan id="pcIss_alg"></tspan></text
+          >
+          <text id="pcIss_adm" x="15" y="47" fill="var(--color-text-success)"></text>
+        </g>
+      </g>
+      <g id="pcN_intD0" class="pc-node-group">
+        <circle
+          cx="0"
+          cy="0"
+          r="6"
+          fill="var(--color-background-primary)"
+          stroke="#7AB3E8"
+          stroke-width="1.2"></circle>
+        <circle cx="0" cy="0" r="2.5" fill="#7AB3E8"></circle>
+        <text
+          id="pcInt0_title"
+          x="-15"
+          y="0"
+          text-anchor="end"
+          font-size="14"
+          font-weight="500"
+          fill="#5491C9"></text>
+        <g
+          font-family="var(--font-mono)"
+          font-size="10"
+          fill="var(--color-text-secondary)"
+          text-anchor="end"
+        >
+          <text x="-15" y="18"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">DOMAIN</tspan>{' '}
+            <tspan id="pcInt0_dom"></tspan></text
+          >
+          <text x="-15" y="32"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ROLE</tspan>{' '}
+            <tspan id="pcInt0_role"></tspan></text
+          >
+          <text x="-15" y="46"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ALG</tspan>{' '}
+            <tspan id="pcInt0_alg"></tspan></text
+          >
+          <text id="pcInt0_adm" x="-15" y="62" fill="var(--color-text-success)"></text>
+        </g>
+      </g>
+      <g id="pcN_rootD0" class="pc-node-group">
+        <circle
+          cx="0"
+          cy="0"
+          r="7"
+          fill="var(--color-background-primary)"
+          stroke="#7AB3E8"
+          stroke-width="1.4"></circle>
+        <circle cx="0" cy="0" r="3" fill="#7AB3E8"></circle>
+        <text id="pcRoot0_title" x="15" y="0" font-size="14" font-weight="500" fill="#5491C9"
+        ></text>
+        <g font-family="var(--font-mono)" font-size="10" fill="var(--color-text-secondary)">
+          <text x="15" y="18"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">DOMAIN</tspan>{' '}
+            <tspan id="pcRoot0_dom"></tspan></text
+          >
+          <text x="15" y="32"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ROLE</tspan>{' '}
+            <tspan id="pcRoot0_role"></tspan></text
+          >
+          <text x="15" y="46"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ALG</tspan>{' '}
+            <tspan id="pcRoot0_alg"></tspan></text
+          >
+          <text id="pcRoot0_adm" x="15" y="62" fill="var(--color-text-success)"></text>
+        </g>
+      </g>
+      <g id="pcN_intD1" class="pc-node-group">
+        <circle
+          cx="0"
+          cy="0"
+          r="6"
+          fill="var(--color-background-primary)"
+          stroke="#988A78"
+          stroke-width="1.2"></circle>
+        <circle cx="0" cy="0" r="2.5" fill="#988A78"></circle>
+        <text
+          id="pcInt1_title"
+          x="-15"
+          y="0"
+          text-anchor="end"
+          font-size="14"
+          font-weight="500"
+          fill="var(--color-text-primary)"></text>
+        <g
+          font-family="var(--font-mono)"
+          font-size="10"
+          fill="var(--color-text-secondary)"
+          text-anchor="end"
+        >
+          <text x="-15" y="18"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">DOMAIN</tspan>{' '}
+            <tspan id="pcInt1_dom"></tspan></text
+          >
+          <text x="-15" y="32"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ROLE</tspan>{' '}
+            <tspan id="pcInt1_role"></tspan></text
+          >
+          <text x="-15" y="46"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ALG</tspan>{' '}
+            <tspan id="pcInt1_alg"></tspan></text
+          >
+          <text id="pcInt1_adm" x="-15" y="62" fill="var(--color-text-success)"></text>
+        </g>
+      </g>
+      <g id="pcN_intD2" class="pc-node-group">
+        <circle
+          cx="0"
+          cy="0"
+          r="6"
+          fill="var(--color-background-primary)"
+          stroke="var(--color-border-secondary)"
+          stroke-width="1"></circle>
+        <circle cx="0" cy="0" r="2.5" fill="var(--color-border-secondary)"></circle>
+        <text
+          id="pcInt2_title"
+          x="15"
+          y="0"
+          font-size="14"
+          font-weight="500"
+          fill="var(--color-text-primary)"></text>
+        <g font-family="var(--font-mono)" font-size="10" fill="var(--color-text-secondary)">
+          <text x="15" y="18"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">DOMAIN</tspan>{' '}
+            <tspan id="pcInt2_dom"></tspan></text
+          >
+          <text x="15" y="32"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ROLE</tspan>{' '}
+            <tspan id="pcInt2_role"></tspan></text
+          >
+          <text x="15" y="46"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ALG</tspan>{' '}
+            <tspan id="pcInt2_alg"></tspan></text
+          >
+          <text id="pcInt2_adm" x="15" y="62"></text>
+        </g>
+        <g id="pcRejectMark" opacity="0">
+          <circle
+            cx="0"
+            cy="0"
+            r="10"
+            fill="none"
+            stroke="var(--color-text-danger)"
+            stroke-width="1"></circle>
+        </g>
+      </g>
+      <g id="pcN_intDn" class="pc-node-group">
+        <circle
+          cx="0"
+          cy="0"
+          r="6"
+          fill="var(--color-background-primary)"
+          stroke="#E8C96A"
+          stroke-width="1.2"></circle>
+        <circle cx="0" cy="0" r="2.5" fill="#E8C96A"></circle>
+        <text id="pcIntn_title" x="15" y="0" font-size="14" font-weight="500" fill="#9C7E2A"></text>
+        <g font-family="var(--font-mono)" font-size="10" fill="var(--color-text-secondary)">
+          <text x="15" y="18"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">DOMAIN</tspan>{' '}
+            <tspan id="pcIntn_dom"></tspan></text
+          >
+          <text x="15" y="32"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ROLE</tspan>{' '}
+            <tspan id="pcIntn_role"></tspan></text
+          >
+          <text x="15" y="46"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ALG</tspan>{' '}
+            <tspan id="pcIntn_alg"></tspan></text
+          >
+          <text id="pcIntn_adm" x="15" y="62" fill="var(--color-text-success)"></text>
+        </g>
+      </g>
+      <g id="pcN_rootDn" class="pc-node-group">
+        <circle
+          cx="0"
+          cy="0"
+          r="7"
+          fill="var(--color-background-primary)"
+          stroke="#E8C96A"
+          stroke-width="1.4"></circle>
+        <circle cx="0" cy="0" r="3" fill="#E8C96A"></circle>
+        <text
+          id="pcRootn_title"
+          x="-15"
+          y="0"
+          text-anchor="end"
+          font-size="14"
+          font-weight="500"
+          fill="#9C7E2A"></text>
+        <g
+          font-family="var(--font-mono)"
+          font-size="10"
+          fill="var(--color-text-secondary)"
+          text-anchor="end"
+        >
+          <text x="-15" y="18"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">DOMAIN</tspan>{' '}
+            <tspan id="pcRootn_dom"></tspan></text
+          >
+          <text x="-15" y="32"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ROLE</tspan>{' '}
+            <tspan id="pcRootn_role"></tspan></text
+          >
+          <text x="-15" y="46"
+            ><tspan fill="var(--color-text-tertiary)" letter-spacing="0.08em">ALG</tspan>{' '}
+            <tspan id="pcRootn_alg"></tspan></text
+          >
+          <text id="pcRootn_adm" x="-15" y="62" fill="var(--color-text-success)"></text>
+        </g>
+      </g>
+
+      <g id="pcTrustPill" opacity="0" transform="translate(280, 745)" style="display:none">
+        <rect
+          width="120"
+          height="24"
+          rx="12"
+          fill="var(--color-background-secondary)"
+          stroke="var(--color-text-success)"
+          stroke-width="0.6"></rect>
+        <text
+          x="60"
+          y="16"
+          text-anchor="middle"
+          font-family="var(--font-mono)"
+          font-size="11"
+          fill="var(--color-text-success)"
+          letter-spacing="0.04em">✓ Trust established</text
+        >
+      </g>
+    </svg>
+    <div class="pc-controls" style="margin-top: 14px;">
+      <button class="pc-replay" id="pcReplay" type="button">↺ replay</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .pki-graph-hero {
+    /* ─── Token bridge ───
+       This component ships with its own design-token API. Each token maps
+       to this site's palette while preserving its semantic role, scoped
+       here instead of :root so it can't leak into the rest of the page. */
+    --font-sans: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --color-background-primary: #08122a;
+    --color-background-secondary: rgba(240, 233, 220, 0.04);
+    --color-text-primary: #f0e9dc;
+    --color-text-secondary: #b8aa98;
+    --color-text-tertiary: #7a6e60;
+    --color-text-success: rgba(158, 201, 168, 0.95);
+    --color-text-warning: #e8c96a;
+    --color-text-danger: #b86a5b;
+    --color-text-info: #7ab3e8;
+    --color-border-secondary: rgba(184, 170, 152, 0.3);
+    --color-border-tertiary: rgba(184, 170, 152, 0.15);
+    font-family: var(--font-sans);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .pc-wrap {
+    position: relative;
+    width: 100%;
+    padding: 1rem 0;
+  }
+  .pc-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    margin-bottom: 14px;
+    padding: 0 2.94%;
+  }
+  .pc-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.4s;
+  }
+  .pc-status.s-eval {
+    color: var(--color-text-warning);
+  }
+  .pc-status.s-rej {
+    color: var(--color-text-danger);
+  }
+  .pc-status.s-found {
+    color: var(--color-text-info);
+  }
+  .pc-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .pc-replay {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    background: transparent;
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 999px;
+    padding: 5px 14px;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+  }
+  .pc-replay:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-secondary);
+  }
+  .pc-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 14px;
+    gap: 10px;
+    align-items: center;
+  }
+  .pc-node-group {
+    opacity: 0;
+  }
+  .pc-node-group.in {
+    opacity: 1;
+    transition: opacity 0.15s ease-out;
+  }
+</style>
+
+<script>
+  import { init } from '../lib/pki-graph';
+
+  const root = document.querySelector<HTMLElement>('.pki-graph-hero');
+  if (root) init(root);
+</script>

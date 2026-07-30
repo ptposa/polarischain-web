@@ -1,0 +1,210 @@
+<section class="section section-pad" id="open-science" style="background:transparent;">
+  <div class="container">
+    <span class="section-kicker" style="color:rgba(200,178,130,0.6);"
+      >Open science &amp; academic contribution</span
+    >
+    <h2 class="section-heading" style="color:var(--ink);">
+      From TFM to doctoral research infrastructure.
+    </h2>
+    <p class="section-sub section-sub-warm">
+      The project is intentionally framed as a research platform: not only an application prototype,
+      but a reproducible line of inquiry around trust graphs, validation strategies, and
+      interoperable PKI systems.
+    </p>
+
+    <div class="open-grid">
+      <article
+        class="open-card"
+        style="background:rgba(255,255,255,0.03);border-color:rgba(200,180,140,0.1);"
+      >
+        <div
+          class="open-card-icon"
+          style="background:rgba(200,180,140,0.1);color:rgba(200,178,130,0.7);"
+        >
+          ◎
+        </div>
+        <h3 style="color:var(--ink);">Master's thesis</h3>
+        <p style="color:var(--ink-soft);">
+          Initial work formalizes the problem space, visual narrative, and experimental basis for
+          trust path optimization in federated PKI ecosystems.
+        </p>
+      </article>
+      <article
+        class="open-card"
+        style="background:rgba(255,255,255,0.03);border-color:rgba(200,180,140,0.1);"
+      >
+        <div
+          class="open-card-icon"
+          style="background:rgba(200,180,140,0.1);color:rgba(200,178,130,0.7);"
+        >
+          ◇
+        </div>
+        <h3 style="color:var(--ink);">Future PhD research</h3>
+        <p style="color:var(--ink-soft);">
+          The same framework can evolve toward publications on traversal heuristics, scoring
+          explainability, and validation interoperability.
+        </p>
+      </article>
+      <article
+        class="open-card"
+        style="background:rgba(255,255,255,0.03);border-color:rgba(200,180,140,0.1);"
+      >
+        <div
+          class="open-card-icon"
+          style="background:rgba(200,180,140,0.1);color:rgba(200,178,130,0.7);"
+        >
+          ▣
+        </div>
+        <h3 style="color:var(--ink);">Open-source project</h3>
+        <p style="color:var(--ink-soft);">
+          Public repositories, technical documentation, and reproducible assets help the project
+          contribute beyond a single prototype implementation.
+        </p>
+      </article>
+    </div>
+
+    <div class="footer-cta" id="publications">
+      <div>
+        <span class="annotation-label" style="color:rgba(200,178,130,0.55);"
+          >Academic projection</span
+        >
+        <p class="footer-cta-text" style="color:var(--ink-soft);margin-top:4px;">
+          Publications, technical reports, and future doctoral dissemination.
+        </p>
+      </div>
+      <div class="footer-actions">
+        <a
+          href="#"
+          class="btn btn-accent"
+          style="background:rgba(30,25,18,0.9);border-color:rgba(200,180,140,0.2);color:rgba(240,225,195,0.9);"
+          >Read documentation</a
+        >
+        <a
+          href="#"
+          class="btn btn-outline-warm"
+          style="border-color:rgba(200,180,140,0.2);color:rgba(200,178,130,0.7);">View GitHub</a
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .open-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+  .open-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--r-lg);
+    padding: 26px;
+  }
+  .open-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+  .open-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.1;
+  }
+  .open-card p {
+    font-size: 0.9rem;
+    line-height: 1.68;
+    color: var(--text-soft);
+  }
+
+  .annotation-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .footer-cta {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .footer-cta-text {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    max-width: 52ch;
+    line-height: 1.55;
+  }
+  .footer-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 22px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 1px solid transparent;
+    letter-spacing: 0.01em;
+  }
+  .btn-accent {
+    background: oklch(72% 0.12 230 / 0.15);
+    border-color: oklch(72% 0.12 230 / 0.35);
+    color: oklch(82% 0.1 230);
+  }
+  .btn-accent:hover {
+    background: oklch(72% 0.12 230 / 0.22);
+    border-color: oklch(72% 0.12 230 / 0.5);
+    transform: translateY(-1px);
+  }
+  .btn-outline-warm {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--text-soft);
+  }
+  .btn-outline-warm:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 760px) {
+    .open-grid {
+      grid-template-columns: 1fr;
+    }
+    .footer-cta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .footer-actions .btn {
+      height: 40px;
+      padding: 0 18px;
+      font-size: 0.84rem;
+    }
+  }
+</style>

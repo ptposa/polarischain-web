@@ -1,0 +1,147 @@
+<section class="section section-pad" id="platform" style="background:transparent;">
+  <div class="container">
+    <span class="section-kicker">Platform</span>
+    <h2 class="section-heading">From formal model to operational service.</h2>
+    <p class="section-sub" style="max-width:70ch;">
+      PolarisChain materialises the graph model as a software platform: an ingestion layer that
+      populates the graph automatically from real X.509 artifacts, a governance-aware graph engine,
+      and an API consumed by each domain's validation services.
+    </p>
+
+    <div class="platform-grid">
+      <article class="challenge-card platform-card platform-card-gold">
+        <div class="platform-card-num">01</div>
+        <h3>Discover</h3>
+        <p>
+          Given a certificate or an origin-destination pair, return the admissible certification
+          paths together with the real artifacts: the concrete cross-certificates, ready to install
+          in a trust store or embed in a signed document. Path discovery as a service, in the
+          lineage of SCVP (RFC&nbsp;5055).
+        </p>
+      </article>
+      <article class="challenge-card platform-card">
+        <div class="platform-card-num">02</div>
+        <h3>Govern</h3>
+        <p>
+          What-if analysis before signing an edge: if we cross-certify at SubCA level with
+          pathLenConstraint&nbsp;2 and these name constraints, what becomes reachable? Which
+          unintended transitive trust appears? The model as a decision tool, not just a lookup.
+        </p>
+      </article>
+      <article class="challenge-card platform-card">
+        <div class="platform-card-num">03</div>
+        <h3>Audit</h3>
+        <p>
+          Visualise how far the trust of a nation or organisation propagates. Detect expired or
+          revoked edges, insufficient path lengths, missing name constraints — and verify every
+          relation is used for the scope it was designed for.
+        </p>
+      </article>
+    </div>
+
+    <div class="platform-flow" role="list">
+      <div class="platform-flow-step" role="listitem">Harvest X.509 artifacts</div>
+      <div class="platform-flow-connector" aria-hidden="true"></div>
+      <div class="platform-flow-step" role="listitem">Populate governed graph</div>
+      <div class="platform-flow-connector" aria-hidden="true"></div>
+      <div class="platform-flow-step" role="listitem">Query reachability</div>
+      <div class="platform-flow-connector" aria-hidden="true"></div>
+      <div class="platform-flow-step" role="listitem">
+        Admissible path + artifacts, or exact failure diagnosis
+      </div>
+    </div>
+    <p class="platform-flow-caption">
+      Designed for interconnected multi-nation environments such as coalition interoperability
+      exercises.
+    </p>
+  </div>
+</section>
+
+<style>
+  .platform-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 48px;
+  }
+
+  .platform-card {
+    padding: 28px 26px;
+  }
+
+  .platform-card-num {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: var(--accent-blue);
+    opacity: 0.75;
+    margin-bottom: 14px;
+  }
+
+  .platform-card-gold .platform-card-num {
+    color: var(--accent-gold);
+  }
+
+  .platform-card-gold {
+    border-color: rgba(232, 201, 106, 0.18);
+  }
+
+  .platform-flow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 44px;
+    flex-wrap: wrap;
+  }
+
+  .platform-flow-step {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 9px 14px;
+    background: rgba(255, 255, 255, 0.025);
+    line-height: 1.5;
+  }
+
+  .platform-flow-connector {
+    flex: 1 0 18px;
+    height: 1px;
+    min-width: 18px;
+    background: rgba(200, 218, 240, 0.18);
+    position: relative;
+  }
+  .platform-flow-connector::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -2.5px;
+    border-left: 5px solid rgba(200, 218, 240, 0.35);
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+  }
+
+  .platform-flow-caption {
+    margin-top: 18px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 1100px) {
+    .platform-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 720px) {
+    .platform-flow {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .platform-flow-connector {
+      display: none;
+    }
+  }
+</style>

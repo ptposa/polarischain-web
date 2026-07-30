@@ -1,0 +1,186 @@
+---
+import MathModel from './MathModel.astro';
+---
+
+<section class="section section-pad" id="research" style="background:transparent;">
+  <div class="container">
+    <span class="section-kicker">Research</span>
+    <h2 class="section-heading">Formalizing federated PKI as a governed weighted graph.</h2>
+    <p class="section-sub">
+      The proposal introduces a formal layer above PKIX semantics, representing certification
+      authorities and governed federation relationships as a directed, weighted graph queryable for
+      valid and optimal certification paths across classical, hybrid, and post-quantum domains.
+    </p>
+
+    <div class="research-grid">
+      <article class="research-card">
+        <h3>Governed trust graph</h3>
+        <p>
+          Instead of inheriting trust from entire hierarchies, PolarisChain models trust as explicit
+          graph edges between governed certification authorities, each carrying both a technical
+          cost and hard governance constraints.
+        </p>
+        <ul>
+          <li>
+            Vertices represent individual CAs within independent EJBCA instances — one instance per
+            administrative domain.
+          </li>
+          <li>
+            Edges encode admissible inter-domain cross-certificates; internal hierarchical relations
+            within the same domain are not federation edges.
+          </li>
+          <li>
+            The model preserves PKIX validation while making federation semantics explicit,
+            computable, and queryable.
+          </li>
+        </ul>
+      </article>
+      <article class="research-card">
+        <h3>Optimal path semantics</h3>
+        <p>
+          The proposal defines a normalised multicriteria cost over federation edges so path
+          selection becomes a deterministic optimisation problem rather than an exhaustive heuristic
+          search.
+        </p>
+        <ul>
+          <li>
+            Edge weights capture cryptographic posture, algorithm family, key strength, and
+            structural distance — each normalised to [0, 1].
+          </li>
+          <li>
+            Dijkstra-based traversal operates exclusively over governance-admissible paths, not the
+            full graph.
+          </li>
+          <li>
+            The result is an explainable, policy-compliant certification chain comparable against
+            BFS as a non-weighted baseline.
+          </li>
+        </ul>
+      </article>
+    </div>
+
+    <div style="margin-top:36px;">
+      <span class="section-kicker">Mathematical model</span>
+      <h3
+        style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,2.6vw,2.4rem);font-weight:400;line-height:1.0;letter-spacing:-0.02em;color:var(--text);margin-bottom:12px;"
+      >
+        A compact formalization of governed federation and path cost.
+      </h3>
+      <p style="font-size:0.96rem;line-height:1.65;color:var(--text-soft);max-width:62ch;">
+        PKIX certificate validation remains intact. The graph layer makes admissible trust
+        propagation explicit, separates normalised technical edge cost from hard governance
+        constraints, and selects routes only among policy-compliant federation paths.
+      </p>
+    </div>
+
+    <MathModel />
+
+    <div class="annotation-strip" id="interoperability">
+      <div class="annotation-item">
+        <span class="annotation-label">Research problem</span>
+        <span class="annotation-value"
+          >Certification path discovery becomes increasingly difficult as multidomain PKI
+          federations grow denser and cryptographically heterogeneous.</span
+        >
+      </div>
+      <div class="annotation-item">
+        <span class="annotation-label">Methodological lens</span>
+        <span class="annotation-value"
+          >Directed weighted graphs, normalised multicriteria cost, deterministic shortest-path
+          computation, and policy-aware trust modelling over real X.509 infrastructure.</span
+        >
+      </div>
+      <div class="annotation-item">
+        <span class="annotation-label">Interoperability objective</span>
+        <span class="annotation-value"
+          >Support controlled interoperability across classical, hybrid, and post-quantum PKI
+          domains without requiring a shared trust root or modifying PKIX validation semantics.</span
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .research-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 40px;
+  }
+
+  .research-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--r-lg);
+    padding: 28px;
+  }
+  .research-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.72rem;
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .research-card p {
+    font-size: 0.94rem;
+    line-height: 1.72;
+    color: var(--text-soft);
+  }
+  .research-card ul {
+    margin-top: 14px;
+    padding-left: 18px;
+    color: var(--text-soft);
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+  .research-card li + li {
+    margin-top: 8px;
+  }
+
+  .annotation-strip {
+    margin-top: 20px;
+    padding: 20px 24px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--r-md);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    border-left: 2px solid oklch(72% 0.12 230 / 0.5);
+  }
+  .annotation-item {
+    display: grid;
+    gap: 4px;
+  }
+  .annotation-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .annotation-value {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-soft);
+  }
+
+  @media (max-width: 760px) {
+    .research-grid {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .research-card {
+      padding: 22px 20px;
+    }
+    .research-card h3 {
+      font-size: 1.42rem;
+    }
+    .annotation-strip {
+      grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 16px 18px;
+    }
+  }
+</style>

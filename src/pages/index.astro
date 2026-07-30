@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/hero/Hero.astro';
+import Challenges from '../components/Challenges.astro';
+import Platform from '../components/Platform.astro';
+import UseCases from '../components/UseCases.astro';
+import Research from '../components/Research.astro';
+import OptimalPaths from '../components/OptimalPaths.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import Contribution from '../components/Contribution.astro';
+import OpenScience from '../components/OpenScience.astro';
+---
+
+<BaseLayout
+  title="PolarisChain — Redesign Proposal"
+  description="A governed graph model for federated PKI trust: discover, govern, and optimise certification paths across classical, hybrid, and post-quantum domains."
+>
+  <Header />
+
+  <main>
+    <Hero />
+
+    <div
+      style="position:relative;z-index:2;height:24px;background:transparent;pointer-events:none;"
+      aria-hidden="true"
+    >
+    </div>
+
+    <Challenges />
+    <Platform />
+    <UseCases />
+
+    <div class="section-transition" aria-hidden="true"></div>
+
+    <Research />
+
+    <div class="section-transition" aria-hidden="true"></div>
+
+    <OptimalPaths />
+    <HowItWorks />
+    <Contribution />
+    <OpenScience />
+  </main>
+</BaseLayout>

@@ -1,0 +1,55 @@
+---
+// Full-document starfield + scroll-driven halo orb. Lives once at the layout
+// level (not per-section) since the canvas spans the whole document height.
+---
+
+<div id="global-starfield-root">
+  <canvas id="starfield-canvas" data-starfield-canvas aria-hidden="true"></canvas>
+  <div class="scroll-glow" data-starfield-glow aria-hidden="true"></div>
+</div>
+
+<style>
+  #starfield-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(0.5px);
+  }
+
+  .scroll-glow {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: min(110vh, 106vw);
+    height: min(110vh, 106vw);
+    margin: calc(min(110vh, 106vw) / -2) 0 0 calc(min(110vh, 106vw) / -2);
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(150, 185, 235, 0.055) 0%,
+      rgba(150, 185, 235, 0.022) 40%,
+      transparent 70%
+    );
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .scroll-glow {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { init } from '../lib/starfield';
+
+  const root = document.getElementById('global-starfield-root');
+  if (root) init(root);
+</script>

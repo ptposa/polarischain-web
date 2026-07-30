@@ -1,0 +1,40 @@
+---
+import '@fontsource/playfair-display/400.css';
+import '@fontsource/playfair-display/500.css';
+import '@fontsource/playfair-display/400-italic.css';
+import '@fontsource/dm-sans/400.css';
+import '@fontsource/dm-sans/500.css';
+import '@fontsource/space-mono/400.css';
+import '../styles/global.css';
+import GlobalStarfield from '../components/GlobalStarfield.astro';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div
+      id="page-bg"
+      style="position:fixed;inset:0;z-index:0;background:transparent;pointer-events:none;"
+    >
+    </div>
+
+    <GlobalStarfield />
+
+    <div id="page-wrap" style="position:relative;">
+      <slot />
+    </div>
+  </body>
+</html>
