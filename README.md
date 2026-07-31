@@ -13,36 +13,54 @@ In modern PKI ecosystems, certificate validation paths can become increasingly c
 - Multiple trust anchors
 - Heterogeneous federation models (mesh, bridge, hybrid)
 
-PolarisChain addresses this complexity by:
+PolarisChain addresses this complexity by making federated trust governance **explicit, computable, and auditable** — not merely an enriched pathfinding exercise. It does so by:
 
 - Representing PKI ecosystems as **trust graphs**
 - Enabling **path discovery algorithms** for certificate validation
+- Providing **what-if governance analysis** before signing cross-certification edges
 - Providing a **visual and conceptual framework** for federated trust
 
 
 ## 🧠 Key Concepts
 
-- **Federated PKI**: Interconnected certification domains with shared trust relationships  
-- **Trust Graphs**: Graph-based modeling of CAs and trust paths  
-- **Path Discovery**: Finding optimal validation chains between entities  
-- **Interoperability**: Supporting diverse PKI models without replacing existing standards (e.g., PKIX)
+- **Federated PKI**: Interconnected certification domains with shared trust relationships
+- **Trust Graphs**: Graph-based modeling of CAs and trust paths
+- **Discover**: Return admissible certification paths with deployable artifacts
+- **Govern**: What-if analysis before signing cross-certification edges, detecting unintended transitive trust
+- **Audit**: Visualizing trust propagation, detecting constraint gaps, verifying scope compliance
+- **Interoperability**: Supporting diverse PKI models without replacing existing standards (e.g., PKIX / RFC 5280)
 
 
 ## 🏗️ Project Structure
 
-This repository contains the **main web interface** of PolarisChain.
+This repository contains the **main web interface** of PolarisChain: a static, narrative landing page built with Astro.
 
 ```text
 polarischain-web/
-├── public/        # Static assets
-├── src/
-│   ├── components/  # UI and graph components
-│   ├── layouts/     # Page layouts
-│   ├── pages/       # Routes (Astro)
-│   └── styles/      # Styling
 ├── astro.config.mjs
 ├── package.json
-└── README.md
+├── public/
+│   └── logo.svg
+├── src/
+│   ├── assets/            # Static assets
+│   ├── components/        # One component per narrative section
+│   │   ├── hero/           # Scroll-dive hero (constellation, caption)
+│   │   └── ...              # Challenges, Platform, UseCases, Research,
+│   │                         # MathModel, OptimalPaths, HowItWorks,
+│   │                         # Contribution, OpenScience
+│   ├── data/               # Typed content (TS + Zod): constellation nodes,
+│   │                        # process steps, scoring table, Φ definitions,
+│   │                        # cost-function coefficients
+│   ├── layouts/            # Base page layout
+│   ├── lib/                # Vanilla-TS animation modules, sharing a single
+│   │                        # rAF scheduler (no GSAP / animation libraries):
+│   │                        #   raf-loop.ts, starfield.ts, scroll-dive.ts,
+│   │                        #   step-timeline.ts, pki-graph.ts
+│   ├── pages/
+│   │   └── index.astro
+│   └── styles/
+│       └── global.css      # Tailwind v4 @theme tokens (design system)
+└── tsconfig.json
 ```
 
 
@@ -51,14 +69,14 @@ polarischain-web/
 Run locally:
 
 ```sh
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 Build for production:
 
 ```sh
-npm run build
+pnpm build
 ```
 
 The generated static site will be available in:
@@ -72,24 +90,39 @@ The generated static site will be available in:
 
 All commands are run from the root of the project:
 
-| Command          | Action                            |
-|------------------|-----------------------------------|
-| `npm install`    | Install dependencies              |
-| `npm run dev`    | Start local development server    |
-| `npm run build`  | Build production site             |
-| `npm run preview`| Preview build locally             |
-| `npm run astro`  | Run Astro CLI commands            |
+| Command         | Action                            |
+|-----------------|------------------------------------|
+| `pnpm install`  | Install dependencies              |
+| `pnpm dev`      | Start local development server    |
+| `pnpm build`    | Build production site             |
+| `pnpm preview`  | Preview build locally             |
+| `pnpm astro`    | Run Astro CLI commands            |
+
+
+## 🎨 Design System
+
+- **Tailwind v4**, tokens-only: every design value (color palette, radii,
+  typography) is defined once in `src/styles/global.css` under `@theme`.
+  Component markup keeps its own semantic classes rather than being
+  rewritten into utility classes, to preserve exact visual fidelity with
+  the validated design.
+- **Fonts**: Playfair Display (display/serif), DM Sans (body text), Space
+  Mono (all monospaced content), self-hosted via `@fontsource`.
+- **Animation**: scroll-driven interactions (hero dive, timeline
+  activation, path-discovery graph) are hand-written vanilla TypeScript
+  using `requestAnimationFrame` and damped lerp easing, coordinated
+  through a single shared scheduler — deliberately without an animation
+  library.
+- Respects `prefers-reduced-motion: reduce`.
 
 
 ## 🌐 Deployment
 
-This project is designed to be deployed as a **static site**.
+This project is 100% static (`output: 'static'`) and designed to be
+deployed as a static site — currently targeting **AWS Amplify**.
 
-Example deployment environments:
-
-- IIS (Windows Server)
-- Nginx / Apache
-- Static hosting (GitHub Pages, Vercel, Netlify)
+The generated `/dist` output is also compatible with any static host
+(Nginx, IIS, Vercel, Netlify, GitHub Pages).
 
 
 ## 🔗 Ecosystem
@@ -97,55 +130,58 @@ Example deployment environments:
 PolarisChain is structured as a modular platform:
 
 - `polarischain-web` → Main website (this repository)
-- `polarischain-docs` → Technical documentation
-- `polarischain-app` → Core application (validation engine & APIs)
+- `polarischain-docs` → Technical documentation (Docusaurus)
+- `polarischain-app` → Core application: validation engine & APIs (ASP.NET Core, SQL Graph, BouncyCastle .NET)
 
 
 ## 🎓 Academic Context
 
 This project is developed as part of:
 
-- 🎓 Master’s Degree in Cybersecurity & Cyberintelligence  
-- 🏫 Universitat Politècnica de València (UPV)  
-- 📄 Master’s Thesis (TFM), with potential continuation toward a PhD  
+- 🎓 Master's Degree in Cybersecurity & Cyberintelligence
+- 🏫 Universitat Politècnica de València (UPV)
+- 📄 Master's Thesis (TFM), with planned continuation toward a PhD
+- 👨‍🏫 Thesis director: Dr. Mario Aragonés Lozano
 
 
 ## 🔬 Research Vision
 
 PolarisChain aims to contribute to:
 
-- Scalable trust in global PKI ecosystems  
-- Graph-based validation models  
-- Post-quantum-ready interoperability strategies  
+- Scalable trust in global PKI ecosystems
+- Graph-based validation models with explicit, computable governance
+- Post-quantum-ready interoperability strategies (PQ/T hybrid, ML-DSA, SLH-DSA)
 
 
 ## 🤝 Open Source Philosophy
 
 This project embraces an open and collaborative approach to:
 
-- Share knowledge with the cybersecurity community  
-- Enable reproducible research  
-- Contribute to the evolution of PKI systems  
+- Share knowledge with the cybersecurity community
+- Enable reproducible research
+- Contribute to the evolution of PKI systems
 
 
 ## 📬 Contact
 
-Author: Jorge Pablo Trías Posa  
-Institution: Universitat Politècnica de València  
+Author: Jorge Pablo Trías Posa
+Institution: Universitat Politècnica de València
 
 
 ## ⭐ Future Work
 
-- Trust path optimization algorithms  
-- Visual graph exploration tools  
-- Integration with real PKI infrastructures (EJBCA, etc.)  
-- Support for hybrid and post-quantum PKI models  
+- Trust path optimization algorithms (Discover pillar)
+- What-if governance analysis tooling (Govern pillar)
+- Visual graph exploration and constraint-gap auditing (Audit pillar)
+- Integration with real PKI infrastructures (EJBCA, three-domain lab: classical / hybrid / PQC-pure)
+- Support for hybrid and post-quantum PKI models
 
 
 ## 🧭 Inspiration
 
-Just as navigators relied on the **Polaris star** to find their way across the ocean,  
+Just as navigators relied on the **Polaris star** to find their way across the ocean,
 **PolarisChain** aims to guide certificates through the complexity of federated trust.
+
 
 ## 👀 Live Deployment
 

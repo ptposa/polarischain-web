@@ -1,0 +1,96 @@
+<section class="section section-pad" id="use-cases" style="background:transparent;">
+  <div class="container">
+    <span class="section-kicker">Use cases</span>
+    <h2 class="section-heading">Three scenarios where federation is the only option.</h2>
+    <p class="section-sub" style="max-width:70ch;">
+      No identity provider mediates these flows. Cross-domain validation depends entirely on PKI
+      federation — and each scenario exercises different components of the governance function Φ.
+    </p>
+
+    <div class="usecase-grid">
+      <article class="challenge-card usecase-card">
+        <div class="usecase-tag">NPE / real-time</div>
+        <h3>Machine-to-machine mTLS</h3>
+        <p>
+          A service in Domain A authenticates a client certificate issued in Domain C. The relying
+          party builds and validates the chain against its own anchors, at connection time.
+        </p>
+        <div class="usecase-exercises">
+          Exercises: <span class="phi">scope</span> (clientAuth), <span class="phi">time</span>
+          (t_now), <span class="phi">crypto_floor</span>
+        </div>
+      </article>
+      <article class="challenge-card usecase-card">
+        <div class="usecase-tag">PAdES / long-term</div>
+        <h3>Document signature validation</h3>
+        <p>
+          A PDF signed in Domain C is opened in Domain A. The signer cannot anticipate every
+          verifying domain, so the verifier must discover the cross-certificate on its own.
+          Long-term validation: signing-time semantics and historical revocation.
+        </p>
+        <div class="usecase-exercises">
+          Exercises: <span class="phi">scope</span> (document signing), <span class="phi">time</span
+          >, <span class="phi">revoked</span>
+        </div>
+      </article>
+      <article class="challenge-card usecase-card">
+        <div class="usecase-tag">S/MIME / role inversion</div>
+        <h3>Coalition messaging</h3>
+        <p>
+          Signed and encrypted mail across domains. Encryption inverts the roles: the sender must
+          validate the foreign recipient's certificate before transmitting.
+        </p>
+        <div class="usecase-exercises">
+          Exercises: <span class="phi">ku</span> (keyEncipherment), <span class="phi">name</span>,
+          <span class="phi">pol⁺/pol⁻</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .usecase-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 48px;
+  }
+
+  .usecase-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 4px;
+    background: rgba(122, 179, 232, 0.08);
+    border: 1px solid rgba(122, 179, 232, 0.16);
+    color: rgba(150, 195, 240, 0.8);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 14px;
+    width: fit-content;
+  }
+
+  .usecase-exercises {
+    margin-top: auto;
+    padding-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+
+  .usecase-exercises .phi {
+    color: var(--accent-blue);
+  }
+
+  @media (max-width: 1100px) {
+    .usecase-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

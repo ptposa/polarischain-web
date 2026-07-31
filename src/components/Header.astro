@@ -1,0 +1,122 @@
+---
+import logoUrl from '../assets/logo.svg?url';
+---
+
+<header class="site-header">
+  <div class="container header-shell">
+    <a href="#" class="header-brand" aria-label="PolarisChain home">
+      <img src={logoUrl} class="brand-logo" alt="PolarisChain" />
+      <span class="brand-name">PolarisChain</span>
+    </a>
+    <nav class="header-nav" aria-label="Primary">
+      <a href="#research" class="nav-link">Research</a>
+      <a href="#interoperability" class="nav-link">Interoperability</a>
+      <a href="#how-it-works" class="nav-link">How it works</a>
+      <a href="#" class="nav-cta">Launch app</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(7, 14, 32, 0.25);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: opacity 0.4s ease;
+  }
+  .site-header.dimmed {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .header-shell {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    min-height: 60px;
+    gap: 20px;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-logo {
+    height: 28px;
+    width: auto;
+    opacity: 0.9;
+  }
+
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.42rem;
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    line-height: 1;
+  }
+
+  .header-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 28px;
+  }
+
+  .nav-link {
+    font-size: 0.875rem;
+    color: rgba(237, 228, 214, 0.7);
+    transition: color 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .nav-link:hover {
+    color: var(--text);
+  }
+
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 16px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.04);
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .nav-cta:hover {
+    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  @media (max-width: 760px) {
+    .header-nav {
+      gap: 16px;
+    }
+    .header-nav .nav-link {
+      display: none;
+    }
+    .nav-cta {
+      height: 34px;
+      padding: 0 14px;
+      font-size: 0.82rem;
+    }
+    .header-shell {
+      gap: 12px;
+    }
+    .brand-name {
+      font-size: 1.2rem;
+    }
+    .brand-logo {
+      height: 24px;
+    }
+  }
+</style>

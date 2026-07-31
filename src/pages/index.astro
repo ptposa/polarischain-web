@@ -1,25 +1,45 @@
 ---
-import MainLayout from "../layouts/MainLayout.astro";
-import SiteHeader from "../components/SiteHeader.astro";
-import PKIGraphHero from "../components/PKIGraphHero.astro";
-import FederationLimits from "../components/FederationLimits.astro";
-import ResearchSection from "../components/ResearchSection.astro";
-import OptimalTrustSection from "../components/OptimalTrustSection.astro";
-import HowItWorks from "../components/HowItWorks.astro";
-import ContributionSection from "../components/ContributionSection.astro";
-import OpenScience from "../components/OpenScience.astro";
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/hero/Hero.astro';
+import Challenges from '../components/Challenges.astro';
+import Platform from '../components/Platform.astro';
+import UseCases from '../components/UseCases.astro';
+import Research from '../components/Research.astro';
+import OptimalPaths from '../components/OptimalPaths.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import Contribution from '../components/Contribution.astro';
+import OpenScience from '../components/OpenScience.astro';
 ---
 
-<MainLayout title="PolarisChain">
-  <SiteHeader />
+<BaseLayout
+  title="PolarisChain — Redesign Proposal"
+  description="A governed graph model for federated PKI trust: discover, govern, and optimise certification paths across classical, hybrid, and post-quantum domains."
+>
+  <Header />
 
   <main>
-    <PKIGraphHero />
-    <FederationLimits />
-    <ResearchSection />
-    <OptimalTrustSection />
+    <Hero />
+
+    <div
+      style="position:relative;z-index:2;height:24px;background:transparent;pointer-events:none;"
+      aria-hidden="true"
+    >
+    </div>
+
+    <Challenges />
+    <Platform />
+    <UseCases />
+
+    <div class="section-transition" aria-hidden="true"></div>
+
+    <Research />
+
+    <div class="section-transition" aria-hidden="true"></div>
+
+    <OptimalPaths />
     <HowItWorks />
-    <ContributionSection />
+    <Contribution />
     <OpenScience />
   </main>
-</MainLayout>
+</BaseLayout>

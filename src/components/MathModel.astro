@@ -1,0 +1,554 @@
+---
+import { formalDefinitionRows, phiConstraintRows } from '../data/phi-definitions';
+import { coefficients } from '../data/coefficients';
+import { algoTableRows } from '../data/algo-table';
+---
+
+<div class="math-block">
+  <!-- 01 Formal definition -->
+  <div class="math-step">
+    <div>
+      <span class="math-step-num">01</span>
+      <h4>Formal definition</h4>
+      <p>The federated PKI ecosystem is modeled as a four-component governed weighted graph:</p>
+      <div class="math-formula"><em>G</em> = (<em>V</em>, <em>E</em>, <em>w</em>, Φ)</div>
+      <p style="font-style:italic;font-size:0.84rem;color:var(--text-muted);margin-top:8px;">
+        Domain distinction: an administrative domain groups CAs under a shared governance policy. In
+        the lab, each EJBCA instance (Docker container) represents one domain. Edges E only exist
+        between CAs of distinct containers.
+      </p>
+    </div>
+    <div>
+      <div class="math-right-label">where:</div>
+      <div class="def-list">
+        {
+          formalDefinitionRows.map((row) => (
+            <div class="def-row">
+              <span class="def-term" set:html={row.term} />
+              <span class="def-desc">{row.desc}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 Cost function -->
+  <div class="math-step">
+    <div>
+      <span class="math-step-num">02</span>
+      <h4>Cost function</h4>
+      <p>
+        Technical and structural cost is expressed as a normalised weighted sum, explicitly
+        separated from governance constraints:
+      </p>
+      <div class="math-formula" style="line-height:1.8;letter-spacing:0;">
+        <em>w</em>(<em>e</em>) = α·<em>c</em><sub style="font-size:0.65em;vertical-align:-0.3em;"
+          >crypto</sub
+        >(<em>e</em>) + β·<em>c</em><sub style="font-size:0.65em;vertical-align:-0.3em;">alg</sub
+        >(<em>e</em>) + γ·<em>c</em><sub style="font-size:0.65em;vertical-align:-0.3em;">key</sub
+        >(<em>e</em>) + δ·<em>c</em><sub style="font-size:0.65em;vertical-align:-0.3em;">dist</sub
+        >(<em>e</em>)
+      </div>
+      <p style="font-size:0.84rem;color:var(--text-muted);margin-top:4px;text-align:center;">
+        α + β + γ + δ = 1, each component <em>c</em><sub style="font-size:0.65em;">x</sub>(<em>e</em
+        >) ∈ [0, 1]
+      </p>
+      <div class="coef-grid">
+        {
+          coefficients.map((c) => (
+            <div class="coef-card">
+              <span class="coef-name" set:html={c.name} />
+              <span class="coef-range">{c.range}</span>
+              <p class="coef-desc">{c.desc}</p>
+              <div class="coef-scale">{c.scale}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <div>
+      <div class="math-right-label">
+        Algorithm scoring table
+        <span
+          style="background:rgba(80,160,100,0.12);color:rgba(100,200,130,0.85);font-size:0.68rem;padding:2px 7px;border-radius:4px;font-weight:500;margin-left:6px;"
+          >derived from real X.509 extensions</span
+        >
+      </div>
+      <div class="table-scroll">
+        <table class="algo-table">
+          <thead>
+            <tr>
+              <th>Algorithm</th>
+              <th>Domain</th>
+              <th><em>c</em><sub style="font-size:0.7em">cry</sub></th>
+              <th><em>c</em><sub style="font-size:0.7em">alg</sub></th>
+              <th><em>c</em><sub style="font-size:0.7em">key</sub></th>
+              <th><em>w</em>(<em>e</em>)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              algoTableRows.map((row) => (
+                <tr>
+                  <td>
+                    {row.algorithm.map((part) => (
+                      <>
+                        <span class="alg">{part}</span>{' '}
+                      </>
+                    ))}
+                  </td>
+                  <td>
+                    <span class={`dom dom-${row.domain}`}>{row.domainLabel}</span>
+                  </td>
+                  <td>
+                    <span class={`score-pill score-${row.tier}`}>{row.cCrypto}</span>
+                  </td>
+                  <td>
+                    <span class={`score-pill score-${row.tier}`}>{row.cAlg}</span>
+                  </td>
+                  <td>
+                    <span class={`score-pill score-${row.tier}`}>{row.cKey}</span>
+                  </td>
+                  <td>
+                    <span class={`score-pill score-${row.tier}`}>{row.weightLabel}</span>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 Governance constraints per edge -->
+  <div class="math-step">
+    <div>
+      <span class="math-step-num">03</span>
+      <h4>Governance constraints per edge</h4>
+      <p>
+        For each edge <em>e</em> ∈ <em>E</em>, the governance layer defines the hard constraints
+        that determine whether trust may propagate through that relation at all:
+      </p>
+      <div class="math-formula" style="line-height:1.9;">
+        Φ(<em>e</em>) = ⟨<em>prop</em>(<em>e</em>), <em>depth</em>(<em>e</em>), <em>scope</em>(<em
+          >e</em
+        >),<br />
+        <em>pol</em><sup style="font-size:0.65em;">+</sup>(<em>e</em>), <em>pol</em><sup
+          style="font-size:0.65em;">−</sup
+        >(<em>e</em>), <em>name</em>(<em>e</em>), <em>ku</em>(<em>e</em>), <em>eku</em>(<em>e</em
+        >),<br />
+        <em>time</em>(<em>e</em>), <em>crypto_floor</em>(<em>e</em>)⟩
+      </div>
+    </div>
+    <div>
+      <div class="math-right-label">where:</div>
+      <div class="def-list">
+        {
+          phiConstraintRows.map((row) => (
+            <div class="def-row">
+              <span class="def-term">
+                <Fragment set:html={row.term} />
+                {row.domSpec && <span class="def-dom" set:html={row.domSpec} />}
+                <span class="def-x509" set:html={row.x509} />
+                {row.isNew && <span class="def-new">new</span>}
+              </span>
+              <span class="def-desc" set:html={row.desc} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 Optimal path -->
+  <div class="math-step">
+    <div>
+      <span class="math-step-num">05</span>
+      <h4>Optimal path</h4>
+      <p>
+        The optimal route is computed only over admissible paths. Governance, scope, policy, and
+        propagation constraints are enforced before optimisation begins:
+      </p>
+      <div class="math-formula">
+        <em>P</em>* = arg min<sub style="font-size:0.65em;vertical-align:-0.3em;"
+          ><em>P</em> ∈ <em>P</em><sub style="font-size:0.65em">adm</sub></sub
+        >
+        &nbsp;Σ<sub style="font-size:0.65em;vertical-align:-0.3em;"><em>e</em> ∈ <em>P</em></sub>
+        <em>w</em>(<em>e</em>)
+      </div>
+    </div>
+    <div>
+      <p style="font-size:0.9rem;line-height:1.65;color:var(--text-soft);">
+        Non-admissible relations do not compete as merely expensive alternatives — they are excluded
+        from the search space altogether. Route optimisation therefore occurs only after governance,
+        scope, policy, propagation, and cryptographic floor constraints have already been enforced.
+      </p>
+      <p
+        style="font-size:0.88rem;line-height:1.6;color:var(--text-muted);margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.05);"
+      >
+        PKIX validation semantics remain unchanged. The graph layer does not replace certificate
+        validation; it governs admissible trust propagation and computes the minimum-cost route only
+        across policy-compliant federation paths.
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .math-block {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: var(--r-xl);
+    padding: 32px 36px;
+    margin-top: 28px;
+  }
+
+  .math-step {
+    display: grid;
+    grid-template-columns: minmax(400px, 0.55fr) 1fr;
+    gap: 32px;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .math-step:first-child {
+    padding-top: 0;
+  }
+  .math-step > div {
+    min-width: 0;
+  }
+  .math-step:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .math-step-num {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .math-step h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.72rem;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .math-step p {
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: var(--text-soft);
+  }
+
+  .math-formula {
+    display: block;
+    padding: 6px 0;
+    margin: 18px 0;
+    background: none;
+    border: none;
+    font-family: var(--font-mono), 'STIX Two Text', 'Cambria Math', serif;
+    font-size: 0.92rem;
+    color: var(--accent-gold);
+    letter-spacing: 0.02em;
+    text-align: left;
+    line-height: 1.7;
+  }
+  .math-formula em {
+    font-style: italic;
+    font-family: 'STIX Two Text', 'Cambria Math', serif;
+  }
+
+  .math-right-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .def-list {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .def-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    font-size: 0.82rem;
+  }
+  .def-row:last-child {
+    border-bottom: none;
+  }
+
+  .coef-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .coef-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--r-md, 10px);
+    padding: 14px 16px;
+  }
+  .coef-name {
+    font-family: 'STIX Two Text', 'Cambria Math', var(--font-mono), serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+  .coef-range {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .coef-desc {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--text-soft);
+    margin-top: 8px;
+  }
+  .coef-scale {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  .def-dom {
+    display: block;
+    font-family: 'STIX Two Text', 'Cambria Math', var(--font-mono), serif;
+    font-style: italic;
+    font-size: 0.8rem;
+    color: var(--text-soft);
+    margin-top: 3px;
+  }
+  .def-x509 {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    line-height: 1.5;
+    color: rgba(120, 210, 150, 0.65);
+    margin-top: 4px;
+  }
+  .def-new {
+    display: inline-block;
+    background: rgba(80, 160, 100, 0.12);
+    color: rgba(100, 200, 130, 0.85);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-top: 6px;
+  }
+
+  .def-term {
+    font-family: 'STIX Two Text', 'Cambria Math', var(--font-mono), serif;
+    color: var(--text);
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+
+  .def-desc {
+    color: var(--text-soft);
+    line-height: 1.52;
+    font-size: 0.8rem;
+  }
+
+  .algo-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-top: 8px;
+  }
+  .algo-table th {
+    text-align: left;
+    padding: 6px 10px;
+    color: var(--text-muted);
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .algo-table th:not(:first-child) {
+    text-align: center;
+  }
+  .algo-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    color: var(--text-soft);
+    line-height: 1.3;
+  }
+  .algo-table td:not(:first-child) {
+    text-align: center;
+  }
+  .algo-table td:first-child {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text);
+  }
+  .algo-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .score-pill {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+  .score-good {
+    background: rgba(80, 180, 120, 0.12);
+    color: rgba(100, 210, 140, 0.9);
+  }
+  .score-mid {
+    background: rgba(200, 160, 60, 0.12);
+    color: rgba(230, 190, 80, 0.9);
+  }
+  .score-bad {
+    background: rgba(200, 80, 60, 0.12);
+    color: rgba(230, 110, 90, 0.9);
+  }
+
+  .dom {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  .dom-pqc {
+    color: rgba(120, 210, 150, 0.92);
+  }
+  .dom-hybrid {
+    color: rgba(232, 201, 106, 0.92);
+  }
+  .dom-classical {
+    color: rgba(122, 179, 232, 0.92);
+  }
+
+  @media (max-width: 1080px) {
+    .math-step {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+  @media (max-width: 760px) {
+    .math-block {
+      padding: 22px 18px;
+    }
+    .math-step {
+      padding: 20px 0;
+    }
+    .math-step h4 {
+      font-size: 1.46rem;
+    }
+    .math-formula {
+      padding: 16px 14px;
+      font-size: 0.95rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .def-row {
+      grid-template-columns: 120px 1fr;
+      gap: 10px;
+    }
+    .coef-grid {
+      grid-template-columns: 1fr;
+    }
+    .algo-table {
+      font-size: 0.74rem;
+      width: 100%;
+      table-layout: auto;
+      min-width: 480px;
+    }
+    .algo-table th,
+    .algo-table td {
+      padding: 0.6rem 6px;
+    }
+    .algo-table td:first-child {
+      font-size: 0.72rem;
+      white-space: normal;
+      line-height: 1.35;
+      min-width: 106px;
+    }
+    .algo-table .alg {
+      white-space: nowrap;
+      display: inline-block;
+    }
+    .algo-table .dom {
+      font-size: 0.68rem;
+    }
+    .algo-table .score-pill {
+      font-size: 0.66rem;
+      padding: 2px 5px;
+    }
+  }
+  @media (max-width: 560px) {
+    .math-block {
+      padding: 18px 14px;
+      border-radius: var(--r-lg);
+    }
+    .math-step {
+      padding: 18px 0;
+    }
+    .math-step h4 {
+      font-size: 1.32rem;
+    }
+    .math-step-num {
+      font-size: 0.64rem;
+    }
+    .def-row {
+      grid-template-columns: 1fr;
+      gap: 2px;
+      padding: 8px 0;
+    }
+    .def-term {
+      font-size: 0.84rem;
+    }
+    .def-desc {
+      font-size: 0.78rem;
+    }
+    .def-dom {
+      font-size: 0.76rem;
+    }
+    .def-x509 {
+      font-size: 0.6rem;
+      overflow-wrap: anywhere;
+    }
+    .math-formula {
+      font-size: 0.78rem;
+      padding: 4px 0;
+      letter-spacing: 0.01em;
+    }
+    .coef-card {
+      padding: 12px 14px;
+    }
+    .coef-desc {
+      font-size: 0.78rem;
+    }
+    .coef-scale {
+      font-size: 0.62rem;
+    }
+  }
+  @media (max-width: 380px) {
+    .math-formula {
+      font-size: 0.85rem;
+      padding: 14px 10px;
+    }
+  }
+</style>
