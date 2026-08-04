@@ -47,6 +47,8 @@ export function init(track: HTMLElement, opts: ScrollDiveOptions = {}): () => vo
   const nodeEls = Array.from(track.querySelectorAll<HTMLElement>('.gnode'));
   const edgeEls = Array.from(track.querySelectorAll<SVGLineElement>('[data-dive-edges] line'));
   const header = document.querySelector<HTMLElement>('.site-header');
+  const aperture = track.querySelector<HTMLElement>('.aperture-frame');
+  const lift = document.getElementById('pageLift');
 
   if (!stageEl || !heroSecEl || !heroShellEl || !captionEl || !hintEl || !canvasEl) return () => {};
   const ctx2d = canvasEl.getContext('2d');
@@ -88,10 +90,40 @@ export function init(track: HTMLElement, opts: ScrollDiveOptions = {}): () => vo
     }
   }
 
-  function projectNode(n: (typeof constellationNodes)[number], zoom: number) {
+  /* ── Dive focal point: the centre of the hero sky chart. The camera enters
+     THROUGH the aperture, then eases to screen centre as the model opens up. ── */
+  let FX = 0;
+  let FY = 0;
+
+  function measureFocal(): void {
+    FX = W / 2;
+    FY = H / 2;
+    if (!aperture) return;
+    const a = aperture.getBoundingClientRect();
+    if (!a.width) return; // hidden on small screens
+    const s = stage.getBoundingClientRect();
+    FX = a.left - s.left + a.width / 2;
+    FY = a.top - s.top + a.height / 2;
+  }
+
+  function focalAt(q: number): { x: number; y: number } {
+    // Recentre EARLY — while the hero is still blurring out and before the
+    // starfield/graph dolly begins — so the second phase is a pure centred zoom
+    // with no lateral drift.
+    const k = win(q, 0.02, 0.15);
+    return { x: FX + (W / 2 - FX) * k, y: FY + (H / 2 - FY) * k };
+  }
+
+  function projectNode(
+    n: (typeof constellationNodes)[number],
+    zoom: number,
+    f: { x: number; y: number },
+  ) {
     const s = 1 + zoom * n.z * 4.2;
-    const px = n.x * s * (W * 0.5) + W * 0.5;
-    const py = n.y * s * (H * 0.5) + H * 0.5;
+    const bx = W * 0.5 + n.x * (W * 0.5);
+    const by = H * 0.5 + n.y * (H * 0.5);
+    const px = f.x + (bx - f.x) * s;
+    const py = f.y + (by - f.y) * s;
     const passed = win(s, 3.4, 5.2);
     const appear = win(zoom, 0.02, 0.1);
     const settle = 1 - win(zoom, 0.88, 0.99);
@@ -128,6 +160,7 @@ export function init(track: HTMLElement, opts: ScrollDiveOptions = {}): () => vo
       hint.style.top = '';
       hint.style.transform = '';
     }
+    measureFocal();
   }
 
   function remap(p: number): number {
@@ -137,12 +170,13 @@ export function init(track: HTMLElement, opts: ScrollDiveOptions = {}): () => vo
   function drawSky(p: number, t: number): void {
     ctx.clearRect(0, 0, W, H);
     const zoom = win(p, 0.12, 0.85);
-    const cx = W / 2;
-    const cy = H / 2;
+    const f = focalAt(p);
     for (const s of stars) {
-      const k = 1 + zoom * s.z * 6;
-      const x = cx + s.x * cx * k;
-      const y = cy + s.y * cy * k;
+      const k = 1 + zoom * s.z * 6; // radial expansion from the focal point
+      const bx = W / 2 + (s.x * W) / 2;
+      const by = H / 2 + (s.y * H) / 2;
+      const x = f.x + (bx - f.x) * k;
+      const y = f.y + (by - f.y) * k;
       if (x < -20 || x > W + 20 || y < -20 || y > H + 20) continue;
       const tw = 0.85 + 0.15 * Math.sin(t * 0.0012 + s.tw);
       const grow = 1 + zoom * s.z * 1.2;
@@ -157,7 +191,8 @@ export function init(track: HTMLElement, opts: ScrollDiveOptions = {}): () => vo
 
   function layoutGraph(p: number): void {
     const zoom = win(p, 0.12, 0.85);
-    const pts = constellationNodes.map((n) => projectNode(n, zoom));
+    const f = focalAt(p);
+    const pts = constellationNodes.map((n) => projectNode(n, zoom, f));
     pts.forEach((pt, i) => {
       const el = nodeEls[i];
       if (!el) return;
@@ -183,22 +218,32 @@ export function init(track: HTMLElement, opts: ScrollDiveOptions = {}): () => vo
     const out = win(q, 0.1, 0.34);
     heroShell.style.opacity = (1 - out).toFixed(3);
     heroShell.style.filter = out > 0.001 ? `blur(${(out * 14).toFixed(1)}px)` : '';
+    const sr = heroShell.getBoundingClientRect();
+    const st = stage.getBoundingClientRect();
+    heroShell.style.transformOrigin =
+      `${(FX - (sr.left - st.left)).toFixed(0)}px ` +
+      `${(FY - (sr.top - st.top) - ty).toFixed(0)}px`;
     heroShell.style.transform = `translateY(${ty.toFixed(1)}px) scale(${(1 + out * 0.35).toFixed(3)})`;
     heroShell.style.pointerEvents = out > 0.5 ? 'none' : '';
+    if (aperture) {
+      const thru = win(q, 0.04, 0.34); // camera passes through the chart
+      aperture.style.transform = `scale(${(1 + thru * 2.4).toFixed(3)})`;
+    }
 
-    const capIn = win(q, 0.4, 0.5);
-    const capOut = win(q, 0.68, 0.8);
+    const capIn = win(q, 0.38, 0.5);
+    const capOut = win(q, 0.84, 1.0);
     caption.style.opacity = (capIn * (1 - capOut)).toFixed(3);
     caption.style.transform = `scale(${(0.92 + capIn * 0.08 + capOut * 0.3).toFixed(3)}) translateY(${((1 - capIn) * 18).toFixed(1)}px)`;
 
     if (intro) hint.style.transform = `translate(-50%,${ty.toFixed(1)}px)`;
     hint.style.opacity = (1 - win(q, 0.02, 0.1)).toFixed(3);
+    if (lift) lift.style.opacity = win(q, 0.7, 0.98).toFixed(3);
     if (header) header.classList.toggle('dimmed', q > 0.12 && q < 0.9);
   }
 
   function tick(t: number): void {
-    current += (target - current) * 0.11;
-    if (Math.abs(target - current) < 0.0004) current = target;
+    current += (target - current) * 0.055; // heavier damping: fast scrolls still read
+    if (Math.abs(target - current) < 0.0002) current = target;
     const q = remap(current);
     drawSky(q, t);
     layoutGraph(q);

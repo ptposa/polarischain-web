@@ -1,7 +1,12 @@
 ---
 import DiveGraph from './DiveGraph.astro';
 import DiveCaption from './DiveCaption.astro';
+import HeroAperture from './HeroAperture.astro';
 ---
+
+<!-- Marine field for the content half of the page: the hero keeps its deep black
+     and this layer is faded in by the dive so the lift reads as one continuous move. -->
+<div class="page-lift" id="pageLift" aria-hidden="true"></div>
 
 <div class="dive-track" data-dive-track>
   <div class="dive-stage" data-dive-stage>
@@ -66,6 +71,8 @@ import DiveCaption from './DiveCaption.astro';
             </div>
           </div>
         </div>
+
+        <HeroAperture />
       </div>
     </section>
 
@@ -76,6 +83,22 @@ import DiveCaption from './DiveCaption.astro';
 </div>
 
 <style>
+  /* Lighter marine field for the content half of the page (fades in as the dive lands) */
+  .page-lift {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(180deg, #04091a 0%, #050c20 60%, #04091a 100%);
+    transition: opacity 0.35s linear;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .page-lift {
+      opacity: 1;
+    }
+  }
+
   /* ─── HERO ─── */
   .hero {
     position: relative;
@@ -99,7 +122,9 @@ import DiveCaption from './DiveCaption.astro';
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    /* Two columns: copy left, dive aperture right (foreshadows the scroll-dive).
+       Copy blocks keep their own max-widths. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
     align-items: start;
     gap: 80px;
     padding: 72px 0 40px;
@@ -156,7 +181,7 @@ import DiveCaption from './DiveCaption.astro';
   /* ─── ACADEMIC CREDENTIAL ─── */
   .credential-card {
     margin-top: 48px;
-    padding: 11px 20px;
+    padding: 18px 20px;
     background: rgba(255, 255, 255, 0.025);
     border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: var(--r-md);
@@ -202,7 +227,7 @@ import DiveCaption from './DiveCaption.astro';
 
   .credential-col-name {
     margin-top: 3px;
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Sans', system-ui, sans-serif;
     font-size: 1rem;
     font-weight: 500;
     color: var(--text);
@@ -247,7 +272,7 @@ import DiveCaption from './DiveCaption.astro';
   /* ════ SCROLL-DIVE — hero wrapper ════ */
   .dive-track {
     position: relative;
-    height: 420vh;
+    height: 480vh;
     z-index: 1;
   }
   .dive-stage {
@@ -313,7 +338,7 @@ import DiveCaption from './DiveCaption.astro';
 
   @media (max-width: 640px) {
     .dive-track {
-      height: 320vh;
+      height: 380vh;
     }
   }
 

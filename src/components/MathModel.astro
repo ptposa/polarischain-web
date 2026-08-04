@@ -54,18 +54,6 @@ import { algoTableRows } from '../data/algo-table';
         α + β + γ + δ = 1, each component <em>c</em><sub style="font-size:0.65em;">x</sub>(<em>e</em
         >) ∈ [0, 1]
       </p>
-      <div class="coef-grid">
-        {
-          coefficients.map((c) => (
-            <div class="coef-card">
-              <span class="coef-name" set:html={c.name} />
-              <span class="coef-range">{c.range}</span>
-              <p class="coef-desc">{c.desc}</p>
-              <div class="coef-scale">{c.scale}</div>
-            </div>
-          ))
-        }
-      </div>
     </div>
     <div>
       <div class="math-right-label">
@@ -119,6 +107,20 @@ import { algoTableRows } from '../data/algo-table';
           </tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Full-width row under both columns of the step: four equal cards -->
+    <div class="coef-grid coef-grid-full">
+      {
+        coefficients.map((c) => (
+          <div class="coef-card">
+            <span class="coef-name" set:html={c.name} />
+            <span class="coef-range">{c.range}</span>
+            <p class="coef-desc">{c.desc}</p>
+            <div class="coef-scale">{c.scale}</div>
+          </div>
+        ))
+      }
     </div>
   </div>
 
@@ -200,7 +202,7 @@ import { algoTableRows } from '../data/algo-table';
   .math-block {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: var(--r-xl);
+    border-radius: var(--r-lg);
     padding: 32px 36px;
     margin-top: 28px;
   }
@@ -295,7 +297,30 @@ import { algoTableRows } from '../data/algo-table';
     gap: 12px;
     margin-top: 18px;
   }
+  /* Full-width row under both columns of the step: four equal cards */
+  .coef-grid-full {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 14px;
+    margin-top: 28px;
+  }
+  @media (max-width: 1080px) {
+    .coef-grid-full {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 600px) {
+    .coef-grid-full {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .coef-grid-full .coef-card {
+    height: 100%;
+  }
   .coef-card {
+    display: flex;
+    flex-direction: column;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: var(--r-md, 10px);
@@ -319,6 +344,8 @@ import { algoTableRows } from '../data/algo-table';
     line-height: 1.5;
     color: var(--text-soft);
     margin-top: 8px;
+    /* Pushes .coef-scale to the bottom so the scale line aligns across the row */
+    flex: 1;
   }
   .coef-scale {
     font-family: var(--font-mono);

@@ -8,8 +8,8 @@
    matching Tailwind's reserved prefixes (--font-*, --color-*, etc.) also
    generate matching utility classes, which is a bonus, not the goal here. */
 @theme {
-  /* Mono family */
-  --font-mono: 'Space Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /* Mono family — IBM Plex Mono (locked in) */
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Palette A: Deep cosmos — marine blue */
   --bg-cosmos: #010309;
@@ -48,11 +48,18 @@
   --line: rgba(200, 218, 240, 0.1);
   --line-strong: rgba(200, 218, 240, 0.7);
 
+  /* Nebula edge — decorative only (never semantic; gold semantics stay in --accent-gold) */
+  --neb-blue: oklch(72% 0.12 230 / 0.55);
+  --neb-violet: oklch(70% 0.13 300 / 0.4);
+  --neb-gold: oklch(76% 0.11 72 / 0.38);
+  --neb-teal: oklch(74% 0.1 190 / 0.32);
+  --neb-ang: 0deg;
+
   /* Radii */
   --r-sm: 6px;
   --r-md: 10px;
-  --r-lg: 18px;
-  --r-xl: 28px;
+  --r-lg: 10px;
+  --r-xl: 10px;
 
   /* Container */
   --max-w: 1440px;
@@ -185,8 +192,8 @@ svg {
 
 /* ─── SHARED CARD ANATOMY (challenge-card is reused verbatim by Challenges, Platform and UseCases) ─── */
 .challenge-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: var(--r-lg);
   padding: 22px 20px 24px;
   display: flex;
@@ -196,8 +203,7 @@ svg {
     background 0.2s;
 }
 .challenge-card:hover {
-  border-color: rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.022);
 }
 .challenge-card-figure {
   background: rgba(255, 255, 255, 0.03);
@@ -222,6 +228,158 @@ svg {
   line-height: 1.58;
   color: var(--text-soft);
   flex: 1;
+}
+
+/* ════ NEBULA CARD EDGE — decorative conic border on card surfaces ════
+   Lives in global.css rather than per-component: the same edge is shared by
+   cards declared across nine different Astro components, and `::before` on a
+   globally-named class needs no scoping hash to reach them. */
+@property --neb-ang {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.challenge-card,
+.research-card,
+.usecase-card,
+.platform-card,
+.contribution-card,
+.open-card,
+.formula-card,
+.optimal-card,
+.credential-card {
+  position: relative;
+  isolation: isolate;
+}
+
+.challenge-card::before,
+.research-card::before,
+.usecase-card::before,
+.platform-card::before,
+.contribution-card::before,
+.open-card::before,
+.formula-card::before,
+.optimal-card::before,
+.credential-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--neb-ang),
+    transparent 0deg,
+    var(--neb-blue) 46deg,
+    transparent 112deg,
+    var(--neb-violet) 168deg,
+    var(--neb-gold) 214deg,
+    transparent 276deg,
+    var(--neb-teal) 328deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.72;
+  transition:
+    opacity 0.45s ease,
+    background 0.45s ease;
+  animation: nebulaDrift 34s linear infinite;
+}
+
+/* Resting elevation — the nebula edge reads as the default state */
+.challenge-card,
+.research-card,
+.contribution-card,
+.open-card {
+  box-shadow: 0 18px 48px -32px oklch(70% 0.13 300 / 0.55);
+  transition:
+    border-color 0.35s ease,
+    background 0.35s ease,
+    box-shadow 0.45s ease,
+    transform 0.35s ease;
+}
+
+/* Hover — the edge warms into gold */
+.challenge-card:hover::before,
+.research-card:hover::before,
+.usecase-card:hover::before,
+.platform-card:hover::before,
+.contribution-card:hover::before,
+.open-card:hover::before,
+.formula-card:hover::before,
+.optimal-card:hover::before {
+  opacity: 0.85;
+  background: conic-gradient(
+    from var(--neb-ang),
+    transparent 0deg,
+    oklch(82% 0.13 82 / 0.75) 46deg,
+    transparent 112deg,
+    oklch(66% 0.1 300 / 0.42) 168deg,
+    oklch(84% 0.12 96 / 0.5) 214deg,
+    transparent 276deg,
+    oklch(78% 0.09 62 / 0.42) 328deg,
+    transparent 360deg
+  );
+  filter: blur(0.4px);
+}
+
+.challenge-card:hover,
+.research-card:hover,
+.contribution-card:hover,
+.open-card:hover,
+.usecase-card:hover,
+.platform-card:hover,
+.formula-card:hover,
+.optimal-card:hover {
+  border-color: rgba(232, 201, 106, 0.12);
+  box-shadow: 0 20px 54px -34px oklch(80% 0.12 82 / 0.42);
+}
+
+@keyframes nebulaDrift {
+  to {
+    --neb-ang: 360deg;
+  }
+}
+
+/* Credential card: finer edge, cool hues only (no gold — it stays semantic) */
+.credential-card::before {
+  inset: -1px;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--neb-ang),
+    transparent 0deg,
+    var(--neb-blue) 46deg,
+    transparent 112deg,
+    var(--neb-violet) 168deg,
+    oklch(68% 0.11 282 / 0.34) 214deg,
+    transparent 276deg,
+    var(--neb-teal) 328deg,
+    transparent 360deg
+  );
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .challenge-card::before,
+  .research-card::before,
+  .usecase-card::before,
+  .platform-card::before,
+  .contribution-card::before,
+  .open-card::before,
+  .formula-card::before,
+  .optimal-card::before,
+  .credential-card::before {
+    animation: none;
+  }
 }
 
 /* Highlight links in math copy */
