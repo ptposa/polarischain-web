@@ -1,0 +1,8 @@
+# Prettier writes LF; pin the working tree to LF too so Windows checkouts
+# with core.autocrlf=true don't report spurious modifications.
+* text=auto eol=lf
+
+*.png binary
+*.ico binary
+*.woff binary
+*.woff2 binary
