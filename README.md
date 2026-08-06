@@ -37,29 +37,31 @@ This repository contains the **main web interface** of PolarisChain: a static, n
 
 ```text
 polarischain-web/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml     # GitHub Pages build + deploy
 ├── astro.config.mjs
 ├── package.json
 ├── public/
 │   └── logo.svg
 ├── src/
-│   ├── assets/            # Static assets
 │   ├── components/        # One component per narrative section
-│   │   ├── hero/           # Scroll-dive hero (constellation, caption)
-│   │   └── ...              # Challenges, Platform, UseCases, Research,
-│   │                         # MathModel, OptimalPaths, HowItWorks,
-│   │                         # Contribution, OpenScience
-│   ├── data/               # Typed content (TS + Zod): constellation nodes,
-│   │                        # process steps, scoring table, Φ definitions,
-│   │                        # cost-function coefficients
-│   ├── layouts/            # Base page layout
-│   ├── lib/                # Vanilla-TS animation modules, sharing a single
-│   │                        # rAF scheduler (no GSAP / animation libraries):
-│   │                        #   raf-loop.ts, starfield.ts, scroll-dive.ts,
-│   │                        #   step-timeline.ts, pki-graph.ts
+│   │   ├── hero/          # Scroll-dive hero (constellation, caption)
+│   │   └── ...            # Challenges, Platform, UseCases, Research,
+│   │                      # MathModel, OptimalPaths, HowItWorks,
+│   │                      # Contribution, OpenScience
+│   ├── data/              # Typed content (TS + Zod): constellation nodes,
+│   │                      # process steps, scoring table, Φ definitions,
+│   │                      # cost-function coefficients
+│   ├── layouts/           # Base page layout
+│   ├── lib/               # Vanilla-TS animation modules, sharing a single
+│   │                      # rAF scheduler (no GSAP / animation libraries):
+│   │                      #   raf-loop.ts, starfield.ts, scroll-dive.ts,
+│   │                      #   step-timeline.ts, pki-graph.ts
 │   ├── pages/
 │   │   └── index.astro
 │   └── styles/
-│       └── global.css      # Tailwind v4 @theme tokens (design system)
+│       └── global.css     # Tailwind v4 @theme tokens (design system)
 └── tsconfig.json
 ```
 
@@ -106,8 +108,9 @@ All commands are run from the root of the project:
   Component markup keeps its own semantic classes rather than being
   rewritten into utility classes, to preserve exact visual fidelity with
   the validated design.
-- **Fonts**: Playfair Display (display/serif), DM Sans (body text), Space
-  Mono (all monospaced content), self-hosted via `@fontsource`.
+- **Fonts**: Playfair Display (display/serif), DM Sans (body text), IBM
+  Plex Mono (all monospaced content) and Archivo (header wordmark only),
+  self-hosted via `@fontsource`.
 - **Animation**: scroll-driven interactions (hero dive, timeline
   activation, path-discovery graph) are hand-written vanilla TypeScript
   using `requestAnimationFrame` and damped lerp easing, coordinated
@@ -118,11 +121,21 @@ All commands are run from the root of the project:
 
 ## 🌐 Deployment
 
-This project is 100% static (`output: 'static'`) and designed to be
-deployed as a static site — currently targeting **AWS Amplify**.
+This project is 100% static (`output: 'static'`) and is deployed to
+**GitHub Pages** via GitHub Actions: every push to `main` triggers
+`.github/workflows/deploy.yml`, which builds with pnpm and publishes
+`/dist`. `polarischain-docs` is served from GitHub Pages as well.
 
-The generated `/dist` output is also compatible with any static host
-(Nginx, IIS, Vercel, Netlify, GitHub Pages).
+The site is served from a project subpath, so `astro.config.mjs` sets
+`site: 'https://ptposa.github.io'` and `base: '/polarischain-web'`:
+
+👉 https://ptposa.github.io/polarischain-web/
+
+A custom domain is planned but not configured yet. Switching to one
+means dropping `base` and updating `site` accordingly.
+
+The generated `/dist` output remains compatible with any static host
+(Nginx, IIS, Vercel, Netlify).
 
 
 ## 🔗 Ecosystem
@@ -187,6 +200,9 @@ Just as navigators relied on the **Polaris star** to find their way across the o
 
 The PolarisChain platform is available online:
 
-👉 https://polarischain.org
+👉 https://ptposa.github.io/polarischain-web/
 
 Experience the graph-based trust model and explore federated PKI concepts in a real environment.
+
+The `polarischain.org` domain is reserved for future use and does not
+serve the site yet.
