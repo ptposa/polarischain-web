@@ -1,5 +1,10 @@
 ---
-import logoUrl from '../assets/logo.svg?url';
+// Imported straight out of public/ so the mark has a single source of truth:
+// the same file is served verbatim as the favicon (see BaseLayout). Vite still
+// inlines it here as a data URI because it sits under the 4KB asset threshold —
+// if the artwork ever grows past that, this emits a hashed copy alongside the
+// verbatim one and should move back into src/assets/.
+import logoUrl from '../../public/logo.svg?url';
 ---
 
 <header class="site-header">
