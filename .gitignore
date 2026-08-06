@@ -28,7 +28,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# AI assistant instruction files and context — not for a public repo
+# AI assistant instruction files and context: not for a public repo
 CLAUDE.md
 AGENTS.md
 .claude/

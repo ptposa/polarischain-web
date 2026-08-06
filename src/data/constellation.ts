@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 /**
  * The 7-node CA constellation projected by the hero scroll-dive.
- * `label`/`sub` are rendered with `set:html` — they carry literal <sub> markup
+ * `label`/`sub` are rendered with `set:html` - they carry literal <sub> markup
  * from the source design (e.g. "CA-Root · D<sub>0</sub>").
  */
 const nodeSchema = z.object({

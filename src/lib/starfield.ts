@@ -27,7 +27,7 @@ export interface StarfieldElements {
 }
 
 export interface StarfieldOptions {
-  /** Force reduced-motion behaviour (halo disabled) regardless of matchMedia — mainly for tests. */
+  /** Force reduced-motion behaviour (halo disabled) regardless of matchMedia - mainly for tests. */
   reducedMotion?: boolean;
 }
 

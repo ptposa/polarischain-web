@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 /**
  * The 4-step "How it works" timeline. `icon` is the literal inner markup of
- * each step's 40x40 viewBox SVG (rendered with `set:html`) — every path/circle
+ * each step's 40x40 viewBox SVG (rendered with `set:html`) - every path/circle
  * carries `pathLength="1"` so `lib/step-timeline.ts` can draw them in with a
  * dashoffset animation on activation. The glyphs are bare: no circle, tile or
  * opaque backing, so the strip reads flat like a plate of figures.

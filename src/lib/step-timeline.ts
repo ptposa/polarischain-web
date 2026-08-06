@@ -1,13 +1,13 @@
 /**
  * "How it works" timeline activation: a one-shot IntersectionObserver that,
  * the first time the process-steps sequence enters view, staggers each step's
- * activation by 750ms — each step draws its own glyph and the 2px segment
+ * activation by 750ms - each step draws its own glyph and the 2px segment
  * running down to the next one. Ported from the third inline <script> of the
  * source design.
  */
 
 export interface StepTimelineOptions {
-  /** Force reduced-motion behaviour (instant activation) regardless of matchMedia — mainly for tests. */
+  /** Force reduced-motion behaviour (instant activation) regardless of matchMedia - mainly for tests. */
   reducedMotion?: boolean;
 }
 

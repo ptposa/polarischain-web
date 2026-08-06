@@ -7,12 +7,12 @@ import { constellationNodes, constellationEdges } from '../data/constellation';
  * second inline <script> of the source design. The constellation markup
  * itself is now rendered statically by `DiveGraph.astro` (iterating
  * `data/constellation.ts`) instead of being built with `innerHTML` at
- * runtime — this module only ever reads the already-rendered `.gnode`
+ * runtime - this module only ever reads the already-rendered `.gnode`
  * elements and `<line>`s to write their per-frame transform/opacity.
  */
 
 export interface ScrollDiveOptions {
-  /** Force reduced-motion behaviour regardless of matchMedia — mainly for tests. */
+  /** Force reduced-motion behaviour regardless of matchMedia - mainly for tests. */
   reducedMotion?: boolean;
 }
 
@@ -100,15 +100,15 @@ export function init(track: HTMLElement, opts: ScrollDiveOptions = {}): () => vo
     FY = H / 2;
     if (!aperture) return;
     const a = aperture.getBoundingClientRect();
-    if (!a.width) return; // chart not laid out yet — fall back to screen centre
+    if (!a.width) return; // chart not laid out yet - fall back to screen centre
     const s = stage.getBoundingClientRect();
     FX = a.left - s.left + a.width / 2;
     FY = a.top - s.top + a.height / 2;
   }
 
   function focalAt(q: number): { x: number; y: number } {
-    // Recentre EARLY — while the hero is still blurring out and before the
-    // starfield/graph dolly begins — so the second phase is a pure centred zoom
+    // Recentre EARLY - while the hero is still blurring out and before the
+    // starfield/graph dolly begins - so the second phase is a pure centred zoom
     // with no lateral drift.
     const k = win(q, 0.02, 0.15);
     return { x: FX + (W / 2 - FX) * k, y: FY + (H / 2 - FY) * k };

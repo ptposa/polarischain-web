@@ -7,7 +7,7 @@
  */
 
 export interface PkiGraphOptions {
-  /** Force reduced-motion behaviour (instant reveal, no typing) regardless of matchMedia — mainly for tests. */
+  /** Force reduced-motion behaviour (instant reveal, no typing) regardless of matchMedia - mainly for tests. */
   reducedMotion?: boolean;
 }
 

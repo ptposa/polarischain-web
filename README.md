@@ -13,7 +13,7 @@ In modern PKI ecosystems, certificate validation paths can become increasingly c
 - Multiple trust anchors
 - Heterogeneous federation models (mesh, bridge, hybrid)
 
-PolarisChain addresses this complexity by making federated trust governance **explicit, computable, and auditable** — not merely an enriched pathfinding exercise. It does so by:
+PolarisChain addresses this complexity by making federated trust governance **explicit, computable, and auditable**, not merely an enriched pathfinding exercise. It does so by:
 
 - Representing PKI ecosystems as **trust graphs**
 - Enabling **path discovery algorithms** for certificate validation
@@ -114,7 +114,7 @@ All commands are run from the root of the project:
 - **Animation**: scroll-driven interactions (hero dive, timeline
   activation, path-discovery graph) are hand-written vanilla TypeScript
   using `requestAnimationFrame` and damped lerp easing, coordinated
-  through a single shared scheduler — deliberately without an animation
+  through a single shared scheduler, deliberately without an animation
   library.
 - Respects `prefers-reduced-motion: reduce`.
 

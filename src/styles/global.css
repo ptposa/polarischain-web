@@ -4,21 +4,21 @@
    Ported 1:1 from the validated design (PolarisChain Redesign.html :root).
    Names are kept verbatim so every component's CSS stays byte-identical to
    the source of truth. Tailwind's @theme still exposes each of these as a
-   real CSS custom property on :root regardless of namespace — only names
+   real CSS custom property on :root regardless of namespace - only names
    matching Tailwind's reserved prefixes (--font-*, --color-*, etc.) also
    generate matching utility classes, which is a bonus, not the goal here. */
 @theme {
-  /* Mono family — IBM Plex Mono (locked in) */
+  /* Mono family: IBM Plex Mono (locked in) */
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  /* Palette A: Deep cosmos — marine blue */
+  /* Palette A: Deep cosmos, marine blue */
   --bg-cosmos: #010309;
   --bg-deep: #050d1f;
   --bg-panel: #081426;
   --bg-panel-2: #0a182e;
   --bg-section-alt: #071122;
 
-  /* Warm academic tones — dark-cream instead of bright paper */
+  /* Warm academic tones: dark-cream instead of bright paper */
   --paper-dark: #181410;
   --paper-mid: #1e1a15;
   --paper-warm: #252019;
@@ -48,7 +48,7 @@
   --line: rgba(200, 218, 240, 0.1);
   --line-strong: rgba(200, 218, 240, 0.7);
 
-  /* Nebula edge — decorative only (never semantic; gold semantics stay in --accent-gold) */
+  /* Nebula edge: decorative only (never semantic; gold semantics stay in --accent-gold) */
   --neb-blue: oklch(72% 0.12 230 / 0.55);
   --neb-violet: oklch(70% 0.13 300 / 0.4);
   --neb-gold: oklch(76% 0.11 72 / 0.38);
@@ -230,7 +230,7 @@ svg {
   flex: 1;
 }
 
-/* ════ NEBULA CARD EDGE — decorative conic border on card surfaces ════
+/* ════ NEBULA CARD EDGE: decorative conic border on card surfaces ════
    Lives in global.css rather than per-component: the same edge is shared by
    cards declared across nine different Astro components, and `::before` on a
    globally-named class needs no scoping hash to reach them. */
@@ -295,7 +295,7 @@ svg {
   animation: nebulaDrift 34s linear infinite;
 }
 
-/* Resting elevation — the nebula edge reads as the default state */
+/* Resting elevation: the nebula edge reads as the default state */
 .challenge-card,
 .research-card,
 .contribution-card,
@@ -308,7 +308,7 @@ svg {
     transform 0.35s ease;
 }
 
-/* Hover — the edge warms into gold */
+/* Hover: the edge warms into gold */
 .challenge-card:hover::before,
 .research-card:hover::before,
 .usecase-card:hover::before,
@@ -350,7 +350,7 @@ svg {
   }
 }
 
-/* Credential card: finer edge, cool hues only (no gold — it stays semantic) */
+/* Credential card: finer edge, cool hues only (no gold, it stays semantic) */
 .credential-card::before {
   inset: -1px;
   padding: 1px;
