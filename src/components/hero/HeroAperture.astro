@@ -87,6 +87,7 @@
 
       <!-- Labels sit outside .aperture-graph: no breathe, no shimmer -->
       <g
+        class="aperture-labels"
         font-family="IBM Plex Mono, monospace"
         font-size="9"
         letter-spacing="0.6"
@@ -99,7 +100,7 @@
           >CA-Int · D<tspan font-size="7" dy="2">0</tspan></text
         >
         <text x="256" y="287">CA-Int · D<tspan font-size="7" dy="2">1</tspan></text>
-        <text x="215" y="300" fill="rgba(184,170,152,0.5)">cross-cert</text>
+        <text class="lbl-cross" x="215" y="300" fill="rgba(184,170,152,0.5)">cross-cert</text>
       </g>
     </svg>
   </div>
@@ -245,16 +246,61 @@
     color: var(--node-b);
   }
 
+  /* ── Tablet: chart centres under the copy, labels scale up to stay legible ── */
   @media (max-width: 1080px) {
     .hero-aperture {
       justify-self: center;
-      max-width: 300px;
+      max-width: 330px;
       margin-top: 8px;
     }
+    .aperture-labels {
+      font-size: 11px;
+    }
   }
+
+  /* ── Mobile: the chart stays, sized to the column and simplified ── */
   @media (max-width: 760px) {
     .hero-aperture {
+      display: flex;
+      justify-self: center;
+      align-self: stretch;
+      width: 100%;
+      max-width: 300px;
+      margin: 4px auto 0;
+      gap: 14px;
+    }
+    .aperture-head {
+      justify-content: center;
+      font-size: 0.58rem;
+      letter-spacing: 0.24em;
+    }
+    /* Tracking stays on the SVG's own letter-spacing attribute */
+    .aperture-labels {
+      font-size: 13px;
+    }
+    .aperture-legend {
+      justify-content: center;
+      gap: 5px 14px;
+      font-size: 0.58rem;
+    }
+  }
+
+  /* ── Narrow mobile: the cross-cert label crowds the quadrilateral, so it goes ── */
+  @media (max-width: 420px) {
+    .hero-aperture {
+      max-width: 258px;
+      gap: 12px;
+    }
+    .aperture-labels {
+      font-size: 15px;
+    }
+    .aperture-labels .lbl-cross {
       display: none;
+    }
+    .aperture-legend {
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
     }
   }
 

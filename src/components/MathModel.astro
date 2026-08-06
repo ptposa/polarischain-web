@@ -14,8 +14,8 @@ import { algoTableRows } from '../data/algo-table';
       <div class="math-formula"><em>G</em> = (<em>V</em>, <em>E</em>, <em>w</em>, Φ)</div>
       <p style="font-style:italic;font-size:0.84rem;color:var(--text-muted);margin-top:8px;">
         Domain distinction: an administrative domain groups CAs under a shared governance policy. In
-        the lab, each EJBCA instance (Docker container) represents one domain. Edges E only exist
-        between CAs of distinct containers.
+        the reference deployment, each isolated CA instance represents one domain. Edges E only
+        exist between CAs of distinct domains.
       </p>
     </div>
     <div>
@@ -114,8 +114,10 @@ import { algoTableRows } from '../data/algo-table';
       {
         coefficients.map((c) => (
           <div class="coef-card">
-            <span class="coef-name" set:html={c.name} />
-            <span class="coef-range">{c.range}</span>
+            <span class="coef-name">
+              <Fragment set:html={c.name} />
+              <span class="coef-range">{c.range}</span>
+            </span>
             <p class="coef-desc">{c.desc}</p>
             <div class="coef-scale">{c.scale}</div>
           </div>
@@ -318,41 +320,52 @@ import { algoTableRows } from '../data/algo-table';
   .coef-grid-full .coef-card {
     height: 100%;
   }
+  /* Notation columns, not nested cards: a ruled strip of definitions.
+     Each term hangs under a hairline, the way a figure legend is set. */
   .coef-card {
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: var(--r-md, 10px);
-    padding: 14px 16px;
+    padding: 16px 18px 2px 0;
+    border-top: 1px solid rgba(232, 201, 106, 0.22);
+    position: relative;
+  }
+  .coef-grid-full .coef-card + .coef-card {
+    padding-left: 18px;
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
   }
   .coef-name {
     font-family: 'STIX Two Text', 'Cambria Math', var(--font-mono), serif;
     font-style: italic;
-    font-size: 0.95rem;
+    font-size: 1.02rem;
     color: var(--text);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
   }
   .coef-range {
-    display: block;
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: 0.62rem;
     color: var(--text-muted);
-    margin-top: 2px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
   }
   .coef-desc {
-    font-size: 0.8rem;
-    line-height: 1.5;
-    color: var(--text-soft);
-    margin-top: 8px;
     /* Pushes .coef-scale to the bottom so the scale line aligns across the row */
     flex: 1;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--text-soft);
+    margin-top: 10px;
+    text-wrap: pretty;
   }
   .coef-scale {
     font-family: var(--font-mono);
-    font-size: 0.66rem;
-    line-height: 1.6;
+    font-size: 0.64rem;
+    line-height: 1.7;
     color: var(--text-muted);
-    margin-top: 8px;
+    margin-top: 12px;
+    padding-top: 9px;
+    border-top: 1px dotted rgba(255, 255, 255, 0.09);
   }
 
   .def-dom {
@@ -497,32 +510,62 @@ import { algoTableRows } from '../data/algo-table';
     .coef-grid {
       grid-template-columns: 1fr;
     }
+
+    /* Fits the viewport: no horizontal scroll. The algorithm column wraps at the
+       "+" of hybrid names, the domain becomes a 3-letter tag. */
     .algo-table {
-      font-size: 0.74rem;
+      font-size: 0.7rem;
       width: 100%;
-      table-layout: auto;
-      min-width: 480px;
+      table-layout: fixed;
+      min-width: 0;
+    }
+    .table-scroll {
+      overflow-x: visible;
     }
     .algo-table th,
     .algo-table td {
-      padding: 0.6rem 6px;
+      padding: 0.55rem 3px;
+    }
+    .algo-table th:first-child,
+    .algo-table td:first-child {
+      width: 30%;
+      padding-right: 0;
+    }
+    .algo-table th:nth-child(2),
+    .algo-table td:nth-child(2) {
+      width: 15%;
+      padding-left: 0;
     }
     .algo-table td:first-child {
-      font-size: 0.72rem;
+      font-size: 0.66rem;
       white-space: normal;
       line-height: 1.35;
-      min-width: 106px;
+      min-width: 0;
     }
     .algo-table .alg {
       white-space: nowrap;
       display: inline-block;
     }
     .algo-table .dom {
-      font-size: 0.68rem;
+      font-size: 0.6rem;
+      letter-spacing: 0;
+    }
+    /* Domain abbreviated in place — PQC / HYB / CLS */
+    .algo-table .dom-hybrid,
+    .algo-table .dom-classical {
+      font-size: 0;
+    }
+    .algo-table .dom-hybrid::after {
+      content: 'HYB';
+      font-size: 0.6rem;
+    }
+    .algo-table .dom-classical::after {
+      content: 'CLS';
+      font-size: 0.6rem;
     }
     .algo-table .score-pill {
-      font-size: 0.66rem;
-      padding: 2px 5px;
+      font-size: 0.6rem;
+      padding: 2px 3px;
     }
   }
   @media (max-width: 560px) {
@@ -562,8 +605,13 @@ import { algoTableRows } from '../data/algo-table';
       padding: 4px 0;
       letter-spacing: 0.01em;
     }
+    /* Stacked: the horizontal rules carry the strip, the verticals go away */
     .coef-card {
-      padding: 12px 14px;
+      padding: 14px 0 2px;
+    }
+    .coef-grid-full .coef-card + .coef-card {
+      padding-left: 0;
+      border-left: none;
     }
     .coef-desc {
       font-size: 0.78rem;

@@ -1,8 +1,9 @@
 /**
  * "How it works" timeline activation: a one-shot IntersectionObserver that,
- * the first time the process-steps sequence enters view, draws the
- * connector line top-to-bottom and staggers each step's activation by
- * 350ms. Ported from the third inline <script> of the source design.
+ * the first time the process-steps sequence enters view, staggers each step's
+ * activation by 750ms — each step draws its own glyph and the 2px segment
+ * running down to the next one. Ported from the third inline <script> of the
+ * source design.
  */
 
 export interface StepTimelineOptions {
@@ -22,7 +23,7 @@ export function init(steps: HTMLElement, opts: StepTimelineOptions = {}): () => 
       if (instant) {
         el.classList.add('is-on');
       } else {
-        timeouts.push(setTimeout(() => el.classList.add('is-on'), 200 + i * 350));
+        timeouts.push(setTimeout(() => el.classList.add('is-on'), 350 + i * 750));
       }
     });
   }

@@ -17,7 +17,7 @@ const formalRowsSchema = z.array(formalRowSchema);
 export const formalDefinitionRows: FormalDefinitionRow[] = formalRowsSchema.parse([
   {
     term: '<em>V</em>',
-    desc: 'Set of certification authorities participating in the federated ecosystem. Each node v ∈ V represents an individual CA within an EJBCA instance.',
+    desc: 'Set of certification authorities participating in the federated ecosystem. Each node v ∈ V represents an individual CA within an administrative domain.',
   },
   {
     term: '<em>E</em> ⊆ <em>V</em> × <em>V</em>',

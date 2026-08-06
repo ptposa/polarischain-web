@@ -100,7 +100,7 @@ export function init(track: HTMLElement, opts: ScrollDiveOptions = {}): () => vo
     FY = H / 2;
     if (!aperture) return;
     const a = aperture.getBoundingClientRect();
-    if (!a.width) return; // hidden on small screens
+    if (!a.width) return; // chart not laid out yet — fall back to screen centre
     const s = stage.getBoundingClientRect();
     FX = a.left - s.left + a.width / 2;
     FY = a.top - s.top + a.height / 2;
