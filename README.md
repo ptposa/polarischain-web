@@ -121,10 +121,14 @@ All commands are run from the root of the project:
 
 ## 🌐 Deployment
 
-This project is 100% static (`output: 'static'`) and is deployed to
-**GitHub Pages** via GitHub Actions: every push to `main` triggers
+`polarischain-web`, the presentation site in this repository, is 100%
+static (`output: 'static'`) and is deployed to **GitHub Pages** via
+GitHub Actions: every push to `main` triggers
 `.github/workflows/deploy.yml`, which builds with pnpm and publishes
 `/dist`. `polarischain-docs` is served from GitHub Pages as well.
+
+The wider platform is not static: `polarischain-app` is a real backend
+(ASP.NET Core validation engine and APIs) and is hosted separately.
 
 The site is served from a project subpath, so `astro.config.mjs` sets
 `site: 'https://ptposa.github.io'` and `base: '/polarischain-web'`:
