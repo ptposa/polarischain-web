@@ -1,0 +1,163 @@
+---
+import Chapter from '../Chapter.astro';
+
+const domains = [
+  { d: 'A', posture: 'Classical', algs: 'RSA, ECDSA', tau: '1', cls: 'classical' },
+  { d: 'B', posture: 'Hybrid', algs: 'Composite ECDSA + ML-DSA', tau: '0.3', cls: 'hybrid' },
+  { d: 'C', posture: 'Post-quantum', algs: 'ML-DSA', tau: '0', cls: 'pq' },
+];
+
+const next = [
+  ['Dominance as a theorem', 'proving the transition monotone against RFC 5280, §6.1.3 and §6.1.4.'],
+  ['The common log, built', 'then several independent logs, signed post-quantum.'],
+  ['Heterogeneity inside a domain', 'hierarchies whose root and intermediates use different algorithms.'],
+  ['A post-quantum channel', 'from the PKI and the graph to the key exchange of the channel.'],
+  ['Time, fully', 'when a datum is valid and when it becomes known, and how the graph evolves.'],
+];
+---
+
+<Chapter id="laboratory" num="11" kicker="Laboratory" title="Three real PKI domains, one reproducible laboratory.">
+  <div class="prose">
+    <p>
+      Three EJBCA Community Edition instances on Proxmox, each a PKI domain with its own
+      cryptographic profile, cross-certified with one another. <strong>Certificates are issued for
+      real, and every constraint of Φ is read from real extensions</strong>, never simulated.
+    </p>
+  </div>
+
+  <table class="domains">
+    <thead>
+      <tr>
+        <th scope="col">Domain</th>
+        <th scope="col">Posture</th>
+        <th scope="col">Algorithms</th>
+        <th scope="col" class="num">Reference τ<sub>d</sub></th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        domains.map((r) => (
+          <tr>
+            <td>
+              <span class={`dot dot--${r.cls}`} />
+              {r.d}
+            </td>
+            <td>{r.posture}</td>
+            <td>{r.algs}</td>
+            <td class="num">{r.tau}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <p class="stack small">
+    <span class="label">Stack</span>
+    .NET on Kestrel · BouncyCastle .NET with native ML-DSA · PostgreSQL · Cytoscape.js · Ansible ·
+    Linux containers, no proprietary licences
+  </p>
+
+  <div class="prose">
+    <p class="small muted">
+      The evaluation measures and describes; it claims no performance improvement. The selected
+      path is checked against exhaustive enumeration on small topologies and against a reference
+      validation library, and a negative result counts as a result.
+    </p>
+  </div>
+
+
+  <div class="next">
+    <p class="label">Next lines of research</p>
+    <ul>
+      {
+        next.map(([t, d]) => (
+          <li>
+            <strong>{t}:</strong> {d}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Chapter>
+
+<style>
+  .domains {
+    width: 100%;
+    max-width: 44rem;
+    margin: 2rem 0 0;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .domains th,
+  .domains td {
+    padding: 0.7rem 1rem 0.7rem 0;
+    border-bottom: 1px solid var(--rule);
+    text-align: left;
+  }
+  .domains th {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .domains td {
+    color: var(--text);
+  }
+  .domains .num {
+    text-align: right;
+    padding-right: 0;
+  }
+  .dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 0.6rem;
+    border-radius: 50%;
+    vertical-align: 0.1em;
+  }
+  .dot--classical {
+    background: var(--classical);
+  }
+  .dot--hybrid {
+    background: var(--hybrid);
+  }
+  .dot--pq {
+    background: var(--pq);
+  }
+
+  .stack {
+    max-width: 44rem;
+    margin: 1.5rem 0 2rem;
+  }
+  .stack .label {
+    margin-right: 0.8rem;
+  }
+
+  .muted {
+    color: var(--text-muted);
+  }
+
+  .next {
+    margin-top: 3rem;
+    max-width: var(--measure);
+  }
+  .next ul {
+    margin: 0.8rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .next li {
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--rule);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 560px) {
+    .domains th:nth-child(3),
+    .domains td:nth-child(3) {
+      display: none;
+    }
+  }
+</style>

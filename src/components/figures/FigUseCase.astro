@@ -1,0 +1,134 @@
+---
+// Figure component: inline SVG styled by the .svg-fig vocabulary in global.css.
+---
+
+<svg class="svg-fig fig-wide" viewBox="0 0 760 300" role="img" aria-labelledby="uc-t uc-d">
+  <title id="uc-t">The use case that runs through the thesis</title>
+  <desc id="uc-d">Three domains, each with a root and an intermediate CA. Domain B trusts its own root. Its intermediate has issued a cross-certificate to the intermediate of domain A, which issued the client certificate. The candidate path is root B, intermediate B, intermediate A, closed by the client certificate.</desc>
+
+  <defs>
+    <marker id="uc-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="uc-ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="arrow-accent" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <!-- domains -->
+  <rect class="box-a" x="20" y="24" width="230" height="250" />
+  <text x="34" y="44" class="t-label">DOMAIN A &middot; CLASSICAL</text>
+  <rect class="box-b" x="265" y="24" width="230" height="250" />
+  <text x="279" y="44" class="t-label">DOMAIN B &middot; RECEIVER</text>
+  <rect class="box-c" x="510" y="24" width="230" height="250" />
+  <text x="524" y="44" class="t-label">DOMAIN C</text>
+
+  <!-- roots -->
+  <rect class="box-strong" x="60" y="62" width="150" height="38" />
+  <text x="135" y="86" text-anchor="middle"><tspan class="t-strong">R</tspan><tspan class="t-small" dy="4">A</tspan><tspan dy="-4" class="t-small">  root CA</tspan></text>
+
+  <rect class="box-accent" x="305" y="62" width="150" height="38" />
+  <text x="380" y="86" text-anchor="middle"><tspan class="t-strong">R</tspan><tspan class="t-small" dy="4">B</tspan><tspan dy="-4" class="t-small">  root CA</tspan></text>
+  <text x="299" y="76" text-anchor="end" class="t-tiny t-accent">anchor</text>
+  <text x="299" y="89" text-anchor="end" class="t-tiny t-accent">TP_B</text>
+
+  <rect class="box-strong" x="550" y="62" width="150" height="38" />
+  <text x="625" y="86" text-anchor="middle"><tspan class="t-strong">R</tspan><tspan class="t-small" dy="4">C</tspan><tspan dy="-4" class="t-small">  root CA</tspan></text>
+
+  <!-- intermediates -->
+  <rect class="box-strong" x="60" y="144" width="150" height="38" />
+  <text x="135" y="168" text-anchor="middle"><tspan class="t-strong">I</tspan><tspan class="t-small" dy="4">A</tspan><tspan dy="-4" class="t-small">  intermediate</tspan></text>
+
+  <rect class="box-strong" x="305" y="144" width="150" height="38" />
+  <text x="380" y="168" text-anchor="middle"><tspan class="t-strong">I</tspan><tspan class="t-small" dy="4">B</tspan><tspan dy="-4" class="t-small">  intermediate</tspan></text>
+
+  <rect class="box-strong" x="550" y="144" width="150" height="38" />
+  <text x="625" y="168" text-anchor="middle"><tspan class="t-strong">I</tspan><tspan class="t-small" dy="4">C</tspan><tspan dy="-4" class="t-small">  intermediate</tspan></text>
+
+  <!-- client certificate -->
+  <rect class="box-plain" x="75" y="220" width="120" height="34" />
+  <text x="135" y="241" text-anchor="middle"><tspan class="t-strong">c</tspan><tspan class="t-small" dy="4">A</tspan><tspan dy="-4" class="t-small">  client cert.</tspan></text>
+
+  <!-- internal edges -->
+  <path class="edge" d="M625 100 V142" marker-end="url(#uc-ar)" />
+
+  <!-- the path -->
+  <path class="edge-accent" d="M380 100 V140" marker-end="url(#uc-ara)" />
+  <path class="edge-accent" d="M305 163 H214" marker-end="url(#uc-ara)" />
+  <path class="edge-accent" d="M135 182 V216" marker-end="url(#uc-ara)" />
+  <path class="edge" d="M135 100 V142" marker-end="url(#uc-ar)" />
+
+  <text x="259" y="156" text-anchor="middle" class="t-tiny t-accent">cross-cert.</text>
+  <text x="259" y="180" text-anchor="middle" class="t-tiny">issued by I_B</text>
+
+  <text x="380" y="214" text-anchor="middle" class="t-small">B decides, inside the handshake,</text>
+  <text x="380" y="229" text-anchor="middle" class="t-small">whether an admissible path exists</text>
+  <text x="380" y="244" text-anchor="middle" class="t-small">and which one is best.</text>
+
+  <text x="625" y="214" text-anchor="middle" class="t-tiny">a third domain: it enters</text>
+  <text x="625" y="228" text-anchor="middle" class="t-tiny">the variants of the use case</text>
+
+  <text x="20" y="294" class="t-tiny">Accent: the candidate path R_B &#8594; I_B &#8594; I_A, closed by c_A. Cross-certificates are issued between intermediates, never from a root.</text>
+</svg>
+
+<svg class="svg-fig fig-narrow" viewBox="0 0 360 356" role="img" aria-labelledby="ucn-t">
+  <title id="ucn-t">The use case that runs through the thesis</title>
+  <defs>
+    <marker id="ucn-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="ucn-ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow-path" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <rect class="box-a" x="4" y="4" width="112" height="262" />
+  <text x="12" y="22" class="t-label">DOMAIN A</text>
+  <rect class="box-b" x="124" y="4" width="112" height="262" />
+  <text x="132" y="22" class="t-label">B · RECEIVER</text>
+  <rect class="box-c" x="244" y="4" width="112" height="262" />
+  <text x="252" y="22" class="t-label">DOMAIN C</text>
+
+  <rect class="box-strong" x="14" y="52" width="92" height="40" />
+  <text x="60" y="70" text-anchor="middle"><tspan class="t-strong">R</tspan><tspan class="t-small" dy="4">A</tspan></text>
+  <text x="60" y="85" text-anchor="middle" class="t-tiny">root CA</text>
+
+  <text x="180" y="46" text-anchor="middle" class="t-tiny t-accent">anchor of B</text>
+  <rect class="box-accent" x="134" y="52" width="92" height="40" />
+  <text x="180" y="70" text-anchor="middle"><tspan class="t-strong">R</tspan><tspan class="t-small" dy="4">B</tspan></text>
+  <text x="180" y="85" text-anchor="middle" class="t-tiny">root CA</text>
+
+  <rect class="box-strong" x="254" y="52" width="92" height="40" />
+  <text x="300" y="70" text-anchor="middle"><tspan class="t-strong">R</tspan><tspan class="t-small" dy="4">C</tspan></text>
+  <text x="300" y="85" text-anchor="middle" class="t-tiny">root CA</text>
+
+  <rect class="box-strong" x="14" y="134" width="92" height="40" />
+  <text x="60" y="152" text-anchor="middle"><tspan class="t-strong">I</tspan><tspan class="t-small" dy="4">A</tspan></text>
+  <text x="60" y="167" text-anchor="middle" class="t-tiny">intermediate</text>
+
+  <rect class="box-strong" x="134" y="134" width="92" height="40" />
+  <text x="180" y="152" text-anchor="middle"><tspan class="t-strong">I</tspan><tspan class="t-small" dy="4">B</tspan></text>
+  <text x="180" y="167" text-anchor="middle" class="t-tiny">intermediate</text>
+
+  <rect class="box-strong" x="254" y="134" width="92" height="40" />
+  <text x="300" y="152" text-anchor="middle"><tspan class="t-strong">I</tspan><tspan class="t-small" dy="4">C</tspan></text>
+  <text x="300" y="167" text-anchor="middle" class="t-tiny">intermediate</text>
+
+  <rect class="box-plain" x="20" y="214" width="80" height="34" />
+  <text x="60" y="235" text-anchor="middle"><tspan class="t-strong">c</tspan><tspan class="t-small" dy="4">A</tspan><tspan class="t-tiny" dy="-4"> client</tspan></text>
+
+  <path class="edge" d="M60 92 V130" marker-end="url(#ucn-ar)" />
+  <path class="edge" d="M300 92 V130" marker-end="url(#ucn-ar)" />
+  <path class="edge-path" d="M180 92 V130" marker-end="url(#ucn-ara)" />
+  <path class="edge-path" d="M134 154 H110" marker-end="url(#ucn-ara)" />
+  <path class="edge-path" d="M60 174 V210" marker-end="url(#ucn-ara)" />
+  <text x="180" y="196" text-anchor="middle" class="t-tiny t-path">cross-certificate</text>
+  <text x="180" y="210" text-anchor="middle" class="t-tiny">issued by I_B to I_A</text>
+  <text x="300" y="200" text-anchor="middle" class="t-tiny">enters the</text>
+  <text x="300" y="214" text-anchor="middle" class="t-tiny">variants</text>
+
+  <text x="4" y="290" class="t-small">B decides, inside the handshake, whether an</text>
+  <text x="4" y="306" class="t-small">admissible path exists and which one is best.</text>
+  <text x="4" y="330" class="t-tiny">In colour: the candidate path R_B → I_B → I_A, closed by c_A.</text>
+  <text x="4" y="346" class="t-tiny">Cross-certificates link intermediates, never a root.</text>
+</svg>

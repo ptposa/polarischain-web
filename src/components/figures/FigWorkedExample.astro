@@ -1,0 +1,223 @@
+---
+// Worked example of chapter 3 of the thesis. The issuing CA of domain C is
+// written Iss_C. Wide drawing, and a lane-per-candidate drawing for phones.
+const nodes = [
+  { id: 'RB', x: 10, y: 148, w: 104, name: 'R', sub: 'B', alg: 'P-384 + ML-DSA-65', cls: 'box-accent' },
+  { id: 'IB', x: 140, y: 148, w: 130, name: 'I', sub: 'B', alg: 'P-384 + ML-DSA-65', cls: 'box-strong' },
+  { id: 'IA1', x: 350, y: 20, w: 130, name: 'I', sub: 'A1', alg: 'ECDSA P-384', cls: 'box-deny' },
+  { id: 'IC1', x: 350, y: 100, w: 130, name: 'I', sub: 'C1', alg: 'P-384 + ML-DSA-65', cls: 'box-strong' },
+  { id: 'Br', x: 350, y: 180, w: 130, name: 'Br', sub: '', alg: 'P-384 + ML-DSA-65', cls: 'box-strong' },
+  { id: 'IC3', x: 350, y: 260, w: 130, name: 'I', sub: 'C3', alg: 'ML-DSA-87', cls: 'box-path' },
+  { id: 'IC2', x: 510, y: 180, w: 120, name: 'I', sub: 'C2', alg: 'ML-DSA-65', cls: 'box-strong' },
+  { id: 'IssC', x: 650, y: 100, w: 100, name: 'Iss', sub: 'C', alg: 'ML-DSA-65', cls: 'box-path' },
+];
+
+// Narrow drawing: one lane per candidate path.
+type Box = { name: string; sub: string; alg: string; cls: string; edge: string };
+const lanes: { id: string; y: number; entry: string; boxes: Box[]; note?: string; state: 'ok' | 'deny' | 'best' }[] = [
+  {
+    id: 'C1',
+    y: 72,
+    entry: 'e2 · 3',
+    state: 'ok',
+    boxes: [
+      { name: 'I', sub: 'C1', alg: 'P-384+ML-DSA-65', cls: 'box-strong', edge: '' },
+      { name: 'Iss', sub: 'C', alg: 'ML-DSA-65', cls: 'box-strong', edge: 'e3 · 0' },
+    ],
+  },
+  {
+    id: 'C2',
+    y: 142,
+    entry: 'e4 · 2',
+    state: 'deny',
+    boxes: [{ name: 'I', sub: 'A1', alg: 'ECDSA P-384', cls: 'box-deny', edge: '' }],
+    note: 'pruned: c_crypto 1 > τ_B 0.3',
+  },
+  {
+    id: 'C3',
+    y: 212,
+    entry: 'e5 · 1',
+    state: 'deny',
+    boxes: [
+      { name: 'Br', sub: '', alg: 'P-384+ML-DSA-65', cls: 'box-strong', edge: '' },
+      { name: 'I', sub: 'C2', alg: 'ML-DSA-65', cls: 'box-strong', edge: 'e6 · 1' },
+    ],
+    note: 'e7: depth 0',
+  },
+  {
+    id: 'C4',
+    y: 282,
+    entry: 'e8 · 3',
+    state: 'best',
+    boxes: [
+      { name: 'I', sub: 'C3', alg: 'ML-DSA-87', cls: 'box-path', edge: '' },
+      { name: 'Iss', sub: 'C', alg: 'ML-DSA-65', cls: 'box-path', edge: 'e9 · 0' },
+    ],
+  },
+];
+const BX = 44;
+const BW = 92;
+const GAP = 34;
+---
+
+<svg class="svg-fig fig-wide" viewBox="0 0 760 360" role="img" aria-labelledby="we-t we-d">
+  <title id="we-t">Worked example: four candidate paths from R_B to the issuing CA Iss_C</title>
+  <desc id="we-d">The receiver B, with threshold 0.3, has four candidate paths. The threshold removes the path through the classical intermediate of A. The depth budget removes the path through the bridge, inside domain C. Of the two survivors the cost selects the path through the ML-DSA-87 intermediate, with cost 1.061 against 1.156.</desc>
+
+  <defs>
+    <marker id="we-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="we-ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="arrow-path" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="we-ard" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow-deny" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <path class="edge-path" d="M114 170 H136" marker-end="url(#we-ara)" />
+  <text x="125" y="140" text-anchor="middle" class="t-tiny">e1 · 3</text>
+
+  <path class="edge-deny" d="M270 164 C 300 164, 316 42, 346 42" marker-end="url(#we-ard)" />
+  <text x="344" y="36" text-anchor="end" class="t-tiny t-deny">e4 · 2</text>
+
+  <path class="edge" d="M270 168 C 300 168, 316 122, 346 122" marker-end="url(#we-ar)" />
+  <text x="344" y="116" text-anchor="end" class="t-tiny">e2 · 3</text>
+
+  <path class="edge" d="M270 174 C 300 174, 316 202, 346 202" marker-end="url(#we-ar)" />
+  <text x="344" y="217" text-anchor="end" class="t-tiny">e5 · 1</text>
+
+  <path class="edge-path" d="M270 178 C 300 178, 316 282, 346 282" marker-end="url(#we-ara)" />
+  <text x="344" y="297" text-anchor="end" class="t-tiny t-path">e8 · 3</text>
+
+  <path class="edge" d="M480 122 H646" marker-end="url(#we-ar)" />
+  <text x="563" y="115" text-anchor="middle" class="t-tiny">e3 · 0</text>
+
+  <path class="edge" d="M480 202 H506" marker-end="url(#we-ar)" />
+  <text x="493" y="195" text-anchor="middle" class="t-tiny">e6 · 1</text>
+
+  <path class="edge-deny" d="M580 180 C 580 160, 680 168, 680 148" marker-end="url(#we-ard)" />
+  <text x="636" y="176" class="t-tiny t-deny">e7 · 0</text>
+
+  <path class="edge-path" d="M480 282 C 700 282, 722 220, 722 148" marker-end="url(#we-ara)" />
+  <text x="642" y="276" class="t-tiny t-path">e9 · 0</text>
+
+  {
+    nodes.map((n) => (
+      <g>
+        <rect class={n.cls} x={n.x} y={n.y} width={n.w} height="44" />
+        <text x={n.x + n.w / 2} y={n.y + 19} text-anchor="middle">
+          <tspan class="t-strong">{n.name}</tspan>
+          {n.sub && (
+            <tspan class="t-small" dy="4">
+              {n.sub}
+            </tspan>
+          )}
+        </text>
+        <text x={n.x + n.w / 2} y={n.y + 36} text-anchor="middle" class="t-tiny">
+          {n.alg}
+        </text>
+      </g>
+    ))
+  }
+
+  <text x="490" y="36" class="t-tiny t-deny">C2 pruned: c_crypto = 1 &gt; τ_B = 0.3</text>
+  <text x="490" y="50" class="t-tiny t-deny">(threshold, at the first crossing)</text>
+  <text x="490" y="241" class="t-tiny t-deny">C3 pruned at e7: depth reaches 0</text>
+  <text x="490" y="254" class="t-tiny t-deny">(inside domain C, not at a crossing)</text>
+
+  <line class="grid-line" x1="20" y1="316" x2="740" y2="316" />
+  <text x="20" y="336" class="t-mono">C1 = (e1, e2, e3)   cost 1.156</text>
+  <text x="20" y="352" class="t-mono t-path">C4 = (e1, e8, e9)   cost 1.061   selected</text>
+  <text x="740" y="336" text-anchor="end" class="t-tiny">edge label: name · pathLenConstraint</text>
+  <text x="740" y="352" text-anchor="end" class="t-tiny">weights α, β, γ, δ = 0.4, 0.3, 0.2, 0.1</text>
+</svg>
+
+<svg class="svg-fig fig-narrow" viewBox="0 0 360 420" role="img" aria-labelledby="wen-t">
+  <title id="wen-t">Worked example: four candidate paths from R_B to the issuing CA Iss_C</title>
+  <defs>
+    <marker id="wen-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="wen-ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow-path" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <rect class="box-accent" x="4" y="4" width="140" height="42" />
+  <text x="74" y="22" text-anchor="middle"><tspan class="t-strong">R</tspan><tspan class="t-small" dy="4">B</tspan></text>
+  <text x="74" y="38" text-anchor="middle" class="t-tiny">anchor · P-384+ML-DSA-65</text>
+
+  <path class="edge-path" d="M144 25 H192" marker-end="url(#wen-ara)" />
+  <text x="168" y="18" text-anchor="middle" class="t-tiny">e1 · 3</text>
+
+  <rect class="box-strong" x="196" y="4" width="160" height="42" />
+  <text x="276" y="22" text-anchor="middle"><tspan class="t-strong">I</tspan><tspan class="t-small" dy="4">B</tspan></text>
+  <text x="276" y="38" text-anchor="middle" class="t-tiny">P-384 + ML-DSA-65</text>
+
+  <path class="edge-muted" d="M276 46 V58 H18 V304" />
+
+  {
+    lanes.map((l) => (
+      <g>
+        <text x="4" y={l.y - 4} class={`t-label ${l.state === 'best' ? 't-path' : l.state === 'deny' ? 't-deny' : ''}`}>
+          {l.id} · {l.entry}
+        </text>
+        <path
+          class={l.state === 'best' ? 'edge-path' : l.state === 'deny' ? 'edge-deny' : 'edge'}
+          d={`M18 ${l.y + 21} H${BX - 4}`}
+          marker-end={l.state === 'best' ? 'url(#wen-ara)' : 'url(#wen-ar)'}
+        />
+        {l.boxes.map((b, i) => {
+          const x = BX + i * (BW + GAP);
+          return (
+            <g>
+              {i > 0 && (
+                <>
+                  <path
+                    class={l.state === 'best' ? 'edge-path' : 'edge'}
+                    d={`M${x - GAP} ${l.y + 21} H${x - 4}`}
+                    marker-end={l.state === 'best' ? 'url(#wen-ara)' : 'url(#wen-ar)'}
+                  />
+                  <text x={x - GAP / 2} y={l.y + 13} text-anchor="middle" class="t-tiny" style="font-size:9.5px">
+                    {b.edge}
+                  </text>
+                </>
+              )}
+              <rect class={b.cls} x={x} y={l.y} width={BW} height="42" />
+              <text x={x + BW / 2} y={l.y + 18} text-anchor="middle">
+                <tspan class="t-strong">{b.name}</tspan>
+                {b.sub && (
+                  <tspan class="t-small" dy="4">
+                    {b.sub}
+                  </tspan>
+                )}
+              </text>
+              <text x={x + BW / 2} y={l.y + 35} text-anchor="middle" class="t-tiny" style="font-size:9.5px">
+                {b.alg}
+              </text>
+            </g>
+          );
+        })}
+        {l.note && (
+          <text x={BX + l.boxes.length * (BW + GAP) - GAP + 10} y={l.y + 25} class="t-tiny t-deny">
+            {l.id === 'C2' ? '' : '✕ '}
+            {l.id === 'C2' ? '' : l.note}
+          </text>
+        )}
+        {l.id === 'C2' && (
+          <>
+            <text x={BX + BW + 12} y={l.y + 18} class="t-tiny t-deny">✕ pruned by the threshold:</text>
+            <text x={BX + BW + 12} y={l.y + 33} class="t-tiny t-deny">c_crypto 1 &gt; τ_B = 0.3</text>
+          </>
+        )}
+      </g>
+    ))
+  }
+
+  <line class="grid-line" x1="4" y1="346" x2="356" y2="346" />
+  <text x="4" y="366" class="t-mono">C1 = (e1, e2, e3)  cost 1.156</text>
+  <text x="4" y="384" class="t-mono t-path">C4 = (e1, e8, e9)  cost 1.061 ✓</text>
+  <text x="4" y="408" class="t-tiny">label: path · edge · pathLenConstraint;  α β γ δ = 0.4 0.3 0.2 0.1</text>
+</svg>

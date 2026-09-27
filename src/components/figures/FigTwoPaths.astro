@@ -1,0 +1,104 @@
+---
+/* Rebuilt from example paths 1 and 2 of the Federal PKI "Path Discovery and
+   Validation" playbook (GSA), as figure 52 of the thesis report does.
+   Connectors are still on purpose: they are certificate chains, not flows. */
+const path1 = [
+  { name: 'Federal Common Policy CA G2', kind: 'anchor' },
+  { name: 'US Treasury Root CA', kind: 'ca' },
+  { name: 'Department of Veterans Affairs CA', kind: 'ca' },
+  { name: 'User (Affiliate)', kind: 'ee' },
+];
+const path2 = [
+  { name: 'Raytheon Technologies Root CA', kind: 'anchor' },
+  { name: 'CertiPath Bridge CA - G3', kind: 'bridge' },
+  { name: 'Federal Bridge CA G4', kind: 'bridge' },
+  { name: 'Federal Common Policy CA G2', kind: 'ca' },
+  { name: 'US Treasury Root CA', kind: 'ca' },
+  { name: 'Department of Veterans Affairs CA', kind: 'ca' },
+  { name: 'User (Affiliate)', kind: 'ee' },
+];
+const cls: Record<string, string> = {
+  anchor: 'box-accent',
+  bridge: 'box-path',
+  ca: 'box-strong',
+  ee: 'box-plain',
+};
+const tcls = (k: string) => (k === 'ee' ? 't-small' : k === 'anchor' ? 't-strong t-accent' : k === 'bridge' ? 't-strong t-path' : 't-strong');
+const ROW = 27;
+const STEP = 14;
+const panels = [
+  { title: 'Path 1', anchor: 'Federal Common Policy CA G2', rows: path1 },
+  { title: 'Path 2', anchor: 'Raytheon Technologies Root CA', rows: path2 },
+];
+---
+
+<svg class="svg-fig fig-wide" viewBox="0 0 760 306" role="img" aria-labelledby="tp-t tp-d">
+  <title id="tp-t">One credential, two valid paths</title>
+  <desc id="tp-d">The same end-entity certificate validates through three CAs when the Federal Common Policy CA G2 is the installed anchor, and through six, crossing two bridges, when the Raytheon Technologies root is.</desc>
+
+  {
+    panels.map((p, k) => (
+      <g transform={`translate(${10 + k * 385} 10)`}>
+        <rect class="box-plain" x="0" y="0" width="355" height="274" />
+        <text x="177" y="24" text-anchor="middle" class="t-title">
+          {p.title}
+        </text>
+        <text x="177" y="42" text-anchor="middle" class="t-small">
+          Installed anchor: {p.anchor}
+        </text>
+        {p.rows.map((n, i) => (
+          <g transform={`translate(${18 + i * STEP} ${64 + i * ROW})`}>
+            {i > 0 && <path class="edge-link" d={`M${-STEP + 5} ${-ROW + 13} V7 H0`} />}
+            <rect class={cls[n.kind]} x="0" y="0" width="11" height="13" />
+            <text x="19" y="11" class={tcls(n.kind)}>
+              {n.name}
+            </text>
+          </g>
+        ))}
+      </g>
+    ))
+  }
+
+  <g transform="translate(10 300)">
+    <rect class="box-accent" x="0" y="-9" width="9" height="10" /><text x="14" y="0" class="t-tiny">Trust anchor</text>
+    <rect class="box-path" x="110" y="-9" width="9" height="10" /><text x="124" y="0" class="t-tiny">Bridge CA</text>
+    <rect class="box-strong" x="210" y="-9" width="9" height="10" /><text x="224" y="0" class="t-tiny">CA</text>
+    <rect class="box-plain" x="270" y="-9" width="9" height="10" /><text x="284" y="0" class="t-tiny">End-entity certificate</text>
+  </g>
+</svg>
+
+<svg class="svg-fig fig-narrow" viewBox="0 0 360 430" role="img" aria-labelledby="tpn-t">
+  <title id="tpn-t">One credential, two valid paths</title>
+  {
+    panels.map((p, k) => {
+      const y0 = k === 0 ? 4 : 176;
+      const h = 56 + p.rows.length * 25;
+      return (
+        <g transform={`translate(4 ${y0})`}>
+          <rect class="box-plain" x="0" y="0" width="352" height={h} />
+          <text x="14" y="22" class="t-title">
+            {p.title}
+          </text>
+          <text x="14" y="39" class="t-tiny">
+            Anchor: {p.anchor}
+          </text>
+          {p.rows.map((n, i) => (
+            <g transform={`translate(${14 + i * 11} ${52 + i * 25})`}>
+              {i > 0 && <path class="edge-link" d={`M${-11 + 5} ${-25 + 12} V6 H0`} />}
+              <rect class={cls[n.kind]} x="0" y="0" width="10" height="12" />
+              <text x="16" y="10.5" class={tcls(n.kind)} style="font-size:12px">
+                {n.name}
+              </text>
+            </g>
+          ))}
+        </g>
+      );
+    })
+  }
+  <g transform="translate(4 424)">
+    <rect class="box-accent" x="0" y="-9" width="9" height="10" /><text x="14" y="0" class="t-tiny">Anchor</text>
+    <rect class="box-path" x="76" y="-9" width="9" height="10" /><text x="90" y="0" class="t-tiny">Bridge</text>
+    <rect class="box-strong" x="146" y="-9" width="9" height="10" /><text x="160" y="0" class="t-tiny">CA</text>
+    <rect class="box-plain" x="194" y="-9" width="9" height="10" /><text x="208" y="0" class="t-tiny">End entity</text>
+  </g>
+</svg>

@@ -1,0 +1,105 @@
+---
+import Chapter from '../Chapter.astro';
+import Figure from '../Figure.astro';
+import FigPlanes from '../figures/FigPlanes.astro';
+import FigHandshake from '../figures/FigHandshake.astro';
+
+const props = [
+  {
+    t: 'Fail closed',
+    d: 'No answer, no path, missing evidence or a validated path that differs from the selected one: the connection is denied, with its reason.',
+  },
+  {
+    t: 'Possession stays with TLS',
+    d: 'The engine decides whether the issuer is admissible. Only the TLS stack decides whether the peer holds the private key.',
+  },
+  {
+    t: 'No network in the handshake',
+    d: 'Graph, policy and status evidence are compiled beforehand and resident in memory. Governance can be down and admission goes on.',
+  },
+  {
+    t: 'Selection, not authority',
+    d: 'A standard library validates the selected path, and only that path. An error of the engine becomes a denial, never an undue acceptance.',
+  },
+];
+---
+
+<Chapter id="admission" num="07" kicker="Admission at the server" title="The decision lives where the connection is accepted.">
+  <div class="prose">
+    <p>
+      The work does not end when the model computes a path. It ends when that path decides whether
+      a connection gets in. PolarisChain sits in the <strong>server side of an mTLS handshake</strong>:
+      the enforcement point is the TLS endpoint's own client-certificate check, and the decision
+      point runs in the same process, with no proxy and no network in between.
+    </p>
+    <p>
+      Each domain splits the work in two planes that can fail separately: an asynchronous
+      governance plane that compiles the graph, and an execution plane on the critical path of the
+      handshake.
+    </p>
+  </div>
+
+  <Figure num={6} caption="Two planes in the receiving domain. Adapted from Annex I of the thesis.">
+    <FigPlanes />
+  </Figure>
+
+  <div class="props grid-4">
+    {
+      props.map((p) => (
+        <div class="rule-top">
+          <h3>{p.t}</h3>
+          <p class="small">{p.d}</p>
+        </div>
+      ))
+    }
+  </div>
+
+  <details class="more">
+    <summary>The handshake, step by step</summary>
+    <Figure num={7} caption="mTLS admission governed by PolarisChain, with the PEP at the server endpoint and a local PDP. Adapted from Annex II of the thesis.">
+      <FigHandshake />
+    </Figure>
+  </details>
+</Chapter>
+
+<style>
+  .props {
+    margin-top: 3rem;
+  }
+  .props h3 {
+    font-size: 1.08rem;
+  }
+  .props .small {
+    margin: 0;
+  }
+
+  .more {
+    margin-top: 2.5rem;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .more summary {
+    padding: 1rem 0;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--link);
+    cursor: pointer;
+    list-style: none;
+  }
+  .more summary::-webkit-details-marker {
+    display: none;
+  }
+  .more summary::before {
+    content: '+';
+    display: inline-block;
+    width: 1.4rem;
+    color: var(--text-muted);
+  }
+  .more[open] summary::before {
+    content: '−';
+  }
+  .more .figure {
+    margin: 0.5rem 0 2rem;
+  }
+</style>

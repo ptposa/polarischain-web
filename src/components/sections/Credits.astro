@@ -1,0 +1,195 @@
+---
+import { normative, informative } from '../../data/references';
+
+const pick = [
+  'RFC5280',
+  'RFC4158',
+  'RFC5055',
+  'RFC5914',
+  'RFC9618',
+  'RFC6962',
+  'RFC9810',
+  'RFC9794',
+  'RFC9881',
+  'FIPS204',
+  'WorldBank',
+  'FPKI-PDVAL',
+  'Kakei2021',
+  'KuboSato2010',
+  'RifaPous2007',
+  'LopezMillan',
+  'SP800-207',
+  'draft-composite',
+];
+const all = [...normative, ...informative];
+const refs = pick.map((k) => all.find((r) => r.key === k)).filter((r) => r !== undefined);
+---
+
+<section class="chapter credits" id="credits" aria-labelledby="credits-h">
+  <div class="wrap">
+    <p class="kicker">Academic context</p>
+    <h2 id="credits-h">Credits.</h2>
+
+    <div class="people grid-3">
+      <div class="person rule-top">
+        <p class="label">Author</p>
+        <h3>Jorge Pablo Trías Posa</h3>
+        <p class="small">
+          Master's Degree in Cybersecurity and Cyberintelligence<br />
+          Polytechnic University of Valencia
+        </p>
+        <p class="links">
+          <a href="https://orcid.org/0009-0005-8226-8071" target="_blank" rel="noreferrer">ORCID</a>
+          <a href="mailto:jptripos@upv.edu.es">Email</a>
+        </p>
+      </div>
+
+      <div class="person rule-top">
+        <p class="label">Thesis supervisor</p>
+        <h3>Dr. Mario Aragonés Lozano</h3>
+        <p class="small">Polytechnic University of Valencia</p>
+        <p class="links">
+          <a href="https://www.upv.es/ficha-personal/maarlo9" target="_blank" rel="noreferrer"
+            >Profile and publications</a
+          >
+        </p>
+      </div>
+
+      <div class="person rule-top">
+        <p class="label">Project</p>
+        <h3>PolarisChain</h3>
+        <p class="small">
+          Ongoing research, 2026. Born as a master's thesis and continuing as doctoral
+          research.
+        </p>
+        <p class="links">
+          <a href="https://github.com/ptposa/polarischain-web" target="_blank" rel="noreferrer"
+            >Source of this site</a
+          >
+        </p>
+      </div>
+    </div>
+
+    <div class="refs">
+      <p class="label">Key references</p>
+      <ol>
+        {
+          refs.map((r) => (
+            <li>
+              <span class="refs__key">[{r.key}]</span>
+              <span>
+                {r.url ? (
+                  <a href={r.url} target="_blank" rel="noreferrer">
+                    {r.text}
+                  </a>
+                ) : (
+                  r.text
+                )}
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <footer class="foot">
+      <p>
+        This page is a public overview of research in progress. The authoritative text is the
+        thesis report; results are described as planned, never as obtained.
+        The figures adapt the diagrams of the thesis and its annexes, distributed by their author
+        under CC BY 4.0. Colours follow the IEEE Brand Identity colour guide as a style reference and
+        imply no endorsement by IEEE. All typefaces are under the SIL Open Font License.
+      </p>
+      <p class="foot__line">
+        <span>PolarisChain · Jorge Pablo Trías Posa · 2026</span>
+        <a href="#top">Back to the sky</a>
+      </p>
+    </footer>
+  </div>
+</section>
+
+<style>
+  .credits h2 {
+    margin-bottom: 2rem;
+  }
+
+  .person h3 {
+    font-size: 1.3rem;
+  }
+  .person .small {
+    margin: 0.3rem 0 0;
+    color: var(--text-muted);
+  }
+  .person .label {
+    margin: 0 0 0.6rem;
+  }
+  .links {
+    display: flex;
+    gap: 1.2rem;
+    margin: 0.8rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+  }
+
+  .refs {
+    margin-top: 4rem;
+  }
+  .refs ol {
+    columns: 2 28rem;
+    column-gap: 3rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .refs li {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    gap: 0.8rem;
+    padding: 0.45rem 0;
+    break-inside: avoid;
+    font-size: 0.78rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+  .refs a {
+    color: var(--text-soft);
+    text-decoration: none;
+  }
+  .refs a:hover {
+    color: var(--link-hover);
+  }
+  .refs__key {
+    font-family: var(--font-mono);
+    color: var(--text-soft);
+    overflow-wrap: anywhere;
+  }
+
+  .foot {
+    margin-top: 4.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .foot p:not(.foot__line) {
+    max-width: 52rem;
+    margin: 0;
+  }
+  .foot__line {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem !important;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+
+  @media (max-width: 560px) {
+    .refs li {
+      grid-template-columns: 1fr;
+      gap: 0.1rem;
+    }
+  }
+</style>

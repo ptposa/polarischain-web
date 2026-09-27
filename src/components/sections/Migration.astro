@@ -1,0 +1,43 @@
+---
+import Chapter from '../Chapter.astro';
+import Figure from '../Figure.astro';
+import FigMigration from '../figures/FigMigration.astro';
+---
+
+<Chapter id="migration" num="09" kicker="Post-quantum migration" title="Migrating becomes a number on an edge.">
+  <div class="prose">
+    <p>
+      As each domain migrates at its own pace, classical, hybrid and post-quantum domains will
+      coexist for years. Because <strong>one algorithm is one node</strong>, a mixed path can be
+      read on the graph hop by hop, and its cost is computed with no extra mechanism.
+    </p>
+    <p>
+      A CA that changes algorithm occupies two nodes, linked by the certificates of RFC 9810: new
+      with old, and old with new. Each is an edge with its own cost, so the asymmetry of migration,
+      usually described in prose, becomes measurable.
+    </p>
+  </div>
+
+  <Figure num={9} caption="For a hybrid receiver, entering the post-quantum node costs 0.266 and is admissible; going back to the classical one is not even in its search space.">
+    <FigMigration />
+  </Figure>
+
+  <p class="key">
+    A receiver governs its own migration by raising <span class="math">τ<sub>d</sub></span>, without reissuing a single
+    certificate.
+  </p>
+
+  <div class="prose">
+    <p class="small muted">
+      Using ML-DSA certificates does not make the channel post-quantum. The thesis acts on the
+      certificates and on the path decision; the key exchange and the handshake signatures of the
+      channel are separate layers.
+    </p>
+  </div>
+</Chapter>
+
+<style>
+  .muted {
+    color: var(--text-muted);
+  }
+</style>

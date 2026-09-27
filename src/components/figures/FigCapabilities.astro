@@ -1,0 +1,85 @@
+---
+// Three questions to one object, ordered by time. The dashed lines flow from
+// the graph to each capability: all three read the same G|t with the same π_d.
+const caps = [
+  { x: 40, name: 'Govern', when: 'before issuing', cls: 'box-govern', stroke: 'var(--govern)' },
+  { x: 290, name: 'Discover', when: 'during the handshake', cls: 'box-discover', stroke: 'var(--discover)' },
+  { x: 540, name: 'Audit', when: 'after the decision', cls: 'box-audit', stroke: 'var(--audit)' },
+];
+const W = 180;
+---
+
+<svg class="svg-fig fig-wide" viewBox="0 0 760 236" role="img" aria-labelledby="cp-t cp-d">
+  <title id="cp-t">Three capabilities over the same graph, ordered by time</title>
+  <desc id="cp-d">Govern asks before a certificate is issued, Discover during the handshake and Audit after the decision. All three query the same governed graph with the same receiver policy.</desc>
+
+  <defs>
+    <marker id="cp-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <rect class="box-strong" x="250" y="14" width="260" height="52" />
+  <text x="380" y="38" text-anchor="middle" class="t-mono" style="font-size:13px">G|t = (V, E|t, w, &#934;)</text>
+  <text x="380" y="55" text-anchor="middle" class="t-small">queried with the receiver's policy &#960;<tspan dy="3" font-size="9">d</tspan></text>
+
+  {
+    caps.map((c) => (
+      <g>
+        <path
+          class="flow"
+          style={`stroke:${c.stroke};fill:none;stroke-width:1.3`}
+          d={`M380 66 C 380 96, ${c.x + W / 2} 88, ${c.x + W / 2} 118`}
+        />
+        <rect class={c.cls} x={c.x} y="118" width={W} height="54" />
+        <text x={c.x + W / 2} y="142" text-anchor="middle" class="t-title" style="font-size:15px">
+          {c.name}
+        </text>
+        <text x={c.x + W / 2} y="160" text-anchor="middle" class="t-small">
+          {c.when}
+        </text>
+        <path class="edge-muted" d={`M${c.x + W / 2} 172 V200`} />
+        <circle cx={c.x + W / 2} cy="206" r="3" class="dot" />
+      </g>
+    ))
+  }
+
+  <path class="edge" d="M20 206 H736" marker-end="url(#cp-ar)" />
+  <text x="736" y="226" text-anchor="end" class="t-label">TIME</text>
+</svg>
+
+<svg class="svg-fig fig-narrow" viewBox="0 0 360 336" role="img" aria-labelledby="cpn-t">
+  <title id="cpn-t">Three capabilities over the same graph, ordered by time</title>
+  <defs>
+    <marker id="cpn-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <rect class="box-strong" x="60" y="4" width="240" height="52" />
+  <text x="180" y="27" text-anchor="middle" class="t-mono" style="font-size:13px">G|t = (V, E|t, w, &#934;)</text>
+  <text x="180" y="45" text-anchor="middle" class="t-tiny">queried with the receiver's policy &#960;<tspan dy="3" font-size="8">d</tspan></text>
+
+  <path class="edge" d="M18 84 V322" marker-end="url(#cpn-ar)" />
+  <text x="4" y="76" class="t-label">TIME</text>
+  <path class="flow" style="stroke:var(--fig-stroke);fill:none;stroke-width:1.2" d="M60 30 H36 V279" />
+
+  {
+    caps.map((c, i) => {
+      const y = 96 + i * 78;
+      return (
+        <g>
+          <path class="flow" style={`stroke:${c.stroke};fill:none;stroke-width:1.3`} d={`M36 ${y + 27} H46`} />
+          <circle cx="18" cy={y + 27} r="3" class="dot" />
+          <rect class={c.cls} x="48" y={y} width="300" height="54" />
+          <text x="64" y={y + 23} class="t-title" style="font-size:15px">
+            {c.name}
+          </text>
+          <text x="64" y={y + 42} class="t-small">
+            {c.when}
+          </text>
+        </g>
+      );
+    })
+  }
+</svg>

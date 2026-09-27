@@ -1,0 +1,173 @@
+---
+const leaves = [
+  { x: 250, m: "m1", h: "h1", what: "cross-cert", who: "I_B → I_A, by B" },
+  { x: 322, m: "m2", h: "h2", what: "trust list", who: "by C" },
+  { x: 394, m: "m3", h: "h3", what: "manifest", who: "B-47, by B" },
+  { x: 466, m: "m4", h: "h4", what: "manifest", who: "C-19, by C" },
+];
+---
+
+<svg class="svg-fig fig-wide" viewBox="0 0 760 420" role="img" aria-labelledby="cl-t cl-d">
+  <title id="cl-t">The federation's common log: who publishes, who verifies, who decides</title>
+  <desc id="cl-d">Domains publish signed material into a single append-only log organised as a Merkle tree, as in Certificate Transparency. The operator orders entries and signs checkpoints. Each domain's compiler reads a snapshot up to a checkpoint, verifies it and compiles its own graph. Witnesses co-sign checkpoints and monitors check inclusion and consistency.</desc>
+
+  <defs>
+    <marker id="cl-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <!-- left: publishers -->
+  <rect class="box-b" x="10" y="24" width="186" height="128" />
+  <text x="22" y="44" class="t-label">DOMAINS &middot; PUBLISH</text>
+  <text x="22" y="64" class="t-small">CA-to-CA certificates</text>
+  <text x="22" y="80" class="t-small">trust lists and status</text>
+  <text x="22" y="96" class="t-small">a signed scope declaration</text>
+  <text x="22" y="112" class="t-small">version manifests (CMS)</text>
+  <text x="22" y="138" class="t-tiny">material, never decisions</text>
+
+  <rect class="box" x="10" y="176" width="186" height="96" />
+  <text x="22" y="196" class="t-label">OPERATOR</text>
+  <text x="22" y="216" class="t-small">accepts signed entries only,</text>
+  <text x="22" y="232" class="t-small">orders them, signs checkpoints</text>
+  <text x="22" y="256" class="t-tiny t-deny">can omit, cannot forge</text>
+
+  <path class="edge" d="M196 88 H222" marker-end="url(#cl-ar)" />
+  <path class="edge-dash" d="M196 224 H222" />
+
+  <!-- log -->
+  <rect class="box-plain" x="222" y="10" width="330" height="324" />
+  <text x="236" y="30" class="t-label">COMMON LOG &middot; APPEND-ONLY MERKLE TREE</text>
+
+  <rect class="box-accent" x="322" y="46" width="130" height="30" />
+  <text x="387" y="66" text-anchor="middle" class="t-mono">R = I(N12, N34)</text>
+
+  <rect class="box-strong" x="261" y="112" width="110" height="28" />
+  <text x="316" y="131" text-anchor="middle" class="t-mono">N12 = I(h1, h2)</text>
+  <rect class="box-strong" x="405" y="112" width="110" height="28" />
+  <text x="460" y="131" text-anchor="middle" class="t-mono">N34 = I(h3, h4)</text>
+
+  <path class="edge" d="M316 112 V96 H460 V112 M387 96 V76" />
+
+  {leaves.map((l, i) => (
+    <g>
+      <path class="edge" d={`M${l.x + 30} 178 V${i < 2 ? 158 : 158} H${i < 2 ? 316 : 460} V140`} />
+      <rect class="box" x={l.x} y="178" width="60" height="26" />
+      <text x={l.x + 30} y="196" text-anchor="middle" class="t-mono">{l.h}=L({l.m})</text>
+      <path class="edge" d={`M${l.x + 30} 204 V226`} />
+      <rect class="box-b" x={l.x} y="226" width="60" height="26" style="stroke-dasharray:none" />
+      <text x={l.x + 30} y="244" text-anchor="middle" class="t-mono t-strong">{l.m}</text>
+      <text x={l.x + 30} y="268" text-anchor="middle" class="t-tiny">{l.what}</text>
+      <text x={l.x + 30} y="281" text-anchor="middle" class="t-tiny">{l.who}</text>
+    </g>
+  ))}
+
+  <text x="300" y="302" text-anchor="middle" class="t-mono" style="font-size:10.5px">L(m) = H(0x00 || enc(m))</text>
+  <text x="474" y="302" text-anchor="middle" class="t-mono" style="font-size:10.5px">I(a, b) = H(0x01 || a || b)</text>
+  <text x="387" y="322" text-anchor="middle" class="t-tiny">the prefixes separate a leaf from an internal node</text>
+
+  <!-- checkpoint -->
+  <rect class="box-accent" x="222" y="346" width="330" height="62" />
+  <text x="236" y="366" class="t-label" style="fill:var(--accent)">CHECKPOINT</text>
+  <text x="236" y="384" class="t-small" style="fill:var(--fig-text)">"At date D this log has N entries and root R."</text>
+  <text x="236" y="399" class="t-tiny">Signed by the log, co-signed by witnesses. It fixes the snapshot M.</text>
+  <path class="edge-dash" d="M387 334 V346" />
+
+  <!-- right: readers -->
+  <rect class="box-discover" x="574" y="24" width="176" height="128" />
+  <text x="586" y="44" class="t-label">COMPILER OF B</text>
+  <text x="586" y="64" class="t-small">reads M up to a checkpoint,</text>
+  <text x="586" y="80" class="t-small">with inclusion and</text>
+  <text x="586" y="96" class="t-small">consistency proofs</text>
+  <text x="586" y="112" class="t-small">compiles its own G|t</text>
+  <text x="586" y="138" class="t-tiny">publishes the manifest m3</text>
+
+  <rect class="box-audit" x="574" y="176" width="176" height="96" />
+  <text x="586" y="196" class="t-label">WITNESSES, MONITORS</text>
+  <text x="586" y="216" class="t-small">co-sign checkpoints; check</text>
+  <text x="586" y="232" class="t-small">inclusion, consistency and</text>
+  <text x="586" y="248" class="t-small">signatures; compare views</text>
+
+  <rect class="box" x="574" y="296" width="176" height="56" />
+  <text x="586" y="316" class="t-label">MIRRORS</text>
+  <text x="586" y="336" class="t-small">serve static, cacheable tiles</text>
+
+  <path class="edge" d="M552 88 H570" marker-end="url(#cl-ar)" />
+  <path class="edge" d="M552 224 H570" marker-end="url(#cl-ar)" />
+  <path class="edge-dash" d="M552 324 H570" />
+</svg>
+
+<svg class="svg-fig fig-narrow" viewBox="0 0 360 624" role="img" aria-labelledby="cln-t">
+  <title id="cln-t">The federation's common log</title>
+  <defs>
+    <marker id="cln-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <rect class="box-b" x="4" y="4" width="352" height="74" />
+  <text x="16" y="22" class="t-label">DOMAINS · PUBLISH</text>
+  <text x="16" y="40" class="t-tiny">CA-to-CA certificates, trust lists and status,</text>
+  <text x="16" y="54" class="t-tiny">a signed scope declaration, version manifests</text>
+  <text x="16" y="69" class="t-tiny t-accent">material, never decisions</text>
+  <path class="flow" style="stroke:var(--fig-stroke);fill:none" d="M180 78 V96" />
+
+  <rect class="box-plain" x="4" y="96" width="352" height="252" />
+  <text x="16" y="114" class="t-label">COMMON LOG · APPEND-ONLY MERKLE TREE</text>
+
+  <rect class="box-accent" x="110" y="124" width="140" height="28" />
+  <text x="180" y="142" text-anchor="middle" class="t-mono">R = I(N12, N34)</text>
+  <rect class="box-strong" x="16" y="172" width="148" height="26" />
+  <text x="90" y="189" text-anchor="middle" class="t-mono">N12 = I(h1, h2)</text>
+  <rect class="box-strong" x="196" y="172" width="148" height="26" />
+  <text x="270" y="189" text-anchor="middle" class="t-mono">N34 = I(h3, h4)</text>
+  <path class="edge" d="M90 172 V162 H270 V172 M180 162 V152" />
+
+  {
+    ['1', '2', '3', '4'].map((k, i) => {
+      const x = 12 + i * 86;
+      const what = ['cross-cert', 'trust list', 'manifest', 'manifest'][i];
+      const who = ['by B', 'by C', 'B-47', 'C-19'][i];
+      return (
+        <g>
+          <path class="edge" d={`M${x + 39} 218 V208 H${i < 2 ? 90 : 270} V198`} />
+          <rect class="box" x={x} y="218" width="78" height="24" />
+          <text x={x + 39} y="234" text-anchor="middle" class="t-mono" style="font-size:10.5px">h{k}=L(m{k})</text>
+          <path class="edge" d={`M${x + 39} 242 V252`} />
+          <rect class="box-b" x={x} y="252" width="78" height="22" style="stroke-dasharray:none" />
+          <text x={x + 39} y="267" text-anchor="middle" class="t-mono t-strong">m{k}</text>
+          <text x={x + 39} y="288" text-anchor="middle" class="t-tiny">{what}</text>
+          <text x={x + 39} y="301" text-anchor="middle" class="t-tiny">{who}</text>
+        </g>
+      );
+    })
+  }
+  <text x="180" y="322" text-anchor="middle" class="t-mono" style="font-size:10.5px">L(m) = H(0x00 || enc(m))</text>
+  <text x="180" y="338" text-anchor="middle" class="t-mono" style="font-size:10.5px">I(a, b) = H(0x01 || a || b)</text>
+
+  <path class="edge-dash" d="M180 348 V358" />
+  <rect class="box-accent" x="4" y="358" width="352" height="62" />
+  <text x="16" y="376" class="t-label" style="fill:var(--accent)">CHECKPOINT</text>
+  <text x="16" y="394" class="t-small" style="fill:var(--fig-text)">"At date D, N entries, root R."</text>
+  <text x="16" y="410" class="t-tiny">Signed by the log, co-signed by witnesses: it fixes M.</text>
+
+  <rect class="box-discover" x="4" y="430" width="352" height="54" />
+  <text x="16" y="448" class="t-label">COMPILER OF B</text>
+  <text x="16" y="465" class="t-tiny">reads M up to a checkpoint, with inclusion and</text>
+  <text x="16" y="478" class="t-tiny">consistency proofs, and compiles its own G|t</text>
+
+  <rect class="box-audit" x="4" y="492" width="352" height="54" />
+  <text x="16" y="510" class="t-label">WITNESSES, MONITORS</text>
+  <text x="16" y="527" class="t-tiny">co-sign checkpoints; check inclusion, consistency</text>
+  <text x="16" y="540" class="t-tiny">and signatures; compare what they see</text>
+
+  <rect class="box" x="4" y="554" width="172" height="64" />
+  <text x="16" y="572" class="t-label">OPERATOR</text>
+  <text x="16" y="589" class="t-tiny">orders, signs checkpoints</text>
+  <text x="16" y="606" class="t-tiny t-deny">can omit, cannot forge</text>
+
+  <rect class="box" x="184" y="554" width="172" height="64" />
+  <text x="196" y="572" class="t-label">MIRRORS</text>
+  <text x="196" y="589" class="t-tiny">serve static,</text>
+  <text x="196" y="606" class="t-tiny">cacheable tiles</text>
+</svg>

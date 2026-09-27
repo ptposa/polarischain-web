@@ -2,44 +2,38 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/hero/Hero.astro';
-import Challenges from '../components/Challenges.astro';
-import Platform from '../components/Platform.astro';
-import UseCases from '../components/UseCases.astro';
-import Research from '../components/Research.astro';
-import OptimalPaths from '../components/OptimalPaths.astro';
-import HowItWorks from '../components/HowItWorks.astro';
-import Contribution from '../components/Contribution.astro';
-import OpenScience from '../components/OpenScience.astro';
+import Motivation from '../components/sections/Motivation.astro';
+import Landscape from '../components/sections/Landscape.astro';
+import Gap from '../components/sections/Gap.astro';
+import Proposal from '../components/sections/Proposal.astro';
+import Model from '../components/sections/Model.astro';
+import HowItWorks from '../components/sections/HowItWorks.astro';
+import Admission from '../components/sections/Admission.astro';
+import CommonLog from '../components/sections/CommonLog.astro';
+import Migration from '../components/sections/Migration.astro';
+import UseCases from '../components/sections/UseCases.astro';
+import Laboratory from '../components/sections/Laboratory.astro';
+import Credits from '../components/sections/Credits.astro';
 ---
 
 <BaseLayout
-  title="PolarisChain"
-  description="A governed graph model for federated PKI trust: discover, govern, and optimise certification paths across classical, hybrid, and post-quantum domains."
+  title="PolarisChain · A governed graph model for federated trust"
+  description="PolarisChain models PKI federation as a governed, weighted graph: admissible certification paths are discovered, governed and chosen across classical, hybrid and post-quantum domains."
 >
   <Header />
-
   <main>
     <Hero />
-
-    <div
-      style="position:relative;z-index:2;height:24px;background:transparent;pointer-events:none;"
-      aria-hidden="true"
-    >
-    </div>
-
-    <Challenges />
-    <Platform />
-    <UseCases />
-
-    <div class="section-transition" aria-hidden="true"></div>
-
-    <Research />
-
-    <div class="section-transition" aria-hidden="true"></div>
-
-    <OptimalPaths />
+    <Motivation />
+    <Landscape />
+    <Gap />
+    <Proposal />
+    <Model />
     <HowItWorks />
-    <Contribution />
-    <OpenScience />
+    <Admission />
+    <CommonLog />
+    <Migration />
+    <UseCases />
+    <Laboratory />
+    <Credits />
   </main>
 </BaseLayout>

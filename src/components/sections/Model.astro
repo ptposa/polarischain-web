@@ -1,0 +1,252 @@
+---
+import Chapter from '../Chapter.astro';
+import Figure from '../Figure.astro';
+import FigWorkedExample from '../figures/FigWorkedExample.astro';
+
+const terms = [
+  ['c<sub>crypto</sub>(v)', 'Posture', 'Posture of the algorithm reached: 0 post-quantum, 0.3 hybrid, 1 classical.'],
+  ['c<sub>alg</sub>(v)', 'Friction', 'Octets of signature and public key the verifier must carry, normalised.'],
+  ['c<sub>key</sub>(v)', 'Key strength', 'Strength of the key material, by NIST security category.'],
+  ['c<sub>dist</sub>(u, v)', 'Distance', '1 when the hop crosses an administrative boundary, 0 otherwise.'],
+];
+---
+
+<Chapter id="model" num="05" kicker="The model" title="One governed graph, read by each receiver.">
+  <div class="article">
+    <p>
+      The federated ecosystem is modelled as a directed graph that changes over time and carries
+      its own governance, read from the certificates themselves:
+    </p>
+
+    <div class="eq" role="math" aria-label="G at t equals V, E at t, w, Phi">
+      <span class="eq__body">G|<sub>t</sub> = (V, E|<sub>t</sub>, w, Φ)</span>
+      <span class="eq__n">(1)</span>
+    </div>
+
+    <p>
+      The vertices <span class="m">V</span> are the certification authorities of the federation,
+      with <strong>one node per algorithm</strong>: rotating a key adds a version of a node,
+      changing algorithm adds a new node. The edges <span class="m">E|<sub>t</sub></span> are
+      derived from real certificates that are valid and not revoked at the instant <span class="m"
+        >t</span
+      >, never from declarations. They include the cross-certificates between intermediate CAs of
+      different domains and the internal edges of each hierarchy.
+    </p>
+
+    <p>
+      Each edge carries the governance constraints of its certificate, read from <code
+        >pathLenConstraint</code
+      >, <code>nameConstraints</code> and the policy extensions, and composed along the path with
+      the semantics of RFC 5280, section 6:
+    </p>
+
+    <div class="eq" role="math" aria-label="Phi of e equals depth, name, pol">
+      <span class="eq__body">Φ(e) = ⟨ depth(e), name(e), pol(e) ⟩</span>
+      <span class="eq__n">(2)</span>
+    </div>
+
+    <p>
+      The graph is never read in the abstract. It is always queried by a receiving domain <span
+        class="m">d</span
+      >, through its policy:
+    </p>
+
+    <div class="eq" role="math" aria-label="pi d">
+      <span class="eq__body"
+        >π<sub>d</sub> = ( TP<sub>d</sub>, s<sub>0</sub>, α, β, γ, δ, τ<sub>d</sub>, σ<sub>d</sub>
+        )</span
+      >
+      <span class="eq__n">(3)</span>
+    </div>
+
+    <p>
+      that is, the anchors it accepts, the initial validation state, four weights that add up to
+      one, a <strong>cryptographic threshold τ<sub>d</sub></strong> and the purposes σ<sub>d</sub>
+      the path must allow. A path is <em>admissible</em> for <span class="m">d</span> when it starts
+      at one of its anchors, satisfies Φ, keeps every hop under the threshold and allows the
+      required purposes:
+    </p>
+
+    <div class="eq eq--wide" role="math" aria-label="Admissible paths">
+      <span class="eq__body"
+        >P<sub>adm</sub>(d, v, t) = &#123; P : tp ⇝ v | tp ∈ TP<sub>d</sub>, P ⊆ E|<sub>t</sub>, P ⊨ Φ,<br />
+        ∀e ∈ P : c<sub>crypto</sub>(e) ≤ τ<sub>d</sub>, σ<sub>d</sub> ⊆ ∩ eku(e) &#125;</span
+      >
+      <span class="eq__n">(4)</span>
+    </div>
+
+    <p>Among the admissible paths, each hop has a cost in the receiver's own weights,</p>
+
+    <div class="eq" role="math" aria-label="w d of u v">
+      <span class="eq__body"
+        >w<sub>d</sub>(u, v) = α c<sub>crypto</sub>(v) + β c<sub>alg</sub>(v) + γ c<sub>key</sub>(v)
+        + δ c<sub>dist</sub>(u, v)</span
+      >
+      <span class="eq__n">(5)</span>
+    </div>
+
+    <table class="terms">
+      <caption class="label">Terms of the cost, each in [0, 1]</caption>
+      <tbody>
+        {
+          terms.map(([sym, name, text]) => (
+            <tr>
+              <th scope="row">
+                <span class="m" set:html={sym} />
+              </th>
+              <td>
+                <span class="terms__name">{name}.</span> {text}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+
+    <p>and the receiver selects the path of least total cost:</p>
+
+    <div class="eq" role="math" aria-label="Selected path">
+      <span class="eq__body"
+        >P*<sub>d</sub>(v) = Sel( arg min<sub>P ∈ P<sub>adm</sub></sub> Σ<sub>e ∈ P</sub> w<sub
+          >d</sub
+        >(e) )</span
+      >
+      <span class="eq__n">(6)</span>
+    </div>
+
+    <p>
+      where Sel breaks ties deterministically: the fewest certificates first, then the
+      lexicographic order of their issuer and serial number.
+    </p>
+  </div>
+
+  <p class="key">
+    <span class="m">Φ</span> and <span class="m">τ<sub>d</sub></span> decide which paths may exist.
+    <span class="m">w<sub>d</sub></span> decides which one is preferred.
+  </p>
+
+  <div class="article">
+    <p>
+      Admission is binary and comes first; preference is continuous and only orders what was
+      admitted. Two receivers can order the same routes differently, and each is right under its
+      own policy.
+    </p>
+  </div>
+
+  <h3 class="example-h">A worked example</h3>
+  <div class="article">
+    <p>
+      A receiver in domain B, hybrid with τ<sub>B</sub> = 0.3, validates a certificate issued in
+      domain C. Four candidate paths exist. The threshold prunes the one through a classical
+      intermediate of A; the depth budget prunes the one through the bridge, inside domain C. Of
+      the two survivors, the cost selects the path through the ML-DSA-87 intermediate.
+    </p>
+  </div>
+
+  <Figure num={5} caption="Four candidate paths, two pruned by different constraints, one selected by cost. With a policy that favours bandwidth instead, the hybrid path wins: the crossover can be computed, at β = 0.473.">
+    <FigWorkedExample />
+  </Figure>
+</Chapter>
+
+<style>
+  .article {
+    max-width: var(--measure);
+  }
+
+  .article p {
+    margin: 0 0 1em;
+  }
+
+  .m {
+    font-family: var(--font-math);
+    color: var(--text);
+  }
+
+  .eq {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+    max-width: var(--measure);
+    margin: 1.3rem 0 1.5rem;
+    padding: 0 0 0 1.5rem;
+  }
+
+  .eq__body {
+    flex: 1;
+    font-family: var(--font-math);
+    font-size: 1.12rem;
+    line-height: 1.5;
+    color: #fff;
+    text-align: center;
+  }
+
+  .eq__body sub {
+    font-size: 0.68em;
+  }
+
+  .eq__n {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--text-muted);
+  }
+
+  .terms {
+    width: 100%;
+    max-width: var(--measure);
+    margin: 0.4rem 0 1.4rem;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .terms caption {
+    margin-bottom: 0.5rem;
+    text-align: left;
+  }
+
+  .terms th,
+  .terms td {
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--rule);
+    text-align: left;
+    vertical-align: baseline;
+  }
+
+  .terms th {
+    width: 8.5rem;
+    padding-right: 1rem;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .terms__name {
+    color: var(--text);
+  }
+
+  .key sub {
+    font-size: 0.65em;
+  }
+
+  .key .m {
+    font-style: normal;
+  }
+
+  .chapter .example-h {
+    margin-top: 3rem;
+  }
+
+  @media (max-width: 560px) {
+    .eq {
+      padding-left: 0;
+      gap: 0.6rem;
+    }
+    .eq__body {
+      font-size: 1rem;
+      text-align: left;
+    }
+    .terms th {
+      width: 6.2rem;
+    }
+  }
+</style>

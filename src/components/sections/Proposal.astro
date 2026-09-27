@@ -1,0 +1,150 @@
+---
+import Chapter from '../Chapter.astro';
+import Figure from '../Figure.astro';
+import FigCapabilities from '../figures/FigCapabilities.astro';
+
+const removed = [
+  ['The bridge CA', 'The federation falls: there is no path between domains.'],
+  ['The cross-certificates', 'The federation falls: the hierarchies are isolated again.'],
+  ['The trust list', 'Verifiers are left without anchors.'],
+  [
+    'PolarisChain',
+    'Nothing falls. Certificates stay signed and any RFC 5280 validator still works. What is lost is knowing what each certificate enables, and choosing among the paths.',
+  ],
+];
+
+const caps = [
+  {
+    name: 'Govern',
+    cls: 'govern',
+    text: 'Before a cross-certificate is signed, or a policy changes: which anchors gain or lose an admissible path, and which selected paths change.',
+  },
+  {
+    name: 'Discover',
+    cls: 'discover',
+    text: 'Inside the handshake: whether an admissible path exists from an anchor the receiver accepts and, if there are several, which one it prefers.',
+  },
+  {
+    name: 'Audit',
+    cls: 'audit',
+    text: 'After the decision: not another verdict but its reason, the constraint or missing edge behind a rejection, with a record that reproduces it.',
+  },
+];
+---
+
+<Chapter id="proposal" num="04" kicker="The proposal" title="A frame of reference, not another federation.">
+  <div class="prose">
+    <p>
+      Polaris is not on the ship's route. It is a fixed reference outside it, which lets navigators
+      compute their own position. PolarisChain plays the same role: <strong>it establishes no trust
+      relationship</strong>. It reads the ones that others established by issuing certificates,
+      represents them as a graph and computes over them.
+    </p>
+  </div>
+
+  <p class="key">It does not establish trust. It computes over the trust that already exists.</p>
+
+  <table class="removed">
+    <caption class="label">Remove each component and watch what falls</caption>
+    <tbody>
+      {
+        removed.map(([what, effect], i) => (
+          <tr class={i === removed.length - 1 ? 'is-us' : ''}>
+            <th scope="row">{what}</th>
+            <td>{effect}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <div class="prose after">
+    <p>
+      From that single object follow three computable capabilities. They are not three tools that
+      share data, but <strong>three questions put to the same graph</strong>, at different moments
+      and by different people.
+    </p>
+  </div>
+
+  <Figure num={4} caption="Govern, Discover and Audit query the same governed graph with the same receiver policy.">
+    <FigCapabilities />
+  </Figure>
+
+  <div class="caps grid-3">
+    {
+      caps.map((c) => (
+        <div class={`cap cap--${c.cls}`}>
+          <h3>{c.name}</h3>
+          <p class="small">{c.text}</p>
+        </div>
+      ))
+    }
+  </div>
+</Chapter>
+
+<style>
+  .removed {
+    width: 100%;
+    max-width: 52rem;
+    margin: 0.5rem 0 0;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .removed caption {
+    margin-bottom: 0.8rem;
+    text-align: left;
+  }
+  .removed th,
+  .removed td {
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--rule);
+    vertical-align: top;
+    text-align: left;
+  }
+  .removed th {
+    width: 14rem;
+    padding-right: 1.5rem;
+    font-weight: 400;
+    color: var(--text);
+  }
+  .removed td {
+    color: var(--text-muted);
+  }
+  .removed tr.is-us th {
+    color: var(--ieee-yellow-75);
+  }
+  .removed tr.is-us td {
+    color: var(--text-soft);
+  }
+
+  .after {
+    margin-top: 3rem;
+  }
+
+  .caps {
+    margin-top: 2.2rem;
+  }
+  .cap {
+    padding-top: 1rem;
+    border-top: 1px solid;
+  }
+  .cap .small {
+    margin: 0;
+  }
+  .cap--govern {
+    border-color: var(--govern);
+  }
+  .cap--discover {
+    border-color: var(--discover);
+  }
+  .cap--audit {
+    border-color: var(--audit);
+  }
+
+  @media (max-width: 640px) {
+    .removed th {
+      width: 9rem;
+      padding-right: 1rem;
+    }
+  }
+</style>

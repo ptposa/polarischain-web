@@ -1,128 +1,149 @@
 ---
-// Imported straight out of public/ so the mark has a single source of truth:
-// the same file is served verbatim as the favicon (see BaseLayout). Vite still
-// inlines it here as a data URI because it sits under the 4KB asset threshold -
-// if the artwork ever grows past that, this emits a hashed copy alongside the
-// verbatim one and should move back into src/assets/.
+// The mark is imported straight out of public/ so it has a single source of
+// truth: the same file is served verbatim as the favicon (see BaseLayout).
 import logoUrl from '../../public/logo.svg?url';
+
+const links = [
+  { href: '#motivation', label: 'Motivation' },
+  { href: '#proposal', label: 'Proposal' },
+  { href: '#model', label: 'Model' },
+  { href: '#how-it-works', label: 'How it works' },
+  { href: '#laboratory', label: 'Laboratory' },
+  { href: '#credits', label: 'Credits' },
+];
 ---
 
-<header class="site-header">
-  <div class="container header-shell">
-    <a href="#" class="header-brand" aria-label="PolarisChain home">
-      <img src={logoUrl} class="brand-logo" alt="PolarisChain" />
-      <span class="brand-name">PolarisChain</span>
+<header class="site-header" data-site-header data-state="top">
+  <div class="site-header__inner">
+    <a href="#top" class="brand" aria-label="PolarisChain, back to the top">
+      <img src={logoUrl} class="brand__logo" alt="" width="28" height="28" />
+      <span class="brand__name">PolarisChain</span>
     </a>
-    <nav class="header-nav" aria-label="Primary">
-      <a href="#research" class="nav-link">Research</a>
-      <a href="#interoperability" class="nav-link">Interoperability</a>
-      <a href="#how-it-works" class="nav-link">How it works</a>
-      <a href="#" class="nav-cta">Launch app</a>
-    </nav>
+    <div class="right">
+      <nav class="nav" aria-label="Sections">
+        {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      </nav>
+      <div class="font-switch" role="group" aria-label="Body typeface" data-font-switch>
+        <button type="button" data-font-choice="mono" aria-pressed="true">Mono</button>
+        <button type="button" data-font-choice="sans" aria-pressed="false">Sans</button>
+      </div>
+    </div>
   </div>
 </header>
 
 <style>
   .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    background: rgba(7, 14, 32, 0.25);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    transition: opacity 0.4s ease;
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    height: var(--header-h);
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color 0.3s,
+      border-color 0.3s,
+      opacity 0.3s,
+      transform 0.3s;
   }
-  .site-header.dimmed {
+
+  .site-header[data-state='hidden'] {
     opacity: 0;
+    transform: translateY(-100%);
     pointer-events: none;
   }
 
-  .header-shell {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    min-height: 60px;
-    gap: 20px;
+  .site-header[data-state='solid'] {
+    background: rgba(2, 11, 28, 0.94);
+    border-bottom-color: var(--rule);
   }
 
-  .header-brand {
+  .site-header__inner {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 1.5rem;
+    width: min(var(--wide), 100% - 2 * var(--gutter));
+    height: 100%;
+    margin-inline: auto;
   }
 
-  .brand-logo {
-    height: 28px;
-    width: auto;
-    opacity: 0.9;
-  }
-
-  /* Wordmark only: Playfair stays on the headings */
-  .brand-name {
-    font-family: 'Archivo', 'DM Sans', system-ui, sans-serif;
-    font-size: 1.3rem;
-    font-weight: 500;
-    color: var(--text);
-    letter-spacing: -0.026em;
-    line-height: 1;
-  }
-
-  .header-nav {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 28px;
-  }
-
-  .nav-link {
-    font-size: 0.875rem;
-    color: rgba(237, 228, 214, 0.7);
-    transition: color 0.2s;
-    letter-spacing: 0.01em;
-  }
-  .nav-link:hover {
-    color: var(--text);
-  }
-
-  .nav-cta {
+  .brand {
     display: inline-flex;
     align-items: center;
-    height: 36px;
-    padding: 0 16px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
-    font-size: 0.875rem;
+    gap: 0.6rem;
     color: var(--text);
-    background: rgba(255, 255, 255, 0.04);
-    transition: all 0.2s;
-    letter-spacing: 0.01em;
-  }
-  .nav-cta:hover {
-    border-color: rgba(255, 255, 255, 0.28);
-    background: rgba(255, 255, 255, 0.07);
+    text-decoration: none;
   }
 
-  @media (max-width: 760px) {
-    .header-nav {
-      gap: 16px;
-    }
-    .header-nav .nav-link {
+  .brand:hover {
+    color: #fff;
+  }
+
+  .brand__logo {
+    width: auto;
+    height: 26px;
+  }
+
+  .brand__name {
+    font-family: var(--font-figure);
+    font-size: 1.15rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
+  }
+
+  .nav {
+    display: flex;
+    gap: 1.6rem;
+  }
+
+  .font-switch {
+    display: inline-flex;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .font-switch button {
+    padding: 0.28rem 0.7rem;
+    border: 0;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .font-switch button[data-font-choice='sans'] {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  .font-switch button[aria-pressed='true'] {
+    background: rgba(255, 212, 106, 0.14);
+    color: var(--ieee-yellow-75);
+  }
+
+  .nav a {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    color: var(--text-soft);
+    text-decoration: none;
+  }
+
+  .nav a:hover {
+    color: var(--text);
+  }
+
+  @media (max-width: 900px) {
+    .nav {
       display: none;
-    }
-    .nav-cta {
-      height: 34px;
-      padding: 0 14px;
-      font-size: 0.82rem;
-    }
-    .header-shell {
-      gap: 12px;
-    }
-    .brand-name {
-      font-size: 1.2rem;
-    }
-    .brand-logo {
-      height: 24px;
     }
   }
 </style>

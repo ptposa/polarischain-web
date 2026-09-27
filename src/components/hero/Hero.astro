@@ -1,74 +1,39 @@
 ---
-import DiveGraph from './DiveGraph.astro';
-import DiveCaption from './DiveCaption.astro';
 import HeroAperture from './HeroAperture.astro';
 ---
 
-<!-- Marine field for the content half of the page: the hero keeps its deep black
-     and this layer is faded in by the dive so the lift reads as one continuous move. -->
-<div class="page-lift" id="pageLift" aria-hidden="true"></div>
+<!-- One continuous move: the reader scrolls, the camera flies towards Polaris
+     through the sky chart, the stars stream past and the black of the sky
+     settles into the deep blue of the page. `lib/dive.ts` drives it. -->
+<div class="dive" id="top" data-dive>
+  <div class="dive__stage" data-dive-stage>
+    <canvas class="dive__sky" data-dive-sky aria-hidden="true"></canvas>
 
-<div class="dive-track" data-dive-track>
-  <div class="dive-stage" data-dive-stage>
-    <canvas class="dive-sky" data-dive-sky aria-hidden="true"></canvas>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__inner" data-dive-content>
+        <div class="hero__copy" data-dive-copy>
+          <p class="hero__kicker">
+            Navigating trust across federated PKI ecosystems · Academic research
+          </p>
 
-    <DiveGraph />
+          <h1 class="hero__title" id="hero-title">
+            A governed graph model for <em>federated trust.</em>
+          </h1>
 
-    <section class="section section-dark hero" id="top">
-      <div class="hero-bg" aria-hidden="true"></div>
-      <div class="container hero-shell">
-        <div class="hero-copy">
-          <div class="hero-title-block">
-            <p class="hero-kicker">
-              Navigating trust across federated PKI ecosystems · Academic research
-            </p>
+          <p class="hero__lead">
+            In a sea of cross-certifications, bridge CAs and trust lists, federation relationships
+            remain implicit and hard to reason about.
+          </p>
 
-            <h1 class="hero-title">A governed graph model for <em>federated trust.</em></h1>
+          <p class="hero__body">
+            Like a polar star for navigators, PolarisChain turns federated PKI into a governed
+            weighted graph: a formal frame of reference where trust can be discovered, governed,
+            optimised, and evolved across classical, hybrid, and post-quantum domains.
+          </p>
 
-            <p class="hero-lead">
-              In a sea of cross-certifications, bridge CAs and trust lists, federation relationships
-              remain implicit and hard to reason about.
-            </p>
-
-            <p class="hero-body">
-              Like a polar star for navigators, PolarisChain turns federated PKI into a governed
-              weighted graph: a formal frame of reference where trust can be discovered, governed,
-              optimised, and evolved across classical, hybrid, and post-quantum domains.
-            </p>
-          </div>
-
-          <div class="credential-card">
-            <div class="credential-header">
-              <div class="credential-label">Academic context</div>
-              <div class="credential-descriptor">
-                Master's thesis continuing as doctoral research
-              </div>
-            </div>
-            <div class="credential-cols">
-              <div class="credential-col">
-                <div class="credential-col-label">Author</div>
-                <div class="credential-col-name">Jorge Pablo Trías Posa</div>
-                <div class="credential-col-affil">Polytechnic University of Valencia</div>
-                <a
-                  href="https://orcid.org/0009-0005-8226-8071"
-                  target="_blank"
-                  rel="noreferrer"
-                  class="credential-link">Publications ↗</a
-                >
-                <a href="mailto:jptripos@upv.edu.es" class="credential-link">Email ↗</a>
-              </div>
-              <div class="credential-col">
-                <div class="credential-col-label">Supervisor</div>
-                <div class="credential-col-name">Dr. Mario Aragonés Lozano</div>
-                <div class="credential-col-affil">Doctoral committee &amp; tribunal · UPV</div>
-                <a
-                  href="https://www.upv.es/ficha-personal/maarlo9"
-                  target="_blank"
-                  rel="noreferrer"
-                  class="credential-link">Profile &amp; publications →</a
-                >
-              </div>
-            </div>
+          <div class="dive__cue dive__cue--inline" data-dive-cue aria-hidden="true">
+            <svg width="44" height="2" viewBox="0 0 44 2"><line x1="0" y1="1" x2="44" y2="1"></line></svg>
+            <span>Scroll to enter the model</span>
           </div>
         </div>
 
@@ -76,217 +41,30 @@ import HeroAperture from './HeroAperture.astro';
       </div>
     </section>
 
-    <DiveCaption />
-
-    <div class="dive-hint" data-dive-hint aria-hidden="true">Scroll to explore the model</div>
+    <div class="dive__cue dive__cue--float" data-dive-cue aria-hidden="true">
+      <span>Scroll to enter the model</span>
+      <svg width="2" height="44" viewBox="0 0 2 44"><line x1="1" y1="0" x2="1" y2="44"></line></svg>
+    </div>
   </div>
 </div>
 
 <style>
-  /* Lighter marine field for the content half of the page (fades in as the dive lands) */
-  .page-lift {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0;
-    background: linear-gradient(180deg, #04091a 0%, #050c20 60%, #04091a 100%);
-    transition: opacity 0.35s linear;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .page-lift {
-      opacity: 1;
-    }
-  }
-
-  /* ─── HERO ─── */
-  .hero {
+  /* The script sets the exact height: one screen, plus the part of the hero
+     that does not fit on it, plus the length of the dive. */
+  .dive {
     position: relative;
-    display: grid;
-    align-items: start;
-    overflow: visible;
-    z-index: 1;
-    background: transparent;
+    height: 170vh;
   }
 
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 68% 42%, oklch(56% 0.09 250 / 0.13), transparent),
-      radial-gradient(ellipse 40% 40% at 82% 22%, oklch(76% 0.11 72 / 0.05), transparent);
-  }
-
-  .hero-shell {
-    position: relative;
-    z-index: 2;
-    display: grid;
-    /* Two columns: copy left, dive aperture right (foreshadows the scroll-dive).
-       Copy blocks keep their own max-widths. */
-    grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
-    align-items: start;
-    gap: 80px;
-    padding: 72px 0 40px;
-  }
-
-  .hero-copy {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .hero-kicker {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 28px;
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  .hero-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(3.2rem, 5.5vw, 5.4rem);
-    font-weight: 400;
-    line-height: 1.03;
-    letter-spacing: -0.03em;
-    color: var(--text);
-    max-width: 14ch;
-  }
-
-  .hero-title em {
-    font-style: italic;
-    color: var(--accent-gold);
-  }
-
-  .hero-lead {
-    margin-top: 24px;
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.3rem, 1.8vw, 1.72rem);
-    line-height: 1.28;
-    color: rgba(240, 233, 220, 0.88);
-    max-width: 52ch;
-  }
-
-  .hero-body {
-    margin-top: 18px;
-    font-size: 1.02rem;
-    line-height: 1.7;
-    color: var(--text-soft);
-    max-width: 56ch;
-  }
-
-  /* ─── ACADEMIC CREDENTIAL ─── */
-  .credential-card {
-    margin-top: 48px;
-    padding: 18px 20px;
-    background: rgba(255, 255, 255, 0.025);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: var(--r-md);
-    max-width: 560px;
-  }
-
-  .credential-header {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .credential-label {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  .credential-descriptor {
-    margin-top: 3px;
-    font-size: 0.82rem;
-    line-height: 1.3;
-    color: var(--text-soft);
-  }
-
-  .credential-cols {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px;
-    margin-top: 9px;
-    padding-top: 9px;
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
-  }
-
-  .credential-col-label {
-    font-family: var(--font-mono);
-    font-size: 0.64rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  .credential-col-name {
-    margin-top: 3px;
-    font-family: 'DM Sans', system-ui, sans-serif;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--text);
-    line-height: 1.15;
-  }
-
-  .credential-col-affil {
-    margin-top: 2px;
-    font-size: 0.76rem;
-    line-height: 1.35;
-    color: var(--text-muted);
-  }
-
-  .credential-link {
-    display: inline-block;
-    margin-top: 5px;
-    margin-right: 14px;
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.06em;
-    color: var(--accent-blue);
-    opacity: 0.85;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(122, 179, 232, 0.25);
-    padding-bottom: 1px;
-    transition:
-      opacity 0.2s,
-      border-color 0.2s;
-  }
-  .credential-link:hover {
-    opacity: 1;
-    border-bottom-color: rgba(122, 179, 232, 0.6);
-  }
-
-  @media (max-width: 600px) {
-    .credential-cols {
-      grid-template-columns: 1fr;
-      gap: 22px;
-    }
-  }
-
-  /* ════ SCROLL-DIVE: hero wrapper ════ */
-  .dive-track {
-    position: relative;
-    height: 480vh;
-    z-index: 1;
-  }
-  .dive-stage {
+  .dive__stage {
     position: sticky;
     top: 0;
+    height: 100vh;
     height: 100svh;
     overflow: hidden;
-    display: grid;
-  }
-  .dive-stage .hero-shell {
-    will-change: transform, opacity, filter;
   }
 
-  .dive-sky {
+  .dive__sky {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -294,125 +72,155 @@ import HeroAperture from './HeroAperture.astro';
     pointer-events: none;
   }
 
-  .dive-hint {
-    position: absolute;
-    left: 50%;
-    bottom: 30px;
-    transform: translateX(-50%);
-    z-index: 4;
+  .hero {
+    position: relative;
+    height: 100%;
+  }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+    align-items: center;
+    gap: clamp(2.5rem, 6vw, 6rem);
+    width: min(var(--wide), 100% - 2 * var(--gutter));
+    min-height: 100%;
+    margin-inline: auto;
+    padding: calc(var(--header-h) + 2.5rem) 0 5.5rem;
+    will-change: transform;
+  }
+
+  .hero__copy {
+    will-change: transform, opacity;
+  }
+
+  .hero__kicker {
+    margin: 0 0 1.8rem;
     font-family: var(--font-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.2em;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--text-muted);
+  }
+
+  .hero__title {
+    max-width: 13ch;
+    font-size: clamp(2.8rem, 5.6vw, 5.2rem);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+  }
+
+  .hero__title em {
+    color: var(--ieee-yellow);
+  }
+
+  .hero__lead {
+    max-width: 46ch;
+    margin: 1.6rem 0 0;
+    font-family: var(--font-heading);
+    font-size: clamp(1.2rem, 1.7vw, 1.5rem);
+    line-height: 1.35;
+    color: var(--text);
+  }
+
+  .hero__body {
+    max-width: 58ch;
+    margin: 1.2rem 0 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-soft);
+  }
+
+  .dive__cue {
+    position: absolute;
+    left: 50%;
+    bottom: 1.6rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    will-change: opacity;
+    gap: 0.7rem;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
     pointer-events: none;
   }
-  .dive-hint::after {
-    content: '';
-    width: 1px;
-    height: 34px;
-    background: linear-gradient(180deg, var(--text-muted), transparent);
-    animation: diveHintDrop 2.2s ease-in-out infinite;
+
+  .dive__cue--inline {
+    display: none;
   }
-  @keyframes diveHintDrop {
-    0% {
-      transform: scaleY(0);
-      transform-origin: top;
-      opacity: 0;
-    }
-    30% {
-      transform: scaleY(1);
-      opacity: 1;
-    }
-    100% {
-      transform: scaleY(1);
-      transform-origin: top;
-      opacity: 0;
+
+  .dive__cue line {
+    stroke: var(--ieee-cyan-50);
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+    animation: cue 1.2s linear infinite;
+  }
+
+  @keyframes cue {
+    to {
+      stroke-dashoffset: -14;
     }
   }
 
-  @media (max-width: 640px) {
-    .dive-track {
-      height: 380vh;
+  @media (max-width: 960px) {
+    .dive__cue--float {
+      display: none;
+    }
+    .dive__cue--inline {
+      position: static;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.8rem;
+      margin-top: 2rem;
+      transform: none;
+    }
+    .hero__inner {
+      grid-template-columns: 1fr;
+      align-content: start;
+      gap: 2.5rem;
+      padding-bottom: 6rem;
+    }
+    .hero__title {
+      max-width: 14ch;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .hero__inner {
+      padding-top: calc(var(--header-h) + 1.5rem);
+    }
+    .hero__kicker {
+      margin-bottom: 1.3rem;
+      font-size: 0.64rem;
+    }
+    .hero__title {
+      font-size: clamp(2.4rem, 11vw, 3.2rem);
+    }
+    .hero__body {
+      font-size: 0.94rem;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .dive-track {
+    .dive {
       height: auto;
     }
-    .dive-stage {
+    .dive__stage {
       position: relative;
       height: auto;
-      overflow: visible;
-      display: block;
     }
-    .dive-sky {
+    .dive__cue {
       display: none;
     }
-    .dive-stage .hero-shell {
-      opacity: 1 !important;
-      transform: none !important;
-      filter: none !important;
-    }
+    .dive__cue--inline {
+    display: none;
   }
 
-  @media (max-width: 1080px) {
-    .hero-shell {
-      grid-template-columns: 1fr;
-      padding: 72px 0 56px;
-      gap: 48px;
-    }
-  }
-  @media (max-width: 760px) {
-    .hero-shell {
-      padding: 56px 0 48px;
-      gap: 40px;
-    }
-    .hero-title {
-      max-width: none;
-    }
-  }
-  @media (max-width: 560px) {
-    .credential-card {
-      margin-top: 36px;
-      padding: 16px;
-    }
-    .hero-title {
-      font-size: clamp(2.4rem, 9.5vw, 3.6rem);
-    }
-    .hero-lead {
-      font-size: clamp(1.1rem, 4vw, 1.35rem);
-      margin-top: 18px;
-    }
-    .hero-body {
-      font-size: 0.96rem;
-      margin-top: 14px;
-    }
-    .hero-kicker {
-      font-size: 0.66rem;
-      margin-bottom: 20px;
-      letter-spacing: 0.16em;
-    }
-  }
-  @media (max-width: 380px) {
-    .hero-shell {
-      padding: 44px 0 40px;
-    }
-    .hero-title {
-      font-size: clamp(2.1rem, 10vw, 2.8rem);
+  .dive__cue line {
+      animation: none;
     }
   }
 </style>
-
-<script>
-  import { init } from '../../lib/scroll-dive';
-
-  const track = document.querySelector<HTMLElement>('[data-dive-track]');
-  if (track) init(track);
-</script>

@@ -1,0 +1,382 @@
+---
+import Chapter from '../Chapter.astro';
+
+// Small drawings for the emerging challenges, in the same vocabulary.
+const emergingArt = [
+  // Lifecycle fatigue: validity windows shrink, renewals pile up.
+  `<path class="grid-line" d="M30 76 H236"/>
+   <path class="edge-muted flow-slow" d="M30 76 H236"/>
+   <rect class="bar bar--1" x="34" y="46" width="62" height="14"/>
+   <rect class="bar bar--2" x="100" y="46" width="42" height="14"/>
+   <rect class="bar bar--3" x="146" y="46" width="28" height="14"/>
+   <rect class="bar bar--4" x="178" y="46" width="18" height="14"/>
+   <rect class="bar bar--5" x="200" y="46" width="12" height="14"/>
+   <rect class="bar bar--6" x="216" y="46" width="8" height="14"/>
+   <rect class="bar bar--6" x="228" y="46" width="6" height="14"/>
+   <text x="34" y="34" class="t-label">validity window</text>
+   <text x="236" y="94" text-anchor="end" class="t-label t-accent">renewals, revocations</text>`,
+  // Machine and AI identities: a few people, a swarm of workloads.
+  `<path class="edge-muted" d="M50 34 L92 34 L72 58 Z M72 58 L58 78 M92 34 L112 58"/>
+   <path class="edge-muted" d="M112 58 L140 30 L162 44 L184 28 L206 42 L228 30 M140 30 L148 52 L170 62 L190 50 L212 62 L230 50 M148 52 L136 72 L158 82 L178 74 L198 80 L218 80"/>
+   <path class="edge-path flow-slow" d="M112 58 L148 52 L170 62 L190 50"/>
+   <circle class="n n--blue" cx="50" cy="34" r="4"/><circle class="n n--blue" cx="92" cy="34" r="4"/>
+   <circle class="n n--blue" cx="72" cy="58" r="4"/><circle class="n n--blue" cx="58" cy="78" r="4"/>
+   <g class="swarm"><circle cx="112" cy="58" r="2.4"/><circle cx="140" cy="30" r="2.4"/><circle cx="162" cy="44" r="2.4"/><circle cx="184" cy="28" r="2.4"/><circle cx="206" cy="42" r="2.4"/><circle cx="228" cy="30" r="2.4"/><circle cx="148" cy="52" r="2.4"/><circle cx="170" cy="62" r="2.4"/><circle cx="190" cy="50" r="2.4"/><circle cx="212" cy="62" r="2.4"/><circle cx="230" cy="50" r="2.4"/><circle cx="136" cy="72" r="2.4"/><circle cx="158" cy="82" r="2.4"/><circle cx="178" cy="74" r="2.4"/><circle cx="198" cy="80" r="2.4"/><circle cx="218" cy="80" r="2.4"/></g>
+   <text x="44" y="18" class="t-label">people</text>
+   <text x="236" y="98" text-anchor="end" class="t-label t-accent">workloads · agents</text>`,
+  // Visibility gap: what is known stops, the rest is guessed.
+  `<rect class="box-dash dash-deny" x="136" y="14" width="96" height="64"/>
+   <text x="184" y="28" text-anchor="middle" class="t-label t-deny">no live view</text>
+   <path class="grid-line" d="M28 84 H236"/>
+   <path class="line-obs" d="M32 70 L60 52 L90 62 L116 44 L136 50"/>
+   <path class="edge-muted flow-slow" d="M136 50 L164 46 L192 62 L226 54"/>
+   <circle class="n n--path" cx="60" cy="52" r="2.8"/><circle class="n n--path" cx="90" cy="62" r="2.8"/>
+   <circle class="n n--path" cx="116" cy="44" r="2.8"/><circle class="n n--anchor" cx="136" cy="50" r="3.4"/>
+   <text x="32" y="98" class="t-label t-path">observed trust state</text>`,
+  // Supply chain: signed steps, then one that cannot be verified.
+  `<path class="grid-line" d="M24 86 H236"/>
+   <path class="edge-path" d="M70 44 H94 M140 44 H164"/>
+   <path class="edge-deny" d="M210 44 H224"/>
+   <rect class="box-path" x="24" y="28" width="46" height="32"/>
+   <rect class="box-path" x="94" y="28" width="46" height="32"/>
+   <rect class="box-path" x="164" y="28" width="46" height="32"/>
+   <rect class="box-deny" x="224" y="28" width="14" height="32"/>
+   <text x="47" y="48" text-anchor="middle" class="t-label" style="font-size:7.5px">source</text>
+   <text x="117" y="48" text-anchor="middle" class="t-label" style="font-size:7.5px">build</text>
+   <text x="187" y="48" text-anchor="middle" class="t-label" style="font-size:7.5px">attest</text>
+   <text x="231" y="76" text-anchor="middle" class="t-label t-deny">?</text>
+   <text x="24" y="18" class="t-label">provenance chain</text>
+   <text x="236" y="98" text-anchor="end" class="t-label t-deny">unverifiable hop</text>`,
+];
+
+const emerging = [
+  {
+    title: 'Operational lifecycle fatigue',
+    text: 'Short-lived certificates, renewals, revocations and policy updates are hard to sustain across many domains.',
+  },
+  {
+    title: 'Machine and AI identity explosion',
+    text: 'Workloads and agents multiply identities, and the trust graph changes faster than people can follow.',
+  },
+  {
+    title: 'Real-time visibility gap',
+    text: 'Nobody sees which trust paths are active right now, which limits audit and incident response.',
+  },
+  {
+    title: 'Software supply chain integrity',
+    text: 'Signed artefacts cross domains, and their provenance still rests on implicit trust in foreign repositories.',
+  },
+];
+---
+
+<Chapter id="motivation" num="01" kicker="Research motivation" title="Challenges in federated PKI environments.">
+  <div class="prose">
+    <p>
+      Cross-certification and bridge CAs have enabled interoperability for years. As trust topologies
+      grow denser and the cryptographic transition gets closer, <strong
+        >discovering, governing and choosing certification paths</strong
+      > is still hard to do in a formal, deterministic and crypto-aware way.
+    </p>
+  </div>
+
+  <div class="challenges grid-4">
+    <article>
+      <svg class="svg-fig mini" viewBox="0 0 260 120" aria-hidden="true">
+        <path class="grid-line" d="M40 100 H232 M40 20 V100" />
+        <path class="edge-path" d="M40 98 C 90 96, 120 86, 146 66 S 200 30, 228 24" />
+        <circle class="n n--path" cx="40" cy="98" r="3" />
+        <circle class="n n--path" cx="146" cy="66" r="3" />
+        <circle class="n n--path" cx="228" cy="24" r="3.4" />
+        <text x="48" y="28" class="t-label">certification paths</text>
+        <text x="232" y="116" text-anchor="end" class="t-label">federated domains</text>
+      </svg>
+      <h3>Growing complexity of trust topologies</h3>
+      <p>Every new relationship multiplies the paths between an identity and an anchor.</p>
+    </article>
+
+    <article>
+      <svg class="svg-fig mini" viewBox="0 0 260 120" aria-hidden="true">
+        <path class="edge-muted" d="M40 60 L100 92 H170 L226 60 M100 92 L170 60" />
+        <path class="edge-dash dash-anchor" d="M40 60 L100 28 H170 L226 60" />
+        <path class="edge-path" d="M40 60 H226" />
+        <circle class="n" cx="100" cy="92" r="3" />
+        <circle class="n" cx="170" cy="92" r="3" />
+        <circle class="n n--anchor" cx="100" cy="28" r="3.2" />
+        <circle class="n n--anchor" cx="170" cy="28" r="3.2" />
+        <circle class="n n--path" cx="100" cy="60" r="3.2" />
+        <circle class="n n--path" cx="170" cy="60" r="3.2" />
+        <circle class="n n--end" cx="40" cy="60" r="4.2" />
+        <circle class="n n--end" cx="226" cy="60" r="4.2" />
+        <text x="40" y="80" text-anchor="middle" class="t-label">EE</text>
+        <text x="226" y="80" text-anchor="middle" class="t-label">TA</text>
+        <text x="135" y="16" text-anchor="middle" class="t-label t-accent">admissible, never explored</text>
+        <text x="135" y="112" text-anchor="middle" class="t-label t-path">one heuristic result</text>
+      </svg>
+      <h3>Heuristic validation</h3>
+      <p>
+        Path building stops at the first chain that works, so better admissible paths are never
+        seen.
+      </p>
+    </article>
+
+    <article>
+      <svg class="svg-fig mini" viewBox="0 0 260 120" aria-hidden="true">
+        <rect class="box-dash dash-deny" x="150" y="14" width="90" height="92" />
+        <text x="195" y="28" text-anchor="middle" class="t-label t-deny">unintended reach</text>
+        <path class="edge-muted" d="M40 60 L110 36 M40 60 L110 84" />
+        <path class="edge-path" d="M40 60 L110 60 L172 60" />
+        <path class="edge-deny flow-slow" d="M110 36 L172 42 L218 62 M110 84 L172 80 L218 62" />
+        <circle class="n n--end" cx="40" cy="60" r="4.2" />
+        <circle class="n" cx="110" cy="36" r="3" />
+        <circle class="n n--path" cx="110" cy="60" r="3.2" />
+        <circle class="n" cx="110" cy="84" r="3" />
+        <circle class="n n--deny" cx="172" cy="42" r="3" />
+        <circle class="n n--path" cx="172" cy="60" r="3.2" />
+        <circle class="n n--deny" cx="172" cy="80" r="3" />
+        <circle class="n n--deny" cx="218" cy="62" r="3.6" />
+        <text x="40" y="80" text-anchor="middle" class="t-label">anchor</text>
+      </svg>
+      <h3>Lack of trust governance</h3>
+      <p>
+        Trust is inherited from whole hierarchies instead of being bounded, and reaches further than
+        anyone decided.
+      </p>
+    </article>
+
+    <article>
+      <svg class="svg-fig mini" viewBox="0 0 260 120" aria-hidden="true">
+        <path class="grid-line" d="M40 104 H232 M40 12 V104" />
+        <path class="line-cl flow-slow" d="M44 26 C 110 30, 170 72, 228 96" />
+        <path class="line-hy" d="M44 98 C 96 62, 170 42, 228 58" />
+        <path class="line-pq" d="M44 100 C 130 98, 170 54, 228 18" />
+        <circle class="n n--pq" cx="228" cy="18" r="3" />
+        <circle class="n n--hy" cx="228" cy="58" r="3" />
+        <circle class="n" cx="228" cy="96" r="3" />
+        <text x="50" y="20" class="t-label">classical</text>
+        <text x="66" y="66" class="t-label t-hy">hybrid</text>
+        <text x="220" y="12" text-anchor="end" class="t-label t-pq">post-quantum</text>
+        <text x="232" y="116" text-anchor="end" class="t-label">time</text>
+      </svg>
+      <h3>No crypto agility awareness</h3>
+      <p>
+        Federation rarely weighs the algorithm on each hop, just as classical, hybrid and
+        post-quantum material starts to coexist.
+      </p>
+    </article>
+  </div>
+
+  <div class="emerging">
+    <p class="label">Emerging challenges</p>
+    <div class="grid-4">
+      {
+        emerging.map((e, i) => (
+          <div class="emerging__item">
+            <svg class="svg-fig mini mini--em" viewBox="0 0 260 100" aria-hidden="true" set:html={emergingArt[i]} />
+            <h4>{e.title}</h4>
+            <p>{e.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</Chapter>
+
+<style>
+  .challenges {
+    margin-top: 3rem;
+  }
+
+  .challenges article {
+    padding-top: 0.4rem;
+  }
+
+  .mini {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    margin-bottom: 1.1rem;
+  }
+
+  .mini .t-label {
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+
+  .challenges h3 {
+    font-size: 1.12rem;
+  }
+
+  .challenges p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .n {
+    fill: var(--ground);
+    stroke: rgba(186, 198, 217, 0.5);
+    stroke-width: 1.2;
+  }
+  .n--path {
+    stroke: var(--ieee-cyan);
+  }
+  .n--anchor {
+    stroke: var(--ieee-yellow-75);
+  }
+  .n--deny {
+    stroke: var(--deny);
+  }
+  .n--end {
+    stroke: var(--text-soft);
+  }
+
+  .dash-anchor {
+    stroke: rgba(255, 212, 106, 0.7);
+  }
+  .dash-deny {
+    stroke: rgba(234, 148, 143, 0.5);
+  }
+
+  .line-pq,
+  .line-hy,
+  .line-cl,
+  .line-obs {
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+  .line-cl {
+    stroke: rgba(186, 198, 217, 0.55);
+    stroke-width: 1.3;
+  }
+  .line-obs {
+    stroke: var(--ieee-cyan);
+    stroke-width: 1.5;
+  }
+  .n--pq {
+    stroke: var(--pq);
+  }
+  .n--hy {
+    stroke: var(--hybrid);
+  }
+  .n--blue {
+    stroke: var(--ieee-blue-50);
+  }
+  .swarm circle {
+    fill: var(--ieee-yellow-75);
+    opacity: 0.8;
+  }
+  .bar {
+    fill: none;
+    stroke-width: 1.1;
+  }
+  .bar--1 {
+    stroke: var(--ieee-blue-50);
+  }
+  .bar--2 {
+    stroke: var(--ieee-blue-50);
+  }
+  .bar--3 {
+    stroke: var(--ieee-cyan-50);
+  }
+  .bar--4 {
+    stroke: var(--ieee-yellow-75);
+  }
+  .bar--5,
+  .bar--6 {
+    stroke: var(--ieee-yellow);
+  }
+  .mini--em {
+    max-width: 280px;
+    margin-bottom: 0.9rem;
+  }
+  .line-pq {
+    stroke: var(--pq);
+  }
+  .line-hy {
+    stroke: var(--hybrid);
+  }
+  .svg-fig .t-pq {
+    fill: var(--pq);
+  }
+  .svg-fig .t-hy {
+    fill: var(--hybrid);
+  }
+
+  .emerging {
+    margin-top: 3.5rem;
+  }
+
+  .emerging .label {
+    margin: 0 0 1.2rem;
+  }
+
+  .emerging .grid-4 {
+    gap: 1.5rem 2.5rem;
+  }
+
+  .emerging__item h4 {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .emerging__item p {
+    margin: 0;
+    font-size: 0.84rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  /* The emerging drawings are injected as HTML, so their inner elements
+     carry no scope attribute: reach them through :global(). */
+  .mini--em :global(.n) {
+    fill: var(--ground);
+    stroke: rgba(186, 198, 217, 0.5);
+    stroke-width: 1.2;
+  }
+  .mini--em :global(.n--blue) {
+    stroke: var(--ieee-blue-50);
+  }
+  .mini--em :global(.n--path) {
+    stroke: var(--ieee-cyan);
+  }
+  .mini--em :global(.n--anchor) {
+    stroke: var(--ieee-yellow-75);
+  }
+  .mini--em :global(.swarm circle) {
+    fill: var(--ieee-yellow-75);
+    opacity: 0.8;
+  }
+  .mini--em :global(.bar) {
+    fill: none;
+    stroke-width: 1.1;
+  }
+  .mini--em :global(.bar--1),
+  .mini--em :global(.bar--2) {
+    stroke: var(--ieee-blue-50);
+  }
+  .mini--em :global(.bar--3) {
+    stroke: var(--ieee-cyan-50);
+  }
+  .mini--em :global(.bar--4) {
+    stroke: var(--ieee-yellow-75);
+  }
+  .mini--em :global(.bar--5),
+  .mini--em :global(.bar--6) {
+    stroke: var(--ieee-yellow);
+  }
+  .mini--em :global(.line-obs) {
+    fill: none;
+    stroke: var(--ieee-cyan);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+  .mini--em :global(.dash-deny) {
+    stroke: rgba(234, 148, 143, 0.5);
+  }
+  .mini--em :global(.t-label) {
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+</style>
