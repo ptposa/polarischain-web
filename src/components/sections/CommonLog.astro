@@ -1,0 +1,28 @@
+---
+import Chapter from '../Chapter.astro';
+import Figure from '../Figure.astro';
+import FigCommonLog from '../figures/FigCommonLog.astro';
+---
+
+<Chapter id="common-log" num="08" kicker="A common log" title="Everyone compiles the same material.">
+  <div class="prose">
+    <p>
+      For every domain to reason over the same federation, they need a common place to read the
+      material from and a way to check it has not been altered. PolarisChain adopts the
+      architecture of <strong>Certificate Transparency</strong>, with another object recorded:
+      certificates between CAs, trust lists, and the signed manifests of each version a domain
+      activates.
+    </p>
+    <p>
+      Entries are leaves of a Merkle tree, and signed checkpoints allow proofs of inclusion and of
+      consistency. The operator can omit an entry but cannot forge one without some proof failing;
+      witnesses and monitors make a split view detectable.
+    </p>
+  </div>
+
+  <p class="key">A minute book with numbered pages, where one can only write at the end.</p>
+
+  <Figure num={8} caption="Who publishes, who verifies and who decides. Adapted from Annex III of the thesis. The log is specified; its implementation is ongoing work.">
+    <FigCommonLog />
+  </Figure>
+</Chapter>

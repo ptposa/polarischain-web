@@ -1,0 +1,62 @@
+---
+import Chapter from '../Chapter.astro';
+import Figure from '../Figure.astro';
+import FigUseCase from '../figures/FigUseCase.astro';
+
+const cases = [
+  {
+    tag: 'In the thesis',
+    title: 'Machine-to-machine mTLS',
+    text: 'A service of one domain admits a client certificate issued in another, at connection time. Discover works inside the handshake. It is the case the laboratory implements end to end.',
+  },
+  {
+    tag: 'Beyond',
+    title: 'Long-term signature validation',
+    text: 'A PAdES signature made years ago in another domain must be judged against the trust in force when it was signed, not today. It needs the graph as it was: part of the ongoing doctoral research.',
+  },
+  {
+    tag: 'Beyond',
+    title: 'Coalition S/MIME',
+    text: 'Participants join and leave during an exercise, and every arrival is a new cross-certificate. It is where Govern is exercised most often.',
+  },
+];
+---
+
+<Chapter id="use-cases" num="10" kicker="Use cases" title="Where a governed path matters.">
+  <div class="prose">
+    <p>
+      One scenario runs through the whole thesis. A client of domain A connects over mTLS to a
+      service of domain B. B trusts only its own root, and its intermediate has cross-certified the
+      intermediate of A. <strong>Inside the handshake, B has to decide whether an admissible path
+      exists under its policy, and which one is best.</strong>
+    </p>
+  </div>
+
+  <Figure num={10} caption="The use case of the thesis. Its variants (a key renewal, a revocation, a higher threshold) are all told on this same scenario.">
+    <FigUseCase />
+  </Figure>
+
+  <div class="cases grid-3">
+    {
+      cases.map((c) => (
+        <div class="rule-top">
+          <p class="label">{c.tag}</p>
+          <h3>{c.title}</h3>
+          <p class="small">{c.text}</p>
+        </div>
+      ))
+    }
+  </div>
+</Chapter>
+
+<style>
+  .cases {
+    margin-top: 3rem;
+  }
+  .cases .label {
+    margin: 0 0 0.6rem;
+  }
+  .cases .small {
+    margin: 0;
+  }
+</style>

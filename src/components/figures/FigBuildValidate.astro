@@ -1,0 +1,85 @@
+---
+// Building a path and validating it are specified by different documents.
+// Wide drawing for tablets and desktops, a vertical one for phones.
+---
+
+<svg class="svg-fig fig-wide" viewBox="0 0 760 268" role="img" aria-labelledby="bv-t bv-d">
+  <title id="bv-t">Building a path and validating it are specified by different documents</title>
+  <desc id="bv-d">RFC 4158 describes how candidate paths may be built but is informational. RFC 5280 section 6 validates one path it receives already built. Between them nothing fixes how to choose the admissible path, nor which of several is best. PolarisChain works in that gap.</desc>
+
+  <rect class="box" x="10" y="20" width="210" height="150" />
+  <text x="24" y="44" class="t-label">RFC 4158 · INFORMATIONAL</text>
+  <text x="24" y="66" class="t-title">Path building</text>
+  <text x="24" y="90" class="t-small">Describes the certificate graph</text>
+  <text x="24" y="106" class="t-small">and heuristics to order candidates.</text>
+  <text x="24" y="122" class="t-small">Its goal is to find a path,</text>
+  <text x="24" y="138" class="t-small">not to prefer one over another.</text>
+
+  <path class="edge-dash flow-slow" d="M220 70 C 270 70, 280 95, 318 95" />
+  <path class="edge-dash flow-slow" d="M220 95 H318" />
+  <path class="edge-dash flow-slow" d="M220 120 C 270 120, 280 95, 318 95" />
+  <text x="226" y="152" class="t-tiny">candidate paths</text>
+
+  <rect class="box-dash" x="318" y="20" width="124" height="150" />
+  <text x="380" y="72" text-anchor="middle" class="t-accent" style="font-size:30px">?</text>
+  <text x="380" y="100" text-anchor="middle" class="t-small">Which one is</text>
+  <text x="380" y="115" text-anchor="middle" class="t-small">admissible, and</text>
+  <text x="380" y="130" text-anchor="middle" class="t-small">which is best?</text>
+  <text x="380" y="155" text-anchor="middle" class="t-tiny">no procedure fixed</text>
+
+  <path class="edge-path" d="M442 95 H536" />
+  <text x="487" y="87" text-anchor="middle" class="t-tiny">one path</text>
+
+  <rect class="box" x="540" y="20" width="210" height="150" />
+  <text x="554" y="44" class="t-label" style="letter-spacing:0.02em">RFC 5280 §6 · PROPOSED STANDARD</text>
+  <text x="554" y="66" class="t-title">Path validation</text>
+  <text x="554" y="90" class="t-small">Input (a) of §6.1.1:</text>
+  <text x="554" y="108" class="t-mono">"a prospective</text>
+  <text x="554" y="123" class="t-mono"> certification path</text>
+  <text x="554" y="138" class="t-mono"> of length n"</text>
+  <text x="554" y="158" class="t-small">Valid or not, by minimum conditions.</text>
+
+  <text x="380" y="196" text-anchor="middle" class="t-small">SCVP (RFC 5055) can ask a server for <tspan class="t-mono">id-swb-pkc-best-cert-path</tspan>, but never defines "best".</text>
+
+  <rect class="box-accent" x="170" y="214" width="420" height="44" />
+  <text x="380" y="233" text-anchor="middle" class="t-strong t-accent">PolarisChain: admissible subgraph, then a preference</text>
+  <text x="380" y="249" text-anchor="middle" class="t-tiny">constraints decide which paths may exist; the verifier's cost ranks those that remain</text>
+</svg>
+
+<svg class="svg-fig fig-narrow" viewBox="0 0 360 500" role="img" aria-labelledby="bvn-t">
+  <title id="bvn-t">Building a path and validating it are specified by different documents</title>
+
+  <rect class="box" x="4" y="4" width="352" height="96" />
+  <text x="18" y="26" class="t-label">RFC 4158 · INFORMATIONAL</text>
+  <text x="18" y="48" class="t-title">Path building</text>
+  <text x="18" y="68" class="t-small">Describes the certificate graph and</text>
+  <text x="18" y="84" class="t-small">heuristics: it finds a path, prefers none.</text>
+
+  <path class="edge-dash flow-slow" d="M120 100 C 120 120, 180 118, 180 142" />
+  <path class="edge-dash flow-slow" d="M180 100 V142" />
+  <path class="edge-dash flow-slow" d="M240 100 C 240 120, 180 118, 180 142" />
+  <text x="252" y="126" class="t-tiny">candidate paths</text>
+
+  <rect class="box-dash" x="60" y="142" width="240" height="84" />
+  <text x="180" y="170" text-anchor="middle" class="t-accent" style="font-size:24px">?</text>
+  <text x="180" y="192" text-anchor="middle" class="t-small">Which one is admissible,</text>
+  <text x="180" y="208" text-anchor="middle" class="t-small">and which is best?</text>
+
+  <path class="edge-path" d="M180 226 V262" />
+  <text x="190" y="248" class="t-tiny">one path</text>
+
+  <rect class="box" x="4" y="262" width="352" height="108" />
+  <text x="18" y="284" class="t-label">RFC 5280 §6 · PROPOSED STANDARD</text>
+  <text x="18" y="306" class="t-title">Path validation</text>
+  <text x="18" y="326" class="t-small">Input (a) of §6.1.1:</text>
+  <text x="18" y="344" class="t-mono">"a prospective certification</text>
+  <text x="18" y="360" class="t-mono"> path of length n"</text>
+
+  <text x="4" y="394" class="t-small">SCVP (RFC 5055) can ask a server for the</text>
+  <text x="4" y="410" class="t-small">best path, but never defines "best".</text>
+
+  <rect class="box-accent" x="4" y="428" width="352" height="64" />
+  <text x="180" y="452" text-anchor="middle" class="t-strong t-accent">PolarisChain</text>
+  <text x="180" y="470" text-anchor="middle" class="t-tiny">admissible subgraph first, then a preference:</text>
+  <text x="180" y="484" text-anchor="middle" class="t-tiny">the verifier's cost ranks the paths that remain</text>
+</svg>

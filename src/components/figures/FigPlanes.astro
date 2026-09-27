@@ -1,0 +1,186 @@
+---
+// Figure component: inline SVG styled by the .svg-fig vocabulary in global.css.
+---
+
+<svg class="svg-fig fig-wide" viewBox="0 0 760 470" role="img" aria-labelledby="pl-t pl-d">
+  <title id="pl-t">Two planes in the receiving domain</title>
+  <desc id="pl-d">An asynchronous governance plane ingests material, compiles the graph and analyses policy. A frontier separates it from the execution plane, which sits on the critical path of the handshake: the PEP in the TLS endpoint, the selector and validator in the same process, and the compiled graph and policy resident in memory. Evidence of each decision feeds governance back.</desc>
+
+  <defs>
+    <marker id="pl-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="pl-ard" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow-deny" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="pl-ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="arrow-accent" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <!-- domain B -->
+  <rect class="box-b" x="160" y="8" width="590" height="456" />
+  <text x="174" y="26" class="t-label">DOMAIN B &middot; OWN POLICY AND DEPLOYMENT</text>
+
+  <!-- governance plane -->
+  <rect class="box-plain" x="175" y="36" width="560" height="110" />
+  <text x="189" y="54" class="t-label">GOVERNANCE PLANE &middot; ASYNCHRONOUS</text>
+
+  <rect class="box" x="189" y="64" width="166" height="72" />
+  <text x="200" y="83" class="t-strong">Ingestion</text>
+  <text x="200" y="100" class="t-tiny">CA-to-CA certificates, status</text>
+  <text x="200" y="113" class="t-tiny">Trust lists: candidates for V, TP</text>
+  <text x="200" y="126" class="t-tiny">Local acceptance, no edges</text>
+
+  <rect class="box" x="367" y="64" width="176" height="72" />
+  <text x="378" y="83" class="t-strong">Graph compilation</text>
+  <text x="378" y="100" class="t-tiny">X.509 &#8594; w(e), &#934;(e)</text>
+  <text x="378" y="113" class="t-mono" style="font-size:10px">G|t = (V, E|t, w, &#934;)</text>
+  <text x="378" y="126" class="t-tiny">compiled and versioned</text>
+
+  <rect class="box-govern" x="555" y="64" width="166" height="72" />
+  <text x="566" y="83" class="t-strong">Administration</text>
+  <text x="566" y="100" class="t-tiny">Local policy &#960;_B</text>
+  <text x="566" y="113" class="t-tiny">What-if analysis of a</text>
+  <text x="566" y="126" class="t-tiny">cross-certificate (Govern)</text>
+
+  <path class="edge-dash" d="M355 100 H363" marker-end="url(#pl-ar)" />
+  <path class="edge-dash" d="M555 100 H547" marker-end="url(#pl-ar)" />
+
+  <!-- frontier -->
+  <rect class="band" x="175" y="154" width="560" height="32" />
+  <text x="189" y="167" class="t-tiny t-strong">FRONTIER &middot; no call to governance during the handshake</text>
+  <text x="189" y="180" class="t-tiny">graph precompiled and resident: governance may be down</text>
+
+  <!-- execution plane -->
+  <rect class="box-plain" x="175" y="194" width="560" height="196" />
+  <text x="189" y="212" class="t-label">EXECUTION PLANE &middot; CRITICAL PATH OF THE HANDSHAKE</text>
+  <text x="721" y="212" text-anchor="end" class="t-tiny">application layer</text>
+
+  <rect class="box-discover" x="189" y="220" width="236" height="66" />
+  <text x="200" y="241" class="t-strong">PEP &middot; server TLS endpoint</text>
+  <text x="200" y="256" class="t-mono" style="font-size:10px">client-certificate callback</text>
+  <text x="200" y="270" class="t-tiny">synchronous, returns a boolean,</text>
+  <text x="200" y="281" class="t-tiny">always evaluates, cert. required</text>
+
+  <rect class="box" x="571" y="226" width="150" height="46" />
+  <text x="582" y="245" class="t-strong">Internal service</text>
+  <text x="582" y="261" class="t-tiny">sees admitted peers only</text>
+
+  <path class="edge-accent" d="M425 245 H567" marker-end="url(#pl-ara)" />
+  <text x="432" y="238" class="t-tiny t-accent">admitted traffic</text>
+  <path class="edge-deny" d="M425 268 H566" marker-end="url(#pl-ard)" />
+  <text x="571" y="286" class="t-tiny t-deny">denied if validation fails,</text>
+  <text x="571" y="298" class="t-tiny t-deny">evidence is missing or</text>
+  <text x="571" y="310" class="t-tiny t-deny">the path differs</text>
+
+  <text x="721" y="320" text-anchor="end" class="t-tiny">decision layer</text>
+  <rect class="box" x="189" y="306" width="236" height="40" />
+  <text x="200" y="323" class="t-strong">Selector and validator (PDP)</text>
+  <text x="200" y="338" class="t-tiny">in process, no network, no disk</text>
+  <text x="571" y="332" class="t-mono" style="font-size:10px">nameConstraints</text>
+  <text x="571" y="345" class="t-mono" style="font-size:10px">pathLenConstraint ...</text>
+
+  <path class="edge" d="M270 284 V302" marker-end="url(#pl-ar)" />
+  <path class="edge" d="M344 306 V288" marker-end="url(#pl-ar)" />
+  <text x="264" y="297" text-anchor="end" class="t-tiny">query</text>
+  <text x="350" y="297" class="t-tiny">verdict</text>
+
+  <text x="721" y="370" text-anchor="end" class="t-tiny">data layer</text>
+  <rect class="box-strong" x="189" y="356" width="236" height="26" />
+  <text x="200" y="373" class="t-small" style="fill:var(--fig-text)">Local G|t and &#960;_B, identified, in memory</text>
+  <path class="edge" d="M307 346 V352" />
+
+  <path class="edge-dash" d="M520 136 V369 H429" marker-end="url(#pl-ar)" />
+  <text x="440" y="362" class="t-tiny">load, outside</text>
+  <text x="440" y="380" class="t-tiny">the handshake</text>
+
+  <!-- evidence -->
+  <rect class="box-audit" x="175" y="398" width="560" height="56" />
+  <text x="189" y="416" class="t-label">EVIDENCE &middot; FEEDS GOVERNANCE BACK (AUDIT)</text>
+  <text x="189" y="432" class="t-tiny">certificate &#183; selected and validated paths &#183; profile &#183; policy and version &#183; cost &#183; reason</text>
+  <text x="189" y="446" class="t-tiny">acceptance of the certificate and completion of the handshake are recorded as distinct facts</text>
+
+  <path class="edge-dash" d="M742 426 H746 V100 H725" marker-end="url(#pl-ar)" />
+
+  <!-- client -->
+  <rect class="box-a" x="10" y="222" width="135" height="98" />
+  <text x="20" y="241" class="t-strong">Client of A</text>
+  <text x="20" y="258" class="t-tiny">standard TLS 1.3 stack</text>
+  <text x="20" y="271" class="t-tiny">no PolarisChain agent</text>
+  <text x="20" y="284" class="t-tiny">proves possession</text>
+  <text x="20" y="297" class="t-tiny">of its private key</text>
+  <text x="10" y="336" class="t-label">OUTSIDE DOMAIN B</text>
+
+  <path class="edge-path" d="M145 250 H185" />
+</svg>
+
+<svg class="svg-fig fig-narrow" viewBox="0 0 360 612" role="img" aria-labelledby="pln-t">
+  <title id="pln-t">Two planes in the receiving domain</title>
+  <defs>
+    <marker id="pln-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="pln-ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow-path" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <rect class="box-a" x="4" y="4" width="352" height="52" />
+  <text x="16" y="24" class="t-strong">Client of A <tspan class="t-tiny">· outside domain B</tspan></text>
+  <text x="16" y="42" class="t-tiny">standard TLS 1.3 stack, proves possession of its key</text>
+  <path class="edge-path" d="M300 56 V140" marker-end="url(#pln-ara)" />
+
+  <rect class="box-b" x="4" y="84" width="352" height="522" />
+  <text x="16" y="102" class="t-label">DOMAIN B · OWN POLICY</text>
+
+  <rect class="box-plain" x="12" y="110" width="336" height="228" />
+  <text x="24" y="128" class="t-label">EXECUTION PLANE · IN THE HANDSHAKE</text>
+
+  <rect class="box-discover" x="24" y="142" width="312" height="48" />
+  <text x="36" y="162" class="t-strong">PEP · server TLS endpoint</text>
+  <text x="36" y="180" class="t-tiny">client-certificate callback, returns a boolean</text>
+
+  <path class="edge" d="M110 190 V206" marker-end="url(#pln-ar)" />
+  <path class="edge" d="M250 210 V194" marker-end="url(#pln-ar)" />
+  <text x="116" y="203" class="t-tiny">query</text>
+  <text x="256" y="206" class="t-tiny">verdict</text>
+
+  <rect class="box" x="24" y="210" width="312" height="42" />
+  <text x="36" y="228" class="t-strong">Selector and validator (PDP)</text>
+  <text x="36" y="244" class="t-tiny">in process, no network, no disk</text>
+
+  <rect class="box-strong" x="24" y="258" width="312" height="26" />
+  <text x="36" y="275" class="t-small">Local G|t and π_B, in memory</text>
+
+  <rect class="box" x="24" y="292" width="150" height="38" />
+  <text x="36" y="309" class="t-strong">Internal service</text>
+  <text x="36" y="323" class="t-tiny">admitted peers only</text>
+  <path class="edge-path" d="M18 166 V311 H20" />
+  <text x="184" y="306" class="t-tiny t-deny">denied if validation fails,</text>
+  <text x="184" y="319" class="t-tiny t-deny">evidence is missing or</text>
+  <text x="184" y="332" class="t-tiny t-deny">the path differs</text>
+
+  <rect class="band" x="12" y="346" width="336" height="36" />
+  <text x="24" y="361" class="t-tiny" style="fill:var(--fig-text)">FRONTIER · no call to governance in the handshake</text>
+  <text x="24" y="375" class="t-tiny">graph precompiled and resident: governance may be down</text>
+
+  <rect class="box-plain" x="12" y="390" width="336" height="154" />
+  <text x="24" y="408" class="t-label">GOVERNANCE PLANE · ASYNCHRONOUS</text>
+  <rect class="box" x="24" y="416" width="300" height="36" />
+  <text x="36" y="431" class="t-strong">Ingestion</text>
+  <text x="36" y="445" class="t-tiny">CA-to-CA certificates, status, trust lists</text>
+  <rect class="box" x="24" y="458" width="300" height="36" />
+  <text x="36" y="473" class="t-strong">Graph compilation</text>
+  <text x="36" y="487" class="t-tiny">X.509 → w(e), Φ(e), compiled and versioned</text>
+  <rect class="box-govern" x="24" y="500" width="300" height="36" />
+  <text x="36" y="515" class="t-strong">Administration</text>
+  <text x="36" y="529" class="t-tiny">local policy π_B, what-if analysis (Govern)</text>
+
+  <path class="edge-dash" d="M324 476 H342 V271 H339" marker-end="url(#pln-ar)" />
+  <text x="344" y="420" class="t-tiny" transform="rotate(-90 344 420)" text-anchor="middle">load</text>
+
+  <rect class="box-audit" x="12" y="552" width="336" height="46" />
+  <text x="24" y="570" class="t-label">EVIDENCE · FEEDS GOVERNANCE (AUDIT)</text>
+  <text x="24" y="588" class="t-tiny">selected and validated paths, policy version, reason</text>
+</svg>

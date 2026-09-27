@@ -1,0 +1,77 @@
+---
+// Figure component: inline SVG styled by the .svg-fig vocabulary in global.css.
+---
+
+<svg class="svg-fig fig-wide" viewBox="0 0 760 286" role="img" aria-labelledby="mg-t mg-d">
+  <title id="mg-t">Migrating is traversing an edge</title>
+  <desc id="mg-d">A CA that moves from ECDSA P-384 to ML-DSA-65 occupies two nodes. The link certificate new-with-old reaches the post-quantum node, costs 0.266 and is admissible for B with threshold 0.3. The link certificate old-with-new reaches the classical node, costs 0.450 and is not admissible.</desc>
+
+  <defs>
+    <marker id="mg-ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="arrow-accent" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="mg-ard" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow-deny" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <rect class="box-b" x="10" y="10" width="740" height="222" />
+  <text x="24" y="30" class="t-label">ONE CA, TWO ALGORITHMS, TWO NODES &middot; SAME DOMAIN</text>
+
+  <text x="380" y="56" text-anchor="middle" class="t-mono t-path">new with old</text>
+  <text x="380" y="72" text-anchor="middle" class="t-tiny">w_B = 0.4&#183;0 + 0.3&#183;0.72 + 0.2&#183;0.25 = 0.266 &#183; admissible</text>
+
+  <rect class="box-strong" x="50" y="100" width="190" height="62" />
+  <text x="145" y="124" text-anchor="middle" class="t-strong">CA, classical node</text>
+  <text x="145" y="142" text-anchor="middle" class="t-mono">ECDSA P-384</text>
+  <text x="145" y="156" text-anchor="middle" class="t-tiny">old key</text>
+
+  <rect class="box-accent" x="520" y="100" width="190" height="62" />
+  <text x="615" y="124" text-anchor="middle" class="t-strong">CA, post-quantum node</text>
+  <text x="615" y="142" text-anchor="middle" class="t-mono">ML-DSA-65</text>
+  <text x="615" y="156" text-anchor="middle" class="t-tiny">new key</text>
+
+  <path class="edge-accent" d="M240 116 C 320 84, 440 84, 516 116" marker-end="url(#mg-ara)" />
+  <path class="edge-deny" d="M520 148 C 440 180, 320 180, 244 148" marker-end="url(#mg-ard)" />
+
+  <text x="380" y="200" text-anchor="middle" class="t-mono t-deny">old with new</text>
+  <text x="380" y="216" text-anchor="middle" class="t-tiny">c_crypto = 1 &gt; &#964;_B = 0.3 &#183; outside the search space (w_B would be 0.450)</text>
+
+  <text x="10" y="256" class="t-tiny">Link certificates as in RFC 9810, section 4.4. They keep the CA name, so they are self-issued and consume no depth budget (RFC 5280, 6.1.4 (h) and (l)).</text>
+  <text x="10" y="274" class="t-tiny">Rotating to another key of the same algorithm adds a version to the same node; changing algorithm creates a node: one algorithm, one node.</text>
+</svg>
+
+<svg class="svg-fig fig-narrow" viewBox="0 0 360 336" role="img" aria-labelledby="mgn-t">
+  <title id="mgn-t">Migrating is traversing an edge</title>
+  <defs>
+    <marker id="mgn-ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow-path" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="mgn-ard" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow-deny" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <rect class="box-b" x="4" y="4" width="352" height="262" />
+  <text x="16" y="24" class="t-label">ONE CA, TWO ALGORITHMS, TWO NODES</text>
+
+  <rect class="box-strong" x="60" y="40" width="240" height="54" />
+  <text x="180" y="62" text-anchor="middle" class="t-strong">CA, classical node</text>
+  <text x="180" y="80" text-anchor="middle" class="t-mono">ECDSA P-384 · old key</text>
+
+  <rect class="box-accent" x="60" y="198" width="240" height="54" />
+  <text x="180" y="220" text-anchor="middle" class="t-strong t-accent">CA, post-quantum node</text>
+  <text x="180" y="238" text-anchor="middle" class="t-mono">ML-DSA-65 · new key</text>
+
+  <path class="edge-path" d="M84 94 V194" marker-end="url(#mgn-ara)" />
+  <path class="edge-deny" d="M276 198 V98" marker-end="url(#mgn-ard)" />
+
+  <text x="96" y="126" class="t-mono t-path">new with old</text>
+  <text x="96" y="142" class="t-tiny">w_B = 0.266 · admissible</text>
+  <text x="264" y="162" text-anchor="end" class="t-mono t-deny">old with new</text>
+  <text x="264" y="178" text-anchor="end" class="t-tiny">c_crypto 1 &gt; τ_B = 0.3</text>
+
+  <text x="4" y="290" class="t-tiny">Link certificates as in RFC 9810, section 4.4: self-issued,</text>
+  <text x="4" y="306" class="t-tiny">they consume no depth budget. Same algorithm, new key:</text>
+  <text x="4" y="322" class="t-tiny">a new version. New algorithm: a new node.</text>
+</svg>

@@ -1,0 +1,47 @@
+---
+import Chapter from '../Chapter.astro';
+import Figure from '../Figure.astro';
+import FigFederationModels from '../figures/FigFederationModels.astro';
+import FigTwoPaths from '../figures/FigTwoPaths.astro';
+---
+
+<Chapter id="landscape" num="02" kicker="Where federation stands" title="Trust already crosses domains, along paths nobody chose.">
+  <div class="prose">
+    <p>
+      A PKI binds a public key to an identity, and trust in that binding climbs a chain of
+      certificates up to an anchor the verifier has chosen. Inside one organisation this is solved.
+      The difficulty begins when <strong>sovereign domains, each with its own policies and its own
+      cryptography, need to accept each other's identities</strong>.
+    </p>
+    <p>
+      Four models do it today. Two of them link the domains with certificates: a mesh of bilateral
+      cross-certificates, or a bridge CA in the middle. The other two link them with a list or an
+      agreement, and bound nothing.
+    </p>
+  </div>
+
+  <Figure num={1} caption="The four federation models, after the World Bank taxonomy (Tullis and Black, 2024).">
+    <FigFederationModels />
+  </Figure>
+
+  <div class="prose after-fig">
+    <p>
+      Once several domains cross-certify, the hierarchy becomes a directed graph, and one credential
+      can have more than one valid path. The Federal PKI playbook shows the same certificate
+      validating through three CAs or through six, crossing two bridges, <strong>depending only on
+      which anchor is installed</strong>.
+    </p>
+  </div>
+
+  <Figure num={2} caption="One credential, two valid paths. Rebuilt from the Federal PKI path discovery and validation playbook (GSA).">
+    <FigTwoPaths />
+  </Figure>
+
+  <p class="key">If there are several paths, someone has to choose among them.</p>
+</Chapter>
+
+<style>
+  .after-fig {
+    margin-top: 3rem;
+  }
+</style>

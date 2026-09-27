@@ -1,0 +1,495 @@
+---
+import {
+  sceneNodes,
+  pathEdges,
+  latentEdges,
+  rejectedEdge,
+  crossEdges,
+  zones,
+  narrowLayout,
+  narrowSkip,
+  narrowZones,
+} from '../data/path-discovery';
+
+// Two drawings of the same scene: a wide one, and a narrow one for phones.
+// Each is a complete artefact with its own status and replay; only the one
+// on screen plays, because the script starts each when it comes into view.
+type Variant = 'wide' | 'narrow';
+const variants: Variant[] = ['wide', 'narrow'];
+
+const at = (v: Variant, id: string) => {
+  const n = sceneNodes.find((x) => x.id === id)!;
+  return v === 'wide' ? { x: n.x, y: n.y } : { x: narrowLayout[id]!.x, y: narrowLayout[id]!.y };
+};
+const seg = (v: Variant, [a, b]: [string, string]) => {
+  const p = at(v, a);
+  const q = at(v, b);
+  return { d: `M${p.x} ${p.y} L${q.x} ${q.y}`, len: Math.hypot(q.x - p.x, q.y - p.y) };
+};
+const same = (e: [string, string], f: [string, string]) =>
+  (e[0] === f[0] && e[1] === f[1]) || (e[0] === f[1] && e[1] === f[0]);
+const isCross = (e: [string, string]) => crossEdges.some((c) => same(c, e));
+const latentFor = (v: Variant) =>
+  v === 'wide' ? latentEdges : latentEdges.filter((e) => !narrowSkip.some((k) => same(k, e)));
+
+const nodeCls = (n: (typeof sceneNodes)[number]) =>
+  [
+    'pd-node',
+    `pd-node--${n.zone}`,
+    `pd-node--${n.kind}`,
+    n.offPath ? 'is-off' : '',
+    n.rejected ? 'is-rejected' : '',
+    n.id === 'rootDn' ? 'is-anchor' : '',
+  ].join(' ');
+
+/** Label geometry for the narrow drawing. */
+const nLabel = (place: string) => {
+  switch (place) {
+    case 'left':
+      return { x: -13, y0: 5, anchor: 'end' };
+    case 'right':
+      return { x: 13, y0: 5, anchor: 'start' };
+    case 'above':
+      return { x: 0, y0: -44, anchor: 'middle' };
+    default:
+      return { x: 0, y0: 26, anchor: 'middle' };
+  }
+};
+---
+
+{
+  variants.map((v) => {
+    const wide = v === 'wide';
+    const zs = wide ? zones : narrowZones;
+    const reject = seg(v, rejectedEdge);
+    return (
+      <figure class={`pd pd--${v}`} data-pd>
+        <div class="pd__head">
+          <span>Federated path discovery</span>
+          <span class="pd__status" data-pd-status data-state="found">
+            <i />
+            <span data-pd-status-text>admissible path selected</span>
+          </span>
+        </div>
+
+        <svg
+          class="pd__svg"
+          viewBox={wide ? '0 0 680 752' : '0 0 360 800'}
+          role="img"
+          aria-labelledby={`pd-t-${v} pd-d-${v}`}
+        >
+          <title id={`pd-t-${v}`}>Federated path discovery across three trust zones</title>
+          <desc id={`pd-d-${v}`}>
+            A server in the origin domain D0 presents its certificate to a relying party in the
+            hybrid domain Dn, whose threshold is 0.3. The discovery climbs from the certificate
+            through the issuing and intermediate CAs of D0, crosses to an intermediate CA of D1 and
+            then to an intermediate CA of Dn, and ends at the relying party's own root, its trust
+            anchor. Every crossing links intermediate CAs. The root of D0 is not on the path. A
+            candidate through a classical RSA-2048 intermediate of D2 is pruned, because its
+            cryptographic cost 1 exceeds the threshold.
+          </desc>
+
+          {zs.map((z) => (
+            <g class={`pd-zone pd-zone--${z.id}`}>
+              <rect x={wide ? 20 : 4} y={z.y} width={wide ? 640 : 352} height={z.h} />
+              <text x={wide ? 36 : 14} y={z.y + (wide ? 24 : 20)} class="pd-zone__title">
+                {z.title}
+              </text>
+              <text x={wide ? 36 : 14} y={z.y + (wide ? 40 : 34)} class="pd-zone__sub">
+                {z.sub}
+              </text>
+            </g>
+          ))}
+
+          <g class="pd-latent">
+            {latentFor(v).map((e) => (
+              <path d={seg(v, e).d} class={isCross(e) ? 'is-cross' : ''} />
+            ))}
+          </g>
+
+          <path class="pd-reject" d={reject.d} data-pd-reject data-len={reject.len.toFixed(1)} />
+
+          <g class="pd-path is-flowing" data-pd-path>
+            {pathEdges.map((e, i) => {
+              const s = seg(v, e);
+              return <path d={s.d} data-seg={i} data-len={s.len.toFixed(1)} />;
+            })}
+          </g>
+
+          {sceneNodes.map((n) => {
+            const p = at(v, n.id);
+            const marker =
+              n.kind === 'ee' ? (
+                <g transform="translate(-14 -12)" class="pd-cert">
+                  <rect x="0" y="0" width="28" height="22" />
+                  <path d="M5 6 H21 M5 10 H23 M5 14 H15" />
+                  <circle cx="22" cy="18" r="3.5" />
+                </g>
+              ) : (
+                <>
+                  {n.id === 'rootDn' && <circle r="13" class="pd-halo" />}
+                  <circle r={n.kind === 'root' ? 7 : 6} class="pd-dot" />
+                  <circle r={n.kind === 'root' ? 3 : 2.4} class="pd-core" />
+                </>
+              );
+
+            if (n.kind === 'ee') {
+              return (
+                <g class={nodeCls(n)} data-node={n.id} transform={`translate(${p.x} ${p.y})`}>
+                  {marker}
+                  <text x="0" y="-22" text-anchor="middle" class="pd-t" data-type={n.title}>
+                    {n.title}
+                  </text>
+                  <text x="0" y="30" text-anchor="middle" class="pd-f" data-type={n.role}>
+                    {n.role}
+                  </text>
+                </g>
+              );
+            }
+
+            if (wide) {
+              const left = n.side === 'left';
+              const tx = left ? -15 : 15;
+              const anchor = left ? 'end' : 'start';
+              return (
+                <g class={nodeCls(n)} data-node={n.id} transform={`translate(${p.x} ${p.y})`}>
+                  {marker}
+                  <text x={tx} y="5" text-anchor={anchor} class="pd-t" data-type={n.title}>
+                    {n.title}
+                  </text>
+                  <text x={tx} y="23" text-anchor={anchor} class="pd-f">
+                    <tspan class="pd-k">DOMAIN </tspan>
+                    <tspan data-type={n.domain}>{n.domain}</tspan>
+                  </text>
+                  <text x={tx} y="37" text-anchor={anchor} class="pd-f">
+                    <tspan class="pd-k">ROLE </tspan>
+                    <tspan data-type={n.role}>{n.role}</tspan>
+                  </text>
+                  <text x={tx} y="51" text-anchor={anchor} class="pd-f">
+                    <tspan class="pd-k">ALG </tspan>
+                    <tspan data-type={n.alg}>{n.alg}</tspan>
+                  </text>
+                  <text x={tx} y="67" text-anchor={anchor} class="pd-s" data-type={n.status}>
+                    {n.status}
+                  </text>
+                </g>
+              );
+            }
+
+            const lay = narrowLayout[n.id]!;
+            const l = nLabel(lay.place);
+            const status = lay.status ?? n.status;
+            return (
+              <g class={nodeCls(n)} data-node={n.id} transform={`translate(${p.x} ${p.y})`}>
+                {marker}
+                <text x={l.x} y={l.y0} text-anchor={l.anchor} class="pd-t" data-type={n.title}>
+                  {n.title}
+                </text>
+                <text x={l.x} y={l.y0 + 16} text-anchor={l.anchor} class="pd-f" data-type={n.alg}>
+                  {n.alg}
+                </text>
+                <text x={l.x} y={l.y0 + 31} text-anchor={l.anchor} class="pd-s" data-type={status}>
+                  {status}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+
+        <div class="pd__foot">
+          <button class="pd__replay" type="button" data-pd-replay>
+            Replay
+          </button>
+        </div>
+      </figure>
+    );
+  })
+}
+
+<style>
+  .pd {
+    margin: 0;
+    --pd-origin: var(--ieee-blue-50);
+    --pd-transit: var(--ieee-dark-blue-25);
+    --pd-rp: var(--ieee-yellow);
+  }
+
+  .pd__head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 3%;
+    margin-bottom: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .pd__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s;
+  }
+  .pd__status i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .pd__status[data-state='eval'] {
+    color: var(--ieee-yellow-75);
+  }
+  .pd__status[data-state='reject'] {
+    color: var(--deny);
+  }
+  .pd__status[data-state='found'] {
+    color: var(--ieee-cyan-50);
+  }
+
+  .pd__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-family: var(--font-figure);
+    font-variant-numeric: lining-nums;
+  }
+
+  .pd-zone rect {
+    fill: none;
+    stroke-width: 1;
+    stroke-dasharray: 2 5;
+  }
+  .pd-zone__title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+  }
+  .pd-zone__sub {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    fill: var(--text-muted);
+  }
+  .pd-zone--origin rect {
+    stroke: rgba(128, 157, 189, 0.55);
+  }
+  .pd-zone--origin .pd-zone__title {
+    fill: var(--pd-origin);
+  }
+  .pd-zone--transit rect {
+    stroke: rgba(173, 174, 190, 0.4);
+  }
+  .pd-zone--transit .pd-zone__title {
+    fill: var(--pd-transit);
+  }
+  .pd-zone--rp rect {
+    stroke: rgba(255, 199, 44, 0.45);
+  }
+  .pd-zone--rp .pd-zone__title {
+    fill: var(--pd-rp);
+  }
+
+  .pd-latent path {
+    fill: none;
+    stroke: rgba(186, 198, 217, 0.22);
+    stroke-width: 1;
+  }
+  .pd-latent path.is-cross {
+    stroke-dasharray: 2 4;
+  }
+
+  .pd-reject {
+    fill: none;
+    stroke: var(--deny);
+    stroke-width: 1.2;
+    stroke-dasharray: 3 4;
+    opacity: 0.55;
+  }
+
+  .pd-path path {
+    fill: none;
+    stroke: var(--ieee-cyan);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+  .pd-path.is-flowing path {
+    stroke-dasharray: 5 4;
+    animation: pd-flow 1.1s linear infinite;
+  }
+
+  .pd-dot {
+    fill: var(--ground);
+    stroke-width: 1.3;
+  }
+  .pd-node--origin .pd-dot {
+    stroke: var(--pd-origin);
+  }
+  .pd-node--origin .pd-core {
+    fill: var(--pd-origin);
+  }
+  .pd-node--transit .pd-dot {
+    stroke: var(--pd-transit);
+  }
+  .pd-node--transit .pd-core {
+    fill: var(--pd-transit);
+  }
+  .pd-node--rp .pd-dot {
+    stroke: var(--pd-rp);
+  }
+  .pd-node--rp .pd-core {
+    fill: var(--pd-rp);
+  }
+  .pd-halo {
+    fill: none;
+    stroke: rgba(255, 199, 44, 0.5);
+    stroke-width: 1;
+  }
+
+  .pd-cert rect,
+  .pd-cert circle {
+    fill: var(--ground);
+    stroke: var(--pd-origin);
+    stroke-width: 1.1;
+  }
+  .pd-cert path {
+    fill: none;
+    stroke: var(--pd-origin);
+    stroke-width: 0.8;
+  }
+
+  .pd-t {
+    font-size: 14px;
+    fill: #fff;
+  }
+  .pd-node--origin .pd-t {
+    fill: var(--pd-origin);
+  }
+  .pd-node--rp .pd-t {
+    fill: var(--ieee-yellow-75);
+  }
+  .pd-node--ee .pd-t {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    fill: var(--text-soft);
+  }
+  .pd-f {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    fill: var(--text-soft);
+  }
+  .pd-node--ee .pd-f {
+    fill: var(--text-muted);
+  }
+  .pd-k {
+    fill: var(--text-muted);
+    letter-spacing: 0.08em;
+  }
+  .pd-s {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    fill: var(--allow);
+  }
+
+  .pd-node.is-off {
+    opacity: 0.5;
+  }
+  .pd-node.is-off .pd-s {
+    fill: var(--text-muted);
+  }
+  .pd-node.is-rejected .pd-s {
+    fill: var(--deny);
+  }
+  .pd-node.is-rejected.is-hit .pd-dot {
+    stroke: var(--deny);
+  }
+  .pd-node.is-rejected.is-hit .pd-core {
+    fill: var(--deny);
+  }
+
+  /* Before the script runs, and without it, the finished scene is shown. */
+  .pd[data-playing] .pd-node {
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .pd[data-playing] .pd-node.is-in {
+    opacity: 1;
+  }
+  .pd[data-playing] .pd-node.is-off.is-in {
+    opacity: 0.5;
+  }
+
+  .pd__foot {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.4rem;
+  }
+
+  .pd__replay {
+    padding: 0.35rem 1rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+  }
+  .pd__replay:hover {
+    color: var(--text);
+    border-color: var(--text-muted);
+  }
+
+  @keyframes pd-flow {
+    to {
+      stroke-dashoffset: 18;
+    }
+  }
+
+  .pd--narrow {
+    display: none;
+  }
+
+  @media (max-width: 719px) {
+    .pd--wide {
+      display: none;
+    }
+    .pd--narrow {
+      display: block;
+      max-width: 440px;
+    }
+    .pd__head {
+      padding: 0;
+      font-size: 0.62rem;
+    }
+    .pd-zone__title {
+      font-size: 10.5px;
+    }
+    .pd-zone__sub {
+      font-size: 9.5px;
+    }
+    .pd-t {
+      font-size: 13px;
+    }
+    .pd-f,
+    .pd-s {
+      font-size: 10.5px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pd-path.is-flowing path {
+      animation: none;
+    }
+    .pd__foot {
+      display: none;
+    }
+  }
+</style>

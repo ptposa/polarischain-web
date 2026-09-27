@@ -1,0 +1,24 @@
+---
+interface Props {
+  /** Figure number, shown before the caption. */
+  num?: number;
+  caption?: string;
+  class?: string;
+}
+
+const { num, caption, class: extra } = Astro.props;
+---
+
+<figure class:list={['figure', extra]}>
+  <div class="figure__frame">
+    <slot />
+  </div>
+  {
+    caption && (
+      <figcaption>
+        {num !== undefined && <b>Figure {num}. </b>}
+        <Fragment set:html={caption} />
+      </figcaption>
+    )
+  }
+</figure>

@@ -1,0 +1,19 @@
+---
+interface Props {
+  id: string;
+  num?: string;
+  kicker: string;
+  title: string;
+  class?: string;
+}
+
+const { id, num, kicker, title, class: extra } = Astro.props;
+---
+
+<section class:list={['chapter', extra]} id={id} aria-labelledby={`${id}-h`}>
+  <div class="wrap">
+    <p class="kicker">{num && <b>{num} · </b>}{kicker}</p>
+    <h2 id={`${id}-h`} set:html={title} />
+    <slot />
+  </div>
+</section>

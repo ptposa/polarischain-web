@@ -1,0 +1,77 @@
+---
+import Chapter from '../Chapter.astro';
+import Figure from '../Figure.astro';
+import FigBuildValidate from '../figures/FigBuildValidate.astro';
+
+const questions = [
+  {
+    when: 'Before issuing',
+    q: 'What does a cross-certificate enable before it is signed?',
+    now: 'Constraints are audited afterwards, with the bridge already in production.',
+  },
+  {
+    when: 'During the handshake',
+    q: 'Which admissible path does the receiver prefer, under its own policy?',
+    now: 'The vendor of each validation library decides, the same way for everyone.',
+  },
+  {
+    when: 'After the decision',
+    q: 'Why was a path accepted, or why was there none?',
+    now: 'A trust store says yes or no. Nothing records the reason.',
+  },
+];
+---
+
+<Chapter id="gap" num="03" kicker="The gap" title="Validating a path is specified. Choosing it is not.">
+  <div class="prose">
+    <p>
+      RFC 5280 validates a chain in detail, but its first input is literally <em
+        >"a prospective certification path"</em
+      >: it does not search for one, and it does not prefer one. RFC 4158 describes how to build
+      paths and is only informational. SCVP lets a client ask a server for the best path and <strong
+        >never defines what makes a path better</strong
+      >.
+    </p>
+    <p>
+      Meanwhile, constraints such as <code>nameConstraints</code> or <code>pathLenConstraint</code> are
+      only checked once a chain has been walked, so path builders explore branches that were condemned
+      before the walk started.
+    </p>
+  </div>
+
+  <Figure num={3} caption="Building and validating are specified by different documents, and nothing in between says which path to choose.">
+    <FigBuildValidate />
+  </Figure>
+
+  <p class="key">Nobody knows what a cross-certificate enables before it is issued.</p>
+
+  <div class="questions grid-3">
+    {
+      questions.map((x, i) => (
+        <div class="rule-top">
+          <p class="label">
+            {String(i + 1).padStart(2, '0')} · {x.when}
+          </p>
+          <h3>{x.q}</h3>
+          <p class="small">{x.now}</p>
+        </div>
+      ))
+    }
+  </div>
+</Chapter>
+
+<style>
+  .questions {
+    margin-top: 1rem;
+  }
+  .questions .label {
+    margin: 0 0 0.7rem;
+  }
+  .questions h3 {
+    font-size: 1.15rem;
+  }
+  .questions .small {
+    margin: 0;
+    color: var(--text-muted);
+  }
+</style>

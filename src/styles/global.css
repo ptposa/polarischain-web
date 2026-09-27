@@ -1,425 +1,615 @@
 @import 'tailwindcss';
 
-/* ─── DESIGN TOKENS ───
-   Ported 1:1 from the validated design (PolarisChain Redesign.html :root).
-   Names are kept verbatim so every component's CSS stays byte-identical to
-   the source of truth. Tailwind's @theme still exposes each of these as a
-   real CSS custom property on :root regardless of namespace - only names
-   matching Tailwind's reserved prefixes (--font-*, --color-*, etc.) also
-   generate matching utility classes, which is a bonus, not the goal here. */
-@theme {
-  /* Mono family: IBM Plex Mono (locked in) */
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+/* ─────────────────────────────────────────────────────────────────────
+   PolarisChain design tokens
 
-  /* Palette A: Deep cosmos, marine blue */
-  --bg-cosmos: #010309;
-  --bg-deep: #050d1f;
-  --bg-panel: #081426;
-  --bg-panel-2: #0a182e;
-  --bg-section-alt: #071122;
+   Colour comes from the IEEE Brand Identity colour guide (03/2025):
+   IEEE Dark Blue, IEEE Blue, Cyan, Teal, Dark Yellow, Red, Purple and
+   Green, with their published tints. The ground of the page is a darker
+   shade of IEEE Dark Blue so the night sky can fade into it.
 
-  /* Warm academic tones: dark-cream instead of bright paper */
-  --paper-dark: #181410;
-  --paper-mid: #1e1a15;
-  --paper-warm: #252019;
-  --paper-border: rgba(200, 180, 140, 0.1);
-  --paper-border-strong: rgba(200, 180, 140, 0.18);
+   Tokens live in a plain :root block (not @theme) so every one of them is
+   emitted whether or not a utility class references it.
+   ───────────────────────────────────────────────────────────────────── */
+:root {
+  /* Sky and ground */
+  --sky-black: #000205;
+  --sky-deep: #010816;
+  --ground: #020b1c;
+  --ground-raise: #04142b;
+
+  /* IEEE palette */
+  --ieee-dark-blue: #002855;
+  --ieee-dark-blue-75: #434e6e;
+  --ieee-dark-blue-50: #737791;
+  --ieee-dark-blue-25: #adaebe;
+  --ieee-blue: #00629b;
+  --ieee-blue-50: #809dbd;
+  --ieee-blue-25: #bac6d9;
+  --ieee-cyan: #00b5e2;
+  --ieee-cyan-50: #6dcff6;
+  --ieee-cyan-25: #b9e5fa;
+  --ieee-teal: #009ca6;
+  --ieee-teal-50: #62cdd2;
+  --ieee-yellow: #ffc72c;
+  --ieee-yellow-75: #ffd46a;
+  --ieee-red: #ba0c2f;
+  --ieee-red-50: #ea948f;
+  --ieee-purple: #981d97;
+  --ieee-purple-50: #be91bf;
+  --ieee-green: #00843d;
+  --ieee-green-50: #83c19a;
+  --ieee-gray: #75787b;
 
   /* Text */
-  --text: #f0e9dc;
-  --text-soft: #b8aa98;
-  --text-muted: #7a6e60;
-  --ink: #f2ead8;
-  --ink-soft: #c4b49a;
-  --ink-muted: rgba(195, 178, 152, 0.55);
+  --text: #eef2f8;
+  --text-soft: var(--ieee-blue-25);
+  --text-muted: var(--ieee-blue-50);
+  --link: var(--ieee-cyan-50);
+  --link-hover: var(--ieee-cyan-25);
 
-  /* Dual accent: cold blue + warm gold */
-  --accent-blue: oklch(72% 0.12 230);
-  --accent-blue-glow: oklch(72% 0.12 230 / 0.18);
-  --accent-gold: oklch(76% 0.11 72);
-  --accent-gold-glow: oklch(76% 0.11 72 / 0.15);
+  /* Rules */
+  --rule: rgba(186, 198, 217, 0.14);
+  --rule-strong: rgba(186, 198, 217, 0.3);
 
-  /* Node colors (from graph) */
-  --node-a: #7ab3e8;
-  --node-b: #e8c96a;
-  --node-c: #a8c8f0;
+  /* Semantics shared by text and figures */
+  --path: var(--ieee-cyan);
+  --anchor: var(--ieee-yellow);
+  --deny: var(--ieee-red-50);
+  --allow: var(--ieee-green-50);
+  --classical: var(--ieee-blue-50);
+  --hybrid: var(--ieee-purple-50);
+  --pq: var(--ieee-teal-50);
+  --govern: var(--ieee-purple-50);
+  --discover: var(--ieee-cyan-50);
+  --audit: var(--ieee-yellow-75);
 
-  /* Edges/lines */
-  --line: rgba(200, 218, 240, 0.1);
-  --line-strong: rgba(200, 218, 240, 0.7);
+  /* Aliases used by the figures carried over from the thesis */
+  --accent: var(--ieee-yellow-75);
 
-  /* Nebula edge: decorative only (never semantic; gold semantics stay in --accent-gold) */
-  --neb-blue: oklch(72% 0.12 230 / 0.55);
-  --neb-violet: oklch(70% 0.13 300 / 0.4);
-  --neb-gold: oklch(76% 0.11 72 / 0.38);
-  --neb-teal: oklch(74% 0.1 190 / 0.32);
-  --neb-ang: 0deg;
+  /* Figures */
+  --fig-text: #c9d4e3;
+  --fig-muted: #93a9c6;
+  --fig-stroke: rgba(186, 198, 217, 0.62);
+  --fig-fill: var(--ground);
 
-  /* Radii */
-  --r-sm: 6px;
-  --r-md: 10px;
-  --r-lg: 10px;
-  --r-xl: 10px;
+  /* Type */
+  --font-body: 'iA Writer Duo S', 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --body-size: 1rem;
+  --body-leading: 1.55;
+  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-figure: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --font-math: 'Cambria Math', Cambria, 'STIX Two Math', Georgia, 'Times New Roman', serif;
 
-  /* Container */
-  --max-w: 1440px;
-
-  /* Shadows */
-  --shadow-card: 0 2px 24px rgba(0, 0, 0, 0.32), 0 1px 4px rgba(0, 0, 0, 0.2);
-  --shadow-glow-blue: 0 0 40px oklch(72% 0.12 230 / 0.12);
-  --shadow-glow-gold: 0 0 40px oklch(76% 0.11 72 / 0.1);
+  /* Layout */
+  --measure: 40rem;
+  --wide: 68rem;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --header-h: 3.75rem;
 }
 
+/* iA Writer Duo S, the body face of certificate.transparency.dev (SIL OFL 1.1).
+   The files go in src/assets/fonts; until they are there, IBM Plex Mono,
+   the family it is drawn from, takes its place. */
+@font-face {
+  font-family: 'iA Writer Duo S';
+  src: url('../assets/fonts/iAWriterDuoS-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'iA Writer Duo S';
+  src: url('../assets/fonts/iAWriterDuoS-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'iA Writer Duo S';
+  src: url('../assets/fonts/iAWriterDuoS-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── Base ─── */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html {
+  background: var(--ground);
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+  -webkit-text-size-adjust: 100%;
 }
 
+/* Black at the top of the sky, fading into the deep blue that holds for the
+   rest of the page. The stops are tied to the length of the hero track, so
+   the dive itself carries the reader from one colour to the other. */
 body {
-  /* Single page-level gradient: near-black only at the very top,
-     constant marine blue from ~22% down to the footer. */
-  background: linear-gradient(180deg, #010309 0%, #050d1f 22%, #050d1f 100%);
-  background-attachment: fixed;
-  color: var(--text);
-  font-family: 'DM Sans', system-ui, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  margin: 0;
   min-height: 100vh;
+  background:
+    linear-gradient(
+      180deg,
+      var(--sky-black) 0,
+      var(--sky-black) 45vh,
+      var(--sky-deep) 95vh,
+      var(--ground) 150vh
+    )
+    no-repeat,
+    var(--ground);
+  color: var(--text-soft);
+  font-family: var(--font-body);
+  font-size: var(--body-size);
+  line-height: var(--body-leading);
+  font-variant-ligatures: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-color: rgba(109, 207, 246, 0.35);
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  transition:
+    color 0.15s,
+    text-decoration-color 0.15s;
 }
-img,
-svg {
-  max-width: 100%;
-}
-
-.container {
-  width: min(var(--max-w), calc(100% - 48px));
-  margin: 0 auto;
-}
-@media (max-width: 640px) {
-  .container {
-    width: calc(100% - 32px);
-  }
-}
-@media (max-width: 380px) {
-  .container {
-    width: calc(100% - 24px);
-  }
+a:hover {
+  color: var(--link-hover);
+  text-decoration-color: currentColor;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  background: var(--bg-cosmos);
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 3px;
+/* Emphasis by colour, not weight: bold monospace reads poorly. */
+strong,
+b {
+  color: var(--ieee-cyan-25);
+  font-weight: 400;
 }
 
-/* Horizontal scroll container for wide tables on narrow screens */
-.table-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  max-width: 100%;
+em {
+  font-style: italic;
 }
 
-/* ─── SECTION ANATOMY (shared across every section component) ─── */
-.section {
+code,
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--text);
+}
+
+sub {
+  font-size: 0.7em;
+  line-height: 0;
+}
+
+::selection {
+  background: rgba(0, 181, 226, 0.35);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 1px solid var(--ieee-cyan);
+  outline-offset: 3px;
+}
+
+/* ─── Layout ─── */
+.wrap {
+  width: min(var(--wide), 100% - 2 * var(--gutter));
+  margin-inline: auto;
+}
+
+.prose {
+  max-width: var(--measure);
+}
+
+.prose p {
+  margin: 0 0 1.1em;
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+/* ─── Sections ─── */
+.chapter {
   position: relative;
-}
-.section-dark {
-  background: transparent;
-}
-.section-pad {
-  padding: 96px 0;
-}
-.section-pad-sm {
-  padding: 72px 0;
-}
-.section-transition {
-  height: 80px;
-  pointer-events: none;
-  background: transparent;
+  padding: clamp(4.5rem, 10vw, 8rem) 0 0;
 }
 
-/* ─── SECTION HEADING (shared across every section component) ─── */
-.section-kicker {
-  display: inline-block;
+.chapter:last-of-type {
+  padding-bottom: clamp(4rem, 8vw, 6rem);
+}
+
+.kicker {
+  display: block;
+  margin: 0 0 1rem;
+  font-family: var(--font-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.18em;
+  font-weight: 400;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: 16px;
-}
-.section-kicker-warm {
-  color: rgba(200, 178, 130, 0.6);
-}
-.section-heading {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2.6rem, 3.8vw, 3.8rem);
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: var(--text);
-}
-.section-heading-warm {
-  color: var(--ink);
-}
-.section-sub {
-  margin-top: 20px;
-  max-width: 62ch;
-  color: var(--text-soft);
-  line-height: 1.65;
-  font-size: 1.02rem;
-}
-.section-sub-warm {
-  color: var(--ink-soft);
 }
 
-/* ─── SHARED CARD ANATOMY (challenge-card is reused verbatim by Challenges, Platform and UseCases) ─── */
-.challenge-card {
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: var(--r-lg);
-  padding: 22px 20px 24px;
-  display: flex;
-  flex-direction: column;
-  transition:
-    border-color 0.2s,
-    background 0.2s;
+.kicker b {
+  color: var(--ieee-cyan-50);
+  font-weight: 400;
 }
-.challenge-card:hover {
-  background: rgba(255, 255, 255, 0.022);
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 400;
+  color: var(--text);
+  text-wrap: balance;
 }
-.challenge-card-figure {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--r-md);
-  padding: 12px;
-  margin-bottom: 18px;
-  min-height: 120px;
-  display: grid;
-  align-items: center;
+
+.chapter h2 {
+  max-width: 26ch;
+  color: var(--ieee-yellow-75);
+  margin-bottom: 1.4rem;
+  font-size: clamp(2rem, 3.6vw, 2.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
 }
-.challenge-card h3 {
-  font-family: 'Playfair Display', serif;
+
+.chapter h3 {
+  margin: 0 0 0.5rem;
   font-size: 1.28rem;
-  font-weight: 400;
-  line-height: 1.1;
+  line-height: 1.25;
+}
+
+/* The one sentence of a section that carries its point */
+.key {
+  max-width: 36ch;
+  margin: 2rem 0;
+  padding-left: 1.1rem;
+  border-left: 1px solid var(--anchor);
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-style: italic;
+  line-height: 1.35;
   color: var(--text);
-  margin-bottom: 10px;
 }
-.challenge-card p {
-  font-size: 0.88rem;
-  line-height: 1.58;
+
+.lede {
+  font-size: 1.06rem;
   color: var(--text-soft);
-  flex: 1;
 }
 
-/* ════ NEBULA CARD EDGE: decorative conic border on card surfaces ════
-   Lives in global.css rather than per-component: the same edge is shared by
-   cards declared across nine different Astro components, and `::before` on a
-   globally-named class needs no scoping hash to reach them. */
-@property --neb-ang {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
+/* ─── Figures ─── */
+.figure {
+  margin: 3rem 0 0;
 }
 
-.challenge-card,
-.research-card,
-.usecase-card,
-.platform-card,
-.contribution-card,
-.open-card,
-.formula-card,
-.optimal-card,
-.credential-card {
-  position: relative;
-  isolation: isolate;
+.figure__frame > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 56rem;
+  margin-inline: 0;
 }
 
-.challenge-card::before,
-.research-card::before,
-.usecase-card::before,
-.platform-card::before,
-.contribution-card::before,
-.open-card::before,
-.formula-card::before,
-.optimal-card::before,
-.credential-card::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  z-index: -1;
-  border-radius: inherit;
-  padding: 1px;
-  pointer-events: none;
-  background: conic-gradient(
-    from var(--neb-ang),
-    transparent 0deg,
-    var(--neb-blue) 46deg,
-    transparent 112deg,
-    var(--neb-violet) 168deg,
-    var(--neb-gold) 214deg,
-    transparent 276deg,
-    var(--neb-teal) 328deg,
-    transparent 360deg
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  opacity: 0.72;
-  transition:
-    opacity 0.45s ease,
-    background 0.45s ease;
-  animation: nebulaDrift 34s linear infinite;
+/* Every figure has two drawings: a wide one for tablets and desktops, and a
+   narrow one for phones, so nothing ever scrolls sideways. */
+.figure__frame > svg.fig-narrow {
+  display: none;
+  max-width: 440px;
 }
 
-/* Resting elevation: the nebula edge reads as the default state */
-.challenge-card,
-.research-card,
-.contribution-card,
-.open-card {
-  box-shadow: 0 18px 48px -32px oklch(70% 0.13 300 / 0.55);
-  transition:
-    border-color 0.35s ease,
-    background 0.35s ease,
-    box-shadow 0.45s ease,
-    transform 0.35s ease;
-}
-
-/* Hover: the edge warms into gold */
-.challenge-card:hover::before,
-.research-card:hover::before,
-.usecase-card:hover::before,
-.platform-card:hover::before,
-.contribution-card:hover::before,
-.open-card:hover::before,
-.formula-card:hover::before,
-.optimal-card:hover::before {
-  opacity: 0.85;
-  background: conic-gradient(
-    from var(--neb-ang),
-    transparent 0deg,
-    oklch(82% 0.13 82 / 0.75) 46deg,
-    transparent 112deg,
-    oklch(66% 0.1 300 / 0.42) 168deg,
-    oklch(84% 0.12 96 / 0.5) 214deg,
-    transparent 276deg,
-    oklch(78% 0.09 62 / 0.42) 328deg,
-    transparent 360deg
-  );
-  filter: blur(0.4px);
-}
-
-.challenge-card:hover,
-.research-card:hover,
-.contribution-card:hover,
-.open-card:hover,
-.usecase-card:hover,
-.platform-card:hover,
-.formula-card:hover,
-.optimal-card:hover {
-  border-color: rgba(232, 201, 106, 0.12);
-  box-shadow: 0 20px 54px -34px oklch(80% 0.12 82 / 0.42);
-}
-
-@keyframes nebulaDrift {
-  to {
-    --neb-ang: 360deg;
+@media (max-width: 719px) {
+  .figure__frame > svg.fig-wide {
+    display: none;
+  }
+  .figure__frame > svg.fig-narrow {
+    display: block;
   }
 }
 
-/* Credential card: finer edge, cool hues only (no gold, it stays semantic) */
-.credential-card::before {
-  inset: -1px;
-  padding: 1px;
-  background: conic-gradient(
-    from var(--neb-ang),
-    transparent 0deg,
-    var(--neb-blue) 46deg,
-    transparent 112deg,
-    var(--neb-violet) 168deg,
-    oklch(68% 0.11 282 / 0.34) 214deg,
-    transparent 276deg,
-    var(--neb-teal) 328deg,
-    transparent 360deg
-  );
-  opacity: 0.6;
+.figure figcaption {
+  max-width: var(--measure);
+  margin-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.figure figcaption b {
+  color: var(--text-soft);
+  font-weight: 400;
+}
+
+/* ─── Small reusable pieces ─── */
+.grid-2,
+.grid-3,
+.grid-4 {
+  display: grid;
+  gap: 2rem 2.5rem;
+}
+
+@media (min-width: 760px) {
+  .grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1080px) {
+  .grid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.rule-top {
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+}
+
+.small {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.math {
+  font-family: var(--font-math);
+  font-style: normal;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.math sub,
+.math sup {
+  font-style: normal;
+}
+
+/* ─── SVG vocabulary shared by every figure ───
+   Thin strokes and still nodes; only the dashed lines move, as in the
+   diagrams of certificate.transparency.dev. */
+.svg-fig {
+  font-family: var(--font-figure);
+  font-variant-numeric: lining-nums tabular-nums;
+  overflow: visible;
+}
+
+.svg-fig text {
+  fill: var(--fig-text);
+  font-family: var(--font-figure);
+  font-size: 13px;
+}
+
+.svg-fig .t-title {
+  font-size: 14px;
+  fill: #fff;
+}
+.svg-fig .t-small {
+  font-size: 11.5px;
+  fill: var(--fig-muted);
+}
+.svg-fig .t-tiny {
+  font-size: 10.5px;
+  fill: var(--fig-muted);
+}
+.svg-fig .t-mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.svg-fig .t-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  fill: var(--fig-muted);
+}
+.svg-fig .t-strong {
+  fill: #fff;
+}
+.svg-fig .t-accent {
+  fill: var(--ieee-yellow-75);
+}
+.svg-fig .t-path {
+  fill: var(--ieee-cyan-50);
+}
+.svg-fig .t-deny {
+  fill: var(--deny);
+}
+.svg-fig .t-allow {
+  fill: var(--allow);
+}
+
+.svg-fig .box,
+.svg-fig .box-strong {
+  fill: var(--fig-fill);
+  stroke: var(--fig-stroke);
+  stroke-width: 1;
+}
+.svg-fig .box-strong {
+  stroke: rgba(221, 229, 240, 0.85);
+}
+.svg-fig .box-plain {
+  fill: none;
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+}
+.svg-fig .box-dash {
+  fill: none;
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.svg-fig .box-accent {
+  fill: var(--fig-fill);
+  stroke: var(--anchor);
+  stroke-width: 1.2;
+}
+.svg-fig .box-path {
+  fill: var(--fig-fill);
+  stroke: var(--path);
+  stroke-width: 1.2;
+}
+.svg-fig .box-govern {
+  fill: var(--fig-fill);
+  stroke: var(--govern);
+}
+.svg-fig .box-discover {
+  fill: var(--fig-fill);
+  stroke: var(--discover);
+}
+.svg-fig .box-audit {
+  fill: var(--fig-fill);
+  stroke: var(--audit);
+}
+.svg-fig .box-deny {
+  fill: var(--fig-fill);
+  stroke: var(--deny);
+  stroke-dasharray: 3 3;
+}
+.svg-fig .box-a,
+.svg-fig .box-b,
+.svg-fig .box-c {
+  fill: none;
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+.svg-fig .box-a {
+  stroke: var(--classical);
+}
+.svg-fig .box-b {
+  stroke: var(--hybrid);
+}
+.svg-fig .box-c {
+  stroke: var(--pq);
+}
+
+.svg-fig .edge {
+  fill: none;
+  stroke: var(--fig-stroke);
+  stroke-width: 1;
+}
+.svg-fig .edge-dash {
+  fill: none;
+  stroke: var(--fig-stroke);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+.svg-fig .edge-accent,
+.svg-fig .edge-path {
+  fill: none;
+  stroke: var(--path);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+  animation: flow 1.1s linear infinite;
+}
+.svg-fig .edge-anchor {
+  fill: none;
+  stroke: var(--anchor);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+  animation: flow 1.1s linear infinite;
+}
+.svg-fig .edge-deny {
+  fill: none;
+  stroke: var(--deny);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+.svg-fig .edge-link {
+  fill: none;
+  stroke: rgba(109, 207, 246, 0.7);
+  stroke-width: 1;
+}
+.svg-fig .edge-muted {
+  fill: none;
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+}
+.svg-fig .flow {
+  stroke-dasharray: 5 4;
+  animation: flow 1.1s linear infinite;
+}
+.svg-fig .flow-slow {
+  stroke-dasharray: 3 6;
+  animation: flow 2.4s linear infinite;
+}
+.svg-fig .arrow {
+  fill: var(--fig-stroke);
+}
+.svg-fig .arrow-accent,
+.svg-fig .arrow-path {
+  fill: var(--path);
+}
+.svg-fig .arrow-anchor {
+  fill: var(--anchor);
+}
+.svg-fig .arrow-deny {
+  fill: var(--deny);
+}
+.svg-fig .dot {
+  fill: var(--fig-text);
+}
+.svg-fig .dot-accent {
+  fill: var(--anchor);
+}
+.svg-fig .band {
+  fill: rgba(234, 148, 143, 0.08);
+  stroke: rgba(234, 148, 143, 0.45);
+  stroke-width: 1;
+}
+.svg-fig .grid-line {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -18;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .challenge-card::before,
-  .research-card::before,
-  .usecase-card::before,
-  .platform-card::before,
-  .contribution-card::before,
-  .open-card::before,
-  .formula-card::before,
-  .optimal-card::before,
-  .credential-card::before {
+  html {
+    scroll-behavior: auto;
+  }
+  .svg-fig .edge-accent,
+  .svg-fig .edge-path,
+  .svg-fig .edge-anchor,
+  .svg-fig .flow,
+  .svg-fig .flow-slow {
     animation: none;
   }
 }
 
-/* Highlight links in math copy */
-.hl-blue {
-  color: var(--accent-blue);
-}
-.hl-gold {
-  color: var(--accent-gold);
-}
-
-@media (max-width: 1080px) {
-  .section-pad {
-    padding: 80px 0;
-  }
-  .section-pad-sm {
-    padding: 64px 0;
-  }
-}
-@media (max-width: 760px) {
-  .section-pad {
-    padding: 64px 0;
-  }
-  .section-pad-sm {
-    padding: 52px 0;
-  }
-  .section-transition {
-    height: 48px;
-  }
-}
-@media (max-width: 560px) {
-  .section-heading {
-    font-size: clamp(2rem, 7.5vw, 2.8rem);
-  }
-  .section-sub {
-    font-size: 0.96rem;
-  }
-  .section-pad {
-    padding: 56px 0;
-  }
-  .section-pad-sm {
-    padding: 44px 0;
-  }
+/* ─── Body typeface toggle ───
+   "Mono" is the RFC-like face of certificate.transparency.dev; "Sans" is the
+   face of the previous version of the site. The header switch sets
+   data-font on <html> and remembers the choice in this browser. */
+:root[data-font='sans'] {
+  --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --body-size: 1.0625rem;
+  --body-leading: 1.6;
 }

@@ -1,15 +1,19 @@
 ---
+// Headings: Playfair Display. Body: iA Writer Duo S (declared in global.css),
+// with IBM Plex Mono as its fallback and for labels; DM Sans is the
+// alternative body face of the header switch. Figures: Archivo.
 import '@fontsource/playfair-display/400.css';
-import '@fontsource/playfair-display/500.css';
 import '@fontsource/playfair-display/400-italic.css';
-import '@fontsource/dm-sans/400.css';
-import '@fontsource/dm-sans/500.css';
-// Archivo carries the header wordmark only: headings stay on Playfair.
-import '@fontsource/archivo/500.css';
+import '@fontsource/playfair-display/500.css';
 import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/400-italic.css';
 import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/archivo/400.css';
+import '@fontsource/archivo/500.css';
+import '@fontsource/dm-sans/400.css';
+import '@fontsource/dm-sans/400-italic.css';
+import '@fontsource/dm-sans/500.css';
 import '../styles/global.css';
-import GlobalStarfield from '../components/GlobalStarfield.astro';
 
 interface Props {
   title: string;
@@ -17,6 +21,9 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+// BASE_URL carries the configured `base`, so the href resolves under the
+// GitHub Pages project path as well as at the site root.
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <!doctype html>
@@ -25,22 +32,19 @@ const { title, description } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <!-- BASE_URL carries the configured `base`, so the href resolves under the
-         GitHub Pages project path as well as at the site root. -->
-    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}/logo.svg`} />
+    <meta name="theme-color" content="#000205" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/logo.svg`} />
     <title>{title}</title>
+    <script is:inline>
+      try {
+        if (localStorage.getItem('pc-font') === 'sans') document.documentElement.dataset.font = 'sans';
+      } catch (e) {}
+    </script>
   </head>
   <body>
-    <div
-      id="page-bg"
-      style="position:fixed;inset:0;z-index:0;background:transparent;pointer-events:none;"
-    >
-    </div>
-
-    <GlobalStarfield />
-
-    <div id="page-wrap" style="position:relative;">
-      <slot />
-    </div>
+    <slot />
+    <script>
+      import '../scripts/main';
+    </script>
   </body>
 </html>

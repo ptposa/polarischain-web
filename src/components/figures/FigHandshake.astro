@@ -1,0 +1,211 @@
+---
+const L = { A: 70, PEP: 235, PDP: 400, SVC: 560, GOV: 692 };
+const lanes = [
+  { x: L.A, name: "Client of A", sub: "standard TLS stack", cls: "box-a" },
+  { x: L.PEP, name: "PEP", sub: "server TLS endpoint", cls: "box-discover" },
+  { x: L.PDP, name: "PDP", sub: "PolarisChain engine", cls: "box-strong" },
+  { x: L.SVC, name: "Internal service", sub: "after the handshake", cls: "box" },
+  { x: L.GOV, name: "Governance", sub: "outside the handshake", cls: "box-plain" },
+];
+type Msg = { y: number; from: number; to: number; label: string; num: string; kind?: "accent" | "deny" | "dash" };
+const msgs: Msg[] = [
+  { y: 100, from: L.GOV, to: L.PDP, label: "load compiled G|t and π_B", num: "0a", kind: "dash" },
+  { y: 176, from: L.A, to: L.PEP, label: "ClientHello", num: "1" },
+  { y: 200, from: L.PEP, to: L.A, label: "ServerHello", num: "2" },
+  { y: 250, from: L.PEP, to: L.A, label: "EncryptedExtensions", num: "4" },
+  { y: 274, from: L.PEP, to: L.A, label: "CertificateRequest", num: "5" },
+  { y: 324, from: L.PEP, to: L.A, label: "Certificate, CertificateVerify, Finished", num: "6-7" },
+  { y: 372, from: L.A, to: L.PEP, label: "Certificate (c_A), CertificateVerify, Finished", num: "10" },
+  { y: 446, from: L.PEP, to: L.PDP, label: "ResolvePath(c_A, π_B, context)", num: "12" },
+  { y: 518, from: L.PDP, to: L.PEP, label: "verdict: selected = validated, policy met", num: "15", kind: "accent" },
+  { y: 570, from: L.PEP, to: L.A, label: "otherwise: TLS alert and close", num: "17", kind: "deny" },
+  { y: 614, from: L.A, to: L.SVC, label: "POST /v1/resource   (same TLS session)", num: "18", kind: "accent" },
+  { y: 638, from: L.SVC, to: L.A, label: "200 OK", num: "20" },
+];
+const phases = [
+  { y: 66, label: "PREPARATION · OUTSIDE THE CRITICAL PATH" },
+  { y: 142, label: "PHASE 1 · KEY EXCHANGE" },
+  { y: 218, label: "PHASE 2 · SERVER PARAMETERS" },
+  { y: 292, label: "PHASE 3 · AUTHENTICATION" },
+  { y: 390, label: "ADMISSION DECISION · PEP AND PDP IN THE SAME PROCESS" },
+  { y: 588, label: "mTLS SESSION, END TO END" },
+];
+function cls(kind?: string) {
+  return kind === "accent" ? "edge-accent" : kind === "deny" ? "edge-deny" : kind === "dash" ? "edge-dash" : "edge";
+}
+function marker(kind?: string) {
+  return kind === "accent" ? "url(#hs-ara)" : kind === "deny" ? "url(#hs-ard)" : "url(#hs-ar)";
+}
+
+// Narrow drawing for phones: each message label sits on its own line above
+// its arrow, so five lifelines fit in 360 units.
+const NL: Record<string, number> = { A: 36, PEP: 108, PDP: 180, SVC: 252, GOV: 324 };
+const nLanes = [
+  { k: 'A', name: 'Client', cls: 'box-a' },
+  { k: 'PEP', name: 'PEP', cls: 'box-discover' },
+  { k: 'PDP', name: 'PDP', cls: 'box-strong' },
+  { k: 'SVC', name: 'Service', cls: 'box' },
+  { k: 'GOV', name: 'Gov.', cls: 'box-plain' },
+];
+type NItem =
+  | { t: 'phase'; label: string }
+  | { t: 'msg'; from: string; to: string; num: string; label: string; kind?: string }
+  | { t: 'note'; num: string; label: string; kind?: string };
+const nItems: NItem[] = [
+  { t: 'phase', label: 'PREPARATION · OUTSIDE THE HANDSHAKE' },
+  { t: 'msg', from: 'GOV', to: 'PDP', num: '0a', label: 'load compiled G|t and π_B', kind: 'dash' },
+  { t: 'note', num: '0b', label: 'client certificate required; callback set' },
+  { t: 'phase', label: 'KEY EXCHANGE AND PARAMETERS' },
+  { t: 'msg', from: 'A', to: 'PEP', num: '1', label: 'ClientHello' },
+  { t: 'msg', from: 'PEP', to: 'A', num: '2-5', label: 'ServerHello … CertificateRequest' },
+  { t: 'phase', label: 'AUTHENTICATION' },
+  { t: 'msg', from: 'PEP', to: 'A', num: '6-7', label: 'Certificate, CertificateVerify, Finished' },
+  { t: 'note', num: '8', label: 'no application data to an unauthenticated peer', kind: 'deny' },
+  { t: 'msg', from: 'A', to: 'PEP', num: '10', label: 'Certificate (c_A), CertificateVerify, Finished' },
+  { t: 'phase', label: 'ADMISSION · PEP AND PDP IN ONE PROCESS' },
+  { t: 'note', num: '11', label: 'callback fires, with or without platform errors', kind: 'discover' },
+  { t: 'msg', from: 'PEP', to: 'PDP', num: '12', label: 'ResolvePath(c_A, π_B, context)' },
+  { t: 'note', num: '13', label: 'filter by Φ, τ_B, σ_B; order by w_B; validate; compare' },
+  { t: 'msg', from: 'PDP', to: 'PEP', num: '15', label: 'verdict: selected = validated', kind: 'accent' },
+  { t: 'note', num: '16', label: 'TLS checks proof of possession, the other gate' },
+  { t: 'msg', from: 'PEP', to: 'A', num: '17', label: 'otherwise: TLS alert and close', kind: 'deny' },
+  { t: 'phase', label: 'mTLS SESSION' },
+  { t: 'msg', from: 'A', to: 'SVC', num: '18', label: 'POST /v1/resource (same session)', kind: 'accent' },
+  { t: 'msg', from: 'SVC', to: 'A', num: '20', label: '200 OK' },
+];
+let ny = 48;
+const nPlaced = nItems.map((it) => {
+  const y = ny;
+  ny += it.t === 'phase' ? 26 : it.t === 'msg' ? 36 : 30;
+  return { ...it, y };
+});
+const nH = ny + 6;
+function ncls(kind?: string) {
+  return kind === 'accent' ? 'edge-path' : kind === 'deny' ? 'edge-deny' : kind === 'dash' ? 'edge-dash' : 'edge';
+}
+function nmark(kind?: string) {
+  return kind === 'accent' ? 'url(#hsn-ara)' : kind === 'deny' ? 'url(#hsn-ard)' : 'url(#hsn-ar)';
+}
+---
+
+<svg class="svg-fig fig-wide" viewBox="0 0 760 656" role="img" aria-labelledby="hs-t hs-d">
+  <title id="hs-t">mTLS admission governed by PolarisChain</title>
+  <desc id="hs-d">A TLS 1.3 handshake in which the server requests a client certificate. When the client presents it, the PEP callback fires and calls the PDP in the same process. The PDP selects a path on the admissible subgraph, validates it with an existing library and checks that the validated path is the selected one. The PEP applies the boolean; TLS still verifies proof of possession. Only then does the internal service see the request.</desc>
+
+  <defs>
+    <marker id="hs-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="hs-ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="arrow-accent" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="hs-ard" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path class="arrow-deny" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  <!-- lanes -->
+  {lanes.map((l) => (
+    <g>
+      <rect class={l.cls} x={l.x - 58} y="6" width="116" height="42" />
+      <text x={l.x} y="24" text-anchor="middle" class="t-strong">{l.name}</text>
+      <text x={l.x} y="39" text-anchor="middle" class="t-tiny">{l.sub}</text>
+      <line class="grid-line" x1={l.x} y1="48" x2={l.x} y2="650" stroke-dasharray="3 4" />
+    </g>
+  ))}
+
+  <!-- phases -->
+  {phases.map((p) => (
+    <g>
+      <rect class="box-strong" x="4" y={p.y - 11} width="752" height="17" style="stroke:none" />
+      <text x="380" y={p.y + 1} text-anchor="middle" class="t-label" style="fill:var(--fig-text)">{p.label}</text>
+    </g>
+  ))}
+
+  <!-- self notes -->
+  <rect class="box" x={L.PEP - 58} y="104" width="200" height="22" />
+  <text x={L.PEP - 50} y="119" class="t-tiny"><tspan class="t-strong" style="fill:var(--fig-text)">0b</tspan>  certificate required; callback set</text>
+
+  <text x={L.PEP + 8} y="192" class="t-tiny">from here on, everything is encrypted</text>
+
+  <rect class="box-deny" x={L.PEP - 58} y="332" width="272" height="22" />
+  <text x={L.PEP - 50} y="347" class="t-tiny"><tspan class="t-strong" style="fill:var(--fig-text)">8</tspan>  no application data to an unauthenticated peer</text>
+
+  <rect class="box-discover" x={L.PEP - 58} y="402" width="250" height="24" />
+  <text x={L.PEP - 50} y="418" class="t-tiny"><tspan class="t-strong" style="fill:var(--fig-text)">11</tspan>  callback fires, with or without platform errors</text>
+
+  <rect class="box-strong" x={L.PDP - 58} y="456" width="330" height="40" />
+  <text x={L.PDP - 50} y="471" class="t-tiny"><tspan class="t-strong" style="fill:var(--fig-text)">13</tspan>  filter by &#934;, &#964;_B, &#963;_B; order by w_B; tie-break by certificate</text>
+  <text x={L.PDP - 50} y="487" class="t-tiny">validate with the library under the declared profile; compare paths</text>
+
+  <rect class="box" x={L.PEP - 58} y="530" width="250" height="22" />
+  <text x={L.PEP - 50} y="545" class="t-tiny"><tspan class="t-strong" style="fill:var(--fig-text)">16</tspan>  TLS checks proof of possession, the other gate</text>
+
+  <!-- messages -->
+  {msgs.map((m) => {
+    const dir = m.to > m.from ? 1 : -1;
+    const x1 = m.from + dir * 4;
+    const x2 = m.to - dir * 6;
+    const mid = (m.from + m.to) / 2;
+    return (
+      <g>
+        <path class={cls(m.kind)} d={`M${x1} ${m.y} H${x2}`} marker-end={marker(m.kind)} />
+        <text x={mid} y={m.y - 6} text-anchor="middle" class={`t-mono ${m.kind === "deny" ? "t-deny" : ""}`} style="font-size:10.5px">
+          <tspan class="t-strong">{m.num}</tspan>  {m.label}
+        </text>
+      </g>
+    );
+  })}
+</svg>
+
+<svg class="svg-fig fig-narrow" viewBox={`0 0 360 ${nH}`} role="img" aria-labelledby="hsn-t">
+  <title id="hsn-t">mTLS admission governed by PolarisChain</title>
+  <defs>
+    <marker id="hsn-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="hsn-ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow-path" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+    <marker id="hsn-ard" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path class="arrow-deny" d="M0 0 L10 5 L0 10 z" />
+    </marker>
+  </defs>
+
+  {nLanes.map((l) => (
+    <g>
+      <rect class={l.cls} x={NL[l.k]! - 32} y="4" width="64" height="30" />
+      <text x={NL[l.k]} y="24" text-anchor="middle" class="t-strong" style="font-size:12px">{l.name}</text>
+      <line class="grid-line" x1={NL[l.k]} y1="34" x2={NL[l.k]} y2={nH - 4} stroke-dasharray="3 4" />
+    </g>
+  ))}
+
+  {nPlaced.map((it) => {
+    if (it.t === 'phase') {
+      return (
+        <g>
+          <rect class="box-strong" x="0" y={it.y} width="360" height="18" style="stroke:none" />
+          <text x="180" y={it.y + 13} text-anchor="middle" class="t-label" style="fill:var(--fig-text);font-size:9.5px">{it.label}</text>
+        </g>
+      );
+    }
+    if (it.t === 'note') {
+      const c = it.kind === 'deny' ? 'box-deny' : it.kind === 'discover' ? 'box-discover' : 'box';
+      return (
+        <g>
+          <rect class={c} x="4" y={it.y + 2} width="352" height="22" />
+          <text x="12" y={it.y + 17} class="t-tiny"><tspan class="t-strong" style="font-size:10.5px">{it.num}</tspan>  {it.label}</text>
+        </g>
+      );
+    }
+    const x1 = NL[it.from]!;
+    const x2 = NL[it.to]!;
+    const dir = x2 > x1 ? 1 : -1;
+    return (
+      <g>
+        <text x="4" y={it.y + 12} class={`t-mono ${it.kind === 'deny' ? 't-deny' : ''}`} style="font-size:10px"><tspan class="t-strong">{it.num}</tspan>  {it.label}</text>
+        <path class={ncls(it.kind)} d={`M${x1 + dir * 3} ${it.y + 24} H${x2 - dir * 5}`} marker-end={nmark(it.kind)} />
+      </g>
+    );
+  })}
+</svg>

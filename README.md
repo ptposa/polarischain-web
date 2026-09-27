@@ -45,23 +45,25 @@ polarischain-web/
 ├── public/
 │   └── logo.svg
 ├── src/
-│   ├── components/        # One component per narrative section
-│   │   ├── hero/          # Scroll-dive hero (constellation, caption)
-│   │   └── ...            # Challenges, Platform, UseCases, Research,
-│   │                      # MathModel, OptimalPaths, HowItWorks,
-│   │                      # Contribution, OpenScience
-│   ├── data/              # Typed content (TS + Zod): constellation nodes,
-│   │                      # process steps, scoring table, Φ definitions,
-│   │                      # cost-function coefficients
+│   ├── components/
+│   │   ├── hero/          # Night-sky hero and its sky chart
+│   │   ├── sections/      # One component per chapter of the story:
+│   │   │                  #   Motivation, Landscape, Gap, Proposal, Model,
+│   │   │                  #   HowItWorks, Admission, CommonLog, Migration,
+│   │   │                  #   UseCases, Laboratory, Credits
+│   │   ├── figures/       # Inline SVG figures adapted from the thesis,
+│   │   │                  #   each with a wide and a narrow drawing
+│   │   ├── PathDiscovery.astro   # Live federated path-discovery figure
+│   │   └── Chapter.astro, Figure.astro, Header.astro
+│   ├── data/              # Path-discovery scene and key references
 │   ├── layouts/           # Base page layout
-│   ├── lib/               # Vanilla-TS animation modules, sharing a single
-│   │                      # rAF scheduler (no GSAP / animation libraries):
-│   │                      #   raf-loop.ts, starfield.ts, scroll-dive.ts,
-│   │                      #   step-timeline.ts, pki-graph.ts
+│   ├── lib/               # Vanilla-TS modules: dive.ts (hero camera move),
+│   │                      #   path-discovery.ts, font-switch.ts
+│   ├── scripts/main.ts    # Single client entry
 │   ├── pages/
 │   │   └── index.astro
 │   └── styles/
-│       └── global.css     # Tailwind v4 @theme tokens (design system)
+│       └── global.css     # Design tokens and the shared SVG vocabulary
 └── tsconfig.json
 ```
 
@@ -103,20 +105,24 @@ All commands are run from the root of the project:
 
 ## 🎨 Design System
 
-- **Tailwind v4**, tokens-only: every design value (color palette, radii,
-  typography) is defined once in `src/styles/global.css` under `@theme`.
-  Component markup keeps its own semantic classes rather than being
-  rewritten into utility classes, to preserve exact visual fidelity with
-  the validated design.
-- **Fonts**: Playfair Display (display/serif), DM Sans (body text), IBM
-  Plex Mono (all monospaced content) and Archivo (header wordmark only),
-  self-hosted via `@fontsource`.
-- **Animation**: scroll-driven interactions (hero dive, timeline
-  activation, path-discovery graph) are hand-written vanilla TypeScript
-  using `requestAnimationFrame` and damped lerp easing, coordinated
-  through a single shared scheduler, deliberately without an animation
-  library.
-- Respects `prefers-reduced-motion: reduce`.
+- **Colour**: the IEEE Brand Identity colour guide (03/2025). The page
+  opens on a black night sky that fades into a deep shade of IEEE Dark
+  Blue, held for the rest of the page. Tokens live in a plain `:root`
+  block in `src/styles/global.css`.
+- **Typography**: Playfair Display for titles and subtitles; a
+  monospaced body face in the style of certificate.transparency.dev,
+  iA Writer Duo S when its webfonts are placed in `src/assets/fonts/`
+  and IBM Plex Mono, the family it derives from, otherwise; Archivo
+  inside the figures. A switch in the header sets the body text in
+  DM Sans instead. All faces are under the SIL Open Font License and,
+  except iA Writer, come from Fontsource.
+- **Figures**: minimal inline SVG in the style of
+  certificate.transparency.dev: thin strokes, still nodes, and only the
+  dashed lines in motion. Every figure has a wide drawing and a narrow
+  one for phones, so nothing scrolls sideways.
+- **Motion**: one scroll-linked camera move in the hero and the
+  path-discovery artefact, both in vanilla TypeScript. Respects
+  `prefers-reduced-motion: reduce`.
 
 
 ## 🌐 Deployment
@@ -148,7 +154,7 @@ PolarisChain is structured as a modular platform:
 
 - `polarischain-web` → Main website (this repository)
 - `polarischain-docs` → Technical documentation (Docusaurus)
-- `polarischain-app` → Core application: validation engine & APIs (ASP.NET Core, SQL Graph, BouncyCastle .NET)
+- `polarischain-app` → Core application: validation engine & APIs (ASP.NET Core on Kestrel, PostgreSQL, BouncyCastle .NET)
 
 
 ## 🎓 Academic Context
