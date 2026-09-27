@@ -28,11 +28,5 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# AI assistant instruction files and context: not for a public repo
-CLAUDE.md
-AGENTS.md
-.claude/
-.auto-memory/
-
 # Local reference PDFs (thesis drafts, proposals, summaries)
 *.pdf
