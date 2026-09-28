@@ -23,9 +23,11 @@ const links = [
       <nav class="nav" aria-label="Sections">
         {links.map((l) => <a href={l.href}>{l.label}</a>)}
       </nav>
-      <div class="font-switch" role="group" aria-label="Body typeface" data-font-switch>
-        <button type="button" data-font-choice="mono" aria-pressed="true">Mono</button>
-        <button type="button" data-font-choice="sans" aria-pressed="false">Sans</button>
+      <div class="palette-switch" role="group" aria-label="Colour palette" data-palette-switch>
+        <button type="button" data-palette-choice="0" aria-pressed="true" title="Current">0</button>
+        <button type="button" data-palette-choice="1" aria-pressed="false" title="Sand">1</button>
+        <button type="button" data-palette-choice="2" aria-pressed="false" title="Default, softer title yellow">2</button>
+        <button type="button" data-palette-choice="3" aria-pressed="false" title="Apricot">3</button>
       </div>
     </div>
   </div>
@@ -75,7 +77,7 @@ const links = [
   }
 
   .brand:hover {
-    color: #fff;
+    color: var(--text-strong);
   }
 
   .brand__logo {
@@ -101,30 +103,25 @@ const links = [
     gap: 1.6rem;
   }
 
-  .font-switch {
+  /* Provisional: goes once a palette is chosen. */
+  .palette-switch {
     display: inline-flex;
     border: 1px solid var(--rule-strong);
     border-radius: 999px;
     overflow: hidden;
   }
 
-  .font-switch button {
-    padding: 0.28rem 0.7rem;
+  .palette-switch button {
+    padding: 0.28rem 0.62rem;
     border: 0;
     background: transparent;
     font-family: var(--font-mono);
     font-size: 0.66rem;
-    letter-spacing: 0.08em;
     color: var(--text-muted);
     cursor: pointer;
   }
 
-  .font-switch button[data-font-choice='sans'] {
-    font-family: 'DM Sans', system-ui, sans-serif;
-    letter-spacing: 0.02em;
-  }
-
-  .font-switch button[aria-pressed='true'] {
+  .palette-switch button[aria-pressed='true'] {
     background: rgba(255, 212, 106, 0.14);
     color: var(--ieee-yellow-75);
   }

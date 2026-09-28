@@ -29,7 +29,11 @@ const easeInOut = (t: number): number => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2)
 const TRAVEL = 1.35;
 const DEPTH_COPY = 0.78;
 /** Scroll length of the dive, in screen heights. */
-const DIVE_LENGTH = 0.7;
+const DIVE_LENGTH = 1.2;
+/** Share of the dive, at its end, over which the next section already
+ * scrolls in: by then the chart has passed and only the last stars remain,
+ * so the reader does not scroll through an empty sky. */
+const DIVE_OVERLAP = 0.5;
 const DEPTH_CHART = 1.06;
 
 export function initDive(): void {
@@ -95,7 +99,10 @@ export function initDive(): void {
     overflow = Math.max(0, content!.scrollHeight - H);
     // One screen, plus whatever of the hero does not fit on it (read at
     // normal scroll speed), plus the dive itself.
-    if (!reduced) track!.style.height = `${Math.round(H + overflow + H * DIVE_LENGTH)}px`;
+    if (!reduced) {
+      track!.style.height = `${Math.round(H + overflow + H * DIVE_LENGTH)}px`;
+      track!.style.marginBottom = `${-Math.round(H * DIVE_LENGTH * DIVE_OVERLAP)}px`;
+    }
     const s = stage!.getBoundingClientRect();
     if (focalEl) {
       const f = focalEl.getBoundingClientRect();
@@ -140,7 +147,7 @@ export function initDive(): void {
     ctx!.globalAlpha = 1;
   }
 
-  function layout(q: number, lift: number): void {
+  function layout(q: number, lift: number, scrolled: number): void {
     const d = TRAVEL * easeInOut(q);
     content!.style.transform = lift ? `translate3d(0, ${(-lift).toFixed(1)}px, 0)` : '';
 
@@ -157,7 +164,8 @@ export function initDive(): void {
     }
 
     if (legend) legend.style.opacity = (1 - smooth(q, 0.02, 0.2)).toFixed(3);
-    const cueOp = (1 - smooth(q, 0, 0.05)).toFixed(3);
+    // The cue has done its job as soon as the reader scrolls.
+    const cueOp = (1 - smooth(scrolled, 0, 40)).toFixed(3);
     cues.forEach((c) => (c.style.opacity = cueOp));
   }
 
@@ -180,7 +188,7 @@ export function initDive(): void {
 
     if (current !== last) {
       draw(q, lift);
-      layout(q, lift);
+      layout(q, lift, current * total);
       last = current;
     }
     if (current !== target) raf = requestAnimationFrame(frame);

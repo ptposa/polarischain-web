@@ -1,61 +1,43 @@
 ---
-// Right column of the hero: a sky chart that the dive enters.
-// The constellation is Ursa Minor. The bowl is the federation mesh, the
-// cross-certificates between intermediate CAs of different domains (never at
-// root level); the handle is the admissible trust chain climbing to Polaris,
-// the anchor of the relying party. `lib/dive.ts` reads `data-focal` to aim the
-// camera at Polaris.
+// Right column of the hero: the sky chart that the dive enters.
+// Of the sky only Polaris is kept. Around it turns the federation of the
+// laboratory: three domains, each with its trust anchor, intermediate CAs and
+// issuing CAs, cross-certified only between intermediates. Polaris is not a
+// node and no path goes through it; each receiver in turn takes it as its
+// reference. `lib/federation-wheel.ts` draws and moves the graph, and
+// `lib/dive.ts` reads `data-focal` to aim the camera at Polaris.
 ---
 
 <aside class="aperture" aria-hidden="true" data-aperture>
   <div class="aperture__frame" data-aperture-frame>
-    <svg class="aperture__svg" viewBox="0 0 400 400">
-      <circle class="ring" cx="200" cy="200" r="188"></circle>
-      <g class="spin spin--a">
-        <circle class="ring ring--dots" cx="200" cy="200" r="170"></circle>
+    <svg class="aperture__svg" viewBox="-175 -175 350 350" data-fed>
+      <g data-fed-guide></g>
+      <g data-fed-edges></g>
+      <polyline class="fw-route" data-fed-route></polyline>
+      <g data-fed-nodes></g>
+      <g data-fed-polaris>
+        <circle class="fw-polaris-halo" cx="0" cy="0" r="12"></circle>
+        <circle class="fw-polaris" cx="0" cy="0" r="4.8" data-focal></circle>
       </g>
-      <g class="spin spin--b">
-        <circle class="ring ring--dots-wide" cx="200" cy="200" r="146"></circle>
-      </g>
-      <path class="ring" d="M200 26 V60 M200 340 V374 M26 200 H60 M340 200 H374"></path>
-
-      <!-- Bowl: the federation mesh -->
-      <path class="mesh" d="M190 235 L243 283 L203 325 L157 258 Z"></path>
-
-      <!-- Handle: the admissible chain, flowing towards Polaris -->
-      <path class="chain" d="M190 235 L182 179 L188 121 L223 75"></path>
-
-      <g class="stars">
-        <circle class="st st--transit" cx="188" cy="121" r="3.4"></circle>
-        <circle class="st st--transit" cx="182" cy="179" r="3.2"></circle>
-        <circle class="st st--origin" cx="190" cy="235" r="4.2"></circle>
-        <circle class="st st--origin" cx="243" cy="283" r="4.4"></circle>
-        <circle class="st st--transit" cx="203" cy="325" r="3.8"></circle>
-        <circle class="st st--faint" cx="157" cy="258" r="3.2"></circle>
-        <circle class="polaris-ring" cx="223" cy="75" r="13"></circle>
-        <circle class="st st--polaris" cx="223" cy="75" r="4.6" data-focal></circle>
-      </g>
-
-      <g class="labels">
-        <text x="242" y="71" class="lbl-polaris">Polaris · D<tspan dy="2" font-size="7">n</tspan></text>
-        <text x="176" y="228" text-anchor="end">CA-Int · D<tspan dy="2" font-size="7">0</tspan></text>
-        <text x="256" y="287">CA-Int · D<tspan dy="2" font-size="7">1</tspan></text>
-        <text x="214" y="302" class="lbl-cross">cross-cert</text>
+      <g data-fed-labels>
+        <text class="fw-lbl fw-lbl--polaris" x="0" y="-18" text-anchor="middle">Polaris</text>
+        <text class="fw-lbl fw-lbl--caption" x="-171" y="-161" data-fed-caption></text>
       </g>
     </svg>
   </div>
 
   <div class="aperture__legend" data-aperture-legend>
-    <span class="lg lg--origin">origin domain</span>
-    <span class="lg lg--transit">federation transit</span>
-    <span class="lg lg--rp">relying party</span>
+    <span class="lg lg--a">classical</span>
+    <span class="lg lg--b">hybrid</span>
+    <span class="lg lg--c">post-quantum</span>
+    <span class="lg lg--pruned">pruned by τ</span>
   </div>
 </aside>
 
 <style>
   .aperture {
     width: 100%;
-    max-width: 380px;
+    max-width: 400px;
     justify-self: end;
     align-self: center;
   }
@@ -63,7 +45,7 @@
   .aperture__frame {
     position: relative;
     aspect-ratio: 1;
-    transform-origin: 55.75% 18.75%;
+    transform-origin: 50% 50%;
     will-change: transform, opacity;
   }
 
@@ -74,84 +56,90 @@
     overflow: visible;
   }
 
-  .ring {
-    fill: none;
-    stroke: rgba(186, 198, 217, 0.16);
-    stroke-width: 1;
-  }
-
-  .ring--dots {
+  /* The graph is created by the script, so its parts carry no scope
+     attribute: they are reached through :global(). */
+  .aperture :global(.fw-edge) {
     stroke: rgba(186, 198, 217, 0.34);
-    stroke-dasharray: 1 12;
-    stroke-linecap: round;
-  }
-
-  .ring--dots-wide {
-    stroke: rgba(186, 198, 217, 0.2);
-    stroke-dasharray: 1 24;
-    stroke-linecap: round;
-  }
-
-  .spin {
-    transform-origin: 200px 200px;
-  }
-  .spin--a {
-    animation: spin 160s linear infinite;
-  }
-  .spin--b {
-    animation: spin 240s linear infinite reverse;
-  }
-
-  .mesh {
-    fill: none;
-    stroke: rgba(186, 198, 217, 0.4);
     stroke-width: 1;
-    stroke-dasharray: 2 5;
+  }
+  .aperture :global(.fw-edge--leaf) {
+    stroke: rgba(186, 198, 217, 0.22);
+  }
+  .aperture :global(.fw-edge--cross) {
+    stroke: rgba(186, 198, 217, 0.5);
+    stroke-dasharray: 2 4;
+  }
+  .aperture :global(.fw-edge--cross.is-pruned) {
+    stroke: rgba(234, 148, 143, 0.85);
   }
 
-  .chain {
+  .fw-route {
     fill: none;
     stroke: var(--ieee-cyan);
-    stroke-width: 1.4;
+    stroke-width: 1.5;
     stroke-linecap: round;
+    stroke-linejoin: round;
     stroke-dasharray: 5 4;
-    animation: chain 1.3s linear infinite;
+    animation: route 1.3s linear infinite;
   }
 
-  .st {
+  .aperture :global(.fw-sight) {
+    stroke: rgba(255, 199, 44, 0.42);
+    stroke-width: 1;
+    stroke-dasharray: 1 5;
+    stroke-linecap: round;
+  }
+
+  .aperture :global(.fw-node) {
     fill: var(--sky-black);
     stroke-width: 1.3;
   }
-  .st--origin {
-    stroke: var(--ieee-blue-50);
+  .aperture :global(.fw-node--A) {
+    stroke: var(--classical);
   }
-  .st--transit {
-    stroke: var(--ieee-dark-blue-25);
+  .aperture :global(.fw-node--B) {
+    stroke: var(--hybrid);
   }
-  .st--faint {
-    stroke: rgba(173, 174, 190, 0.45);
+  .aperture :global(.fw-node--C) {
+    stroke: var(--pq);
   }
-  .st--polaris {
+  .aperture :global(.fw-node--leaf) {
+    fill: rgba(186, 198, 217, 0.6);
+    stroke: none;
+  }
+  .aperture :global(.fw-anchor) {
+    fill: none;
+    stroke: rgba(238, 242, 248, 0.55);
+    stroke-width: 1;
+  }
+
+  .fw-polaris {
     fill: var(--ieee-yellow);
-    stroke: var(--ieee-yellow);
   }
-  .polaris-ring {
+  .fw-polaris-halo {
     fill: none;
     stroke: rgba(255, 199, 44, 0.45);
     stroke-width: 1;
   }
 
-  .labels text {
+  .aperture :global(.fw-lbl) {
     font-family: var(--font-mono);
     font-size: 9.5px;
-    letter-spacing: 0.04em;
-    fill: rgba(186, 198, 217, 0.75);
+    letter-spacing: 0.03em;
+    fill: rgba(186, 198, 217, 0.8);
   }
-  .labels .lbl-polaris {
+  .aperture :global(.fw-lbl--iss) {
+    fill: rgba(147, 169, 198, 0.8);
+  }
+  .aperture :global(.fw-lbl--leaf) {
+    fill: var(--text);
+  }
+  .aperture .fw-lbl--polaris {
     fill: var(--ieee-yellow-75);
   }
-  .labels .lbl-cross {
-    fill: rgba(186, 198, 217, 0.5);
+  .aperture .fw-lbl--caption {
+    fill: var(--text-muted);
+    letter-spacing: 0.08em;
   }
 
   .aperture__legend {
@@ -169,51 +157,65 @@
   .lg::before {
     content: '';
     display: inline-block;
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
     margin-right: 0.45rem;
+    border: 1px solid currentColor;
     border-radius: 50%;
-    vertical-align: 0.12em;
-    background: currentColor;
+    vertical-align: 0.1em;
   }
-  .lg--origin {
-    color: var(--ieee-blue-50);
+  .lg--a::before {
+    color: var(--classical);
   }
-  .lg--transit {
-    color: var(--ieee-dark-blue-25);
+  .lg--b::before {
+    color: var(--hybrid);
   }
-  .lg--rp {
-    color: var(--ieee-yellow-75);
+  .lg--c::before {
+    color: var(--pq);
+  }
+  .lg--pruned::before {
+    width: 14px;
+    height: 0;
+    border: 0;
+    border-top: 1px dashed rgba(234, 148, 143, 0.85);
+    border-radius: 0;
+    vertical-align: 0.25em;
   }
 
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  @keyframes chain {
+  @keyframes route {
     to {
       stroke-dashoffset: -18;
     }
   }
 
+  /* One column (tablets): a larger chart with smaller type, since the view
+     box is drawn bigger. */
   @media (max-width: 960px) {
     .aperture {
       justify-self: center;
-      max-width: 300px;
+      max-width: 520px;
     }
-    .labels text {
-      font-size: 12px;
+    .aperture :global(.fw-lbl) {
+      font-size: 8.5px;
     }
-    .labels .lbl-cross {
+  }
+
+  /* Phones: the chart takes the full width and the names of the issuing CAs
+     give way so the rest stay legible. */
+  @media (max-width: 560px) {
+    .aperture {
+      max-width: none;
+    }
+    .aperture :global(.fw-lbl) {
+      font-size: 9px;
+    }
+    .aperture :global(.fw-lbl--iss) {
       display: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .spin--a,
-    .spin--b,
-    .chain {
+    .fw-route {
       animation: none;
     }
   }

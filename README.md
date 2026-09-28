@@ -58,7 +58,8 @@ polarischain-web/
 │   ├── data/              # Path-discovery scene and key references
 │   ├── layouts/           # Base page layout
 │   ├── lib/               # Vanilla-TS modules: dive.ts (hero camera move),
-│   │                      #   path-discovery.ts, font-switch.ts
+│   │                      #   federation-wheel.ts (hero sky chart) and
+│   │                      #   path-discovery.ts
 │   ├── scripts/main.ts    # Single client entry
 │   ├── pages/
 │   │   └── index.astro
@@ -113,15 +114,17 @@ All commands are run from the root of the project:
   monospaced body face in the style of certificate.transparency.dev,
   iA Writer Duo S when its webfonts are placed in `src/assets/fonts/`
   and IBM Plex Mono, the family it derives from, otherwise; Archivo
-  inside the figures. A switch in the header sets the body text in
-  DM Sans instead. All faces are under the SIL Open Font License and,
-  except iA Writer, come from Fontsource.
+  inside the figures; STIX Two Math for the equations and for the Greek
+  letters and symbols anywhere else, since the text faces do not carry
+  them. All faces are under the SIL Open Font License
+  and, except iA Writer, come from Fontsource.
 - **Figures**: minimal inline SVG in the style of
   certificate.transparency.dev: thin strokes, still nodes, and only the
   dashed lines in motion. Every figure has a wide drawing and a narrow
   one for phones, so nothing scrolls sideways.
-- **Motion**: one scroll-linked camera move in the hero and the
-  path-discovery artefact, both in vanilla TypeScript. Respects
+- **Motion**: one scroll-linked camera move in the hero, the federation
+  turning about Polaris in the hero sky chart, and the path-discovery
+  artefact, all in vanilla TypeScript. Respects
   `prefers-reduced-motion: reduce`.
 
 

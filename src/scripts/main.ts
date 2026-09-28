@@ -4,8 +4,10 @@
  */
 import { initDive } from '../lib/dive';
 import { initPathDiscovery } from '../lib/path-discovery';
-import { initFontSwitch } from '../lib/font-switch';
+import { initFederationWheel } from '../lib/federation-wheel';
+import { initPaletteSwitch } from '../lib/palette-switch';
 
+initFederationWheel();
 initDive();
 initPathDiscovery();
-initFontSwitch();
+initPaletteSwitch();

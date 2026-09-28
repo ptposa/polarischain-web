@@ -13,7 +13,7 @@ const terms = [
 
 <Chapter id="model" num="05" kicker="The model" title="One governed graph, read by each receiver.">
   <div class="article">
-    <p>
+    <p class="intro">
       The federated ecosystem is modelled as a directed graph that changes over time and carries
       its own governance, read from the certificates themselves:
     </p>
@@ -149,7 +149,7 @@ const terms = [
 </Chapter>
 
 <style>
-  .article {
+  .article .intro {
     max-width: var(--measure);
   }
 
@@ -167,7 +167,6 @@ const terms = [
     align-items: baseline;
     justify-content: space-between;
     gap: 1.5rem;
-    max-width: var(--measure);
     margin: 1.3rem 0 1.5rem;
     padding: 0 0 0 1.5rem;
   }
@@ -177,7 +176,7 @@ const terms = [
     font-family: var(--font-math);
     font-size: 1.12rem;
     line-height: 1.5;
-    color: #fff;
+    color: var(--text-strong);
     text-align: center;
   }
 
@@ -193,11 +192,8 @@ const terms = [
 
   .terms {
     width: 100%;
-    max-width: var(--measure);
     margin: 0.4rem 0 1.4rem;
     border-collapse: collapse;
-    font-size: 0.88rem;
-    line-height: 1.5;
   }
 
   .terms caption {
