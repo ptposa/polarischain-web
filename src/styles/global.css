@@ -42,6 +42,7 @@
   --ieee-gray: #75787b;
 
   /* Text */
+  --text-strong: #fff;
   --text: #eef2f8;
   --text-soft: var(--ieee-blue-25);
   --text-muted: var(--ieee-blue-50);
@@ -74,19 +75,33 @@
   --fig-fill: var(--ground);
 
   /* Type */
-  --font-body: 'iA Writer Duo S', 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-  --body-size: 1rem;
+  /* Every face is served with the site, so the page looks the same on every
+     system. None of the text faces carries Greek or mathematical symbols;
+     STIX Two Math, listed after each of them, draws those characters. */
+  --font-body: 'iA Writer Duo S', 'IBM Plex Mono', 'STIX Two Math', ui-monospace, monospace;
+  /* One size and one leading for all running text: paragraphs, cards,
+     lists and tables. Labels, captions and references are smaller. */
+  --body-size: 0.9375rem;
   --body-leading: 1.55;
-  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-  --font-figure: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
-  --font-math: 'Cambria Math', Cambria, 'STIX Two Math', Georgia, 'Times New Roman', serif;
+  --font-heading: 'Playfair Display', 'STIX Two Math', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', 'STIX Two Math', ui-monospace, monospace;
+  --font-figure: 'Archivo', 'STIX Two Math', 'Helvetica Neue', Arial, sans-serif;
+  --font-math: 'STIX Two Math', Georgia, serif;
 
   /* Layout */
   --measure: 40rem;
   --wide: 68rem;
+  --figure: 48rem;
   --gutter: clamp(1rem, 4vw, 2.5rem);
   --header-h: 3.75rem;
+}
+
+/* Phones: slightly smaller body text, set closer. */
+@media (max-width: 560px) {
+  :root {
+    --body-size: 0.875rem;
+    --body-leading: 1.45;
+  }
 }
 
 /* iA Writer Duo S, the body face of certificate.transparency.dev (SIL OFL 1.1).
@@ -128,21 +143,20 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-/* Black at the top of the sky, fading into the deep blue that holds for the
-   rest of the page. The stops are tied to the length of the hero track, so
-   the dive itself carries the reader from one colour to the other. */
+/* Black sky over the upper 60 % of the opening screen; below that it fades
+   into the deep blue that holds for the rest of the page. The
+   hero stays pinned while the page scrolls under it, so the dive carries the
+   reader from one colour to the other. */
 body {
   margin: 0;
   min-height: 100vh;
   background:
-    linear-gradient(
-      180deg,
-      var(--sky-black) 0,
-      var(--sky-black) 45vh,
-      var(--sky-deep) 95vh,
-      var(--ground) 150vh
-    )
-    no-repeat,
+    linear-gradient(180deg, var(--sky-black) 0, var(--sky-black) 60vh, var(--ground) 100vh)
+      no-repeat,
+    var(--ground);
+  background:
+    linear-gradient(180deg, var(--sky-black) 0, var(--sky-black) 60svh, var(--ground) 100svh)
+      no-repeat,
     var(--ground);
   color: var(--text-soft);
   font-family: var(--font-body);
@@ -169,10 +183,11 @@ a:hover {
   text-decoration-color: currentColor;
 }
 
-/* Emphasis by colour, not weight: bold monospace reads poorly. */
+/* No bold: monospace reads poorly in weight. Emphasis keeps the colour of
+   the text around it. */
 strong,
 b {
-  color: var(--ieee-cyan-25);
+  color: inherit;
   font-weight: 400;
 }
 
@@ -202,13 +217,17 @@ sub {
   outline-offset: 3px;
 }
 
-/* ─── Layout ─── */
+/* ─── Layout ───
+   One content width for the whole page (--wide). The introduction of each
+   section is set at a reading measure; the text that develops it, tables and
+   card rows use the full width. Figures are centred, at a width close to the
+   one they were drawn at, so their type keeps its size. */
 .wrap {
   width: min(var(--wide), 100% - 2 * var(--gutter));
   margin-inline: auto;
 }
 
-.prose {
+.chapter h2 + .prose {
   max-width: var(--measure);
 }
 
@@ -285,11 +304,6 @@ h4 {
   color: var(--text);
 }
 
-.lede {
-  font-size: 1.06rem;
-  color: var(--text-soft);
-}
-
 /* ─── Figures ─── */
 .figure {
   margin: 3rem 0 0;
@@ -299,8 +313,8 @@ h4 {
   display: block;
   width: 100%;
   height: auto;
-  max-width: 56rem;
-  margin-inline: 0;
+  max-width: var(--figure);
+  margin-inline: auto;
 }
 
 /* Every figure has two drawings: a wide one for tablets and desktops, and a
@@ -320,8 +334,8 @@ h4 {
 }
 
 .figure figcaption {
-  max-width: var(--measure);
-  margin-top: 1rem;
+  max-width: var(--figure);
+  margin: 1rem auto 0;
   font-family: var(--font-mono);
   font-size: 0.74rem;
   line-height: 1.55;
@@ -372,11 +386,6 @@ h4 {
   border-top: 1px solid var(--rule);
 }
 
-.small {
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
 .math {
   font-family: var(--font-math);
   font-style: normal;
@@ -406,7 +415,7 @@ h4 {
 
 .svg-fig .t-title {
   font-size: 14px;
-  fill: #fff;
+  fill: var(--text-strong);
 }
 .svg-fig .t-small {
   font-size: 11.5px;
@@ -427,7 +436,7 @@ h4 {
   fill: var(--fig-muted);
 }
 .svg-fig .t-strong {
-  fill: #fff;
+  fill: var(--text-strong);
 }
 .svg-fig .t-accent {
   fill: var(--ieee-yellow-75);
@@ -604,12 +613,38 @@ h4 {
   }
 }
 
-/* ─── Body typeface toggle ───
-   "Mono" is the RFC-like face of certificate.transparency.dev; "Sans" is the
-   face of the previous version of the site. The header switch sets
-   data-font on <html> and remembers the choice in this browser. */
-:root[data-font='sans'] {
-  --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --body-size: 1.0625rem;
-  --body-leading: 1.6;
+/* ─── Provisional palette switch ───
+   Three alternatives to the default, to compare on the real page. 1 and 3
+   share a softer set of light tones for the bulk of the text (the default
+   white is kept a little brighter only for equations and figure titles) and
+   differ in the accent that replaces the IEEE yellow: titles, "federated
+   trust.", Polaris and the trust anchors. 2 is the default with only the
+   yellow of "federated trust." changed to that of the section titles. The header switch sets
+   data-palette on <html> and remembers the choice in this browser. Once one
+   is chosen, its values move into :root and this block, the switch and
+   lib/palette-switch.ts go. */
+:root[data-palette='1'],
+:root[data-palette='3'] {
+  --text-strong: #d9e0ea;
+  --text: #c3cdda;
+  --text-soft: #a2b2c8;
+  --text-muted: #7f95b1;
+  --fig-text: #b8c4d3;
+}
+
+/* 1 · Sand: the yellow, in a warmer and quieter tone. */
+:root[data-palette='1'] {
+  --ieee-yellow: #d9b86a;
+  --ieee-yellow-75: #dcc38c;
+}
+
+/* 2 · Default, with "federated trust." in the yellow of the section titles. */
+:root[data-palette='2'] .hero__title em {
+  color: var(--ieee-yellow-75);
+}
+
+/* 3 · Apricot: a soft warm orange. */
+:root[data-palette='3'] {
+  --ieee-yellow: #e2a77c;
+  --ieee-yellow-75: #e6b994;
 }
