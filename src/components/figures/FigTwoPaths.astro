@@ -24,12 +24,23 @@ const cls: Record<string, string> = {
   ee: 'box-plain',
 };
 const tcls = (k: string) => (k === 'ee' ? 't-small' : k === 'anchor' ? 't-strong t-accent' : k === 'bridge' ? 't-strong t-path' : 't-strong');
-const ROW = 27;
-const STEP = 14;
 const panels = [
   { title: 'Path 1', anchor: 'Federal Common Policy CA G2', rows: path1 },
   { title: 'Path 2', anchor: 'Raytheon Technologies Root CA', rows: path2 },
 ];
+
+// Each chain is centred in its panel, both ways, so the shorter one does not
+// sit in a corner. Text widths are estimated from the character count.
+const layout = (
+  rows: { name: string; kind: string }[],
+  o: { width: number; top: number; height: number; row: number; step: number; gap: number; char: number },
+) => {
+  const w = Math.max(...rows.map((n, i) => i * o.step + o.gap + n.name.length * (n.kind === 'ee' ? o.char * 0.88 : o.char)));
+  const h = (rows.length - 1) * o.row + 13;
+  return { x0: Math.round((o.width - w) / 2), y0: Math.round(o.top + (o.height - h) / 2) };
+};
+const WIDE = { width: 355, top: 58, height: 206, row: 30, step: 18, gap: 19, char: 6.6 };
+const NARROW = { width: 352, top: 48, height: 0, row: 25, step: 13, gap: 16, char: 6.2 };
 ---
 
 <svg class="svg-fig fig-wide" viewBox="0 0 760 306" role="img" aria-labelledby="tp-t tp-d">
@@ -47,8 +58,8 @@ const panels = [
           Installed anchor: {p.anchor}
         </text>
         {p.rows.map((n, i) => (
-          <g transform={`translate(${18 + i * STEP} ${64 + i * ROW})`}>
-            {i > 0 && <path class="edge-link" d={`M${-STEP + 5} ${-ROW + 13} V7 H0`} />}
+          <g transform={`translate(${layout(p.rows, WIDE).x0 + i * WIDE.step} ${layout(p.rows, WIDE).y0 + i * WIDE.row})`}>
+            {i > 0 && <path class="edge-link" d={`M${-WIDE.step + 5} ${-WIDE.row + 13} V7 H0`} />}
             <rect class={cls[n.kind]} x="0" y="0" width="11" height="13" />
             <text x="19" y="11" class={tcls(n.kind)}>
               {n.name}
@@ -83,8 +94,8 @@ const panels = [
             Anchor: {p.anchor}
           </text>
           {p.rows.map((n, i) => (
-            <g transform={`translate(${14 + i * 11} ${52 + i * 25})`}>
-              {i > 0 && <path class="edge-link" d={`M${-11 + 5} ${-25 + 12} V6 H0`} />}
+            <g transform={`translate(${layout(p.rows, NARROW).x0 + i * NARROW.step} ${52 + i * NARROW.row})`}>
+              {i > 0 && <path class="edge-link" d={`M${-NARROW.step + 5} ${-NARROW.row + 12} V6 H0`} />}
               <rect class={cls[n.kind]} x="0" y="0" width="10" height="12" />
               <text x="16" y="10.5" class={tcls(n.kind)} style="font-size:12px">
                 {n.name}

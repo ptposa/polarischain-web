@@ -5,6 +5,12 @@ const leaves = [
   { x: 394, m: "m3", h: "h3", what: "manifest", who: "B-47, by B" },
   { x: 466, m: "m4", h: "h4", what: "manifest", who: "C-19, by C" },
 ];
+
+// "I_B" becomes I with a subscript B.
+const sub = (s: string) =>
+  s.replace(/([A-Za-zτπσ]{1,4})_([A-Za-z]{1,6})\b(.?)/g, (_m, a: string, b: string, c: string) =>
+    `${a}<tspan dy="2" font-size="0.75em">${b}</tspan>` + (c ? `<tspan dy="-2">${c}</tspan>` : ''),
+  );
 ---
 
 <svg class="svg-fig fig-wide" viewBox="0 0 760 420" role="img" aria-labelledby="cl-t cl-d">
@@ -58,13 +64,13 @@ const leaves = [
       <rect class="box-b" x={l.x} y="226" width="60" height="26" style="stroke-dasharray:none" />
       <text x={l.x + 30} y="244" text-anchor="middle" class="t-mono t-strong">{l.m}</text>
       <text x={l.x + 30} y="268" text-anchor="middle" class="t-tiny">{l.what}</text>
-      <text x={l.x + 30} y="281" text-anchor="middle" class="t-tiny">{l.who}</text>
+      <text x={l.x + 30} y="281" text-anchor="middle" class="t-tiny" set:html={sub(l.who)} />
     </g>
   ))}
 
-  <text x="300" y="302" text-anchor="middle" class="t-mono" style="font-size:10.5px">L(m) = H(0x00 || enc(m))</text>
-  <text x="474" y="302" text-anchor="middle" class="t-mono" style="font-size:10.5px">I(a, b) = H(0x01 || a || b)</text>
-  <text x="387" y="322" text-anchor="middle" class="t-tiny">the prefixes separate a leaf from an internal node</text>
+  <text x="387" y="298" text-anchor="middle" class="t-mono" style="font-size:10.5px">L(m) = H(0x00 || enc(m))</text>
+  <text x="387" y="312" text-anchor="middle" class="t-mono" style="font-size:10.5px">I(a, b) = H(0x01 || a || b)</text>
+  <text x="387" y="327" text-anchor="middle" class="t-tiny">the prefixes separate a leaf from an internal node</text>
 
   <!-- checkpoint -->
   <rect class="box-accent" x="222" y="346" width="330" height="62" />

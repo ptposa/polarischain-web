@@ -3,11 +3,17 @@
    as figure 51 of the thesis report does. Two drawings: a wide tree and a
    narrow one for phones. The cryptographic models, where PolarisChain works,
    are highlighted. */
+const leaves = [
+  { cx: 94, name: 'Bridge CA', sub: '2n cross-certificates', ex: 'Federal PKI (US)', cls: 'box-accent' },
+  { cx: 282, name: 'Mesh', sub: 'n(n−1) cross-certificates', ex: 'PKIoverheid (NL)', cls: 'box-accent' },
+  { cx: 478, name: 'Common standards', sub: 'qualification, trusted list', ex: 'eIDAS (EU)', cls: 'box' },
+  { cx: 666, name: 'Central broker', sub: 'redistributes anchors', ex: 'ICAO PKD', cls: 'box' },
+];
 const leavesN = [
   { x: 26, y: 142, name: 'Bridge CA', sub: '2n cross-certificates', ex: 'Federal PKI (US)', cls: 'box-accent' },
-  { x: 26, y: 214, name: 'Mesh', sub: 'n(n−1) cross-certificates', ex: 'PKIoverheid (NL)', cls: 'box-accent' },
+  { x: 26, y: 226, name: 'Mesh', sub: 'n(n−1) cross-certificates', ex: 'PKIoverheid (NL)', cls: 'box-accent' },
   { x: 204, y: 142, name: 'Common standards', sub: 'trusted lists', ex: 'eIDAS (EU)', cls: 'box' },
-  { x: 204, y: 214, name: 'Central broker', sub: 'redistributes anchors', ex: 'ICAO PKD', cls: 'box' },
+  { x: 204, y: 226, name: 'Central broker', sub: 'redistributes anchors', ex: 'ICAO PKD', cls: 'box' },
 ];
 ---
 
@@ -28,31 +34,28 @@ const leavesN = [
   <text x="570" y="118" text-anchor="middle" class="t-strong">Non-cryptographic approaches</text>
   <text x="570" y="136" text-anchor="middle" class="t-small">a list or an agreement links them</text>
 
-  <path class="edge-muted" d="M190 146 V166 H100 V184 M190 166 H280 V184" />
-  <path class="edge-muted" d="M570 146 V166 H480 V184 M570 166 H660 V184" />
+  <path class="edge-muted" d="M190 146 V166 H94 V184 M190 166 H282 V184" />
+  <path class="edge-muted" d="M570 146 V166 H478 V184 M570 166 H666 V184" />
 
-  <rect class="box-accent" x="20" y="184" width="160" height="62" />
-  <text x="100" y="208" text-anchor="middle" class="t-strong t-accent">Bridge CA</text>
-  <text x="100" y="226" text-anchor="middle" class="t-small">2n cross-certificates</text>
-  <text x="100" y="239" text-anchor="middle" class="t-tiny">Federal PKI (US)</text>
-
-  <rect class="box-accent" x="200" y="184" width="160" height="62" />
-  <text x="280" y="208" text-anchor="middle" class="t-strong t-accent">Mesh</text>
-  <text x="280" y="226" text-anchor="middle" class="t-small">n(n−1) cross-certificates</text>
-  <text x="280" y="239" text-anchor="middle" class="t-tiny">PKIoverheid (NL)</text>
-
-  <rect class="box" x="400" y="184" width="160" height="62" />
-  <text x="480" y="208" text-anchor="middle" class="t-strong">Common standards</text>
-  <text x="480" y="226" text-anchor="middle" class="t-small">qualification, trusted list</text>
-  <text x="480" y="239" text-anchor="middle" class="t-tiny">eIDAS (EU)</text>
-
-  <rect class="box" x="580" y="184" width="160" height="62" />
-  <text x="660" y="208" text-anchor="middle" class="t-strong">Central broker</text>
-  <text x="660" y="226" text-anchor="middle" class="t-small">redistributes anchors</text>
-  <text x="660" y="239" text-anchor="middle" class="t-tiny">ICAO PKD</text>
+  {
+    leaves.map((l) => (
+      <g>
+        <rect class={l.cls} x={l.cx - 86} y="184" width="172" height="62" />
+        <text x={l.cx} y="206" text-anchor="middle" class={l.cls === 'box-accent' ? 't-strong t-accent' : 't-strong'}>
+          {l.name}
+        </text>
+        <text x={l.cx} y="223" text-anchor="middle" class="t-small">
+          {l.sub}
+        </text>
+        <text x={l.cx} y="238" text-anchor="middle" class="t-tiny">
+          For example: {l.ex}
+        </text>
+      </g>
+    ))
+  }
 </svg>
 
-<svg class="svg-fig fig-narrow" viewBox="0 0 360 286" role="img" aria-labelledby="fmn-t">
+<svg class="svg-fig fig-narrow" viewBox="0 0 360 304" role="img" aria-labelledby="fmn-t">
   <title id="fmn-t">The four PKI federation models</title>
 
   <rect class="box-strong" x="110" y="6" width="140" height="34" />
@@ -67,20 +70,23 @@ const leavesN = [
   <text x="269" y="88" text-anchor="middle" class="t-strong">Non-cryptographic</text>
   <text x="269" y="104" text-anchor="middle" class="t-tiny">a list or an agreement</text>
 
-  <path class="edge-muted" d="M91 114 V126 H16 V171 H26 M16 171 V243 H26" />
-  <path class="edge-muted" d="M269 114 V126 H194 V171 H204 M194 171 V243 H204" />
+  <path class="edge-muted" d="M91 114 V126 H16 V178 H26 M16 178 V262 H26" />
+  <path class="edge-muted" d="M269 114 V126 H194 V178 H204 M194 178 V262 H204" />
 
   {
     leavesN.map((l) => (
       <g>
-        <rect class={l.cls} x={l.x} y={l.y} width="150" height="60" />
+        <rect class={l.cls} x={l.x} y={l.y} width="150" height="72" />
         <text x={l.x + 75} y={l.y + 20} text-anchor="middle" class={l.cls === 'box-accent' ? 't-strong t-accent' : 't-strong'}>
           {l.name}
         </text>
-        <text x={l.x + 75} y={l.y + 37} text-anchor="middle" class="t-tiny">
+        <text x={l.x + 75} y={l.y + 36} text-anchor="middle" class="t-tiny">
           {l.sub}
         </text>
         <text x={l.x + 75} y={l.y + 51} text-anchor="middle" class="t-tiny">
+          For example:
+        </text>
+        <text x={l.x + 75} y={l.y + 64} text-anchor="middle" class="t-tiny">
           {l.ex}
         </text>
       </g>

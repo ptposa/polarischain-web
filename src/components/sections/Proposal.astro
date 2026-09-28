@@ -9,7 +9,7 @@ const removed = [
   ['The trust list', 'Verifiers are left without anchors.'],
   [
     'PolarisChain',
-    'Nothing falls. Certificates stay signed and any RFC 5280 validator still works. What is lost is knowing what each certificate enables, and choosing among the paths.',
+    'Nothing in the federation falls. Certificates stay signed and any RFC 5280 validator still works. What is lost is knowing what each certificate enables, and choosing among the paths.',
   ],
 ];
 
@@ -66,7 +66,7 @@ const caps = [
     </p>
   </div>
 
-  <Figure num={4} caption="Govern, Discover and Audit query the same governed graph with the same receiver policy.">
+  <Figure num={4} class="fig-caps" caption="Govern, Discover and Audit query the same governed graph with the same receiver policy.">
     <FigCapabilities />
   </Figure>
 
@@ -83,9 +83,10 @@ const caps = [
 </Chapter>
 
 <style>
+  /* Narrower than the text and centred, with room above and below. */
   .removed {
-    width: 100%;
-    margin: 0.5rem 0 0;
+    width: min(100%, 46rem);
+    margin: 3.5rem auto 0;
     border-collapse: collapse;
   }
   .removed caption {
@@ -100,13 +101,13 @@ const caps = [
     text-align: left;
   }
   .removed th {
-    width: 14rem;
+    width: 12rem;
     padding-right: 1.5rem;
     font-weight: 400;
     color: var(--text);
   }
   .removed td {
-    color: var(--text-muted);
+    color: var(--text-soft);
   }
   .removed tr.is-us th {
     color: var(--ieee-yellow-75);
@@ -116,15 +117,19 @@ const caps = [
   }
 
   .after {
-    margin-top: 3rem;
+    margin-top: 4rem;
+  }
+
+  .after + :global(.fig-caps) {
+    margin-top: 4rem;
   }
 
   .caps {
-    margin-top: 2.2rem;
+    margin-top: 3.4rem;
   }
   .cap {
-    padding-top: 1rem;
-    border-top: 1px solid;
+    padding-left: 1.2rem;
+    border-left: 1px solid;
   }
   .cap .small {
     margin: 0;

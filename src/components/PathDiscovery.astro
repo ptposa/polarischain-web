@@ -17,6 +17,12 @@ import {
 type Variant = 'wide' | 'narrow';
 const variants: Variant[] = ['wide', 'narrow'];
 
+// "c_crypto" becomes c with a subscript.
+const sub = (t: string) =>
+  t.replace(/([A-Za-zτ]{1,4})_([A-Za-z]{1,6})\b(.?)/g, (_m, a: string, b: string, c: string) =>
+    `${a}<tspan dy="2" font-size="0.75em">${b}</tspan>` + (c ? `<tspan dy="-2">${c}</tspan>` : ''),
+  );
+
 const at = (v: Variant, id: string) => {
   const n = sceneNodes.find((x) => x.id === id)!;
   return v === 'wide' ? { x: n.x, y: n.y } : { x: narrowLayout[id]!.x, y: narrowLayout[id]!.y };
@@ -74,7 +80,7 @@ const nLabel = (place: string) => {
 
         <svg
           class="pd__svg"
-          viewBox={wide ? '0 0 680 752' : '0 0 360 800'}
+          viewBox={wide ? '0 0 680 572' : '0 0 360 588'}
           role="img"
           aria-labelledby={`pd-t-${v} pd-d-${v}`}
         >
@@ -169,9 +175,7 @@ const nLabel = (place: string) => {
                     <tspan class="pd-k">ALG </tspan>
                     <tspan data-type={n.alg}>{n.alg}</tspan>
                   </text>
-                  <text x={tx} y="67" text-anchor={anchor} class="pd-s" data-type={n.status}>
-                    {n.status}
-                  </text>
+                  <text x={tx} y="67" text-anchor={anchor} class="pd-s" data-type={n.status} set:html={sub(n.status)} />
                 </g>
               );
             }
@@ -188,9 +192,7 @@ const nLabel = (place: string) => {
                 <text x={l.x} y={l.y0 + 16} text-anchor={l.anchor} class="pd-f" data-type={n.alg}>
                   {n.alg}
                 </text>
-                <text x={l.x} y={l.y0 + 31} text-anchor={l.anchor} class="pd-s" data-type={status}>
-                  {status}
-                </text>
+                <text x={l.x} y={l.y0 + 31} text-anchor={l.anchor} class="pd-s" data-type={status} set:html={sub(status)} />
               </g>
             );
           })}
@@ -238,6 +240,11 @@ const nLabel = (place: string) => {
     height: 5px;
     border-radius: 50%;
     background: currentColor;
+  }
+  .pd__status :global(.pd__sym) {
+    font-family: var(--font-math);
+    letter-spacing: 0;
+    text-transform: none;
   }
   .pd__status[data-state='eval'] {
     color: var(--ieee-yellow-75);

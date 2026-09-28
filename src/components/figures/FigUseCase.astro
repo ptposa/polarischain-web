@@ -29,8 +29,8 @@
 
   <rect class="box-accent" x="305" y="62" width="150" height="38" />
   <text x="380" y="86" text-anchor="middle"><tspan class="t-strong">R</tspan><tspan class="t-small" dy="4">B</tspan><tspan dy="-4" class="t-small">  root CA</tspan></text>
-  <text x="299" y="76" text-anchor="end" class="t-tiny t-accent">anchor</text>
-  <text x="299" y="89" text-anchor="end" class="t-tiny t-accent">TP_B</text>
+  <text x="299" y="76" text-anchor="end" class="t-tiny t-accent t-halo">anchor</text>
+  <text x="299" y="89" text-anchor="end" class="t-tiny t-accent t-halo">TP<tspan dy="2" font-size="0.75em">B</tspan></text>
 
   <rect class="box-strong" x="550" y="62" width="150" height="38" />
   <text x="625" y="86" text-anchor="middle"><tspan class="t-strong">R</tspan><tspan class="t-small" dy="4">C</tspan><tspan dy="-4" class="t-small">  root CA</tspan></text>
@@ -58,8 +58,8 @@
   <path class="edge-accent" d="M135 182 V216" marker-end="url(#uc-ara)" />
   <path class="edge" d="M135 100 V142" marker-end="url(#uc-ar)" />
 
-  <text x="259" y="156" text-anchor="middle" class="t-tiny t-accent">cross-cert.</text>
-  <text x="259" y="180" text-anchor="middle" class="t-tiny">issued by I_B</text>
+  <text x="259" y="156" text-anchor="middle" class="t-tiny t-accent t-halo">cross-cert.</text>
+  <text x="259" y="180" text-anchor="middle" class="t-tiny t-halo">issued by I<tspan dy="2" font-size="0.75em">B</tspan></text>
 
   <text x="380" y="214" text-anchor="middle" class="t-small">B decides, inside the handshake,</text>
   <text x="380" y="229" text-anchor="middle" class="t-small">whether an admissible path exists</text>
@@ -68,7 +68,7 @@
   <text x="625" y="214" text-anchor="middle" class="t-tiny">a third domain: it enters</text>
   <text x="625" y="228" text-anchor="middle" class="t-tiny">the variants of the use case</text>
 
-  <text x="20" y="294" class="t-tiny">Accent: the candidate path R_B &#8594; I_B &#8594; I_A, closed by c_A. Cross-certificates are issued between intermediates, never from a root.</text>
+  <text x="20" y="294" class="t-tiny">Accent: the candidate path R<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2"> </tspan>&#8594; I<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2"> </tspan>&#8594; I<tspan dy="2" font-size="0.75em">A</tspan><tspan dy="-2">,</tspan> closed by c<tspan dy="2" font-size="0.75em">A</tspan><tspan dy="-2">.</tspan> Cross-certificates are issued between intermediates, never from a root.</text>
 </svg>
 
 <svg class="svg-fig fig-narrow" viewBox="0 0 360 356" role="img" aria-labelledby="ucn-t">
@@ -123,12 +123,12 @@
   <path class="edge-path" d="M134 154 H110" marker-end="url(#ucn-ara)" />
   <path class="edge-path" d="M60 174 V210" marker-end="url(#ucn-ara)" />
   <text x="180" y="196" text-anchor="middle" class="t-tiny t-path">cross-certificate</text>
-  <text x="180" y="210" text-anchor="middle" class="t-tiny">issued by I_B to I_A</text>
+  <text x="180" y="210" text-anchor="middle" class="t-tiny">issued by I<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2"> </tspan>to I<tspan dy="2" font-size="0.75em">A</tspan></text>
   <text x="300" y="200" text-anchor="middle" class="t-tiny">enters the</text>
   <text x="300" y="214" text-anchor="middle" class="t-tiny">variants</text>
 
   <text x="4" y="290" class="t-small">B decides, inside the handshake, whether an</text>
   <text x="4" y="306" class="t-small">admissible path exists and which one is best.</text>
-  <text x="4" y="330" class="t-tiny">In colour: the candidate path R_B → I_B → I_A, closed by c_A.</text>
+  <text x="4" y="330" class="t-tiny">In colour: the candidate path R<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2"> </tspan>→ I<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2"> </tspan>→ I<tspan dy="2" font-size="0.75em">A</tspan><tspan dy="-2">,</tspan> closed by c<tspan dy="2" font-size="0.75em">A</tspan><tspan dy="-2">.</tspan></text>
   <text x="4" y="346" class="t-tiny">Cross-certificates link intermediates, never a root.</text>
 </svg>

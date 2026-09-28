@@ -33,7 +33,7 @@ const questions = [
       >.
     </p>
     <p>
-      Meanwhile, constraints such as <code>nameConstraints</code> or <code>pathLenConstraint</code> are
+      Meanwhile, constraints such as <code class="x509">nameConstraints</code> or <code class="x509">pathLenConstraint</code> are
       only checked once a chain has been walked, so path builders explore branches that were condemned
       before the walk started.
     </p>
@@ -64,14 +64,17 @@ const questions = [
   .questions {
     margin-top: 1rem;
   }
+  /* Numbered like the sections, so in another colour: the section numbers
+     are cyan, these are tan. */
   .questions .label {
     margin: 0 0 0.7rem;
+    color: var(--tan);
   }
   .questions h3 {
     font-size: 1.15rem;
   }
   .questions .small {
     margin: 0;
-    color: var(--text-muted);
+    color: var(--text-soft);
   }
 </style>

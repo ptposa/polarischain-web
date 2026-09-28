@@ -8,7 +8,7 @@ const domains = [
 ];
 
 const next = [
-  ['Dominance as a theorem', 'proving the transition monotone against RFC 5280, §6.1.3 and §6.1.4.'],
+  ['Dominance as a theorem', 'proving the transition monotone against RFC 5280, sections 6.1.3 and 6.1.4.'],
   ['The common log, built', 'then several independent logs, signed post-quantum.'],
   ['Heterogeneity inside a domain', 'hierarchies whose root and intermediates use different algorithms.'],
   ['A post-quantum channel', 'from the PKI and the graph to the key exchange of the channel.'],
@@ -31,7 +31,7 @@ const next = [
         <th scope="col">Domain</th>
         <th scope="col">Posture</th>
         <th scope="col">Algorithms</th>
-        <th scope="col" class="num">Reference τ<sub>d</sub></th>
+        <th scope="col" class="num">Reference <span class="sym">τ<sub>d</sub></span></th>
       </tr>
     </thead>
     <tbody>
@@ -81,14 +81,16 @@ const next = [
 </Chapter>
 
 <style>
+  /* Sized to its content, not to the page: four short columns. */
   .domains {
-    width: 100%;
+    width: auto;
+    min-width: min(100%, 34rem);
     margin: 2rem 0 0;
     border-collapse: collapse;
   }
   .domains th,
   .domains td {
-    padding: 0.7rem 1rem 0.7rem 0;
+    padding: 0.7rem 2.5rem 0.7rem 0;
     border-bottom: 1px solid var(--rule);
     text-align: left;
   }
@@ -100,8 +102,15 @@ const next = [
     text-transform: uppercase;
     color: var(--text-muted);
   }
+  /* The symbol keeps its case: an uppercase tau reads as a T. */
+  .domains th .sym {
+    font-family: var(--font-math);
+    font-size: 1.15em;
+    letter-spacing: 0;
+    text-transform: none;
+  }
   .domains td {
-    color: var(--text);
+    color: var(--text-soft);
   }
   .domains .num {
     text-align: right;
@@ -133,7 +142,7 @@ const next = [
   }
 
   .muted {
-    color: var(--text-muted);
+    color: var(--text-soft);
   }
 
   .next {
@@ -141,12 +150,14 @@ const next = [
   }
   .next ul {
     margin: 0.8rem 0 0;
-    padding: 0;
-    list-style: none;
+    padding: 0 0 0 1.2rem;
+    list-style: disc;
   }
   .next li {
-    padding: 0.55rem 0;
-    border-top: 1px solid var(--rule);
+    padding: 0.3rem 0;
+  }
+  .next li::marker {
+    color: var(--text-muted);
   }
 
   @media (max-width: 560px) {

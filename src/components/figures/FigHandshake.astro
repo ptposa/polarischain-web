@@ -30,6 +30,12 @@ const phases = [
   { y: 390, label: "ADMISSION DECISION · PEP AND PDP IN THE SAME PROCESS" },
   { y: 588, label: "mTLS SESSION, END TO END" },
 ];
+// "π_B" becomes π with a subscript B, as elsewhere on the page. Code, such
+// as the ResolvePath call, keeps its underscores.
+const subs = (s: string) =>
+  s.replace(/([πτσw])_([A-Z])(.?)/g, (_m, a: string, b: string, c: string) =>
+    `${a}<tspan dy="2" font-size="0.75em">${b}</tspan>` + (c ? `<tspan dy="-2">${c}</tspan>` : ''),
+  );
 function cls(kind?: string) {
   return kind === "accent" ? "edge-accent" : kind === "deny" ? "edge-deny" : kind === "dash" ? "edge-dash" : "edge";
 }
@@ -88,7 +94,7 @@ function nmark(kind?: string) {
 }
 ---
 
-<svg class="svg-fig fig-wide" viewBox="0 0 760 656" role="img" aria-labelledby="hs-t hs-d">
+<svg class="svg-fig fig-wide" viewBox="0 0 760 690" role="img" aria-labelledby="hs-t hs-d">
   <title id="hs-t">mTLS admission governed by PolarisChain</title>
   <desc id="hs-d">A TLS 1.3 handshake in which the server requests a client certificate. When the client presents it, the PEP callback fires and calls the PDP in the same process. The PDP selects a path on the admissible subgraph, validates it with an existing library and checks that the validated path is the selected one. The PEP applies the boolean; TLS still verifies proof of possession. Only then does the internal service see the request.</desc>
 
@@ -104,6 +110,15 @@ function nmark(kind?: string) {
     </marker>
   </defs>
 
+  <!-- which lanes belong to which domain -->
+  <g class="domains">
+    <text x={L.A} y="11" text-anchor="middle" class="t-label">DOMAIN A</text>
+    <path class="edge" d={`M${L.A - 56} 20 H${L.A + 56}`} marker-start="url(#hs-ar)" marker-end="url(#hs-ar)" />
+    <text x={(L.PEP + L.GOV) / 2} y="11" text-anchor="middle" class="t-label">DOMAIN B</text>
+    <path class="edge" d={`M${L.PEP - 56} 20 H${L.GOV + 56}`} marker-start="url(#hs-ar)" marker-end="url(#hs-ar)" />
+  </g>
+
+  <g transform="translate(0 34)">
   <!-- lanes -->
   {lanes.map((l) => (
     <g>
@@ -118,7 +133,7 @@ function nmark(kind?: string) {
   {phases.map((p) => (
     <g>
       <rect class="box-strong" x="4" y={p.y - 11} width="752" height="17" style="stroke:none" />
-      <text x="380" y={p.y + 1} text-anchor="middle" class="t-label" style="fill:var(--fig-text)">{p.label}</text>
+      <text x="380" y={p.y + 1} text-anchor="middle" class="t-label t-phase">{p.label}</text>
     </g>
   ))}
 
@@ -135,7 +150,7 @@ function nmark(kind?: string) {
   <text x={L.PEP - 50} y="418" class="t-tiny"><tspan class="t-strong" style="fill:var(--fig-text)">11</tspan>  callback fires, with or without platform errors</text>
 
   <rect class="box-strong" x={L.PDP - 58} y="456" width="330" height="40" />
-  <text x={L.PDP - 50} y="471" class="t-tiny"><tspan class="t-strong" style="fill:var(--fig-text)">13</tspan>  filter by &#934;, &#964;_B, &#963;_B; order by w_B; tie-break by certificate</text>
+  <text x={L.PDP - 50} y="471" class="t-tiny"><tspan class="t-strong" style="fill:var(--fig-text)">13</tspan>  filter by &#934;, &#964;<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2">, &#963;</tspan><tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2">; order by w</tspan><tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2">; tie-break by certificate</tspan></text>
   <text x={L.PDP - 50} y="487" class="t-tiny">validate with the library under the declared profile; compare paths</text>
 
   <rect class="box" x={L.PEP - 58} y="530" width="250" height="22" />
@@ -151,14 +166,15 @@ function nmark(kind?: string) {
       <g>
         <path class={cls(m.kind)} d={`M${x1} ${m.y} H${x2}`} marker-end={marker(m.kind)} />
         <text x={mid} y={m.y - 6} text-anchor="middle" class={`t-mono ${m.kind === "deny" ? "t-deny" : ""}`} style="font-size:10.5px">
-          <tspan class="t-strong">{m.num}</tspan>  {m.label}
+          <tspan class="t-strong">{m.num}</tspan>  <tspan set:html={m.label.startsWith('ResolvePath') ? m.label : subs(m.label)} />
         </text>
       </g>
     );
   })}
+  </g>
 </svg>
 
-<svg class="svg-fig fig-narrow" viewBox={`0 0 360 ${nH}`} role="img" aria-labelledby="hsn-t">
+<svg class="svg-fig fig-narrow" viewBox={`0 0 360 ${nH + 30}`} role="img" aria-labelledby="hsn-t">
   <title id="hsn-t">mTLS admission governed by PolarisChain</title>
   <defs>
     <marker id="hsn-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
@@ -170,8 +186,17 @@ function nmark(kind?: string) {
     <marker id="hsn-ard" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
       <path class="arrow-deny" d="M0 0 L10 5 L0 10 z" />
     </marker>
+    <marker id="hsn-ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+    </marker>
   </defs>
 
+  <text x={NL.A} y="11" text-anchor="middle" class="t-label" style="font-size:9px">DOMAIN A</text>
+  <path class="edge" d={`M${NL.A - 30} 20 H${NL.A + 30}`} marker-start="url(#hsn-ab)" marker-end="url(#hsn-ab)" />
+  <text x={(NL.PEP + NL.GOV) / 2} y="11" text-anchor="middle" class="t-label" style="font-size:9px">DOMAIN B</text>
+  <path class="edge" d={`M${NL.PEP - 30} 20 H${NL.GOV + 30}`} marker-start="url(#hsn-ab)" marker-end="url(#hsn-ab)" />
+
+  <g transform="translate(0 30)">
   {nLanes.map((l) => (
     <g>
       <rect class={l.cls} x={NL[l.k]! - 32} y="4" width="64" height="30" />
@@ -185,7 +210,7 @@ function nmark(kind?: string) {
       return (
         <g>
           <rect class="box-strong" x="0" y={it.y} width="360" height="18" style="stroke:none" />
-          <text x="180" y={it.y + 13} text-anchor="middle" class="t-label" style="fill:var(--fig-text);font-size:9.5px">{it.label}</text>
+          <text x="180" y={it.y + 13} text-anchor="middle" class="t-label t-phase" style="font-size:9.5px">{it.label}</text>
         </g>
       );
     }
@@ -194,7 +219,7 @@ function nmark(kind?: string) {
       return (
         <g>
           <rect class={c} x="4" y={it.y + 2} width="352" height="22" />
-          <text x="12" y={it.y + 17} class="t-tiny"><tspan class="t-strong" style="font-size:10.5px">{it.num}</tspan>  {it.label}</text>
+          <text x="12" y={it.y + 17} class="t-tiny"><tspan class="t-strong" style="font-size:10.5px">{it.num}</tspan>  <tspan set:html={subs(it.label)} /></text>
         </g>
       );
     }
@@ -203,9 +228,10 @@ function nmark(kind?: string) {
     const dir = x2 > x1 ? 1 : -1;
     return (
       <g>
-        <text x="4" y={it.y + 12} class={`t-mono ${it.kind === 'deny' ? 't-deny' : ''}`} style="font-size:10px"><tspan class="t-strong">{it.num}</tspan>  {it.label}</text>
+        <text x="4" y={it.y + 12} class={`t-mono ${it.kind === 'deny' ? 't-deny' : ''}`} style="font-size:10px"><tspan class="t-strong">{it.num}</tspan>  <tspan set:html={it.label.startsWith('ResolvePath') ? it.label : subs(it.label)} /></text>
         <path class={ncls(it.kind)} d={`M${x1 + dir * 3} ${it.y + 24} H${x2 - dir * 5}`} marker-end={nmark(it.kind)} />
       </g>
     );
   })}
+  </g>
 </svg>
