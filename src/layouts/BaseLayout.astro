@@ -10,7 +10,6 @@ import '@fontsource/ibm-plex-mono/400-italic.css';
 import '@fontsource/ibm-plex-mono/500.css';
 import '@fontsource/archivo/400.css';
 import '@fontsource/archivo/500.css';
-import '@fontsource/stix-two-math/400.css';
 import '../styles/global.css';
 
 interface Props {
@@ -33,12 +32,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <meta name="theme-color" content="#000205" />
     <link rel="icon" type="image/svg+xml" href={`${base}/logo.svg`} />
     <title>{title}</title>
-    <script is:inline>
-      try {
-        var p = localStorage.getItem('pc-palette');
-        if (p === '1' || p === '2' || p === '3') document.documentElement.dataset.palette = p;
-      } catch (e) {}
-    </script>
   </head>
   <body>
     <slot />

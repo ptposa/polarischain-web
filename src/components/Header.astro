@@ -19,17 +19,9 @@ const links = [
       <img src={logoUrl} class="brand__logo" alt="" width="28" height="28" />
       <span class="brand__name">PolarisChain</span>
     </a>
-    <div class="right">
-      <nav class="nav" aria-label="Sections">
-        {links.map((l) => <a href={l.href}>{l.label}</a>)}
-      </nav>
-      <div class="palette-switch" role="group" aria-label="Colour palette" data-palette-switch>
-        <button type="button" data-palette-choice="0" aria-pressed="true" title="Current">0</button>
-        <button type="button" data-palette-choice="1" aria-pressed="false" title="Sand">1</button>
-        <button type="button" data-palette-choice="2" aria-pressed="false" title="Default, softer title yellow">2</button>
-        <button type="button" data-palette-choice="3" aria-pressed="false" title="Apricot">3</button>
-      </div>
-    </div>
+    <nav class="nav" aria-label="Sections">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
   </div>
 </header>
 
@@ -92,38 +84,9 @@ const links = [
     letter-spacing: -0.02em;
   }
 
-  .right {
-    display: flex;
-    align-items: center;
-    gap: 1.8rem;
-  }
-
   .nav {
     display: flex;
     gap: 1.6rem;
-  }
-
-  /* Provisional: goes once a palette is chosen. */
-  .palette-switch {
-    display: inline-flex;
-    border: 1px solid var(--rule-strong);
-    border-radius: 999px;
-    overflow: hidden;
-  }
-
-  .palette-switch button {
-    padding: 0.28rem 0.62rem;
-    border: 0;
-    background: transparent;
-    font-family: var(--font-mono);
-    font-size: 0.66rem;
-    color: var(--text-muted);
-    cursor: pointer;
-  }
-
-  .palette-switch button[aria-pressed='true'] {
-    background: rgba(255, 212, 106, 0.14);
-    color: var(--ieee-yellow-75);
   }
 
   .nav a {

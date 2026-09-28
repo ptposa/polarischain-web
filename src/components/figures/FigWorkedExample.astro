@@ -8,7 +8,7 @@ const nodes = [
   { id: 'IC1', x: 350, y: 100, w: 130, name: 'I', sub: 'C1', alg: 'P-384 + ML-DSA-65', cls: 'box-strong' },
   { id: 'Br', x: 350, y: 180, w: 130, name: 'Br', sub: '', alg: 'P-384 + ML-DSA-65', cls: 'box-strong' },
   { id: 'IC3', x: 350, y: 260, w: 130, name: 'I', sub: 'C3', alg: 'ML-DSA-87', cls: 'box-path' },
-  { id: 'IC2', x: 510, y: 180, w: 120, name: 'I', sub: 'C2', alg: 'ML-DSA-65', cls: 'box-strong' },
+  { id: 'IC2', x: 530, y: 180, w: 110, name: 'I', sub: 'C2', alg: 'ML-DSA-65', cls: 'box-strong' },
   { id: 'IssC', x: 650, y: 100, w: 100, name: 'Iss', sub: 'C', alg: 'ML-DSA-65', cls: 'box-path' },
 ];
 
@@ -58,6 +58,12 @@ const lanes: { id: string; y: number; entry: string; boxes: Box[]; note?: string
 const BX = 44;
 const BW = 92;
 const GAP = 34;
+
+// "I_B" becomes I with a subscript B.
+const sub = (s: string) =>
+  s.replace(/([A-Za-zτπσ]{1,4})_([A-Za-z]{1,6})\b(.?)/g, (_m, a: string, b: string, c: string) =>
+    `${a}<tspan dy="2" font-size="0.75em">${b}</tspan>` + (c ? `<tspan dy="-2">${c}</tspan>` : ''),
+  );
 ---
 
 <svg class="svg-fig fig-wide" viewBox="0 0 760 360" role="img" aria-labelledby="we-t we-d">
@@ -94,11 +100,11 @@ const GAP = 34;
   <path class="edge" d="M480 122 H646" marker-end="url(#we-ar)" />
   <text x="563" y="115" text-anchor="middle" class="t-tiny">e3 · 0</text>
 
-  <path class="edge" d="M480 202 H506" marker-end="url(#we-ar)" />
-  <text x="493" y="195" text-anchor="middle" class="t-tiny">e6 · 1</text>
+  <path class="edge" d="M480 202 H526" marker-end="url(#we-ar)" />
+  <text x="503" y="195" text-anchor="middle" class="t-tiny">e6 · 1</text>
 
-  <path class="edge-deny" d="M580 180 C 580 160, 680 168, 680 148" marker-end="url(#we-ard)" />
-  <text x="636" y="176" class="t-tiny t-deny">e7 · 0</text>
+  <path class="edge-deny" d="M596 180 C 596 162, 680 168, 680 148" marker-end="url(#we-ard)" />
+  <text x="646" y="176" class="t-tiny t-deny">e7 · 0</text>
 
   <path class="edge-path" d="M480 282 C 700 282, 722 220, 722 148" marker-end="url(#we-ara)" />
   <text x="642" y="276" class="t-tiny t-path">e9 · 0</text>
@@ -122,7 +128,7 @@ const GAP = 34;
     ))
   }
 
-  <text x="490" y="36" class="t-tiny t-deny">C2 pruned: c_crypto = 1 &gt; τ_B = 0.3</text>
+  <text x="490" y="36" class="t-tiny t-deny">C2 pruned: c<tspan dy="2" font-size="0.75em">crypto</tspan><tspan dy="-2"> </tspan>= 1 &gt; τ<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2"> </tspan>= 0.3</text>
   <text x="490" y="50" class="t-tiny t-deny">(threshold, at the first crossing)</text>
   <text x="490" y="241" class="t-tiny t-deny">C3 pruned at e7: depth reaches 0</text>
   <text x="490" y="254" class="t-tiny t-deny">(inside domain C, not at a crossing)</text>
@@ -203,13 +209,13 @@ const GAP = 34;
         {l.note && (
           <text x={BX + l.boxes.length * (BW + GAP) - GAP + 10} y={l.y + 25} class="t-tiny t-deny">
             {l.id === 'C2' ? '' : '✕ '}
-            {l.id === 'C2' ? '' : l.note}
+            <tspan set:html={l.id === 'C2' ? '' : sub(l.note)} />
           </text>
         )}
         {l.id === 'C2' && (
           <>
             <text x={BX + BW + 12} y={l.y + 18} class="t-tiny t-deny">✕ pruned by the threshold:</text>
-            <text x={BX + BW + 12} y={l.y + 33} class="t-tiny t-deny">c_crypto 1 &gt; τ_B = 0.3</text>
+            <text x={BX + BW + 12} y={l.y + 33} class="t-tiny t-deny">c<tspan dy="2" font-size="0.75em">crypto</tspan><tspan dy="-2"> </tspan>1 &gt; τ<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2"> </tspan>= 0.3</text>
           </>
         )}
       </g>

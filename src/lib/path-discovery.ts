@@ -34,9 +34,36 @@ function setup(root: HTMLElement): void {
   const wait = (ms: number, id: number): Promise<boolean> =>
     new Promise((resolve) => window.setTimeout(() => resolve(id === run), ms));
 
+  // The status is set in capitals; Greek letters keep their case, since an
+  // uppercase tau would read as a T.
   function setStatus(text: string, state: StatusState): void {
-    if (statusText) statusText.textContent = text;
+    if (statusText) {
+      statusText.replaceChildren(
+        ...text
+          .split(/([ΦΤτ])/)
+          .filter(Boolean)
+          .map((part) => {
+            if (!/^[ΦΤτ]$/.test(part)) return document.createTextNode(part);
+            const sym = document.createElement('span');
+            sym.className = 'pd__sym';
+            sym.textContent = part;
+            return sym;
+          }),
+      );
+    }
     if (statusEl) statusEl.dataset.state = state;
+  }
+
+  // Each typed label keeps its final markup (subscripts are tspans), so the
+  // typewriter fills its text nodes in order instead of flattening them.
+  const markup = new WeakMap<Element, string>();
+  root.querySelectorAll<SVGElement>('[data-type]').forEach((el) => markup.set(el, el.innerHTML));
+
+  function textNodes(el: Element): Text[] {
+    const out: Text[] = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) out.push(n as Text);
+    return out;
   }
 
   function clearNode(g: SVGGElement | null): void {
@@ -50,11 +77,15 @@ function setup(root: HTMLElement): void {
     if (!g) return true;
     g.classList.add('is-in');
     for (const el of Array.from(g.querySelectorAll<SVGElement>('[data-type]'))) {
-      const text = el.dataset.type ?? '';
-      el.textContent = '';
-      for (const ch of text) {
-        el.textContent += ch;
-        if (!(await wait(perChar, runId))) return false;
+      el.innerHTML = markup.get(el) ?? el.dataset.type ?? '';
+      const parts = textNodes(el);
+      const texts = parts.map((t) => t.data);
+      parts.forEach((t) => (t.data = ''));
+      for (let i = 0; i < parts.length; i++) {
+        for (const ch of texts[i]!) {
+          parts[i]!.data += ch;
+          if (!(await wait(perChar, runId))) return false;
+        }
       }
     }
     return true;

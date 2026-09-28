@@ -2,18 +2,16 @@
  * Hero dive: a single scroll-linked camera move.
  *
  * The page opens on a night sky. As the reader scrolls, one virtual camera
- * travels towards Polaris in the sky chart: the stars stream past with real
- * perspective (nearer stars move faster), the hero copy and the chart, placed
- * at their own depths, slide out of view, and the stars finally thin out as
- * the body gradient behind the stage turns from black to deep blue. Every
- * element reads the same camera position, so the move is one transition, not
- * a sequence of effects.
+ * travels towards Polaris in the sky chart: the hero copy and the chart,
+ * placed at their own depths, slide out of view, and the stars finally thin
+ * out as the body gradient behind the stage turns from black to deep blue.
+ * The stars are drawn once and stay still: the sky is the one backdrop, and
+ * only what sits on it moves, which keeps the move smooth on phones.
  */
 
 interface Star {
   sx: number; // screen position at rest
   sy: number;
-  z: number; // depth: 1 is the depth of the sky chart
   r: number;
   a: number;
 }
@@ -79,7 +77,6 @@ export function initDive(): void {
       stars.push({
         sx: -0.1 * W + Math.random() * 1.2 * W,
         sy: -0.1 * H + Math.random() * 1.2 * H,
-        z: 0.35 + Math.random() ** 1.3 * 2.9,
         r: bright ? 0.9 + Math.random() * 0.6 : 0.35 + Math.random() * 0.5,
         a: bright ? 0.55 + Math.random() * 0.3 : 0.18 + Math.random() * 0.35,
       });
@@ -115,6 +112,7 @@ export function initDive(): void {
     const c = copy!.getBoundingClientRect();
     copy!.style.transformOrigin = `${(fx - (c.left - s.left)).toFixed(0)}px ${(fy - (c.top - s.top)).toFixed(0)}px`;
     buildStars();
+    draw();
     last = -1;
   }
 
@@ -125,23 +123,15 @@ export function initDive(): void {
     return total > 0 ? clamp(-r.top / total, 0, 1) : 0;
   }
 
-  function draw(q: number, lift: number): void {
-    const d = TRAVEL * easeInOut(q);
-    const cy = fy - lift;
-    const fade = 1 - smooth(q, 0.78, 1);
+  /** The still sky: every star at rest, drawn once per size of the stage. */
+  function draw(): void {
     ctx!.clearRect(0, 0, W, H);
     ctx!.fillStyle = '#e4ecf7';
     for (const s of stars) {
-      const gap = s.z - d;
-      if (gap < 0.04) continue;
-      const k = s.z / gap;
-      const x = fx + (s.sx - fx) * k;
-      const y = cy + (s.sy - lift - cy) * k;
-      if (x < -8 || x > W + 8 || y < -8 || y > H + 8) continue;
-      const near = clamp(k, 1, 4);
-      ctx!.globalAlpha = s.a * fade * clamp(0.6 + 0.4 * near, 0, 1);
+      if (s.sx < -8 || s.sx > W + 8 || s.sy < -8 || s.sy > H + 8) continue;
+      ctx!.globalAlpha = s.a;
       ctx!.beginPath();
-      ctx!.arc(x, y, s.r * (0.8 + 0.35 * near), 0, Math.PI * 2);
+      ctx!.arc(s.sx, s.sy, s.r, 0, Math.PI * 2);
       ctx!.fill();
     }
     ctx!.globalAlpha = 1;
@@ -187,7 +177,7 @@ export function initDive(): void {
     const q = intro ? clamp((current - intro) / (1 - intro), 0, 1) : current;
 
     if (current !== last) {
-      draw(q, lift);
+      canvas!.style.opacity = (1 - smooth(q, 0.78, 1)).toFixed(3);
       layout(q, lift, current * total);
       last = current;
     }
@@ -206,7 +196,6 @@ export function initDive(): void {
   measure();
 
   if (reduced) {
-    draw(0, 0);
     const onStaticScroll = (): void => setHeader(window.scrollY > 8 ? 'solid' : 'top');
     window.addEventListener('scroll', onStaticScroll, { passive: true });
     onStaticScroll();

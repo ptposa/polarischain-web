@@ -3,11 +3,105 @@ import Chapter from '../Chapter.astro';
 import Figure from '../Figure.astro';
 import FigWorkedExample from '../figures/FigWorkedExample.astro';
 
-const terms = [
-  ['c<sub>crypto</sub>(v)', 'Posture', 'Posture of the algorithm reached: 0 post-quantum, 0.3 hybrid, 1 classical.'],
-  ['c<sub>alg</sub>(v)', 'Friction', 'Octets of signature and public key the verifier must carry, normalised.'],
-  ['c<sub>key</sub>(v)', 'Key strength', 'Strength of the key material, by NIST security category.'],
-  ['c<sub>dist</sub>(u, v)', 'Distance', '1 when the hop crosses an administrative boundary, 0 otherwise.'],
+// Each formula is followed by the meaning of its fields: the symbol, where
+// the value comes from (the X.509 name when there is one), and what it does.
+// Symbols and sources carry literal markup and are rendered with set:html.
+interface Def {
+  sym: string;
+  src: string;
+  text: string;
+}
+
+const graphDefs: Def[] = [
+  {
+    sym: 'V',
+    src: 'CA certificates',
+    text: 'The certification authorities of the federation, one node per algorithm: rotating a key adds a version of a node, changing algorithm adds a new node.',
+  },
+  {
+    sym: 'E|<sub>t</sub>',
+    src: 'CA-to-CA certificates, valid and not revoked at t',
+    text: 'Every certificate between CAs in force at the instant t: the cross-certificates between intermediates of different domains and the internal edges of each hierarchy.',
+  },
+  {
+    sym: 'w',
+    src: 'attributes of the CA reached',
+    text: 'The cost of each hop, in the receiving domain’s own weights. Defined below, in (5).',
+  },
+  {
+    sym: 'Φ',
+    src: 'X.509 extensions of each certificate',
+    text: 'The governance constraints each edge imposes by itself. Defined next, in (2).',
+  },
+];
+
+const phiDefs: Def[] = [
+  {
+    sym: 'depth(e)',
+    src: 'X.509 · basicConstraints, pathLenConstraint<br />RFC 5280, section 4.2.1.9',
+    text: 'How many intermediate certificates may still follow; the budget shrinks at each hop along the path.',
+  },
+  {
+    sym: 'name(e)',
+    src: 'X.509 · nameConstraints<br />RFC 5280, section 4.2.1.10',
+    text: 'The name spaces the path may reach, permitted and excluded, accumulated by intersection along the path.',
+  },
+  {
+    sym: 'pol(e)',
+    src: 'X.509 · certificatePolicies, policyMappings,<br />policyConstraints, inhibitAnyPolicy',
+    text: 'The policies the path carries, with their mappings and constraints, processed as the policy tree of RFC 5280, section 6.',
+  },
+];
+
+const policyDefs: Def[] = [
+  {
+    sym: 'TP<sub>d</sub>',
+    src: 'trust anchors of the receiver',
+    text: 'The anchors the receiving domain accepts. Every path it considers starts at one of them.',
+  },
+  {
+    sym: 's<sub>0</sub>',
+    src: 'RFC 5280, section 6.1.1, inputs',
+    text: 'The initial state of validation: the initial policy set, the explicit-policy, policy-mapping and anyPolicy indicators, and the initial name subtrees.',
+  },
+  {
+    sym: 'α, β, γ, δ',
+    src: 'weights of the cost, α + β + γ + δ = 1',
+    text: 'How much the receiver values posture, friction, key strength and distance.',
+  },
+  {
+    sym: 'τ<sub>d</sub>',
+    src: 'cryptographic threshold, in [0, 1]',
+    text: 'The highest posture the receiver admits on any hop: 1 accepts classical nodes, 0.3 hybrid ones, 0 only post-quantum.',
+  },
+  {
+    sym: 'σ<sub>d</sub>',
+    src: 'X.509 · extendedKeyUsage<br />RFC 5280, section 4.2.1.12',
+    text: 'The purposes the path must allow, such as TLS client authentication.',
+  },
+];
+
+const costDefs: Def[] = [
+  {
+    sym: 'c<sub>crypto</sub>(v)',
+    src: 'posture · algorithm of the CA reached',
+    text: '0 post-quantum, 0.3 hybrid, 1 classical.',
+  },
+  {
+    sym: 'c<sub>alg</sub>(v)',
+    src: 'friction · signature and public key size',
+    text: 'Octets of signature and public key the verifier must carry, normalised.',
+  },
+  {
+    sym: 'c<sub>key</sub>(v)',
+    src: 'key strength · NIST security category',
+    text: 'Strength of the key material, by NIST security category.',
+  },
+  {
+    sym: 'c<sub>dist</sub>(u, v)',
+    src: 'distance · dom(u) ≠ dom(v)',
+    text: '1 when the hop crosses an administrative boundary, 0 otherwise.',
+  },
 ];
 ---
 
@@ -19,31 +113,56 @@ const terms = [
     </p>
 
     <div class="eq" role="math" aria-label="G at t equals V, E at t, w, Phi">
-      <span class="eq__body">G|<sub>t</sub> = (V, E|<sub>t</sub>, w, Φ)</span>
+      <span class="eq__body"
+        ><span class="v">G</span>|<sub>t</sub> = ( <span class="v">V</span>, <span class="v">E</span
+        >|<sub>t</sub>, <span class="v">w</span>, <span class="g">Φ</span> )</span
+      >
       <span class="eq__n">(1)</span>
     </div>
 
-    <p>
-      The vertices <span class="m">V</span> are the certification authorities of the federation,
-      with <strong>one node per algorithm</strong>: rotating a key adds a version of a node,
-      changing algorithm adds a new node. The edges <span class="m">E|<sub>t</sub></span> are
-      derived from real certificates that are valid and not revoked at the instant <span class="m"
-        >t</span
-      >, never from declarations. They include the cross-certificates between intermediate CAs of
-      different domains and the internal edges of each hierarchy.
-    </p>
+    <dl class="defs">
+      {
+        graphDefs.map((d) => (
+          <div class="def">
+            <dt>
+              <span class="def__sym" set:html={d.sym} />
+              <span class="def__src" set:html={d.src} />
+            </dt>
+            <dd>{d.text}</dd>
+          </div>
+        ))
+      }
+    </dl>
 
     <p>
-      Each edge carries the governance constraints of its certificate, read from <code
-        >pathLenConstraint</code
-      >, <code>nameConstraints</code> and the policy extensions, and composed along the path with
-      the semantics of RFC 5280, section 6:
+      Each edge carries the governance constraints of its certificate, composed along the path
+      with the semantics of RFC 5280, section 6:
     </p>
 
     <div class="eq" role="math" aria-label="Phi of e equals depth, name, pol">
-      <span class="eq__body">Φ(e) = ⟨ depth(e), name(e), pol(e) ⟩</span>
+      <span class="eq__body"
+        ><span class="g">Φ</span>(<span class="v">e</span>) = ⟨ <span class="fn">depth</span>(<span
+          class="v">e</span
+        >), <span class="fn">name</span>(<span class="v">e</span>), <span class="fn">pol</span>(<span
+          class="v">e</span
+        >) ⟩</span
+      >
       <span class="eq__n">(2)</span>
     </div>
+
+    <dl class="defs">
+      {
+        phiDefs.map((d) => (
+          <div class="def">
+            <dt>
+              <span class="def__sym" set:html={d.sym} />
+              <span class="def__src" set:html={d.src} />
+            </dt>
+            <dd>{d.text}</dd>
+          </div>
+        ))
+      }
+    </dl>
 
     <p>
       The graph is never read in the abstract. It is always queried by a receiving domain <span
@@ -53,24 +172,47 @@ const terms = [
 
     <div class="eq" role="math" aria-label="pi d">
       <span class="eq__body"
-        >π<sub>d</sub> = ( TP<sub>d</sub>, s<sub>0</sub>, α, β, γ, δ, τ<sub>d</sub>, σ<sub>d</sub>
-        )</span
+        ><span class="g">π</span><sub>d</sub> = ( <span class="v">TP</span><sub>d</sub>, <span
+          class="v">s</span
+        ><sub>0</sub>, <span class="g">α</span>, <span class="g">β</span>, <span class="g">γ</span>,{' '}
+        <span class="g">δ</span>, <span class="g">τ</span><sub>d</sub>, <span class="g">σ</span><sub
+          >d</sub
+        > )</span
       >
       <span class="eq__n">(3)</span>
     </div>
 
+    <dl class="defs defs--5">
+      {
+        policyDefs.map((d) => (
+          <div class="def">
+            <dt>
+              <span class="def__sym" set:html={d.sym} />
+              <span class="def__src" set:html={d.src} />
+            </dt>
+            <dd>{d.text}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
     <p>
-      that is, the anchors it accepts, the initial validation state, four weights that add up to
-      one, a <strong>cryptographic threshold τ<sub>d</sub></strong> and the purposes σ<sub>d</sub>
-      the path must allow. A path is <em>admissible</em> for <span class="m">d</span> when it starts
-      at one of its anchors, satisfies Φ, keeps every hop under the threshold and allows the
-      required purposes:
+      A path is <em>admissible</em> for <span class="m">d</span> when it starts at one of its
+      anchors, satisfies <span class="m">Φ</span>, keeps every hop under the threshold and allows
+      the required purposes:
     </p>
 
     <div class="eq eq--wide" role="math" aria-label="Admissible paths">
       <span class="eq__body"
-        >P<sub>adm</sub>(d, v, t) = &#123; P : tp ⇝ v | tp ∈ TP<sub>d</sub>, P ⊆ E|<sub>t</sub>, P ⊨ Φ,<br />
-        ∀e ∈ P : c<sub>crypto</sub>(e) ≤ τ<sub>d</sub>, σ<sub>d</sub> ⊆ ∩ eku(e) &#125;</span
+        ><span class="v">P</span><sub>adm</sub>(<span class="v">d</span>, <span class="v">v</span>,{' '}
+        <span class="v">t</span>) = &#123; <span class="v">P</span> : <span class="v">tp</span> ⇝
+        <span class="v">v</span> | <span class="v">tp</span> ∈ <span class="v">TP</span><sub>d</sub
+        >, <span class="v">P</span> ⊆ <span class="v">E</span>|<sub>t</sub>, <span class="v">P</span
+        > ⊨ <span class="g">Φ</span>,<br />
+        ∀<span class="v">e</span> ∈ <span class="v">P</span> : <span class="v">c</span><sub
+          >crypto</sub
+        >(<span class="v">e</span>) ≤ <span class="g">τ</span><sub>d</sub>, <span class="g">σ</span
+        ><sub>d</sub> ⊆ ∩ <span class="fn">eku</span>(<span class="v">e</span>) &#125;</span
       >
       <span class="eq__n">(4)</span>
     </div>
@@ -79,37 +221,42 @@ const terms = [
 
     <div class="eq" role="math" aria-label="w d of u v">
       <span class="eq__body"
-        >w<sub>d</sub>(u, v) = α c<sub>crypto</sub>(v) + β c<sub>alg</sub>(v) + γ c<sub>key</sub>(v)
-        + δ c<sub>dist</sub>(u, v)</span
+        ><span class="v">w</span><sub>d</sub>(<span class="v">u</span>, <span class="v">v</span>) ={' '}
+        <span class="g">α</span> <span class="v">c</span><sub>crypto</sub>(<span class="v">v</span>)
+        + <span class="g">β</span> <span class="v">c</span><sub>alg</sub>(<span class="v">v</span>) +{' '}
+        <span class="g">γ</span> <span class="v">c</span><sub>key</sub>(<span class="v">v</span>) +{' '}
+        <span class="g">δ</span> <span class="v">c</span><sub>dist</sub>(<span class="v">u</span>,{' '}
+        <span class="v">v</span>)</span
       >
       <span class="eq__n">(5)</span>
     </div>
 
-    <table class="terms">
-      <caption class="label">Terms of the cost, each in [0, 1]</caption>
-      <tbody>
-        {
-          terms.map(([sym, name, text]) => (
-            <tr>
-              <th scope="row">
-                <span class="m" set:html={sym} />
-              </th>
-              <td>
-                <span class="terms__name">{name}.</span> {text}
-              </td>
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
+    <dl class="defs">
+      {
+        costDefs.map((d) => (
+          <div class="def">
+            <dt>
+              <span class="def__sym" set:html={d.sym} />
+              <span class="def__src" set:html={d.src} />
+            </dt>
+            <dd>{d.text}</dd>
+          </div>
+        ))
+      }
+    </dl>
 
-    <p>and the receiver selects the path of least total cost:</p>
+    <p>
+      Each term lies in [0, 1]. The receiver selects the path of least total cost:
+    </p>
 
     <div class="eq" role="math" aria-label="Selected path">
       <span class="eq__body"
-        >P*<sub>d</sub>(v) = Sel( arg min<sub>P ∈ P<sub>adm</sub></sub> Σ<sub>e ∈ P</sub> w<sub
+        ><span class="v">P</span>*<sub>d</sub>(<span class="v">v</span>) = <span class="fn">Sel</span
+        >( <span class="fn">arg min</span><sub
+          ><span class="v">P</span> ∈ <span class="v">P</span><sub>adm</sub></sub
+        > Σ<sub><span class="v">e</span> ∈ <span class="v">P</span></sub> <span class="v">w</span><sub
           >d</sub
-        >(e) )</span
+        >(<span class="v">e</span>) )</span
       >
       <span class="eq__n">(6)</span>
     </div>
@@ -121,7 +268,7 @@ const terms = [
   </div>
 
   <p class="key">
-    <span class="m">Φ</span> and <span class="m">τ<sub>d</sub></span> decide which paths may exist.
+    <span class="m">Φ</span> and <span class="m">τ<sub>d</sub></span> decide which paths may exist.{' '}
     <span class="m">w<sub>d</sub></span> decides which one is preferred.
   </p>
 
@@ -149,6 +296,15 @@ const terms = [
 </Chapter>
 
 <style>
+  /* The model reads as the page of a paper: every formula in one brown ink
+     (the tan of the numbered labels), each followed by the meaning of its
+     fields, whose symbols are set in sand. */
+  :global(#model) {
+    --ink: #e6d4b2;
+    --ink-eq: var(--tan);
+    --ink-rule: #a8957a;
+  }
+
   .article .intro {
     max-width: var(--measure);
   }
@@ -159,7 +315,7 @@ const terms = [
 
   .m {
     font-family: var(--font-math);
-    color: var(--text);
+    color: var(--ink);
   }
 
   .eq {
@@ -167,57 +323,93 @@ const terms = [
     align-items: baseline;
     justify-content: space-between;
     gap: 1.5rem;
-    margin: 1.3rem 0 1.5rem;
-    padding: 0 0 0 1.5rem;
+    margin: 2.8rem 0 1.6rem;
+    padding: 1.1rem 0 1.1rem 1.5rem;
+    border-block: 1px solid rgba(168, 149, 122, 0.22);
+    background: linear-gradient(90deg, rgba(230, 212, 178, 0.035), rgba(230, 212, 178, 0));
   }
 
   .eq__body {
     flex: 1;
     font-family: var(--font-math);
-    font-size: 1.12rem;
-    line-height: 1.5;
-    color: var(--text-strong);
+    font-size: 1.22rem;
+    line-height: 1.6;
+    color: var(--ink-eq);
     text-align: center;
   }
 
   .eq__body sub {
-    font-size: 0.68em;
+    font-size: 0.66em;
+  }
+
+  .eq .fn {
+    letter-spacing: 0.01em;
+  }
+
+  /* The sentence after a formula or its fields stands apart from both. */
+  .eq + p {
+    margin-top: 2.6rem;
   }
 
   .eq__n {
     font-family: var(--font-mono);
     font-size: 0.74rem;
-    color: var(--text-muted);
+    color: var(--ink-rule);
   }
 
-  .terms {
-    width: 100%;
-    margin: 0.4rem 0 1.4rem;
-    border-collapse: collapse;
+  /* The fields of a formula: symbol, where it comes from, what it does. */
+  .defs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1.4rem 2rem;
+    margin: 0 0 3rem;
   }
 
-  .terms caption {
-    margin-bottom: 0.5rem;
-    text-align: left;
+  /* The five fields of the policy fit one row on wide screens. */
+  @media (min-width: 1100px) {
+    .defs--5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      column-gap: 1.5rem;
+    }
   }
 
-  .terms th,
-  .terms td {
-    padding: 0.55rem 0;
-    border-top: 1px solid var(--rule);
-    text-align: left;
-    vertical-align: baseline;
+  .def {
+    padding-left: 1rem;
+    border-left: 1px solid rgba(168, 149, 122, 0.35);
   }
 
-  .terms th {
-    width: 8.5rem;
-    padding-right: 1rem;
-    font-weight: 400;
-    white-space: nowrap;
+  .def dt {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0 0 0.45rem;
   }
 
-  .terms__name {
-    color: var(--text);
+  .def__sym {
+    font-family: var(--font-math);
+    font-size: 1.1rem;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .def__sym :global(sub) {
+    font-size: 0.66em;
+  }
+
+  .def__src {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    line-height: 1.45;
+    letter-spacing: 0.02em;
+    color: var(--x509);
+  }
+
+  .def dd {
+    margin: 0;
+    font-family: var(--font-figure);
+    font-size: var(--body-size);
+    line-height: 1.5;
+    color: var(--text-soft);
   }
 
   .key sub {
@@ -228,21 +420,18 @@ const terms = [
     font-style: normal;
   }
 
-  .chapter .example-h {
+  :global(.chapter) .example-h {
     margin-top: 3rem;
   }
 
   @media (max-width: 560px) {
     .eq {
-      padding-left: 0;
+      padding-left: 0.6rem;
       gap: 0.6rem;
     }
     .eq__body {
-      font-size: 1rem;
+      font-size: 1.02rem;
       text-align: left;
-    }
-    .terms th {
-      width: 6.2rem;
     }
   }
 </style>

@@ -44,9 +44,17 @@
   /* Text */
   --text-strong: #fff;
   --text: #eef2f8;
-  --text-soft: var(--ieee-blue-25);
+  /* Running text: grey with a trace of the ground blue. */
+  --text-soft: #b2b9c3;
   --text-muted: var(--ieee-blue-50);
   --link: var(--ieee-cyan-50);
+  /* Small headings and labels that must stand out from the running text:
+     sub-headings of cards, phase names in figures, figure numbers. */
+  --subhead: var(--ieee-cyan-50);
+  /* Names from the X.509 profile (extensions, fields), as in the thesis. */
+  --x509: #8fd0a6;
+  /* A warm tan, outside the IEEE set, for the names of the challenge frames. */
+  --tan: #d2a77f;
   --link-hover: var(--ieee-cyan-25);
 
   /* Rules */
@@ -60,7 +68,7 @@
   --allow: var(--ieee-green-50);
   --classical: var(--ieee-blue-50);
   --hybrid: var(--ieee-purple-50);
-  --pq: var(--ieee-teal-50);
+  --pq: var(--ieee-green-50);
   --govern: var(--ieee-purple-50);
   --discover: var(--ieee-cyan-50);
   --audit: var(--ieee-yellow-75);
@@ -81,7 +89,7 @@
   --font-body: 'iA Writer Duo S', 'IBM Plex Mono', 'STIX Two Math', ui-monospace, monospace;
   /* One size and one leading for all running text: paragraphs, cards,
      lists and tables. Labels, captions and references are smaller. */
-  --body-size: 0.9375rem;
+  --body-size: 0.90625rem;
   --body-leading: 1.55;
   --font-heading: 'Playfair Display', 'STIX Two Math', Georgia, serif;
   --font-mono: 'IBM Plex Mono', 'STIX Two Math', ui-monospace, monospace;
@@ -92,16 +100,35 @@
   --measure: 40rem;
   --wide: 68rem;
   --figure: 48rem;
+  /* Space between one section and the next, the same everywhere. */
+  --section-gap: clamp(4.5rem, 10vw, 8rem);
   --gutter: clamp(1rem, 4vw, 2.5rem);
   --header-h: 3.75rem;
 }
 
-/* Phones: slightly smaller body text, set closer. */
+/* Tablets and phones: slightly smaller body text; phones also set closer. */
+@media (max-width: 1024px) {
+  :root {
+    --body-size: 0.859375rem;
+  }
+}
+
 @media (max-width: 560px) {
   :root {
-    --body-size: 0.875rem;
+    --body-size: 0.828125rem;
     --body-leading: 1.45;
   }
+}
+
+/* STIX Two Math (SIL OFL 1.1, licence beside the file), served whole: it
+   carries the Latin letters of the equations and every Greek letter and
+   mathematical symbol the text faces lack. */
+@font-face {
+  font-family: 'STIX Two Math';
+  src: url('../assets/fonts/STIXTwoMath-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 /* iA Writer Duo S, the body face of certificate.transparency.dev (SIL OFL 1.1).
@@ -143,7 +170,7 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-/* Black sky over the upper 60 % of the opening screen; below that it fades
+/* Black sky over the upper third of the opening screen; below that it fades
    into the deep blue that holds for the rest of the page. The
    hero stays pinned while the page scrolls under it, so the dive carries the
    reader from one colour to the other. */
@@ -151,11 +178,11 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, var(--sky-black) 0, var(--sky-black) 60vh, var(--ground) 100vh)
+    linear-gradient(180deg, var(--sky-black) 0, var(--sky-black) 33vh, var(--ground) 100vh)
       no-repeat,
     var(--ground);
   background:
-    linear-gradient(180deg, var(--sky-black) 0, var(--sky-black) 60svh, var(--ground) 100svh)
+    linear-gradient(180deg, var(--sky-black) 0, var(--sky-black) 33svh, var(--ground) 100svh)
       no-repeat,
     var(--ground);
   color: var(--text-soft);
@@ -163,6 +190,8 @@ body {
   font-size: var(--body-size);
   line-height: var(--body-leading);
   font-variant-ligatures: none;
+  /* Playfair Display defaults to old-style figures; 0.3 must not read as o.3. */
+  font-variant-numeric: lining-nums;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -200,6 +229,13 @@ code,
   font-family: var(--font-mono);
   font-size: 0.9em;
   color: var(--text);
+}
+
+/* X.509 names in running text: italic and in their own colour. */
+code.x509 {
+  font-size: 1em;
+  font-style: italic;
+  color: var(--x509);
 }
 
 sub {
@@ -242,7 +278,7 @@ sub {
 /* ─── Sections ─── */
 .chapter {
   position: relative;
-  padding: clamp(4.5rem, 10vw, 8rem) 0 0;
+  padding: var(--section-gap) 0 0;
 }
 
 .chapter:last-of-type {
@@ -293,7 +329,7 @@ h4 {
 
 /* The one sentence of a section that carries its point */
 .key {
-  max-width: 36ch;
+  max-width: 46rem;
   margin: 2rem 0;
   padding-left: 1.1rem;
   border-left: 1px solid var(--anchor);
@@ -339,12 +375,18 @@ h4 {
   font-family: var(--font-mono);
   font-size: 0.74rem;
   line-height: 1.55;
-  color: var(--text-muted);
+  color: var(--text-soft);
 }
 
 .figure figcaption b {
-  color: var(--text-soft);
+  color: var(--subhead);
   font-weight: 400;
+}
+
+/* Figures dense enough to need more room than the others. */
+.figure--large .figure__frame > svg.fig-wide,
+.figure.figure--large figcaption {
+  max-width: 60rem;
 }
 
 /* ─── Small reusable pieces ─── */
@@ -407,6 +449,14 @@ h4 {
   overflow: visible;
 }
 
+/* A label that sits on a border or an edge hides the line behind its letters. */
+.svg-fig .t-halo {
+  paint-order: stroke;
+  stroke: var(--ground);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
 .svg-fig text {
   fill: var(--fig-text);
   font-family: var(--font-figure);
@@ -434,6 +484,9 @@ h4 {
   font-size: 10px;
   letter-spacing: 0.1em;
   fill: var(--fig-muted);
+}
+.svg-fig .t-phase {
+  fill: var(--subhead);
 }
 .svg-fig .t-strong {
   fill: var(--text-strong);
@@ -611,40 +664,4 @@ h4 {
   .svg-fig .flow-slow {
     animation: none;
   }
-}
-
-/* ─── Provisional palette switch ───
-   Three alternatives to the default, to compare on the real page. 1 and 3
-   share a softer set of light tones for the bulk of the text (the default
-   white is kept a little brighter only for equations and figure titles) and
-   differ in the accent that replaces the IEEE yellow: titles, "federated
-   trust.", Polaris and the trust anchors. 2 is the default with only the
-   yellow of "federated trust." changed to that of the section titles. The header switch sets
-   data-palette on <html> and remembers the choice in this browser. Once one
-   is chosen, its values move into :root and this block, the switch and
-   lib/palette-switch.ts go. */
-:root[data-palette='1'],
-:root[data-palette='3'] {
-  --text-strong: #d9e0ea;
-  --text: #c3cdda;
-  --text-soft: #a2b2c8;
-  --text-muted: #7f95b1;
-  --fig-text: #b8c4d3;
-}
-
-/* 1 · Sand: the yellow, in a warmer and quieter tone. */
-:root[data-palette='1'] {
-  --ieee-yellow: #d9b86a;
-  --ieee-yellow-75: #dcc38c;
-}
-
-/* 2 · Default, with "federated trust." in the yellow of the section titles. */
-:root[data-palette='2'] .hero__title em {
-  color: var(--ieee-yellow-75);
-}
-
-/* 3 · Apricot: a soft warm orange. */
-:root[data-palette='3'] {
-  --ieee-yellow: #e2a77c;
-  --ieee-yellow-75: #e6b994;
 }

@@ -116,8 +116,10 @@ All commands are run from the root of the project:
   and IBM Plex Mono, the family it derives from, otherwise; Archivo
   inside the figures; STIX Two Math for the equations and for the Greek
   letters and symbols anywhere else, since the text faces do not carry
-  them. All faces are under the SIL Open Font License
-  and, except iA Writer, come from Fontsource.
+  them. All faces are under the SIL Open Font License. Playfair
+  Display, IBM Plex Mono and Archivo come from Fontsource; STIX Two
+  Math is served whole from `src/assets/fonts/`, since the Fontsource
+  package limits it to Latin.
 - **Figures**: minimal inline SVG in the style of
   certificate.transparency.dev: thin strokes, still nodes, and only the
   dashed lines in motion. Every figure has a wide drawing and a narrow

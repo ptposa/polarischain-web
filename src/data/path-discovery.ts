@@ -34,7 +34,7 @@ export const sceneNodes: SceneNode[] = [
   {
     id: 'ee',
     x: 96,
-    y: 140,
+    y: 120,
     zone: 'origin',
     side: 'right',
     kind: 'ee',
@@ -47,7 +47,7 @@ export const sceneNodes: SceneNode[] = [
   {
     id: 'issuing',
     x: 318,
-    y: 92,
+    y: 84,
     zone: 'origin',
     side: 'right',
     kind: 'ca',
@@ -60,7 +60,7 @@ export const sceneNodes: SceneNode[] = [
   {
     id: 'intD0',
     x: 300,
-    y: 188,
+    y: 132,
     zone: 'origin',
     side: 'left',
     kind: 'ca',
@@ -73,7 +73,7 @@ export const sceneNodes: SceneNode[] = [
   {
     id: 'rootD0',
     x: 470,
-    y: 188,
+    y: 132,
     zone: 'origin',
     side: 'right',
     kind: 'root',
@@ -87,7 +87,7 @@ export const sceneNodes: SceneNode[] = [
   {
     id: 'intD1',
     x: 300,
-    y: 384,
+    y: 290,
     zone: 'transit',
     side: 'left',
     kind: 'ca',
@@ -100,7 +100,7 @@ export const sceneNodes: SceneNode[] = [
   {
     id: 'intD2',
     x: 500,
-    y: 404,
+    y: 300,
     zone: 'transit',
     side: 'right',
     kind: 'ca',
@@ -114,7 +114,7 @@ export const sceneNodes: SceneNode[] = [
   {
     id: 'intDn',
     x: 452,
-    y: 612,
+    y: 444,
     zone: 'rp',
     side: 'right',
     kind: 'ca',
@@ -127,7 +127,7 @@ export const sceneNodes: SceneNode[] = [
   {
     id: 'rootDn',
     x: 230,
-    y: 652,
+    y: 484,
     zone: 'rp',
     side: 'left',
     kind: 'root',
@@ -175,21 +175,21 @@ export const zones: { id: Zone; y: number; h: number; title: string; sub: string
   {
     id: 'origin',
     y: 20,
-    h: 244,
+    h: 180,
     title: 'ORIGIN DOMAIN · D₀',
     sub: 'Post-quantum · issuer of the certificate',
   },
   {
     id: 'transit',
-    y: 280,
-    h: 216,
+    y: 212,
+    h: 160,
     title: 'FEDERATION TRANSIT · D₁ ‥ Dₙ₋₁',
     sub: 'Intermediate domains',
   },
   {
     id: 'rp',
-    y: 512,
-    h: 224,
+    y: 384,
+    h: 176,
     title: 'RELYING-PARTY DOMAIN · Dₙ',
     sub: 'Hybrid · threshold τ = 0.3 · validator',
   },
@@ -202,21 +202,21 @@ export const zones: { id: Zone; y: number; h: number; title: string; sub: string
 export type Place = 'left' | 'right' | 'below' | 'above';
 
 export const narrowLayout: Record<string, { x: number; y: number; place: Place; status?: string }> = {
-  ee: { x: 44, y: 124, place: 'below' },
-  issuing: { x: 150, y: 86, place: 'right' },
-  intD0: { x: 150, y: 196, place: 'left' },
-  rootD0: { x: 290, y: 196, place: 'below' },
-  intD1: { x: 150, y: 400, place: 'left' },
-  intD2: { x: 286, y: 380, place: 'below' },
-  intDn: { x: 150, y: 604, place: 'left' },
-  rootDn: { x: 270, y: 700, place: 'below', status: '✓ relying-party anchor' },
+  ee: { x: 44, y: 110, place: 'below' },
+  issuing: { x: 150, y: 70, place: 'right' },
+  intD0: { x: 150, y: 150, place: 'left' },
+  rootD0: { x: 290, y: 140, place: 'below' },
+  intD1: { x: 150, y: 300, place: 'left' },
+  intD2: { x: 286, y: 280, place: 'below' },
+  intDn: { x: 150, y: 450, place: 'left' },
+  rootDn: { x: 270, y: 520, place: 'below', status: '✓ relying-party anchor' },
 };
 
 /** Latent edges left out of the narrow scene, where they would cross labels. */
 export const narrowSkip: [string, string][] = [['intD2', 'intDn']];
 
 export const narrowZones: { id: Zone; y: number; h: number; title: string; sub: string }[] = [
-  { id: 'origin', y: 8, h: 262, title: 'ORIGIN · D₀', sub: 'post-quantum · issuer' },
-  { id: 'transit', y: 280, h: 230, title: 'TRANSIT · D₁ ‥ Dₙ₋₁', sub: 'intermediate domains' },
-  { id: 'rp', y: 520, h: 272, title: 'RELYING PARTY · Dₙ', sub: 'hybrid · τ = 0.3 · validator' },
+  { id: 'origin', y: 8, h: 192, title: 'ORIGIN · D₀', sub: 'post-quantum · issuer' },
+  { id: 'transit', y: 208, h: 162, title: 'TRANSIT · D₁ ‥ Dₙ₋₁', sub: 'intermediate domains' },
+  { id: 'rp', y: 378, h: 202, title: 'RELYING PARTY · Dₙ', sub: 'hybrid · τ = 0.3 · validator' },
 ];

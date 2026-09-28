@@ -81,7 +81,9 @@ const emerging = [
 
   <div class="challenges grid-4">
     <article>
-      <svg class="svg-fig mini" viewBox="0 0 260 120" aria-hidden="true">
+      <h3>Growing complexity of trust topologies</h3>
+      <p>Every new relationship multiplies the paths between an identity and an anchor.</p>
+      <svg class="svg-fig mini" viewBox="22 4 224 116" aria-hidden="true">
         <path class="grid-line" d="M40 100 H232 M40 20 V100" />
         <path class="edge-path" d="M40 98 C 90 96, 120 86, 146 66 S 200 30, 228 24" />
         <circle class="n n--path" cx="40" cy="98" r="3" />
@@ -90,12 +92,15 @@ const emerging = [
         <text x="48" y="28" class="t-label">certification paths</text>
         <text x="232" y="116" text-anchor="end" class="t-label">federated domains</text>
       </svg>
-      <h3>Growing complexity of trust topologies</h3>
-      <p>Every new relationship multiplies the paths between an identity and an anchor.</p>
     </article>
 
     <article>
-      <svg class="svg-fig mini" viewBox="0 0 260 120" aria-hidden="true">
+      <h3>Heuristic validation</h3>
+      <p>
+        Path building stops at the first chain that works, so better admissible paths are never
+        seen.
+      </p>
+      <svg class="svg-fig mini" viewBox="22 4 224 116" aria-hidden="true">
         <path class="edge-muted" d="M40 60 L100 92 H170 L226 60 M100 92 L170 60" />
         <path class="edge-dash dash-anchor" d="M40 60 L100 28 H170 L226 60" />
         <path class="edge-path" d="M40 60 H226" />
@@ -112,15 +117,15 @@ const emerging = [
         <text x="135" y="16" text-anchor="middle" class="t-label t-accent">admissible, never explored</text>
         <text x="135" y="112" text-anchor="middle" class="t-label t-path">one heuristic result</text>
       </svg>
-      <h3>Heuristic validation</h3>
-      <p>
-        Path building stops at the first chain that works, so better admissible paths are never
-        seen.
-      </p>
     </article>
 
     <article>
-      <svg class="svg-fig mini" viewBox="0 0 260 120" aria-hidden="true">
+      <h3>Lack of trust governance</h3>
+      <p>
+        Trust is inherited from whole hierarchies instead of being bounded, and reaches further than
+        anyone decided.
+      </p>
+      <svg class="svg-fig mini" viewBox="22 4 224 116" aria-hidden="true">
         <rect class="box-dash dash-deny" x="150" y="14" width="90" height="92" />
         <text x="195" y="28" text-anchor="middle" class="t-label t-deny">unintended reach</text>
         <path class="edge-muted" d="M40 60 L110 36 M40 60 L110 84" />
@@ -136,15 +141,15 @@ const emerging = [
         <circle class="n n--deny" cx="218" cy="62" r="3.6" />
         <text x="40" y="80" text-anchor="middle" class="t-label">anchor</text>
       </svg>
-      <h3>Lack of trust governance</h3>
-      <p>
-        Trust is inherited from whole hierarchies instead of being bounded, and reaches further than
-        anyone decided.
-      </p>
     </article>
 
     <article>
-      <svg class="svg-fig mini" viewBox="0 0 260 120" aria-hidden="true">
+      <h3>No crypto agility awareness</h3>
+      <p>
+        Federation rarely weighs the algorithm on each hop, just as classical, hybrid and
+        post-quantum material starts to coexist.
+      </p>
+      <svg class="svg-fig mini" viewBox="22 4 224 116" aria-hidden="true">
         <path class="grid-line" d="M40 104 H232 M40 12 V104" />
         <path class="line-cl flow-slow" d="M44 26 C 110 30, 170 72, 228 96" />
         <path class="line-hy" d="M44 98 C 96 62, 170 42, 228 58" />
@@ -157,11 +162,6 @@ const emerging = [
         <text x="220" y="12" text-anchor="end" class="t-label t-pq">post-quantum</text>
         <text x="232" y="116" text-anchor="end" class="t-label">time</text>
       </svg>
-      <h3>No crypto agility awareness</h3>
-      <p>
-        Federation rarely weighs the algorithm on each hop, just as classical, hybrid and
-        post-quantum material starts to coexist.
-      </p>
     </article>
   </div>
 
@@ -171,9 +171,9 @@ const emerging = [
       {
         emerging.map((e, i) => (
           <div class="emerging__item">
-            <svg class="svg-fig mini mini--em" viewBox="0 0 260 100" aria-hidden="true" set:html={emergingArt[i]} />
             <h4>{e.title}</h4>
             <p>{e.text}</p>
+            <svg class="svg-fig mini mini--em" viewBox="18 6 226 100" aria-hidden="true" set:html={emergingArt[i]} />
           </div>
         ))
       }
@@ -186,16 +186,30 @@ const emerging = [
     margin-top: 3rem;
   }
 
-  .challenges article {
-    padding-top: 0.4rem;
+  .challenges,
+  .emerging .grid-4 {
+    gap: 1.2rem;
   }
 
+  /* Each challenge in its own faint frame: title and text first, then its
+     drawing, held at the foot so the drawings of a row line up. */
+  .challenges article,
+  .emerging__item {
+    display: flex;
+    flex-direction: column;
+    padding: 0.95rem 0.95rem 0.85rem;
+    border: 1px solid rgba(186, 198, 217, 0.12);
+    border-radius: 3px;
+  }
+
+  /* The drawing takes the whole width of its frame; its viewBox is cropped
+     to the drawing so no margin is wasted. */
   .mini {
     display: block;
     width: 100%;
-    max-width: 320px;
     height: auto;
-    margin-bottom: 1.1rem;
+    margin: auto 0 0;
+    padding-top: 1rem;
   }
 
   .mini .t-label {
@@ -203,12 +217,10 @@ const emerging = [
     letter-spacing: 0.06em;
   }
 
-  .challenges h3 {
-    font-size: 1.12rem;
-  }
-
-  .challenges p {
+  .challenges p,
+  .emerging__item p {
     margin: 0;
+    color: var(--text-soft);
   }
 
   .n {
@@ -285,10 +297,6 @@ const emerging = [
   .bar--6 {
     stroke: var(--ieee-yellow);
   }
-  .mini--em {
-    max-width: 280px;
-    margin-bottom: 0.9rem;
-  }
   .line-pq {
     stroke: var(--pq);
   }
@@ -308,21 +316,16 @@ const emerging = [
 
   .emerging .label {
     margin: 0 0 1.2rem;
+    color: var(--ieee-red-50);
   }
 
-  .emerging .grid-4 {
-    gap: 1.5rem 2.5rem;
-  }
-
+  .challenges h3,
   .emerging__item h4 {
-    margin: 0 0 0.35rem;
-    font-size: 1rem;
+    margin: 0 0 0.5rem;
+    font-size: 1.12rem;
+    line-height: 1.25;
     font-weight: 400;
-  }
-
-  .emerging__item p {
-    margin: 0;
-    color: var(--text-muted);
+    color: var(--tan);
   }
   /* The emerging drawings are injected as HTML, so their inner elements
      carry no scope attribute: reach them through :global(). */

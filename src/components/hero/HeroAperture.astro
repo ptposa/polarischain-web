@@ -1,6 +1,6 @@
 ---
 // Right column of the hero: the sky chart that the dive enters.
-// Of the sky only Polaris is kept. Around it turns the federation of the
+// Of the sky only Polaris is kept. Around it sways the federation of the
 // laboratory: three domains, each with its trust anchor, intermediate CAs and
 // issuing CAs, cross-certified only between intermediates. Polaris is not a
 // node and no path goes through it; each receiver in turn takes it as its
@@ -10,10 +10,10 @@
 
 <aside class="aperture" aria-hidden="true" data-aperture>
   <div class="aperture__frame" data-aperture-frame>
-    <svg class="aperture__svg" viewBox="-175 -175 350 350" data-fed>
+    <svg class="aperture__svg" viewBox="-210 -175 420 350" data-fed>
       <g data-fed-guide></g>
       <g data-fed-edges></g>
-      <polyline class="fw-route" data-fed-route></polyline>
+      <path class="fw-route" data-fed-route></path>
       <g data-fed-nodes></g>
       <g data-fed-polaris>
         <circle class="fw-polaris-halo" cx="0" cy="0" r="12"></circle>
@@ -21,7 +21,7 @@
       </g>
       <g data-fed-labels>
         <text class="fw-lbl fw-lbl--polaris" x="0" y="-18" text-anchor="middle">Polaris</text>
-        <text class="fw-lbl fw-lbl--caption" x="-171" y="-161" data-fed-caption></text>
+        <text class="fw-lbl fw-lbl--caption" x="-206" y="-161" data-fed-caption></text>
       </g>
     </svg>
   </div>
@@ -44,7 +44,7 @@
 
   .aperture__frame {
     position: relative;
-    aspect-ratio: 1;
+    aspect-ratio: 6 / 5;
     transform-origin: 50% 50%;
     will-change: transform, opacity;
   }
@@ -59,6 +59,7 @@
   /* The graph is created by the script, so its parts carry no scope
      attribute: they are reached through :global(). */
   .aperture :global(.fw-edge) {
+    fill: none;
     stroke: rgba(186, 198, 217, 0.34);
     stroke-width: 1;
   }
@@ -124,7 +125,7 @@
 
   .aperture :global(.fw-lbl) {
     font-family: var(--font-mono);
-    font-size: 9.5px;
+    font-size: 10px;
     letter-spacing: 0.03em;
     fill: rgba(186, 198, 217, 0.8);
   }
@@ -200,17 +201,14 @@
     }
   }
 
-  /* Phones: the chart takes the full width and the names of the issuing CAs
-     give way so the rest stay legible. */
+  /* Phones: the chart takes the full width, with type a little larger so
+     it reads at that size. */
   @media (max-width: 560px) {
     .aperture {
       max-width: none;
     }
     .aperture :global(.fw-lbl) {
-      font-size: 9px;
-    }
-    .aperture :global(.fw-lbl--iss) {
-      display: none;
+      font-size: 10.5px;
     }
   }
 

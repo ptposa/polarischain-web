@@ -146,6 +146,33 @@ import HeroAperture from './HeroAperture.astro';
     text-transform: uppercase;
     color: var(--text-muted);
     pointer-events: none;
+    isolation: isolate;
+  }
+
+  /* A faint light around the cue, breathing slowly, that invites the reader
+     in. It fades with the cue as soon as the page scrolls. */
+  .dive__cue::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: -1;
+    width: 22rem;
+    height: 13rem;
+    transform: translate(-50%, -42%);
+    background: radial-gradient(
+      closest-side,
+      rgba(150, 200, 235, 0.11),
+      rgba(150, 200, 235, 0.045) 55%,
+      rgba(150, 200, 235, 0) 100%
+    );
+    animation: halo 5s ease-in-out infinite;
+  }
+
+  @keyframes halo {
+    50% {
+      opacity: 0.55;
+    }
   }
 
   .dive__cue--inline {
@@ -182,7 +209,9 @@ import HeroAperture from './HeroAperture.astro';
       margin-top: auto;
     }
     .dive__cue--inline {
-      position: static;
+      position: relative;
+      left: auto;
+      bottom: auto;
       display: flex;
       align-self: center;
       margin-top: auto;
@@ -247,7 +276,8 @@ import HeroAperture from './HeroAperture.astro';
     .dive__cue {
       display: none;
     }
-    .dive__cue line {
+    .dive__cue line,
+    .dive__cue::before {
       animation: none;
     }
   }

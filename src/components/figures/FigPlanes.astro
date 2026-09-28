@@ -2,7 +2,7 @@
 // Figure component: inline SVG styled by the .svg-fig vocabulary in global.css.
 ---
 
-<svg class="svg-fig fig-wide" viewBox="0 0 760 470" role="img" aria-labelledby="pl-t pl-d">
+<svg class="svg-fig fig-wide" viewBox="0 0 760 478" role="img" aria-labelledby="pl-t pl-d">
   <title id="pl-t">Two planes in the receiving domain</title>
   <desc id="pl-d">An asynchronous governance plane ingests material, compiles the graph and analyses policy. A frontier separates it from the execution plane, which sits on the critical path of the handshake: the PEP in the TLS endpoint, the selector and validator in the same process, and the compiled graph and policy resident in memory. Evidence of each decision feeds governance back.</desc>
 
@@ -19,7 +19,7 @@
   </defs>
 
   <!-- domain B -->
-  <rect class="box-b" x="160" y="8" width="590" height="456" />
+  <rect class="box-b" x="160" y="8" width="597" height="461" />
   <text x="174" y="26" class="t-label">DOMAIN B &middot; OWN POLICY AND DEPLOYMENT</text>
 
   <!-- governance plane -->
@@ -40,7 +40,7 @@
 
   <rect class="box-govern" x="555" y="64" width="166" height="72" />
   <text x="566" y="83" class="t-strong">Administration</text>
-  <text x="566" y="100" class="t-tiny">Local policy &#960;_B</text>
+  <text x="566" y="100" class="t-tiny">Local policy &#960;<tspan dy="2" font-size="7.5">B</tspan></text>
   <text x="566" y="113" class="t-tiny">What-if analysis of a</text>
   <text x="566" y="126" class="t-tiny">cross-certificate (Govern)</text>
 
@@ -54,7 +54,7 @@
 
   <!-- execution plane -->
   <rect class="box-plain" x="175" y="194" width="560" height="196" />
-  <text x="189" y="212" class="t-label">EXECUTION PLANE &middot; CRITICAL PATH OF THE HANDSHAKE</text>
+  <text x="189" y="212" class="t-label">EXECUTION PLANE &middot; CRITICAL PATH</text>
   <text x="721" y="212" text-anchor="end" class="t-tiny">application layer</text>
 
   <rect class="box-discover" x="189" y="220" width="236" height="66" />
@@ -69,7 +69,7 @@
 
   <path class="edge-accent" d="M425 245 H567" marker-end="url(#pl-ara)" />
   <text x="432" y="238" class="t-tiny t-accent">admitted traffic</text>
-  <path class="edge-deny" d="M425 268 H566" marker-end="url(#pl-ard)" />
+  <path class="edge-deny" d="M425 268 H500 V293 H566" marker-end="url(#pl-ard)" />
   <text x="571" y="286" class="t-tiny t-deny">denied if validation fails,</text>
   <text x="571" y="298" class="t-tiny t-deny">evidence is missing or</text>
   <text x="571" y="310" class="t-tiny t-deny">the path differs</text>
@@ -88,7 +88,7 @@
 
   <text x="721" y="370" text-anchor="end" class="t-tiny">data layer</text>
   <rect class="box-strong" x="189" y="356" width="236" height="26" />
-  <text x="200" y="373" class="t-small" style="fill:var(--fig-text)">Local G|t and &#960;_B, identified, in memory</text>
+  <text x="200" y="373" class="t-small" style="fill:var(--fig-text)">Local G|t and &#960;<tspan dy="2" font-size="8.5">B</tspan><tspan dy="-2">, identified, in memory</tspan></text>
   <path class="edge" d="M307 346 V352" />
 
   <path class="edge-dash" d="M520 136 V369 H429" marker-end="url(#pl-ar)" />
@@ -151,7 +151,7 @@
   <text x="36" y="244" class="t-tiny">in process, no network, no disk</text>
 
   <rect class="box-strong" x="24" y="258" width="312" height="26" />
-  <text x="36" y="275" class="t-small">Local G|t and π_B, in memory</text>
+  <text x="36" y="275" class="t-small">Local G|t and π<tspan dy="2" font-size="8.5">B</tspan><tspan dy="-2">, in memory</tspan></text>
 
   <rect class="box" x="24" y="292" width="150" height="38" />
   <text x="36" y="309" class="t-strong">Internal service</text>
@@ -175,7 +175,7 @@
   <text x="36" y="487" class="t-tiny">X.509 → w(e), Φ(e), compiled and versioned</text>
   <rect class="box-govern" x="24" y="500" width="300" height="36" />
   <text x="36" y="515" class="t-strong">Administration</text>
-  <text x="36" y="529" class="t-tiny">local policy π_B, what-if analysis (Govern)</text>
+  <text x="36" y="529" class="t-tiny">local policy π<tspan dy="2" font-size="7.5">B</tspan><tspan dy="-2">, what-if analysis (Govern)</tspan></text>
 
   <path class="edge-dash" d="M324 476 H342 V271 H339" marker-end="url(#pln-ar)" />
   <text x="344" y="420" class="t-tiny" transform="rotate(-90 344 420)" text-anchor="middle">load</text>
