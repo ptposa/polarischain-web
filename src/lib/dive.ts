@@ -7,10 +7,16 @@
  * out as the body gradient behind the stage turns from black to deep blue.
  * The stars are drawn once and stay still: the sky is the one backdrop, and
  * only what sits on it moves, which keeps the move smooth on phones.
+ *
+ * When the hero is taller than the screen (phones, short windows), the stage
+ * is made as tall as the hero and pinned with a negative top: the browser
+ * scrolls it natively until its last screen is in view, and only then does
+ * it hold still for the dive. No part of the page follows the finger through
+ * script, so nothing lags behind it.
  */
 
 interface Star {
-  sx: number; // screen position at rest
+  sx: number; // position on the stage, in CSS pixels from its top left
   sy: number;
   r: number;
   a: number;
@@ -56,27 +62,38 @@ export function initDive(): void {
   const chart = track.querySelector<HTMLElement>('[data-aperture-frame]');
   const focalEl = track.querySelector<SVGElement>('[data-focal]');
   const cues = Array.from(track.querySelectorAll<HTMLElement>('[data-dive-cue]'));
+  const floatCues = Array.from(track.querySelectorAll<HTMLElement>('.dive__cue--float'));
   const legend = track.querySelector<HTMLElement>('[data-aperture-legend]');
   const ctx = canvas?.getContext('2d');
   if (!stage || !canvas || !content || !copy || !ctx) return;
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // A finger already scrolls smoothly: follow it closely. A wheel moves in
+  // steps: ease them out.
+  const EASE = window.matchMedia('(pointer: coarse)').matches ? 0.34 : 0.16;
 
-  let W = 0;
-  let H = 0;
-  let overflow = 0; // hero content taller than the stage (small screens)
+  let W = 0; // stage width
+  let V = 0; // one screen: the height of the stage before it is extended
+  let overflow = 0; // hero content taller than one screen
   let fx = 0; // Polaris, in stage coordinates, before any transform
   let fy = 0;
-  let stars: Star[] = [];
+  let sizeKey = '';
 
-  function buildStars(): void {
-    const n = Math.round(clamp((W * H) / 1900, 260, 760));
-    stars = [];
+  // One field of stars for the whole visit, larger than any screen it may be
+  // shown on. A resize (a phone's address bar hiding, a rotation) only
+  // reveals more or less of it: no star ever moves or changes.
+  const FIELD = Math.max(window.screen.width, window.screen.height, window.innerWidth, window.innerHeight) * 1.6;
+  const stars: Star[] = [];
+  {
+    // The same density as a screen of 260 to 760 stars, whatever its size.
+    const area = Math.max(window.innerWidth * window.innerHeight, 1);
+    const density = clamp(area / 1900, 260, 760) / area;
+    const n = Math.round(FIELD * FIELD * density);
     for (let i = 0; i < n; i++) {
       const bright = Math.random() < 0.07;
       stars.push({
-        sx: -0.1 * W + Math.random() * 1.2 * W,
-        sy: -0.1 * H + Math.random() * 1.2 * H,
+        sx: Math.random() * FIELD,
+        sy: Math.random() * FIELD,
         r: bright ? 0.9 + Math.random() * 0.6 : 0.35 + Math.random() * 0.5,
         a: bright ? 0.55 + Math.random() * 0.3 : 0.18 + Math.random() * 0.35,
       });
@@ -87,18 +104,34 @@ export function initDive(): void {
     content!.style.transform = '';
     copy!.style.transform = '';
     if (chart) chart.style.transform = '';
+    stage!.style.height = '';
+    stage!.style.top = '';
     W = stage!.clientWidth;
-    H = stage!.clientHeight;
+    V = stage!.clientHeight;
+    overflow = Math.max(0, content!.scrollHeight - V);
+    const stageH = V + overflow;
+    if (!reduced && overflow) {
+      stage!.style.height = `${stageH}px`;
+      stage!.style.top = `${-overflow}px`;
+    }
+    floatCues.forEach((c) => (c.style.bottom = overflow ? `calc(1.6rem + ${overflow}px)` : ''));
+
+    // The canvas is redrawn only when the stage really changes size.
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas!.width = Math.round(W * dpr);
-    canvas!.height = Math.round(H * dpr);
-    ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-    overflow = Math.max(0, content!.scrollHeight - H);
-    // One screen, plus whatever of the hero does not fit on it (read at
-    // normal scroll speed), plus the dive itself.
+    const key = `${W}x${stageH}@${dpr}`;
+    if (key !== sizeKey) {
+      sizeKey = key;
+      canvas!.width = Math.round(W * dpr);
+      canvas!.height = Math.round(stageH * dpr);
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      draw(W, stageH);
+    }
+
+    // The stage scrolls natively through the part of the hero that does not
+    // fit, then holds for the dive.
     if (!reduced) {
-      track!.style.height = `${Math.round(H + overflow + H * DIVE_LENGTH)}px`;
-      track!.style.marginBottom = `${-Math.round(H * DIVE_LENGTH * DIVE_OVERLAP)}px`;
+      track!.style.height = `${Math.round(stageH + V * DIVE_LENGTH)}px`;
+      track!.style.marginBottom = `${-Math.round(V * DIVE_LENGTH * DIVE_OVERLAP)}px`;
     }
     const s = stage!.getBoundingClientRect();
     if (focalEl) {
@@ -107,28 +140,29 @@ export function initDive(): void {
       fy = f.top + f.height / 2 - s.top;
     } else {
       fx = W / 2;
-      fy = H / 2;
+      fy = V / 2;
     }
     const c = copy!.getBoundingClientRect();
     copy!.style.transformOrigin = `${(fx - (c.left - s.left)).toFixed(0)}px ${(fy - (c.top - s.top)).toFixed(0)}px`;
-    buildStars();
-    draw();
     last = -1;
   }
 
-  /** Scroll progress through the track, 0 to 1. */
-  function progress(): number {
+  /** How far the page has scrolled into the track, and the dive's progress:
+   * 0 while the stage is still scrolling natively, 1 when it lets go. */
+  function read(): { scrolled: number; q: number } {
     const r = track!.getBoundingClientRect();
-    const total = r.height - window.innerHeight;
-    return total > 0 ? clamp(-r.top / total, 0, 1) : 0;
+    const scrolled = Math.max(0, -r.top);
+    const hold = r.height - (V + overflow);
+    const q = hold > 0 ? clamp((scrolled - overflow) / hold, 0, 1) : 0;
+    return { scrolled, q };
   }
 
-  /** The still sky: every star at rest, drawn once per size of the stage. */
-  function draw(): void {
-    ctx!.clearRect(0, 0, W, H);
+  /** The still sky, drawn once per size of the stage. */
+  function draw(w: number, h: number): void {
+    ctx!.clearRect(0, 0, w, h);
     ctx!.fillStyle = '#e4ecf7';
     for (const s of stars) {
-      if (s.sx < -8 || s.sx > W + 8 || s.sy < -8 || s.sy > H + 8) continue;
+      if (s.sx > w + 8 || s.sy > h + 8) continue;
       ctx!.globalAlpha = s.a;
       ctx!.beginPath();
       ctx!.arc(s.sx, s.sy, s.r, 0, Math.PI * 2);
@@ -137,9 +171,8 @@ export function initDive(): void {
     ctx!.globalAlpha = 1;
   }
 
-  function layout(q: number, lift: number, scrolled: number): void {
+  function layout(q: number, scrolled: number): void {
     const d = TRAVEL * easeInOut(q);
-    content!.style.transform = lift ? `translate3d(0, ${(-lift).toFixed(1)}px, 0)` : '';
 
     // The copy sits in front of the chart and leaves first.
     const kc = Math.min(DEPTH_COPY / Math.max(DEPTH_COPY - d, 0.05), 1.8);
@@ -154,41 +187,44 @@ export function initDive(): void {
     }
 
     if (legend) legend.style.opacity = (1 - smooth(q, 0.02, 0.2)).toFixed(3);
-    // The cue has done its job as soon as the reader scrolls.
+    // The cue's words have done their job as soon as the reader scrolls. Its
+    // halo lingers: where the hero scrolls natively (phones, tablets) it
+    // fades over a good part of the screen, as the cue rises out of view.
     const cueOp = (1 - smooth(scrolled, 0, 40)).toFixed(3);
-    cues.forEach((c) => (c.style.opacity = cueOp));
+    const haloOp = (1 - smooth(scrolled, 0, overflow ? V * 0.45 : 40)).toFixed(3);
+    cues.forEach((c) => {
+      c.style.setProperty('--cue-op', cueOp);
+      c.style.setProperty('--halo-op', haloOp);
+    });
   }
 
   let target = 0;
   let current = 0;
+  let scrolledNow = 0;
   let last = -1;
   let raf = 0;
 
   function frame(): void {
     raf = 0;
-    current += (target - current) * 0.16;
+    current += (target - current) * EASE;
     if (Math.abs(target - current) < 0.0004) current = target;
-
-    // On short screens the hero first scrolls up to show all of its content;
-    // the dive starts once it has been read.
-    const total = track!.offsetHeight - window.innerHeight;
-    const intro = total > 0 ? clamp(overflow / total, 0, 0.9) : 0;
-    const lift = overflow * (intro ? clamp(current / intro, 0, 1) : 0);
-    const q = intro ? clamp((current - intro) / (1 - intro), 0, 1) : current;
-
     if (current !== last) {
-      canvas!.style.opacity = (1 - smooth(q, 0.78, 1)).toFixed(3);
-      layout(q, lift, current * total);
+      canvas!.style.opacity = (1 - smooth(current, 0.78, 1)).toFixed(3);
+      layout(current, scrolledNow);
       last = current;
     }
     if (current !== target) raf = requestAnimationFrame(frame);
   }
 
   function onScroll(): void {
-    target = progress();
+    const { scrolled, q } = read();
+    target = q;
+    scrolledNow = scrolled;
+    // The cue fades with the scroll itself, even before the dive begins.
+    if (q === 0 && current === 0) layout(0, scrolled);
     const r = track!.getBoundingClientRect();
     if (r.bottom <= window.innerHeight * 0.02) setHeader('solid');
-    else if (target > 0.004) setHeader('hidden');
+    else if (scrolled > 4) setHeader('hidden');
     else setHeader('top');
     if (!raf) raf = requestAnimationFrame(frame);
   }
@@ -202,17 +238,30 @@ export function initDive(): void {
     return;
   }
 
+  // A phone's address bar showing or hiding changes the window height but
+  // not the stage (sized in svh): nothing to measure then.
   let resizeTimer = 0;
+  let lastW = window.innerWidth;
+  let lastV = V;
   window.addEventListener('resize', () => {
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(() => {
-      measure();
+      stage!.style.height = '';
+      const v = stage!.clientHeight;
+      if (window.innerWidth !== lastW || v !== lastV) {
+        lastW = window.innerWidth;
+        measure();
+        lastV = V;
+      } else if (overflow) {
+        stage!.style.height = `${V + overflow}px`;
+      }
       onScroll();
     }, 120);
   });
   window.addEventListener('scroll', onScroll, { passive: true });
   document.fonts?.ready.then(() => {
     measure();
+    lastV = V;
     onScroll();
   });
   onScroll();

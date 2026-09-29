@@ -53,7 +53,7 @@
   --subhead: var(--ieee-cyan-50);
   /* Names from the X.509 profile (extensions, fields), as in the thesis. */
   --x509: #8fd0a6;
-  /* A warm tan, outside the IEEE set, for the names of the challenge frames. */
+  /* A warm tan, outside the IEEE set: numbered labels and the formulas. */
   --tan: #d2a77f;
   --link-hover: var(--ieee-cyan-25);
 
