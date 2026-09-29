@@ -1,0 +1,281 @@
+---
+// The last screen of the page: the night sky meets the sea. Polaris stands
+// over the horizon, its light runs down the swell, and a small sailboat keeps
+// its course by it. It closes the image the page opens with. Decorative only:
+// silhouettes and the undulation of the sea.
+
+const W = 1600; // view box
+const H = 380;
+const HORIZON = 206;
+const POLARIS = { x: 800, y: 96 };
+const BOAT = { x: 648, y: HORIZON + 30 };
+
+// A fixed pseudo-random sequence, so every build draws the same night.
+let seed = 41;
+const rand = (): number => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
+const r1 = (n: number) => Math.round(n * 10) / 10;
+
+// Field stars, and the stars of the Little Dipper without its lines.
+const dipper = [
+  [841, 87, 0.9],
+  [876, 96, 0.8],
+  [902, 114, 0.9],
+  [947, 105, 1.5],
+  [962, 130, 1.1],
+  [918, 138, 0.8],
+];
+const stars = [
+  ...Array.from({ length: 64 }, () => ({
+    x: Math.round(rand() * W),
+    y: Math.round(18 + Math.pow(rand(), 1.3) * (HORIZON - 44)),
+    r: r1(rand() > 0.94 ? 1.2 : 0.45 + rand() * 0.55),
+    o: r1(0.18 + rand() * 0.45),
+  })).filter((s) => !(s.x > 770 && s.x < 990 && s.y > 64 && s.y < 150)),
+  ...dipper.map(([x, y, r]) => ({ x, y, r, o: 0.8 })),
+];
+
+// The swell: long undulating lines, flat and tight near the horizon, wider
+// and deeper towards the viewer, broken where the light leaves them. Each
+// line repeats every `period` units and drifts by exactly that much, so the
+// motion loops without a seam.
+const ROWS = 13;
+const swell = Array.from({ length: ROWS }, (_, i) => {
+  const t = i / (ROWS - 1);
+  const y0 = HORIZON + 2.5 + (H - HORIZON - 10) * Math.pow(t, 1.9);
+  const L = 70 + 380 * Math.pow(t, 1.1); // wavelength
+  const a = 0.3 + 3.2 * Math.pow(t, 1.3); // amplitude
+  const p1 = rand() * Math.PI * 2;
+  const p2 = rand() * Math.PI * 2;
+  const m = 1 + Math.floor(rand() * 3);
+  const period = L * m;
+  const step = Math.max(4, L / 18);
+  const pts: string[] = [];
+  for (let x = -period; x <= W + period + step; x += step) {
+    const y = y0 + a * (Math.sin((2 * Math.PI * x) / L + p1) + 0.35 * Math.sin((4 * Math.PI * x) / L + p2));
+    pts.push(`${r1(x)} ${r1(y)}`);
+  }
+  // Broken into long runs, and the pattern repeats with the period too.
+  const d1 = period * (0.4 + rand() * 0.25);
+  const g1 = period * (0.06 + rand() * 0.1);
+  const d2 = period * (0.08 + rand() * 0.14);
+  const g2 = period - d1 - g1 - d2;
+  return {
+    id: `hz-s${i}`,
+    d: `M${pts.join(' L')}`,
+    dash: `${r1(d1)} ${r1(g1)} ${r1(d2)} ${r1(Math.max(2, g2))}`,
+    w: r1(0.55 + 1.05 * t),
+    o: r1(0.1 + 0.13 * t),
+    period: r1(period),
+    dur: r1(period / (3 + 7 * t)),
+  };
+});
+---
+
+<div class="horizon" aria-hidden="true">
+  <svg class="horizon__svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <linearGradient id="hz-sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0.45" stop-color="var(--ground)" />
+        <stop offset="1" stop-color="#041731" />
+      </linearGradient>
+      <linearGradient id="hz-sea" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#04152d" />
+        <stop offset="0.4" stop-color="#020b1b" />
+        <stop offset="1" stop-color="var(--sky-black)" />
+      </linearGradient>
+      <linearGradient id="hz-rim" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#bac6d9" stop-opacity="0" />
+        <stop offset="0.5" stop-color="#bac6d9" stop-opacity="0.22" />
+        <stop offset="1" stop-color="#bac6d9" stop-opacity="0" />
+      </linearGradient>
+      <!-- The path of Polaris on the water: a narrow cone under the star
+           that lights whatever swell passes through it. -->
+      <linearGradient id="hz-beam" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#fff" stop-opacity="0" />
+        <stop offset="0.5" stop-color="#fff" stop-opacity="1" />
+        <stop offset="1" stop-color="#fff" stop-opacity="0" />
+      </linearGradient>
+      <linearGradient id="hz-fade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff" stop-opacity="1" />
+        <stop offset="1" stop-color="#fff" stop-opacity="0.35" />
+      </linearGradient>
+      <mask id="hz-cone" maskUnits="userSpaceOnUse" x="0" y={HORIZON} width={W} height={H - HORIZON}>
+        <polygon
+          points={`${POLARIS.x - 6},${HORIZON} ${POLARIS.x + 6},${HORIZON} ${POLARIS.x + 150},${H} ${POLARIS.x - 150},${H}`}
+          fill="url(#hz-beam)"
+        />
+      </mask>
+      {swell.map((s) => <path id={s.id} d={s.d} />)}
+    </defs>
+
+    <rect width={W} height={HORIZON} fill="url(#hz-sky)" />
+    <rect y={HORIZON} width={W} height={H - HORIZON} fill="url(#hz-sea)" />
+
+    <g class="hz-stars">
+      {stars.map((s) => <circle cx={s.x} cy={s.y} r={s.r} style={`opacity:${s.o}`} />)}
+    </g>
+
+    <g class="hz-polaris">
+      <circle class="hz-polaris__halo" cx={POLARIS.x} cy={POLARIS.y} r="10" />
+      <circle class="hz-polaris__core" cx={POLARIS.x} cy={POLARIS.y} r="2.6" />
+      <text class="hz-label" x={POLARIS.x} y={POLARIS.y - 17} text-anchor="middle">Polaris</text>
+    </g>
+
+    <line x1="0" y1={HORIZON} x2={W} y2={HORIZON} stroke="url(#hz-rim)" stroke-width="1" />
+
+    <!-- The swell, and the same swell again where the light of Polaris falls -->
+    <g class="hz-swell">
+      {swell.map((s) => (
+        <g class="hz-row" style={`--period:${s.period}px;animation-duration:${s.dur}s`}>
+          <use href={`#${s.id}`} style={`stroke-width:${s.w};stroke-opacity:${s.o};stroke-dasharray:${s.dash}`} />
+        </g>
+      ))}
+    </g>
+    <g class="hz-swell hz-swell--lit" mask="url(#hz-cone)">
+      {swell.map((s) => (
+        <g class="hz-row" style={`--period:${s.period}px;animation-duration:${s.dur}s`}>
+          <use href={`#${s.id}`} style={`stroke-width:${s.w};stroke-dasharray:${s.dash}`} />
+        </g>
+      ))}
+    </g>
+
+    <!-- The sailboat: a silhouette on the swell, and its reflection -->
+    <g transform={`translate(${BOAT.x} ${BOAT.y})`}>
+      <g class="hz-reflection">
+        <path d="M-10 6 q5 -1.2 10 0 t10 0" />
+        <path d="M-6 10 q4 -1 8 0 t8 0" />
+        <path d="M-3 14 q3 -0.8 6 0" />
+      </g>
+      <g class="hz-boat">
+        <path class="hz-sail" d="M1.4 -35 Q9 -18 18 -2.4 L1.4 -2.4 Z" />
+        <path class="hz-sail hz-sail--jib" d="M-1.4 -30 Q-7 -15 -14.5 -2.4 L-1.4 -2.4 Z" />
+        <path class="hz-mast" d="M0 -37 V0" />
+        <path class="hz-hull" d="M-19 -0.6 Q0 1.4 20 -1.4 L14.5 4.4 Q0 6 -14.5 4.4 Z" />
+      </g>
+    </g>
+  </svg>
+</div>
+
+<style>
+  /* Full bleed at the foot of the page. The top of the sky is the colour of
+     the page and the bottom of the sea is the black of the opening sky. */
+  .horizon {
+    position: relative;
+    width: 100%;
+    height: clamp(16rem, 28vw, 34rem);
+    overflow: hidden;
+    background: var(--sky-black);
+  }
+
+  .horizon__svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hz-stars circle {
+    fill: #e4ecf7;
+  }
+
+  /* Polaris, as in the opening sky chart */
+  .hz-polaris__core {
+    fill: var(--ieee-yellow);
+  }
+  .hz-polaris__halo {
+    fill: none;
+    stroke: rgba(255, 199, 44, 0.45);
+    stroke-width: 1;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: hz-breathe 6s ease-in-out infinite;
+  }
+  .hz-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    fill: var(--ieee-yellow-75);
+    opacity: 0.7;
+  }
+
+  /* The swell */
+  .hz-swell use {
+    fill: none;
+    stroke: var(--ieee-blue-25);
+    stroke-linecap: round;
+  }
+  .hz-swell--lit use {
+    stroke: #f3e2b0;
+    stroke-opacity: 0.55;
+  }
+  .hz-row {
+    animation: hz-drift linear infinite;
+  }
+
+  /* The boat: sails in soft grey, the hull a dark silhouette */
+  .hz-boat {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: hz-bob 7s ease-in-out infinite;
+  }
+  .hz-sail {
+    fill: var(--fig-text);
+  }
+  .hz-sail--jib {
+    fill: #aab5c4;
+  }
+  .hz-mast {
+    stroke: var(--fig-text);
+    stroke-width: 1;
+  }
+  .hz-hull {
+    fill: #1a2a42;
+  }
+  .hz-reflection path {
+    fill: none;
+    stroke: var(--fig-text);
+    stroke-width: 0.9;
+    stroke-linecap: round;
+    opacity: 0.22;
+  }
+
+  @keyframes hz-drift {
+    to {
+      transform: translateX(calc(-1 * var(--period)));
+    }
+  }
+  @keyframes hz-breathe {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.18);
+      opacity: 0.5;
+    }
+  }
+  @keyframes hz-bob {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-1.6deg);
+    }
+    50% {
+      transform: translateY(1.2px) rotate(1.6deg);
+    }
+  }
+
+  /* On phones the label would be a few pixels high: the star speaks alone. */
+  @media (max-width: 560px) {
+    .hz-label {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hz-row,
+    .hz-polaris__halo,
+    .hz-boat {
+      animation: none;
+    }
+  }
+</style>

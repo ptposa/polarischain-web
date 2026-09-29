@@ -54,6 +54,7 @@ polarischain-web/
 │   │   ├── figures/       # Inline SVG figures adapted from the thesis,
 │   │   │                  #   each with a wide and a narrow drawing
 │   │   ├── PathDiscovery.astro   # Live federated path-discovery figure
+│   │   ├── Horizon.astro         # Closing night sea: Polaris and a sailboat
 │   │   └── Chapter.astro, Figure.astro, Header.astro
 │   ├── data/              # Path-discovery scene and key references
 │   ├── layouts/           # Base page layout
@@ -126,7 +127,10 @@ All commands are run from the root of the project:
   one for phones, so nothing scrolls sideways.
 - **Motion**: one scroll-linked camera move in the hero, the federation
   turning about Polaris in the hero sky chart, and the path-discovery
-  artefact, all in vanilla TypeScript. Respects
+  artefact, all in vanilla TypeScript. The page closes on a night sea,
+  with Polaris at the end of the Little Dipper, its track on the water and a
+  small sailboat taking a sight on it, in inline SVG with CSS-only
+  motion. Respects
   `prefers-reduced-motion: reduce`.
 
 
