@@ -32,7 +32,7 @@ import HeroAperture from './HeroAperture.astro';
           </p>
 
           <div class="dive__cue dive__cue--inline" data-dive-cue aria-hidden="true">
-            <span>Scroll to enter the model</span>
+            <span>Deep dive into the research</span>
             <svg width="2" height="44" viewBox="0 0 2 44"><line x1="1" y1="0" x2="1" y2="44"></line></svg>
           </div>
         </div>
@@ -42,7 +42,7 @@ import HeroAperture from './HeroAperture.astro';
     </section>
 
     <div class="dive__cue dive__cue--float" data-dive-cue aria-hidden="true">
-      <span>Scroll to enter the model</span>
+      <span>Deep dive into the research</span>
       <svg width="2" height="44" viewBox="0 0 2 44"><line x1="1" y1="0" x2="1" y2="44"></line></svg>
     </div>
   </div>
@@ -87,7 +87,6 @@ import HeroAperture from './HeroAperture.astro';
     min-height: 100%;
     margin-inline: auto;
     padding: var(--hero-top) 0 5.5rem;
-    will-change: transform;
   }
 
   .hero__copy {
@@ -149,6 +148,12 @@ import HeroAperture from './HeroAperture.astro';
     isolation: isolate;
   }
 
+  /* The script fades the words and the halo separately. */
+  .dive__cue > span,
+  .dive__cue > svg {
+    opacity: var(--cue-op, 1);
+  }
+
   /* A faint light around the cue, breathing slowly, that invites the reader
      in. It fades with the cue as soon as the page scrolls. */
   .dive__cue::before {
@@ -166,6 +171,7 @@ import HeroAperture from './HeroAperture.astro';
       rgba(150, 200, 235, 0.045) 55%,
       rgba(150, 200, 235, 0) 100%
     );
+    filter: opacity(var(--halo-op, 1));
     animation: halo 5s ease-in-out infinite;
   }
 
