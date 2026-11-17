@@ -33,7 +33,7 @@ const contents = [
     </div>
 
     <nav class="toc" aria-label="Contents">
-      <p class="label">Contents</p>
+      <p class="toc__head">Contents</p>
       <ol>
         {
           contents.map(([id, n, t]) => (
@@ -51,7 +51,10 @@ const contents = [
 </section>
 
 <style>
+  /* Positioned, so it paints above the pinned stage of the opening screen,
+     which would otherwise sit over the contents and take their clicks. */
   .front {
+    position: relative;
     padding-top: clamp(3rem, 7vw, 5rem);
   }
 
@@ -75,13 +78,24 @@ const contents = [
     margin-bottom: 0;
   }
 
+  /* The label in the pale yellow of the statements (Definition 1,
+     Proposition 4), the yellow the page keeps for what opens a passage. */
+  .abstract b {
+    color: #f1dea8;
+  }
+
   .toc {
     padding-top: 1.2rem;
     border-top: 1px solid var(--rule);
   }
 
-  .toc .label {
+  .toc__head {
     margin: 0 0 0.6rem;
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    font-variant: small-caps;
+    letter-spacing: 0.04em;
+    color: var(--text-soft);
   }
 
   .toc ol {
@@ -99,8 +113,18 @@ const contents = [
     text-decoration: none;
   }
 
-  .toc a:hover {
-    color: var(--text-strong);
+  /* An entry turns the pale yellow of the Abstract label under the pointer,
+     number and name alike, so the reader sees where the link goes. */
+  .toc a {
+    transition: color 0.2s ease;
+  }
+  .toc a:hover,
+  .toc a:focus-visible {
+    color: #f1dea8;
+  }
+  .toc a:hover .toc__n,
+  .toc a:focus-visible .toc__n {
+    color: #f1dea8;
   }
 
   .toc__n {

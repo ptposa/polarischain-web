@@ -111,16 +111,15 @@ All commands are run from the root of the project:
   opens on a black night sky that fades into a deep shade of IEEE Dark
   Blue, held for the rest of the page. Tokens live in a plain `:root`
   block in `src/styles/global.css`.
-- **Typography**: Playfair Display for titles and subtitles; a
-  monospaced body face in the style of certificate.transparency.dev,
-  iA Writer Duo S when its webfonts are placed in `src/assets/fonts/`
-  and IBM Plex Mono, the family it derives from, otherwise; Archivo
-  inside the figures; STIX Two Math for the equations and for the Greek
-  letters and symbols anywhere else, since the text faces do not carry
-  them. All faces are under the SIL Open Font License. Playfair
-  Display, IBM Plex Mono and Archivo come from Fontsource; STIX Two
-  Math is served whole from `src/assets/fonts/`, since the Fontsource
-  package limits it to Latin.
+- **Typography**: Newsreader for the running text and the headings, with
+  its small capitals for the navigation and the section lines; JetBrains
+  Mono for identifiers; Archivo inside the figures, captions and tables;
+  STIX Two Math for the equations and for the Greek letters and symbols
+  anywhere else, with the italic of STIX Two Text for the variables. All
+  faces are under the SIL Open Font License. Newsreader, JetBrains Mono,
+  Archivo and STIX Two Text come from Fontsource; STIX Two Math is served
+  whole from `src/assets/fonts/`, since the Fontsource package limits it
+  to Latin.
 - **Figures**: minimal inline SVG in the style of
   certificate.transparency.dev: thin strokes, still nodes, and only the
   dashed lines in motion. Every figure has a wide drawing and a narrow

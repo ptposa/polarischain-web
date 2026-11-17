@@ -6,6 +6,7 @@ import FigAdmissionMap from '../figures/FigAdmissionMap.astro';
 import FigWorkedExample from '../figures/FigWorkedExample.astro';
 import FigFloorPrice from '../figures/FigFloorPrice.astro';
 import FigCone from '../figures/FigCone.astro';
+import Where from '../Where.astro';
 
 // The section follows chapter 3 of the thesis, in its short version of
 // 16 November 2026. Formulas are written as markup and rendered with
@@ -72,6 +73,98 @@ const sizes = [
   ['ECDSA P-256', '72', '65', 'traditional', '0'],
 ];
 
+// The components of every displayed formula, one by one (see Where.astro).
+const where1 = [
+  ['t', 'The instant at which the federation is looked at.'],
+  ['V', 'The keys of the certification authorities, each one a node v = ⟨dn(v), pk(v), alg(v)⟩: its distinguished name, its public key and the profile of that key. Each node also carries its domain dom(v), its cryptographic level ℓ(v) and a weak-key flag weak(v).'],
+  ['E|<sub>t</sub>', 'The CA certificates between those keys that are within their validity period at <i>t</i>, a subset of every edge <i>E</i> compiled from the material.'],
+  ['src, dst', 'Two functions E → V that give, for each certificate, the key that signs it and the key it certifies. Two certificates may join the same two keys, so the graph is a multigraph.'],
+  ['w', 'The cost of each edge as common facts, a function E → ℕ × {0, 1}: the octets that depend on the algorithm, and whether the certificate crosses an administrative boundary.'],
+  ['Φ', 'The governance constraints of each certificate, a function E → 𝒞 that gives ⟨depth, name, pol⟩: its depth budget, its name constraints and its policy extensions, composed along the path as in RFC 5280, section 6.'],
+  ['(π<sub>d</sub>, c, t)', 'The query: the policy of the receiving domain <i>d</i>, which is not part of the graph, the certificate <i>c</i> it is presented and the instant <i>t</i>.'],
+];
+const where2 = [
+  ['E', 'Every edge compiled from the snapshot of the material, whatever its validity.'],
+  ['e', 'One edge, that is, one CA certificate between two keys.'],
+  ['time(e)', 'The validity period of its certificate, from the field <code class="x509">notBefore</code> to the field <code class="x509">notAfter</code>.'],
+  ['t', 'The instant of the query.'],
+];
+const where3 = [
+  ['life<sub>d</sub>(e)', 'The instants at which receiver <i>d</i> can traverse the edge <i>e</i>.'],
+  ['d', 'The receiving domain. Revocation depends on it, because the authority of the evidence is bound to its anchor.'],
+  ['time(e)', 'The validity period of the certificate of <i>e</i>.'],
+  ['rev<sub>d</sub>(e, t)', 'The revocation state of the certificate at <i>t</i> for the receiver: <code>revoked</code> if the applicable evidence revokes it or some evidence did so irrevocably, <code>good</code> if the applicable evidence covers <i>t</i> and holds it good, and <code>unknown</code> otherwise.'],
+];
+const where4 = [
+  ['TP<sub>d</sub>', 'The trust anchor entries, each with its identifier, its key, its initial state s<sub>0</sub>(d, tp), its provenance and its validity.', 'RFC 5280, 6.1.1 (c) to (i)'],
+  ['κ<sub>d</sub>', 'The octets that crossing one administrative boundary is worth to the receiver.', 'outside the RFC'],
+  ['τ<sub>d</sub>', 'The ordered list of cryptographic floors, of one or more elements, from the most to the least demanding.', 'outside the RFC'],
+  ['A<sub>d</sub><sup>key</sup>, A<sub>d</sub><sup>sig</sup>', 'The key profiles and the signature algorithms the receiver admits.', 'outside the RFC'],
+  ['σ<sub>d</sub>', 'The purposes the chain must allow, such as <code class="x509">clientAuth</code>.', 'outside section 6'],
+  ['L<sub>d</sub>', 'The largest number of CA certificates in a path.', 'outside the RFC'],
+  ['F<sub>d</sub>', 'The freshness demanded of the log checkpoint, F<sub>d</sub><sup>cp</sup>, and of the status evidence, F<sub>d</sub><sup>ev</sup>.', 'outside section 6'],
+  ['D<sub>d</sub>', 'The keys the receiver excludes, by a canonical identifier kid(v) of the key material.', 'outside the RFC'],
+];
+const where5 = [
+  ['u', 'A key of the path, the anchor included.'],
+  ['ℓ(u)', 'Its cryptographic level, the pair (stage(u), nist_category(u)).'],
+  ['stage(u)', 'Its migration stage, ordered <code>traditional</code> &lt; <code>hybrid</code> &lt; <code>post_quantum</code>, with the names of RFC 9794.'],
+  ['nist_category(u)', 'Its NIST security category, from 1 to 5, with 0 for traditional algorithms and the category of the post-quantum component for a hybrid one.'],
+  ['τ', 'A cryptographic floor, the pair (τ<sup>stage</sup>, τ<sup>cat</sup>) the receiver demands.'],
+  ['⪰', 'Meets the floor: both components are at least as high. The order is partial, so two levels may not be comparable.'],
+];
+const where6 = [
+  ['b(e)', 'The octets of the two parts of the certificate that depend on the algorithm.'],
+  ['|pk(dst(e))|', 'The size of the public key it certifies, that of the key <i>dst(e)</i>.'],
+  ['|sig(e)|', 'The size of the signature that closes it, made by the key <i>src(e)</i>.'],
+  ['c<sub>dist</sub>(e)', '1 if the two keys belong to different administrative domains, and 0 otherwise.'],
+  ['κ<sub>d</sub>', 'The price receiver <i>d</i> puts on crossing one boundary, in octets.'],
+  ['w<sub>d</sub>(e)', 'The cost of the edge for the receiver, in octet-equivalents.'],
+  ['P', 'A path, a sequence of edges.'],
+  ['W<sub>d</sub>(P)', 'The cost of the path, the sum of the costs of its edges.'],
+];
+const where7 = [
+  ['ℕ<sub>∞</sub>', 'The remaining depth, <code class="x509">max_path_length</code>: a natural number, or ∞ when there is no limit.'],
+  ['𝒯 × 𝒯', 'The permitted and the excluded name subtrees, <code class="x509">permitted_subtrees</code> and <code class="x509">excluded_subtrees</code>: two values of the same type.'],
+  ['𝒢<sub>pol</sub>', 'The graph of valid policies of RFC 9618, which replaces the policy tree of RFC 5280.'],
+  ['ℕ<sub>∞</sub><sup>3</sup>', 'The three policy counters, <code class="x509">explicit_policy</code>, <code class="x509">inhibit_anyPolicy</code> and <code class="x509">policy_mapping</code>.'],
+  ['2<sup>OID</sup>', 'The initial set of policies the receiver accepts, any subset of the policy identifiers.'],
+  ['δ', 'The transition: from a state and an edge, the next state, or ⊥ if the edge breaks a constraint.'],
+  ['⊥', 'The failure state, which is never left.'],
+  ['fin<sub>t</sub>', 'The closing step at <i>t</i>: from the last key, the state reached and the presented certificate, the output of the validation, or ⊥.'],
+  ['𝒳, 𝒪', 'The presented certificates and the outputs of the closing step, the valid policies restricted by the user, as RFC 9618 fixes.'],
+];
+const where8 = [
+  ['P<sub>adm</sub>(d, c, t, τ)', 'The paths receiver <i>d</i> may accept for the presented certificate <i>c</i> at the instant <i>t</i> under the floor <i>τ</i>.'],
+  ['Paths<sub>d,τ</sub>(t)', 'The paths that start at a valid anchor entry of <i>d</i> and run over its subgraph under <i>τ</i>, each edge leaving the key the previous one reached.'],
+  ['𝒰<sub>d</sub>', 'The search universe: the simple paths, with no key repeated, of at most L<sub>d</sub> CA certificates.'],
+  ['fresh<sub>d</sub>(M, t)', 'The snapshot <i>M</i> is recent: its checkpoint is no older than F<sub>d</sub><sup>cp</sup>. It guards the whole query.'],
+  ['P ⊨<sub>d,c</sub> Φ', 'The path satisfies the constraints for <i>c</i>: the state never falls to ⊥ and the closing step accepts it.'],
+  ['h', 'The number of CA certificates of the path; the presented certificate is the (h + 1)-th.'],
+  ['status<sub>t</sub>(P, i)', 'The <i>i</i>-th certificate of the chain is held good at <i>t</i>, as defined by (9).'],
+];
+const where9 = [
+  ['x<sub>i</sub>', 'The <i>i</i>-th certificate of the chain (x<sub>1</sub>, …, x<sub>h+1</sub>), the certificates of the path followed by the presented one. It is issued by the key v<sub>i−1</sub>.'],
+  ['exempt(x<sub>i</sub>)', 'Holds only for a presented certificate that carries <code class="x509">noRevAvail</code>.'],
+  ['i = 1', 'The first certificate, whose issuer is the anchor: the anchor entry grants it the right to sign lists.'],
+  ['crl(e<sub>i−1</sub>)', 'The permission of the certificate through which the path reaches the issuing key: its <code class="x509">keyUsage</code> carries <code class="x509">cRLSign</code>, as RFC 10007 demands.'],
+  ['rev<sub>d</sub>(x<sub>i</sub>, t)', 'The revocation state for the receiver, from the list signed by the key that issued x<sub>i</sub>.'],
+];
+const where10 = [
+  ['P*<sub>d</sub>(c)', 'The path receiver <i>d</i> selects for the certificate <i>c</i>.'],
+  ['arg min W<sub>d</sub>(P)', 'The admissible paths of least cost, under the first floor of the list that leaves any, τ<sub>d</sub><sup>j*</sup>.'],
+  ['Sel', 'The choice of a single path among them, the first in the order of the key <i>k</i>.'],
+  ['k(P)', 'The selection key, compared in order: the cost W<sub>d</sub>(P), the number of certificates <i>h</i>, the identifier of the anchor entry id<sub>tp</sub> and the identifiers id(e<sub>1</sub>), …, id(e<sub>h</sub>) of its certificates.'],
+  ['id(e)', 'The SHA-256 digest of the signed content of the certificate together with the key that signs it.'],
+];
+const where11 = [
+  ['Cone<sub>d</sub>(M, t)', 'The cone of trust of receiver <i>d</i> over the snapshot <i>M</i> at the instant <i>t</i>.'],
+  ['v', 'A key of the graph.'],
+  ['E<sub>d,τ<sub>d</sub><sup>r</sup></sub>|<sub>t</sub>', 'The edges of the receiver’s subgraph at <i>t</i> under the last floor of its list, τ<sub>d</sub><sup>r</sup>.'],
+  ['v<sub>tp</sub>', 'The key of the anchor entry <i>tp</i>.'],
+  ['TP<sub>d</sub>(t)', 'The anchor entries of <i>d</i> that are valid at <i>t</i>.'],
+];
+
 const exEdges = [
   ['e<sub>1</sub>', 'Root B → Intermediate B', '5,462', '0', '5,462'],
   ['e<sub>2</sub>', 'Intermediate B → Intermediate C1', '5,462', '1', '11,462'],
@@ -112,22 +205,7 @@ const exEdges = [
     </p>
   </div>
 
-  <div class="tbl-wrap">
-    <table class="tbl sym">
-      <caption><b>Table 3.</b> The pieces of the graph and where each one comes from.</caption>
-      <tbody>
-        {
-          graphRows.map(([s, what, text]) => (
-            <tr>
-              <th scope="row" class="m" set:html={s} />
-              <td class="m" set:html={what} />
-              <td set:html={text} />
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
-  </div>
+  <Where items={where1} label="Components of (1)" />
 
   <div class="prose">
     <p>
@@ -171,6 +249,7 @@ const exEdges = [
     <span class="eq__body" set:html={eqInstant} />
     <span class="eq__n" id="eq-2">(2)</span>
   </div>
+  <Where items={where2} label="Components of (2)" />
 
   <div class="prose">
     <p>
@@ -182,6 +261,7 @@ const exEdges = [
     <span class="eq__body" set:html={eqLife} />
     <span class="eq__n" id="eq-3">(3)</span>
   </div>
+  <Where items={where3} label="Components of (3)" />
 
   <div class="prose">
     <p>
@@ -195,27 +275,10 @@ const exEdges = [
     <span class="eq__n" id="eq-4">(4)</span>
   </div>
 
-  <div class="tbl-wrap">
-    <table class="tbl sym">
-      <caption
-        ><b>Table 4.</b> Elements of the policy <a class="eqref" href="#eq-4">(4)</a>. A value belongs to it if it changes when the
-        verifying domain changes and no certificate is touched.</caption
-      >
-      <thead>
-        <tr><th scope="col">Element</th><th scope="col">Meaning</th><th scope="col">RFC 5280</th></tr>
-      </thead>
-      <tbody>
-        {
-          policyRows.map(([s, text, src]) => (
-            <tr>
-              <th scope="row" class="m" set:html={s} />
-              <td set:html={text} />
-              <td class="src">{src}</td>
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
+  <Where items={where4} label="Components of (4)" />
+
+  <div class="prose">
+    <p class="small">A value belongs to the policy if it changes when the verifying domain changes and no certificate is touched. The anchors with their initial state are inputs of section 6.1.1 of RFC 5280; the rest of the policy does not come from that standard.</p>
   </div>
 
   <div class="prose">
@@ -232,6 +295,7 @@ const exEdges = [
     <span class="eq__body" set:html={eqFloor} />
     <span class="eq__n" id="eq-5">(5)</span>
   </div>
+  <Where items={where5} label="Components of (5)" />
 
   <div class="prose">
     <p>
@@ -256,6 +320,7 @@ const exEdges = [
     <span class="eq__body" set:html={eqCost} />
     <span class="eq__n" id="eq-6">(6)</span>
   </div>
+  <Where items={where6} label="Components of (6)" />
 
   <div class="prose">
     <p>
@@ -275,7 +340,7 @@ const exEdges = [
   <div class="tbl-wrap">
     <table class="tbl">
       <caption
-        ><b>Table 5.</b> Reference sizes in octets, and the level <span class="m">ℓ(v)</span> of a key of each algorithm.
+        ><b>Table 3.</b> Reference sizes in octets, and the level <span class="m">ℓ(v)</span> of a key of each algorithm.
         ML-DSA sizes are those of FIPS 204; composite sizes are the sum of the two components, as
         in RFC 10073.</caption
       >
@@ -293,12 +358,12 @@ const exEdges = [
           sizes.map(([a, s, k, st, cat]) => (
             <tr>
               <th scope="row">{a}</th>
-              <td class="num pad">{s}</td>
-              <td class="num pad">{k}</td>
-              <td>
+              <td class="num pad" data-label="Signature">{s}</td>
+              <td class="num pad" data-label="Public key">{k}</td>
+              <td data-label="stage">
                 <span class={`tag tag--${st}`}>{st}</span>
               </td>
-              <td class="num">{cat}</td>
+              <td class="num" data-label="nist_category">{cat}</td>
             </tr>
           ))
         }
@@ -330,6 +395,7 @@ const exEdges = [
     <span class="eq__body" set:html={eqState} />
     <span class="eq__n" id="eq-7">(7)</span>
   </div>
+  <Where items={where7} label="Components of (7)" />
 
   <Figure num={5} caption="The six slots of a state and the product that forms the space S, with the state of the use-case route on reaching Intermediate A.">
     <FigState />
@@ -353,10 +419,12 @@ const exEdges = [
       <span class="eq__body" set:html={eqAdm} />
       <span class="eq__n" id="eq-8">(8)</span>
     </div>
+  <Where items={where8} label="Components of (8)" />
     <div class="eq eq--long" role="math" aria-label="Status of each certificate of the chain">
       <span class="eq__body" set:html={eqStatus} />
       <span class="eq__n" id="eq-9">(9)</span>
     </div>
+  <Where items={where9} label="Components of (9)" />
   </div>
 
   <Figure num={6} caption="The conditions of an admissible path and the selection, over the use-case route. Hover or focus a condition to see what it checks.">
@@ -386,6 +454,7 @@ const exEdges = [
       <span class="eq__body" set:html={eqSel} />
       <span class="eq__n" id="eq-10">(10)</span>
     </div>
+  <Where items={where10} label="Components of (10)" />
   </div>
 
   <div class="prose">
@@ -429,7 +498,7 @@ const exEdges = [
 
   <div class="tbl-wrap">
     <table class="tbl">
-      <caption><b>Table 6.</b> Cost of the edges for receiver B, in octet-equivalents.</caption>
+      <caption><b>Table 4.</b> Cost of the edges for receiver B, in octet-equivalents.</caption>
       <thead>
         <tr>
           <th scope="col">Edge</th>
@@ -444,10 +513,10 @@ const exEdges = [
           exEdges.map(([e, who, b, c, w]) => (
             <tr>
               <th scope="row" class="m" set:html={e} />
-              <td>{who}</td>
-              <td class="num pad">{b}</td>
-              <td class="num pad">{c}</td>
-              <td class="num">{w}</td>
+              <td data-label="Issuer → subject">{who}</td>
+              <td class="num pad" data-label="b(e)">{b}</td>
+              <td class="num pad" data-label="c_dist">{c}</td>
+              <td class="num" data-label="w_B">{w}</td>
             </tr>
           ))
         }
@@ -532,6 +601,7 @@ const exEdges = [
     <span class="eq__body" set:html={eqCone} />
     <span class="eq__n" id="eq-11">(11)</span>
   </div>
+  <Where items={where11} label="Components of (11)" />
 
   <div class="prose">
     <p>
@@ -606,6 +676,14 @@ const exEdges = [
   .eq--long .eq__body {
     font-size: 1.05rem;
     white-space: nowrap;
+  }
+
+  /* On a phone even the long formulas wrap at their spaces, so nothing
+     scrolls sideways. */
+  @media (max-width: 640px) {
+    .eq--long .eq__body {
+      white-space: normal;
+    }
   }
 
   /* With two lines, the number sits level with the last one, as in LaTeX. */

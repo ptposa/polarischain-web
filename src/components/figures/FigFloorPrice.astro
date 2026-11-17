@@ -38,21 +38,21 @@ const fmt = (n: number) => n.toLocaleString('en-US');
 
     {yt.map((w) => <line class="grid-line" x1={X0} x2={X1} y1={y(w)} y2={y(w)} />)}
     {
-      yt.map((w) => (
-        <text class="t-tiny" x={X0 - 8} y={y(w) + 3.5} text-anchor="end">
+      yt.map((w, i) => (
+        <text class="t-tiny" x={X0 - 8} y={y(w) + 3.5} text-anchor="end" data-odd={i % 2 ? '' : undefined}>
           {fmt(w)}
         </text>
       ))
     }
     {
-      xt.map((k) => (
-        <text class="t-tiny" x={x(k)} y={Y0 + 18} text-anchor="middle">
+      xt.map((k, i) => (
+        <text class="t-tiny" x={x(k)} y={Y0 + 22} text-anchor="middle" data-odd={i % 2 ? '' : undefined}>
           {fmt(k)}
         </text>
       ))
     }
     <line class="edge-muted" x1={X0} x2={X1} y1={Y0} y2={Y0}></line>
-    <text class="t-small" x={X1} y={Y0 + 38} text-anchor="end">κ, octets that crossing one boundary is worth</text>
+    <text class="t-small" x={X1} y={Y0 + 44} text-anchor="end">κ, octets per boundary</text>
     <text class="t-small" x={X0 - 52} y={Y1 - 8}>W(P), octet-equivalents</text>
 
     <!-- The crossover of C1 and C2 -->
@@ -149,16 +149,24 @@ const fmt = (n: number) => n.toLocaleString('en-US');
     max-width: var(--table);
   }
 
-  /* On a phone the plot keeps a legible size and scrolls inside its own box. */
-  .fp__plot {
-    overflow-x: auto;
-  }
-
   .fp svg {
     display: block;
     width: 100%;
-    min-width: 30rem;
     height: auto;
+  }
+
+  /* On a phone the plot fits the column: its type grows so it stays legible
+     at the smaller scale, and every other tick is left out. */
+  @media (max-width: 640px) {
+    .fp svg :global(text.t-tiny) {
+      font-size: 19px;
+    }
+    .fp svg :global(text.t-small) {
+      font-size: 20px;
+    }
+    .fp svg :global(text[data-odd]) {
+      display: none;
+    }
   }
 
   .fp-line {
