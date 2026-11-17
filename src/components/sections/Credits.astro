@@ -73,7 +73,12 @@ const refs = pick.map((k) => all.find((r) => r.key === k)).filter((r) => r !== u
       <div class="person">
         <p class="label">Thesis supervisor</p>
         <h3>Dr. Mario Aragonés Lozano</h3>
-        <p class="small">Polytechnic University of Valencia&nbsp;(UPV)</p>
+        <p class="small">
+          <a class="plain" href="https://www.upv.es/entidades/etsit/" target="_blank" rel="noreferrer"
+            >Higher Technical School of Telecommunication Engineering&nbsp;(ETSIT)</a
+          ><br />
+          Polytechnic University of Valencia&nbsp;(UPV)
+        </p>
         <p class="links">
           <a href="https://www.upv.es/ficha-personal/maarlo9" target="_blank" rel="noreferrer"
             >Profile and publications</a
@@ -159,6 +164,13 @@ const refs = pick.map((k) => all.find((r) => r.key === k)).filter((r) => r !== u
   .person .small {
     margin: 0.3rem 0 0;
     color: var(--text-soft);
+  }
+  .person .small a.plain {
+    color: inherit;
+    text-decoration: none;
+  }
+  .person .small a.plain:hover {
+    color: var(--link-hover);
   }
   .person .label {
     margin: 0 0 0.6rem;
