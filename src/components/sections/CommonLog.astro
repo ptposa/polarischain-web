@@ -4,25 +4,29 @@ import Figure from '../Figure.astro';
 import FigCommonLog from '../figures/FigCommonLog.astro';
 ---
 
-<Chapter id="common-log" num="08" kicker="A common log" title="Everyone compiles the same material.">
+<Chapter id="common-log" num="9" kicker="The common log" title="Everyone compiles the same material">
   <div class="prose">
     <p>
       For every domain to reason over the same federation, they need a common place to read the
       material from and a way to check it has not been altered. PolarisChain adopts the
-      architecture of <strong>Certificate Transparency</strong>, with another object recorded:
+      architecture of <strong>Certificate Transparency</strong>
+      <a href="#ref-RFC6962">[RFC6962]</a>, with another object recorded:
       certificates between CAs, trust lists, and the signed manifests of each version a domain
       activates.
+      <span class="sn"
+        ><b>Material, never decisions.</b> Everything a domain publishes means the same to every reader, whereas its policy and the version it activates belong to it alone and are never published.</span
+      >
     </p>
     <p>
       Entries are leaves of a Merkle tree, and signed checkpoints allow proofs of inclusion and of
       consistency. The operator can omit an entry but cannot forge one without some proof failing;
-      witnesses and monitors make a split view detectable.
+      witnesses and monitors make a split view detectable. The log cannot give freshness by itself, because an old checkpoint still passes every proof, and that is why each receiver bounds its age in its own policy.
     </p>
   </div>
 
-  <p class="key">A minute book with numbered pages, where one can only write at the end.</p>
+  <p class="key">The log works like a minute book with numbered pages, in which one can only ever write at the end.</p>
 
-  <Figure num={8} class="figure--large" caption="Who publishes, who verifies and who decides. Adapted from Annex III of the thesis. The log is specified; its implementation is ongoing work.">
+  <Figure num={12} class="figure--large" caption="Who publishes, who verifies and who decides. Adapted from Annex III of the thesis. The log is specified; its implementation is ongoing work.">
     <FigCommonLog />
   </Figure>
 </Chapter>

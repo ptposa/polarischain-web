@@ -1,437 +1,624 @@
 ---
 import Chapter from '../Chapter.astro';
 import Figure from '../Figure.astro';
+import FigState from '../figures/FigState.astro';
+import FigAdmissionMap from '../figures/FigAdmissionMap.astro';
 import FigWorkedExample from '../figures/FigWorkedExample.astro';
+import FigFloorPrice from '../figures/FigFloorPrice.astro';
+import FigCone from '../figures/FigCone.astro';
 
-// Each formula is followed by the meaning of its fields: the symbol, where
-// the value comes from (the X.509 name when there is one), and what it does.
-// Symbols and sources carry literal markup and are rendered with set:html.
-interface Def {
-  sym: string;
-  src: string;
-  text: string;
-}
+// The section follows chapter 3 of the thesis, in its short version of
+// 16 November 2026. Formulas are written as markup and rendered with
+// set:html, so their braces need no escaping.
+const eqGraph = 'G|<sub>t</sub> = ( V, E|<sub>t</sub>, src, dst, w, Φ )';
+const eqInstant = 'E|<sub>t</sub> = { e ∈ E : t ∈ time(e) }';
+const eqLife = 'life<sub>d</sub>(e) = { t ∈ time(e) : rev<sub>d</sub>(e, t) = <code>good</code> }';
+const eqPolicy =
+  'π<sub>d</sub> = ( TP<sub>d</sub>, κ<sub>d</sub>, τ<sub>d</sub>, A<sub>d</sub><sup>key</sup>, A<sub>d</sub><sup>sig</sup>, σ<sub>d</sub>, L<sub>d</sub>, F<sub>d</sub>, D<sub>d</sub> )';
+const eqFloor =
+  'ℓ(u) ⪰ τ &nbsp;⟺&nbsp; stage(u) ≥ τ<sup>stage</sup> ∧ nist_category(u) ≥ τ<sup>cat</sup>';
+const eqCost =
+  'b(e) = |pk(dst(e))| + |sig(e)| &emsp; w<sub>d</sub>(e) = b(e) + κ<sub>d</sub> · c<sub>dist</sub>(e) <br />W<sub>d</sub>(P) = Σ<sub>e ∈ P</sub> w<sub>d</sub>(e)';
+const eqState =
+  'S = ℕ<sub>∞</sub> × 𝒯 × 𝒯 × 𝒢<sub>pol</sub> × ℕ<sub>∞</sub><sup>3</sup> × 2<sup>OID</sup><br />δ : S × E → S ∪ {⊥} &emsp; fin<sub>t</sub> : V × S × 𝒳 → 𝒪 ∪ {⊥}';
+const eqAdm =
+  'P<sub>adm</sub>(d, c, t, τ) = { P ∈ Paths<sub>d,τ</sub>(t) ∩ 𝒰<sub>d</sub> :<br />fresh<sub>d</sub>(M, t) ∧ P ⊨<sub>d,c</sub> Φ ∧ ∀i ∈ {1, …, h+1} : status<sub>t</sub>(P, i) }';
+const eqStatus =
+  'status<sub>t</sub>(P, i) ⟺ exempt(x<sub>i</sub>) ∨ ( ( i = 1 ∨ crl(e<sub>i−1</sub>) ) ∧ rev<sub>d</sub>(x<sub>i</sub>, t) = <code>good</code> )';
+const eqSel =
+  'P*<sub>d</sub>(c) = Sel( arg min<sub>P ∈ P<sub>adm</sub></sub> W<sub>d</sub>(P) )<br />k(P) = ( W<sub>d</sub>(P), h, id<sub>tp</sub>, (id(e<sub>1</sub>), …, id(e<sub>h</sub>)) )';
+const eqCone =
+  'Cone<sub>d</sub>(M, t) = { v : a path of E<sub>d,τ<sub>d</sub><sup>r</sup></sub>|<sub>t</sub> leads from v<sub>tp</sub> to v, for some tp ∈ TP<sub>d</sub>(t) }';
 
-const graphDefs: Def[] = [
-  {
-    sym: 'V',
-    src: 'CA certificates',
-    text: 'The certification authorities of the federation, one node per algorithm: rotating a key adds a version of a node, changing algorithm adds a new node.',
-  },
-  {
-    sym: 'E|t',
-    src: 'CA-to-CA certificates, valid and not revoked at t',
-    text: 'Every certificate between CAs in force at the instant t: the cross-certificates between intermediates of different domains and the internal edges of each hierarchy.',
-  },
-  {
-    sym: 'w',
-    src: 'attributes of the CA reached',
-    text: 'The cost of each hop, in the receiving domain’s own weights. Defined below, in (5).',
-  },
-  {
-    sym: 'Φ',
-    src: 'X.509 extensions of each certificate',
-    text: 'The governance constraints each edge imposes by itself. Defined next, in (2).',
-  },
+const graphRows = [
+  ['V', 'CA keys, v = ⟨dn, pk, alg⟩', 'Subject name, subjectPublicKeyInfo. Each key carries its domain, its level ℓ(v) and a weak-key flag.'],
+  ['E|<sub>t</sub> ⊆ E', 'Certificates between keys', 'Those within their validity period at <span class="m">t</span>. Revocation is not here: each receiver resolves it at admission.'],
+  ['src, dst', 'E → V', 'The key that signs each certificate and the key it certifies. Two certificates may join the same two keys: E is a multigraph.'],
+  ['w', 'E → ℕ × {0, 1}', 'Cost of the edge as common facts: octets that depend on the algorithm, and whether it crosses an administrative boundary.'],
+  ['Φ', 'E → 𝒞', 'Governance constraints of the certificate, ⟨depth, name, pol⟩, composed along the path as in RFC 5280, section 6.'],
+  ['π<sub>d</sub>', 'not part of the graph', 'Policy of the receiving domain <span class="m">d</span>. The graph is queried with <span class="m">(π<sub>d</sub>, c, t)</span>.'],
 ];
 
-const phiDefs: Def[] = [
-  {
-    sym: 'depth(e)',
-    src: 'X.509 · basicConstraints, pathLenConstraint<br />RFC 5280, section 4.2.1.9',
-    text: 'How many intermediate certificates may still follow; the budget shrinks at each hop along the path.',
-  },
-  {
-    sym: 'name(e)',
-    src: 'X.509 · nameConstraints<br />RFC 5280, section 4.2.1.10',
-    text: 'The name spaces the path may reach, permitted and excluded, accumulated by intersection along the path.',
-  },
-  {
-    sym: 'pol(e)',
-    src: 'X.509 · certificatePolicies, policyMappings,<br />policyConstraints, inhibitAnyPolicy',
-    text: 'The policies the path carries, with their mappings and constraints, processed as the policy tree of RFC 5280, section 6.',
-  },
+const edgeConds = [
+  'The signature verifies with the key <span class="m">src(e)</span>, and the two signature algorithm fields agree (RFC 5280, 6.1.3 (a)(1) and 4.1.1.2).',
+  'The issuer field matches the name of the CA that holds <span class="m">src(e)</span> (6.1.3 (a)(4)).',
+  '<code class="x509">basicConstraints</code> has <code class="x509">cA</code> set to <code>TRUE</code> (6.1.4 (k)).',
+  'If <code class="x509">keyUsage</code> is present, it includes <code class="x509">keyCertSign</code> (6.1.4 (n)).',
+  'The two ends are different keys, so the certificate is not self-signed.',
+  'It carries no critical extension that the parser cannot process (6.1.4 (o)).',
+  'It does not carry <code class="x509">noRevAvail</code>, which RFC 9608 forbids in CA certificates.',
 ];
 
-const policyDefs: Def[] = [
-  {
-    sym: 'TP<sub>d</sub>',
-    src: 'trust anchors of the receiver',
-    text: 'The anchors the receiving domain accepts. Every path it considers starts at one of them.',
-  },
-  {
-    sym: 's<sub>0</sub>',
-    src: 'RFC 5280, section 6.1.1, inputs',
-    text: 'The initial state of validation: the initial policy set, the explicit-policy, policy-mapping and anyPolicy indicators, and the initial name subtrees.',
-  },
-  {
-    sym: 'α, β, γ, δ',
-    src: 'weights of the cost, α + β + γ + δ = 1',
-    text: 'How much the receiver values posture, friction, key strength and distance.',
-  },
-  {
-    sym: 'τ<sub>d</sub>',
-    src: 'cryptographic threshold, in [0, 1]',
-    text: 'The highest posture the receiver admits on any hop: 1 accepts classical nodes, 0.3 hybrid ones, 0 only post-quantum.',
-  },
-  {
-    sym: 'σ<sub>d</sub>',
-    src: 'X.509 · extendedKeyUsage<br />RFC 5280, section 4.2.1.12',
-    text: 'The purposes the path must allow, such as TLS client authentication.',
-  },
+const policyRows = [
+  ['TP<sub>d</sub>', 'Trust anchor entries, each with its identifier, its key, its initial state s<sub>0</sub>(d, tp), its provenance and its validity.', '6.1.1 (c) to (i)'],
+  ['κ<sub>d</sub>', 'Octets that crossing one administrative boundary is worth.', 'outside the RFC'],
+  ['τ<sub>d</sub>', 'Ordered list of cryptographic floors, of one or more elements.', 'outside the RFC'],
+  ['A<sub>d</sub><sup>key</sup>, A<sub>d</sub><sup>sig</sup>', 'Key profiles and signature algorithms admitted.', 'outside the RFC'],
+  ['σ<sub>d</sub>', 'Purposes the chain must allow, such as <code class="x509">clientAuth</code>.', 'outside section 6'],
+  ['L<sub>d</sub>', 'Largest number of CA certificates in a path.', 'outside the RFC'],
+  ['F<sub>d</sub>', 'Freshness demanded of the log checkpoint and of the status evidence.', 'outside section 6'],
+  ['D<sub>d</sub>', 'Keys the receiver excludes, by a canonical identifier <span class="m">kid(v)</span> of the key material.', 'outside the RFC'],
 ];
 
-const costDefs: Def[] = [
-  {
-    sym: 'c<sub>crypto</sub>(v)',
-    src: 'posture · algorithm of the CA reached',
-    text: '0 post-quantum, 0.3 hybrid, 1 classical.',
-  },
-  {
-    sym: 'c<sub>alg</sub>(v)',
-    src: 'friction · signature and public key size',
-    text: 'Octets of signature and public key the verifier must carry, normalised.',
-  },
-  {
-    sym: 'c<sub>key</sub>(v)',
-    src: 'key strength · NIST security category',
-    text: 'Strength of the key material, by NIST security category.',
-  },
-  {
-    sym: 'c<sub>dist</sub>(u, v)',
-    src: 'distance · dom(u) ≠ dom(v)',
-    text: '1 when the hop crosses an administrative boundary, 0 otherwise.',
-  },
+const sizes = [
+  ['ML-DSA-87', '4,627', '2,592', 'post_quantum', '5'],
+  ['ECDSA P-384 + ML-DSA-65', '3,413', '2,049', 'hybrid', '3'],
+  ['ML-DSA-65', '3,309', '1,952', 'post_quantum', '3'],
+  ['ECDSA P-256 + ML-DSA-44', '2,492', '1,377', 'hybrid', '2'],
+  ['ML-DSA-44', '2,420', '1,312', 'post_quantum', '2'],
+  ['RSA-4096', '512', '512', 'traditional', '0'],
+  ['RSA-2048', '256', '256', 'traditional', '0'],
+  ['ECDSA P-384', '104', '97', 'traditional', '0'],
+  ['ECDSA P-256', '72', '65', 'traditional', '0'],
+];
+
+const exEdges = [
+  ['e<sub>1</sub>', 'Root B → Intermediate B', '5,462', '0', '5,462'],
+  ['e<sub>2</sub>', 'Intermediate B → Intermediate C1', '5,462', '1', '11,462'],
+  ['e<sub>3</sub>', 'Intermediate C1 → Issuing C', '5,365', '0', '5,365'],
+  ['e<sub>8</sub>', 'Intermediate B → Intermediate C3', '6,005', '1', '12,005'],
+  ['e<sub>9</sub>', 'Intermediate C3 → Issuing C', '6,579', '0', '6,579'],
+  ['e<sub>4</sub>', 'Intermediate B → Intermediate A1', '3,510', '1', '9,510'],
+  ['e<sub>10</sub>', 'Intermediate A1 → Issuing C', '2,056', '1', '8,056'],
 ];
 ---
 
-<Chapter id="model" num="05" kicker="The model" title="One governed graph, read by each receiver.">
-  <div class="article">
-    <p class="intro">
-      The federated ecosystem is modelled as a directed graph that changes over time and carries
-      its own governance, read from the certificates themselves:
-    </p>
-
-    <div class="eq" role="math" aria-label="G at t equals V, E at t, w, Phi">
-      <span class="eq__body"
-        ><span class="v">G</span>|<span class="v">t</span> = ( <span class="v">V</span>, <span class="v">E</span
-        >|<span class="v">t</span>, <span class="v">w</span>, <span class="g">Φ</span> )</span
-      >
-      <span class="eq__n">(1)</span>
-    </div>
-
-    <dl class="defs">
-      {
-        graphDefs.map((d) => (
-          <div class="def">
-            <dt>
-              <span class="def__sym" set:html={d.sym} />
-              <span class="def__src" set:html={d.src} />
-            </dt>
-            <dd>{d.text}</dd>
-          </div>
-        ))
-      }
-    </dl>
-
+<Chapter id="model" num="5" kicker="The model" title="One common graph, read by each receiver">
+  <div class="prose">
     <p>
-      Each edge carries the governance constraints of its certificate, composed along the path
-      with the semantics of RFC 5280, section 6:
+      The model rests on a single object: the certification graph of the federation at an instant.
+      Every domain compiles it the same way from the same published material, and each receiver
+      then queries it with its own policy.
+      <span class="sn sn--key"
+        ><b>Key idea</b> There is one logical graph and there are as many queries as receivers, so two receivers that query the same graph can obtain different routes, which is exactly what the model intends.</span
+      >
     </p>
-
-    <div class="eq" role="math" aria-label="Phi of e equals depth, name, pol">
-      <span class="eq__body"
-        ><span class="g">Φ</span>(<span class="v">e</span>) = ⟨ <span class="fn">depth</span>(<span
-          class="v">e</span
-        >), <span class="fn">name</span>(<span class="v">e</span>), <span class="fn">pol</span>(<span
-          class="v">e</span
-        >) ⟩</span
-      >
-      <span class="eq__n">(2)</span>
-    </div>
-
-    <dl class="defs">
-      {
-        phiDefs.map((d) => (
-          <div class="def">
-            <dt>
-              <span class="def__sym" set:html={d.sym} />
-              <span class="def__src" set:html={d.src} />
-            </dt>
-            <dd>{d.text}</dd>
-          </div>
-        ))
-      }
-    </dl>
-
     <p>
-      The graph is never read in the abstract. It is always queried by a receiving domain <span
-        class="m">d</span
-      >, through its policy:
+      The examples use the names of the use case throughout. Domain A publishes its systems under <code>altair.example</code>, and the cross-certificate that Intermediate B issues to Intermediate A permits the names of <code>ops.altair.example</code>, its operations department, while it excludes <code>ext.ops.altair.example</code>, where A enrols the machines of its contractors. The client is <code>erp.ops.altair.example</code>, and B demands of it its own certificate policy <span class="m">p<sub>B</sub></span>, which the cross-certificate maps to the policy <span class="m">p<sub>A</sub></span> of A.
     </p>
+  </div>
 
-    <div class="eq" role="math" aria-label="pi d">
-      <span class="eq__body"
-        ><span class="g">π</span><sub>d</sub> = ( <span class="v">TP</span><sub>d</sub>, <span
-          class="v">s</span
-        ><sub>0</sub>, <span class="g">α</span>, <span class="g">β</span>, <span class="g">γ</span>,{' '}
-        <span class="g">δ</span>, <span class="g">τ</span><sub>d</sub>, <span class="g">σ</span><sub
-          >d</sub
-        > )</span
-      >
-      <span class="eq__n">(3)</span>
-    </div>
-
-    <dl class="defs defs--5">
-      {
-        policyDefs.map((d) => (
-          <div class="def">
-            <dt>
-              <span class="def__sym" set:html={d.sym} />
-              <span class="def__src" set:html={d.src} />
-            </dt>
-            <dd>{d.text}</dd>
-          </div>
-        ))
-      }
-    </dl>
-
+  <div class="thm">
     <p>
-      A path is <em>admissible</em> for <span class="m">d</span> when it starts at one of its
-      anchors, satisfies <span class="m">Φ</span>, keeps every hop under the threshold and allows
-      the required purposes:
+      <b>Definition 1 (key graph).</b> The federation at the instant <span class="m">t</span> is the directed multigraph
     </p>
-
-    <div class="eq eq--wide" role="math" aria-label="Admissible paths">
-      <span class="eq__body"
-        ><span class="v">P</span><sub>adm</sub>(<span class="v">d</span>, <span class="v">v</span>,{' '}
-        <span class="v">t</span>) = &#123; <span class="v">P</span> : <span class="v">tp</span> ⇝
-        <span class="v">v</span> | <span class="v">tp</span> ∈ <span class="v">TP</span><sub>d</sub
-        >, <span class="v">P</span> ⊆ <span class="v">E</span>|<span class="v">t</span>, <span class="v">P</span
-        > ⊨ <span class="g">Φ</span>,<br />
-        ∀<span class="v">e</span> ∈ <span class="v">P</span> : <span class="v">c</span><sub
-          >crypto</sub
-        >(<span class="v">e</span>) ≤ <span class="g">τ</span><sub>d</sub>, <span class="g">σ</span
-        ><sub>d</sub> ⊆ ∩ <span class="fn">eku</span>(<span class="v">e</span>) &#125;</span
-      >
-      <span class="eq__n">(4)</span>
+    <div class="eq" role="math" aria-label="G at t equals V, E at t, src, dst, w, Phi">
+      <span class="eq__body" set:html={eqGraph} />
+      <span class="eq__n" id="eq-1">(1)</span>
     </div>
-
-    <p>Among the admissible paths, each hop has a cost in the receiver's own weights,</p>
-
-    <div class="eq" role="math" aria-label="w d of u v">
-      <span class="eq__body"
-        ><span class="v">w</span><sub>d</sub>(<span class="v">u</span>, <span class="v">v</span>) ={' '}
-        <span class="g">α</span> <span class="v">c</span><sub>crypto</sub>(<span class="v">v</span>)
-        + <span class="g">β</span> <span class="v">c</span><sub>alg</sub>(<span class="v">v</span>) +{' '}
-        <span class="g">γ</span> <span class="v">c</span><sub>key</sub>(<span class="v">v</span>) +{' '}
-        <span class="g">δ</span> <span class="v">c</span><sub>dist</sub>(<span class="v">u</span>,{' '}
-        <span class="v">v</span>)</span
-      >
-      <span class="eq__n">(5)</span>
-    </div>
-
-    <dl class="defs">
-      {
-        costDefs.map((d) => (
-          <div class="def">
-            <dt>
-              <span class="def__sym" set:html={d.sym} />
-              <span class="def__src" set:html={d.src} />
-            </dt>
-            <dd>{d.text}</dd>
-          </div>
-        ))
-      }
-    </dl>
-
     <p>
-      Each term lies in [0, 1]. The receiver selects the path of least total cost:
+      whose nodes are the keys of the certification authorities and whose edges are the CA
+      certificates between them that are valid at <span class="m">t</span>.
     </p>
+  </div>
 
-    <div class="eq" role="math" aria-label="Selected path">
-      <span class="eq__body"
-        ><span class="v">P</span>*<sub>d</sub>(<span class="v">v</span>) = <span class="fn">Sel</span
-        >( <span class="fn">arg min</span><sub
-          ><span class="v">P</span> ∈ <span class="v">P</span><sub>adm</sub></sub
-        > Σ<sub><span class="v">e</span> ∈ <span class="v">P</span></sub> <span class="v">w</span><sub
-          >d</sub
-        >(<span class="v">e</span>) )</span
-      >
-      <span class="eq__n">(6)</span>
-    </div>
+  <div class="tbl-wrap">
+    <table class="tbl sym">
+      <caption><b>Table 3.</b> The pieces of the graph and where each one comes from.</caption>
+      <tbody>
+        {
+          graphRows.map(([s, what, text]) => (
+            <tr>
+              <th scope="row" class="m" set:html={s} />
+              <td class="m" set:html={what} />
+              <td set:html={text} />
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
 
+  <div class="prose">
     <p>
-      where Sel breaks ties deterministically: the fewest certificates first, then the
-      lexicographic order of their issuer and serial number.
+      The expression <a class="eqref" href="#eq-1">(1)</a> already holds the three traits of the model, and the first is that the graph is{' '}
+      <strong>governed</strong>, because its edges carry the constraints of their certificates and a
+      path is only good if it respects them all. It is <strong>temporal</strong>, because the set of
+      edges depends on the instant, so a question about the past is the same question asked at another <span class="m">t</span>. And it is <strong>common</strong>: none of its components depends on who queries
+      it, so two domains that compile the same material obtain exactly the same graph.
+      <span class="sn"
+        ><b>Nodes are keys.</b> When a CA rotates its key, the new key is a new node, whether or
+        not the algorithm changes. A cross-certificate certifies one key: what the CA signs with
+        the next one is no longer reachable through it.</span
+      >
+    </p>
+    <p>
+      The domain of a key does not come from any X.509 field but from the scope declaration that each domain signs and publishes, and a declaration only counts for a key if that key signs it too, so no member can claim a key it does not control. A key that nobody claims gets a domain of its own, and the domain enters the cost and never the admission.
+    </p>
+  </div>
+
+  <h3 class="sub"><span>5.1</span> When a certificate is an edge</h3>
+  <div class="prose">
+    <p>
+      Not every certificate in the material is an edge, since a certificate issued with the key <span class="m">u</span> for the key <span class="m">v</span> is one only if it meets seven conditions, the first six taken from RFC 5280 and the last
+      from its update in RFC 9608.
+    </p>
+    <ol class="conds">
+      {edgeConds.map((c) => <li set:html={c} />)}
+    </ol>
+    <p>
+      These conditions do not constrain paths: they decide whether there is an edge at all, and so
+      they are not part of <span class="m">Φ</span>. Each edge also carries four data that are not constraints: the signature algorithm of its certificate <span class="m">sigalg(e)</span>, the names it presents <span class="m">nm(e)</span>, the self-issued mark <span class="m">si(e)</span>, and the permission <span class="m">crl(e)</span>, which holds when its <code class="x509">keyUsage</code> carries <code class="x509">cRLSign</code> and decides whether the revocation lists signed by the certified key count for whoever reaches it through that edge.
+      <span class="sn"
+        ><b>Why not issuer and serial number.</b> An edge is identified by the signed content of its certificate together with the key that signs it, <span class="m">id(e)</span> = SHA-256(<code class="x509">tbsCertificate</code>, issuer key). Uniqueness of a serial number holds inside one
+        CA, and two unrelated CAs of a federation may share a name.</span
+      >
+    </p>
+    <p>Of all the edges, the graph at <span class="m">t</span> keeps those within their validity period:</p>
+  </div>
+
+  <div class="eq" role="math" aria-label="Edges at the instant t">
+    <span class="eq__body" set:html={eqInstant} />
+    <span class="eq__n" id="eq-2">(2)</span>
+  </div>
+
+  <div class="prose">
+    <p>
+      The revocation state cannot be part of the common graph. Evidence only counts if whoever signs it has authority over the certificate, and RFC 5280 binds that authority to the receiver, since the key that signs a revocation list has to validate up to the same anchor as the chain (section 6.3.3 (f)). A common verdict would have to decide that authority without knowing the anchor, and it would then be enough for a member to certify a key of its own under the name of a foreign CA to withdraw that CA’s certificates from every receiver. Each receiver <span class="m">d</span> therefore resolves the state <span class="m">rev<sub>d</sub>(x, t)</span> of a certificate at admission, with three values, because not knowing whether a certificate is revoked is not the same as knowing it is not.
+    </p>
+  </div>
+
+  <div class="eq" role="math" aria-label="Instants at which the receiver can traverse an edge">
+    <span class="eq__body" set:html={eqLife} />
+    <span class="eq__n" id="eq-3">(3)</span>
+  </div>
+
+  <div class="prose">
+    <p>
+      The value is <code>revoked</code> if the applicable evidence revokes the certificate or any evidence did so irrevocably, <code>good</code> if the applicable evidence covers <span class="m">t</span> and holds it good, and <code>unknown</code> otherwise. In this work the evidence with authority is the revocation list signed by the same key that issued the certificate, and the applicable one is the most recent issued no later than <span class="m">t</span> and no older than the receiver accepts.
+    </p>
+  </div>
+
+  <h3 class="sub"><span>5.2</span> The policy of the receiver</h3>
+  <div class="eq" role="math" aria-label="Policy of the receiver d">
+    <span class="eq__body" set:html={eqPolicy} />
+    <span class="eq__n" id="eq-4">(4)</span>
+  </div>
+
+  <div class="tbl-wrap">
+    <table class="tbl sym">
+      <caption
+        ><b>Table 4.</b> Elements of the policy <a class="eqref" href="#eq-4">(4)</a>. A value belongs to it if it changes when the
+        verifying domain changes and no certificate is touched.</caption
+      >
+      <thead>
+        <tr><th scope="col">Element</th><th scope="col">Meaning</th><th scope="col">RFC 5280</th></tr>
+      </thead>
+      <tbody>
+        {
+          policyRows.map(([s, text, src]) => (
+            <tr>
+              <th scope="row" class="m" set:html={s} />
+              <td set:html={text} />
+              <td class="src">{src}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <p>
+      The receiver does not search for a path from a root but from one of its anchors, and each anchor entry starts the validation in an initial state <span class="m">s<sub>0</sub>(d, tp)</span> that the receiver fixes, with the names it starts from, the policies it accepts and its depth. A service that authorises by certificate policies demands them here, as the initial policy set of its anchors with explicit policy, so that every admissible path credits at least one policy accepted for that service. If that set gathers policies that grant different rights, the closing step may return different subsets depending on the path, and the service then authorises with the output of the validated path and not with the initial set.
+    </p>
+    <p>
+      A cryptographic floor is the least level the receiver demands of each CA on the path, the
+      anchor included, and it is a pair that is compared component by component:
+    </p>
+  </div>
+
+  <div class="eq" role="math" aria-label="A level meets a floor">
+    <span class="eq__body" set:html={eqFloor} />
+    <span class="eq__n" id="eq-5">(5)</span>
+  </div>
+
+  <div class="prose">
+    <p>
+      By <a class="eqref" href="#eq-5">(5)</a>, with <span class="m">τ</span> = (<code>hybrid</code>, 0) the receiver admits hybrid and post-quantum keys of any
+      category; with (<code>post_quantum</code>, 3), only post-quantum keys of category 3 or above,
+      which leaves ML-DSA-44 out. Raising the floor, removing an algorithm or excluding a key takes
+      a subgraph of the common graph, the only part the receiver walks, so those decisions can only remove paths.
+      <span class="sn"
+        ><b>A list of floors expresses a preference.</b> An adversary who breaks the algorithm of a node presents a certificate fabricated under that node, and if its only path meets the last floor of the list the receiver admits it. The guarantee against forgery is therefore that of the last floor of the list, and no higher.</span
+      >
+    </p>
+  </div>
+
+  <h3 class="sub"><span>5.3</span> The cost, and why posture is not in it</h3>
+  <div class="prose">
+    <p>
+      Among the paths the policy lets it consider, the receiver prefers the cheapest. The cost has two levels, the common facts on the edge and the price that one receiver puts on them with a single parameter.
+    </p>
+  </div>
+
+  <div class="eq" role="math" aria-label="Cost of an edge and of a path">
+    <span class="eq__body" set:html={eqCost} />
+    <span class="eq__n" id="eq-6">(6)</span>
+  </div>
+
+  <div class="prose">
+    <p>
+      The first term of <a class="eqref" href="#eq-6">(6)</a>, <span class="m">b(e)</span>, measures in octets the two parts of a certificate that depend on the
+      algorithm: the public key it carries and the signature that closes it. The second,{' '}
+      <span class="m">c<sub>dist</sub>(e)</span>, is 1 when the two keys belong to different administrative domains. The
+      price <span class="m">κ<sub>d</sub></span> says how many octets crossing one boundary is worth to the receiver, so
+      the cost of a path is measured in octet-equivalents and computed in exact arithmetic.
+      <span class="sn"
+        ><b>One parameter is enough.</b> Selection does not change if every cost is multiplied by
+        the same positive constant, so two weights and a scale choose exactly what <span class="m">κ<sub>d</sub></span>{' '}
+        chooses.</span
+      >
+    </p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <caption
+        ><b>Table 5.</b> Reference sizes in octets, and the level <span class="m">ℓ(v)</span> of a key of each algorithm.
+        ML-DSA sizes are those of FIPS 204; composite sizes are the sum of the two components, as
+        in RFC 10073.</caption
+      >
+      <thead>
+        <tr>
+          <th scope="col">Algorithm</th>
+          <th scope="col" class="num pad">Signature</th>
+          <th scope="col" class="num pad">Public key</th>
+          <th scope="col"><code>stage</code></th>
+          <th scope="col" class="num"><code>nist_category</code></th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          sizes.map(([a, s, k, st, cat]) => (
+            <tr>
+              <th scope="row">{a}</th>
+              <td class="num pad">{s}</td>
+              <td class="num pad">{k}</td>
+              <td>
+                <span class={`tag tag--${st}`}>{st}</span>
+              </td>
+              <td class="num">{cat}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <p>
+      The migration stage and the security category also come from the algorithm, and they could be
+      added along the path as one more term of the cost instead of being demanded through the floor, yet the model deliberately leaves them out. A chain is accepted
+      only if every signature verifies, so an adversary able to forge the signatures of a single CA
+      can fabricate certificates below it, and adding the levels of the nodes would give different numbers to two routes with the same weakest link.
     </p>
   </div>
 
   <p class="key">
-    <span class="m">Φ</span> and <span class="m">τ<sub>d</sub></span> decide which paths may exist.{' '}
-    <span class="m">w<sub>d</sub></span> decides which one is preferred.
+    Since the protection of a chain is set by its weakest link, posture is not added into the cost but demanded, as a floor, of every key on the path.
   </p>
 
-  <div class="article">
+  <h3 class="sub"><span>5.4</span> What the validation carries along a path</h3>
+  <div class="prose">
     <p>
-      Admission is binary and comes first; preference is continuous and only orders what was
-      admitted. Two receivers can order the same routes differently, and each is right under its
-      own policy.
+      Each certificate brings constraints, the path accumulates them in a state, and the transition computes the next state from the previous one. A state is a card with six slots, and the state space <span class="m">S</span> is the set of every possible card, written as a Cartesian product because each card holds one value of each slot at once.
     </p>
   </div>
 
-  <h3 class="example-h">A worked example</h3>
-  <div class="article">
+  <div class="eq eq--long" role="math" aria-label="State space, transition and closing step">
+    <span class="eq__body" set:html={eqState} />
+    <span class="eq__n" id="eq-7">(7)</span>
+  </div>
+
+  <Figure num={5} caption="The six slots of a state and the product that forms the space S, with the state of the use-case route on reaching Intermediate A.">
+    <FigState />
+  </Figure>
+
+  <div class="prose">
     <p>
-      A receiver in domain B, hybrid with τ<sub>B</sub> = 0.3, validates a certificate issued in
-      domain C. Four candidate paths exist. The threshold prunes the one through a classical
-      intermediate of A; the depth budget prunes the one through the bridge, inside domain C. Of
-      the two survivors, the cost selects the path through the ML-DSA-87 intermediate.
+      The transition <span class="m">δ</span> reads from each edge its constraints, the names it presents and its self-issued mark, and returns the next state or the failure state <span class="m">⊥</span>, which is never left. The closing step <span class="m">fin<sub>t</sub></span> processes the presented certificate as the last one and returns the valid policies restricted by the user, the output RFC 9618 fixes. A path satisfies <span class="m">Φ</span> for <span class="m">c</span> when it never falls to <span class="m">⊥</span> and the closing step accepts it.
+      <span class="sn"
+        ><b>The only adaptation.</b> RFC 5280 starts its counters with the length of a path that the search does not yet know. The model starts them at <span class="m">∞</span>, which gives the same decisions, because a path of <span class="m">n</span> certificates applies at most <span class="m">n</span> decrements and the algorithm only asks whether a counter is zero.</span
+      >
     </p>
   </div>
 
-  <Figure num={5} caption="Four candidate paths, two pruned by different constraints, one selected by cost. With a policy that favours bandwidth instead, the hybrid path wins: the crossover can be computed, at β = 0.473.">
+  <h3 class="sub"><span>5.5</span> Admissible paths and the selected one</h3>
+  <div class="thm">
+    <p>
+      <b>Definition 2 (admissible path).</b> For the receiver <span class="m">d</span>, the presented certificate <span class="m">c</span>, the instant <span class="m">t</span> and a floor <span class="m">τ</span>, a path is admissible when it starts at a valid anchor entry of <span class="m">d</span>, runs over the receiver’s subgraph inside the search universe, satisfies <span class="m">Φ</span> up to and including <span class="m">c</span>, and every certificate of its chain <span class="m">(x<sub>1</sub>, …, x<sub>h+1</sub>)</span> is held good by its own issuer.
+    </p>
+    <div class="eq eq--long" role="math" aria-label="Admissible paths">
+      <span class="eq__body" set:html={eqAdm} />
+      <span class="eq__n" id="eq-8">(8)</span>
+    </div>
+    <div class="eq eq--long" role="math" aria-label="Status of each certificate of the chain">
+      <span class="eq__body" set:html={eqStatus} />
+      <span class="eq__n" id="eq-9">(9)</span>
+    </div>
+  </div>
+
+  <Figure num={6} caption="The conditions of an admissible path and the selection, over the use-case route. Hover or focus a condition to see what it checks.">
+    <FigAdmissionMap />
+  </Figure>
+
+  <div class="prose">
+    <p>
+      The state of each certificate is resolved by induction along the path. The anchor credits with its list the first certificate, the key that this certifies credits the second, and the issuing CA credits at the end the presented certificate, so the definition ends without recursion. A list only counts if its key may sign it for whoever reaches it along <span class="m">P</span>: for the keys of the path that permission is <span class="m">crl(e<sub>i−1</sub>)</span>, because RFC 10007 demands since June 2026 that the certificate of a list signer carry <code class="x509">cRLSign</code>, and for the anchor it is granted by the anchor entry. The value of <span class="m">rev<sub>d</sub></span> is the same along any path and the permission is not, so two cross-certificates to the same key can give paths with different states.
+      <span class="sn"
+        ><b>Two profiles of evidence.</b> The standards admit two further signers, an OCSP responder delegated by the issuing key and another key of the same CA after a rotation. Both need an auxiliary path to the same anchor and their dependencies can close in a cycle, so this work leaves them as an extended profile, declared and not proved, and states its results for the direct profile, which is also the one of the laboratory.</span
+      >
+    </p>
+    <p>
+      The presented certificate is bound into every expression, because the constraints of a cross-certificate apply to everything that comes after it. Three clients of the same Issuing A have the same candidate path and it is admissible for only one: it serves <code>erp.ops.altair.example</code>, but not <code>nominas.rrhh.altair.example</code>, which falls outside the permitted subtree, nor <code>portatil7.ext.ops.altair.example</code>, which falls in the excluded one.
+    </p>
+  </div>
+
+  <p class="key">A path is always admissible for a particular certificate, and never towards a CA in general.</p>
+
+  <div class="thm">
+    <p>
+      <b>Definition 3 (selected path).</b> Among the admissible paths under the first floor of the
+      list that leaves any, the receiver selects the one of least cost, and <span class="m">Sel</span> makes it unique by ordering paths on the key <span class="m">k(P)</span>.
+    </p>
+    <div class="eq eq--long" role="math" aria-label="Selected path and selection key">
+      <span class="eq__body" set:html={eqSel} />
+      <span class="eq__n" id="eq-10">(10)</span>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>
+      The search universe <span class="m">𝒰<sub>d</sub></span> is the set of simple paths of the key graph with at most{' '}
+      <span class="m">L<sub>d</sub></span> CA certificates: no key is visited twice, the rule RFC 4158 recommends, which
+      implies the no-repeated-certificate rule of RFC 5280. The universe is finite, so if any path is admissible there is an optimum and <span class="m">Sel</span> makes it unique, and the search the thesis implements enumerates its admissible paths exactly, which is feasible on the topologies of the laboratory.
+    </p>
+    <p>
+      Admission <a class="eqref" href="#eq-8">(8)</a> is binary and comes first, whereas preference <a class="eqref" href="#eq-10">(10)</a> only orders the paths that were admitted. The security of
+      admission does not depend on the cost, which decides which of the admissible paths is validated, recorded and explained, and that
+      makes the route Audit keeps deterministic and reproducible.
+      <span class="sn"
+        ><b>Two outputs that must not be confused.</b> <span class="m">s*</span> is the state the path reaches before the
+        presented certificate; it explains the decision. <span class="m">o*</span> is the output of the closing step, with
+        the valid policies of RFC 9618, and it is the only one a service may use to
+        authorise.</span
+      >
+    </p>
+  </div>
+
+  <p class="key">
+    An admissible path decides whether there is a route to propose and the cost only decides which, but the certificate is not accepted until the server validates that route and TLS checks that the client holds the key.
+  </p>
+
+  <h3 class="sub"><span>5.6</span> A worked example</h3>
+  <div class="prose">
+    <p>
+      With admission and selection defined, a whole case can be solved. Receiver B has Root B as its anchor, demands <span class="m">τ<sub>B</sub></span> = (<code>hybrid</code>, 0), accepts
+      up to five CA certificates and prices a boundary at <span class="m">κ<sub>B</sub></span> = 6,000 octets. The
+      presented certificate was issued by Issuing C, an ML-DSA-65 CA of domain C, and four candidate paths lead to it. The floor removes the one through domain A at its first crossing, because
+      Intermediate A1 is (<code>traditional</code>, 0). The depth budget removes the one through
+      the bridge on an internal edge of domain C, which is only detected because the graph holds
+      internal edges too.
+    </p>
+  </div>
+
+  <Figure num={7} caption="Four candidate paths from Root B to Issuing C. Two fall to different constraints and the cost selects C₁, the path through the hybrid intermediate.">
     <FigWorkedExample />
   </Figure>
+
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <caption><b>Table 6.</b> Cost of the edges for receiver B, in octet-equivalents.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Edge</th>
+          <th scope="col">Issuer → subject</th>
+          <th scope="col" class="num pad">b(e)</th>
+          <th scope="col" class="num pad">c<sub>dist</sub></th>
+          <th scope="col" class="num">w<sub>B</sub></th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          exEdges.map(([e, who, b, c, w]) => (
+            <tr>
+              <th scope="row" class="m" set:html={e} />
+              <td>{who}</td>
+              <td class="num pad">{b}</td>
+              <td class="num pad">{c}</td>
+              <td class="num">{w}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <p>
+      C₁ costs 22,289 and C₄ costs 24,046, so C₁ wins, and since both cross one boundary and differ only in 1,757 octets, it wins for any <span class="m">κ</span>. It is the right result: both have the same limiting
+      profile, (<code>hybrid</code>, 3), that of Root B and Intermediate B, and all the ML-DSA-87
+      intermediate of C₄ adds is octets. If the level entered the cost, C₄ could win for having one
+      more post-quantum node without being any more resistant.
+    </p>
+    <p>
+      The policy changes the optimum in two ways that can be computed, and the first is the floor: a receiver B′ of the same
+      domain with a traditional floor also admits C₂, which crosses two boundaries and carries 5,261
+      octets less than C₁. C₂ wins as soon as a boundary is worth less than that to the receiver. The example leaves a prediction the laboratory can check, that B selects C₁, and not a proof of the integration, which belongs to the experimental validation.
+    </p>
+  </div>
+
+  <Figure num={8} caption="The floor decides which paths compete; the price of a boundary decides which of them wins. Move κ and change the floor.">
+    <FigFloorPrice />
+  </Figure>
+
+  <h3 class="sub"><span>5.7</span> Three results</h3>
+  <div class="prose">
+    <p>
+      The exact enumeration of the example does not scale, and making the search tractable depends on three results that this work states and does not implement, so that pruning by dominance is a deployment extension and not the search of the thesis. Dijkstra’s algorithm with one label per node is not correct on this graph, because two paths can reach the same key with different accumulated states and the dearer one cannot be discarded, since its state may admit continuations the cheaper one forbids. The exact technique is a
+      label-setting search with dominance, as in the resource-constrained shortest path problem.
+    </p>
+  </div>
+
+  <div class="thm">
+    <p>
+      <b>Proposition 1 (dominance).</b> A label at the key <span class="m">x</span> with anchor entry <span class="m">tp</span>, state <span class="m">s</span>, visited keys <span class="m">U</span> and selection key <span class="m">k</span> dominates another at the same key and anchor with <span class="m">(s′, U′, k′)</span> when <span class="m">s</span> is at least as permissive as <span class="m">s′</span>, <span class="m">U ⊆ U′</span>, <span class="m">k ≤ k′</span> and the first carries the permission <span class="m">crl</span> whenever the second does. The dominated label can be discarded
+      without losing the selected path.
+    </p>
+    <p class="status">
+      <b>Proved by argument</b> for the relation defined by accepted continuations. A relation that can be computed component by component and implies it remains open.
+    </p>
+  </div>
+
+  <div class="thm">
+    <p>
+      <b>Lemma 2 (cycle elimination).</b> If no certificate of the receiver’s subgraph carries
+      policy mappings, or the anchor entry starts with the <code class="x509">policy_mapping</code>{' '}
+      counter at zero, every walk that repeats a key and is accepted for <span class="m">c</span> contains a simple path that is also accepted for <span class="m">c</span>, at lower cost and with fewer certificates.
+    </p>
+    <p class="status">
+      <b>Proved by argument and checked by simulation</b>, though it has not yet been reviewed by third parties.
+    </p>
+  </div>
+
+  <div class="thm">
+    <p>
+      <b>Proposition 3 (complexity).</b> Given the material, an anchor entry and a presented
+      certificate, deciding whether a path exists that passes RFC 5280 validation is NP-complete,
+      even when the key graph is acyclic and there are no policies, depth limits or costs.
+    </p>
+    <p class="status">
+      <b>Proved by reduction</b> from the path with forbidden pairs problem{' '}
+      <a href="#ref-Gabow1976">[Gabow1976]</a>: hardness appears with name constraints alone and paths of unbounded length, because with <span class="m">L<sub>d</sub></span> fixed the enumeration is polynomial.
+    </p>
+  </div>
+
+  <div class="prose">
+    <p>
+      Soundness and completeness against standard validation are stated but not proved, although the safety of the design does not rest on them alone. The selected path is validated explicitly before it is
+      accepted, so an error of the model in chaining, validity, names or policies becomes a denial and never an undue acceptance as long as the validation library is correct, and what only the engine checks depends on an independent checker.
+    </p>
+  </div>
+
+  <h3 class="sub"><span>5.8</span> The cone of trust and confinement</h3>
+  <div class="prose">
+    <p>
+      In a federation any member can publish certificates and evidence, and controlling the transitivity of trust demands knowing which of those publications can change a receiver’s decisions. The answer is stated with its cone of trust, formed by the keys of its valid anchors and every key reached from them along edges of its subgraph under the last floor of its list.
+    </p>
+  </div>
+
+  <div class="eq eq--long" role="math" aria-label="Cone of trust of the receiver d">
+    <span class="eq__body" set:html={eqCone} />
+    <span class="eq__n" id="eq-11">(11)</span>
+  </div>
+
+  <div class="prose">
+    <p>
+      The cone is not the receiver’s subgraph but the part of it reached from the anchors, so a foreign key that meets the floor and the lists is in the subgraph and stays outside the cone for as long as no certificate leads to it from an anchor. <span class="m">Obj<sub>d</sub>(M, t)</span> names the objects of the snapshot <span class="m">M</span>, certificates or evidence, whose signature verifies with a key of the cone.
+    </p>
+  </div>
+
+  <Figure num={9} class="figure--large" caption="The cone of trust of receiver B, inside its subgraph, inside the common graph. Change the floor of B and watch the cone follow it.">
+    <FigCone />
+  </Figure>
+
+  <div class="thm">
+    <p>
+      <b>Proposition 4 (confinement).</b> In the direct profile, with the same policy and the same valid anchor entries, let <span class="m">M</span> and <span class="m">M′</span> be two snapshots that meet <span class="m">fresh<sub>d</sub></span> at <span class="m">t</span> and hold the same objects signed by keys of the cone, <span class="m">Obj<sub>d</sub>(M, t) = Obj<sub>d</sub>(M′, t)</span>. Then <span class="m">P<sub>adm</sub>(d, c, t, τ)</span> is the same with both, for every presented certificate <span class="m">c</span> and every floor <span class="m">τ</span> of the list.
+    </p>
+    <p class="status">
+      <b>Proved by argument</b> for the direct profile. The cones of the two snapshots coincide, every path of the receiver starts at an anchor, and in the direct profile the evidence of each certificate is signed by the key that issued it, which is a node of the path. Not reviewed by third parties nor checked by simulation; in the extended profile it is not proved.
+    </p>
+  </div>
+
+  <p class="key">
+    Nothing signed by a domain the receiver does not reach from its anchors can make it admit a certificate or deny one, and inside its cone what a foreign key can get admitted is bounded by the constraints of the receiver’s own edges that lead to it.
+  </p>
 </Chapter>
 
 <style>
-  /* The model reads as the page of a paper: every formula in one brown ink
-     (the tan of the numbered labels), each followed by the meaning of its
-     fields, whose symbols are set in sand. */
-  :global(#model) {
-    --ink: #e6d4b2;
-    --ink-eq: var(--tan);
-    --ink-rule: #a8957a;
+  .conds {
+    margin: 0 0 1.2em;
+    padding-left: 1.4rem;
+    list-style: decimal;
   }
 
-  .article .intro {
-    max-width: var(--measure);
-  }
-
-  .article p {
-    margin: 0 0 1em;
-  }
-
-  .m {
-    font-family: var(--font-math);
-    color: var(--ink);
-  }
-
-  .eq {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin: 2.8rem 0 1.6rem;
-    padding: 1.1rem 0 1.1rem 1.5rem;
-    border-block: 1px solid rgba(168, 149, 122, 0.22);
-    background: linear-gradient(90deg, rgba(230, 212, 178, 0.035), rgba(230, 212, 178, 0));
-  }
-
-  .eq__body {
-    flex: 1;
-    font-family: var(--font-math);
-    font-size: 1.22rem;
-    line-height: 1.6;
-    color: var(--ink-eq);
-    text-align: center;
-  }
-
-  .eq__body sub {
-    font-size: 0.66em;
-  }
-
-  .eq .fn {
-    letter-spacing: 0.01em;
-  }
-
-  /* The sentence after a formula or its fields stands apart from both. */
-  .eq + p {
-    margin-top: 2.6rem;
-  }
-
-  .eq__n {
-    font-family: var(--font-mono);
-    font-size: 0.74rem;
-    color: var(--ink-rule);
-  }
-
-  /* The fields of a formula: symbol, where it comes from, what it does. */
-  .defs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-    gap: 1.4rem 2rem;
-    margin: 0 0 3rem;
-  }
-
-  /* The five fields of the policy fit one row on wide screens. */
-  @media (min-width: 1100px) {
-    .defs--5 {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      column-gap: 1.5rem;
-    }
-  }
-
-  .def {
-    padding-left: 1rem;
-    border-left: 1px solid rgba(168, 149, 122, 0.35);
-  }
-
-  .def dt {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    margin: 0 0 0.45rem;
-  }
-
-  .def__sym {
-    font-family: var(--font-math);
-    font-size: 1.1rem;
-    line-height: 1.2;
-    color: var(--ink);
-  }
-
-  .def__sym :global(sub) {
-    font-size: 0.66em;
-  }
-
-  .def__src {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    line-height: 1.45;
-    letter-spacing: 0.02em;
-    color: var(--x509);
-  }
-
-  .def dd {
-    margin: 0;
-    font-family: var(--font-figure);
-    font-size: var(--body-size);
+  .conds li {
+    padding: 0.15rem 0 0.15rem 0.3rem;
+    font-size: 1.0625rem;
     line-height: 1.5;
+  }
+
+  .conds li::marker {
+    color: var(--brass);
+    font-variant-numeric: lining-nums;
+  }
+
+  /* Tables whose first column is a symbol. */
+  .sym th.m {
+    font-size: 1.05rem;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .sym td.m {
     color: var(--text-soft);
+    white-space: nowrap;
   }
 
-  .key sub {
-    font-size: 0.65em;
+  .sym .src {
+    white-space: nowrap;
+    color: var(--text-muted);
   }
 
-  .key .m {
-    font-style: normal;
+  .tbl .pad {
+    padding-right: 1.4rem;
   }
 
-  :global(.chapter) .example-h {
-    margin-top: 3rem;
+  .thm .eq {
+    margin: 0.9rem 0;
+  }
+
+  /* Long formulas break over two lines, as in the thesis, so that they and
+     their number stay inside the text column; on a phone they scroll inside
+     their own box instead of pushing the page. */
+  .eq--long .eq__body {
+    font-size: 1.05rem;
+    white-space: nowrap;
+  }
+
+  /* With two lines, the number sits level with the last one, as in LaTeX. */
+  .eq--long {
+    align-items: flex-end;
+  }
+  .eq--long .eq__n {
+    padding-bottom: 0.3rem;
   }
 
   @media (max-width: 560px) {
-    .eq {
-      padding-left: 0.6rem;
-      gap: 0.6rem;
-    }
     .eq__body {
       font-size: 1.02rem;
-      text-align: left;
     }
   }
 </style>

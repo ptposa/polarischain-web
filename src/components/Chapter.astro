@@ -1,7 +1,9 @@
 ---
 interface Props {
   id: string;
+  /** Section number, as in a paper. */
   num?: string;
+  /** What the section is, in two or three words. */
   kicker: string;
   title: string;
   class?: string;
@@ -12,7 +14,7 @@ const { id, num, kicker, title, class: extra } = Astro.props;
 
 <section class:list={['chapter', extra]} id={id} aria-labelledby={`${id}-h`}>
   <div class="wrap">
-    <p class="kicker">{num && <b>{num} · </b>}{kicker}</p>
+    <p class="sec">{num && <b>{num}</b>}<span>{kicker}</span></p>
     <h2 id={`${id}-h`} set:html={title} />
     <slot />
   </div>

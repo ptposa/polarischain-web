@@ -1,0 +1,192 @@
+---
+// The state space S as a card with six slots (thesis, figure
+// anatomia-del-estado). Built in HTML rather than SVG, so the same drawing
+// reflows on a phone: the three columns stack and the product signs stay
+// between the factors. Hovering or focusing a slot lights its row.
+const slots = [
+  { f: 'ℕ<sub>∞</sub>', what: 'Remaining depth', rfc: 'max_path_length', v: '1' },
+  { f: '𝒯', what: 'Permitted name subtrees', rfc: 'permitted_subtrees', v: '<code>ops.altair.example</code>', pair: true },
+  { f: '𝒯', what: 'Excluded name subtrees', rfc: 'excluded_subtrees', v: '<code>ext.ops.altair.example</code>', pair: true },
+  { f: '𝒢<sub>pol</sub>', what: 'Graph of valid policies', rfc: 'valid_policy_graph', v: 'p<sub>B</sub>, expecting p<sub>A</sub>' },
+  { f: 'ℕ<sub>∞</sub><sup>3</sup>', what: 'Three policy counters', rfc: 'explicit_policy · inhibit_anyPolicy · policy_mapping', v: '(0, ∞, ∞)' },
+  { f: '2<sup>OID</sup>', what: 'Initial policies the receiver accepts', rfc: 'user-initial-policy-set', v: '{ p<sub>B</sub> }' },
+];
+---
+
+<div class="st" role="group" aria-label="The six slots of a validation state">
+  <div class="st__head" aria-hidden="true">
+    <span class="m">S =</span>
+    <span>What each slot keeps</span>
+    <span>A state s ∈ S, at Intermediate A</span>
+  </div>
+  <ol class="st__rows">
+    {
+      slots.map((s, i) => (
+        <li class:list={['st__row', { 'st__row--pair': s.pair }]} tabindex="0">
+          <span class="st__f m">
+            <span set:html={s.f} />
+            {i < slots.length - 1 && <span class="st__x" aria-hidden="true">×</span>}
+          </span>
+          <span class="st__what">
+            {s.what}
+            <code class="st__rfc">{s.rfc}</code>
+          </span>
+          <span class="st__v m" set:html={s.v} />
+        </li>
+      ))
+    }
+  </ol>
+  <p class="st__note">
+    The sign × reads “and”: a state holds one value of each slot at once, and <span class="m">S</span> is the set of every combination. <span class="m">𝒯</span> appears twice, joined by the bracket, because the permitted and the excluded names are two values of the same type.
+  </p>
+</div>
+
+<style>
+  .st {
+    max-width: var(--figure);
+    margin-inline: auto;
+    font-family: var(--font-figure);
+    color: var(--fig-text);
+  }
+
+  .st__head,
+  .st__row {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 0 1.2rem;
+    align-items: center;
+  }
+
+  .st__head {
+    padding: 0 0 0.6rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.03em;
+    color: var(--fig-muted);
+  }
+
+  .st__head .m {
+    font-size: 1.1rem;
+    color: var(--text);
+  }
+
+  .st__rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .st__row {
+    position: relative;
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--rule);
+    transition: background-color 0.25s ease;
+  }
+
+  .st__row:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .st__row:hover,
+  .st__row:focus-visible {
+    outline: none;
+    background: color-mix(in srgb, var(--brass) 8%, transparent);
+  }
+
+  .st__f {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 0.35rem 0;
+    border: 1px solid var(--fig-stroke);
+    border-radius: 3px;
+    background: var(--ground-raise);
+    font-size: 1.15rem;
+    color: var(--text);
+  }
+
+  /* The product sign hangs between this factor and the next. */
+  .st__x {
+    position: absolute;
+    left: 50%;
+    bottom: -1.15rem;
+    transform: translateX(-50%);
+    font-size: 0.95rem;
+    color: var(--brass-soft);
+  }
+
+  /* The two name slots share a bracket on the left. */
+  .st__row--pair .st__f::before {
+    content: '';
+    position: absolute;
+    left: -0.7rem;
+    top: -0.55rem;
+    bottom: -0.55rem;
+    width: 0.4rem;
+    border-left: 1px solid var(--brass);
+  }
+  .st__row--pair:nth-child(2) .st__f::before {
+    top: 50%;
+    border-top: 1px solid var(--brass);
+  }
+  .st__row--pair:nth-child(3) .st__f::before {
+    bottom: 50%;
+    border-bottom: 1px solid var(--brass);
+  }
+
+  .st__what {
+    display: grid;
+    gap: 0.15rem;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .st__rfc {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-style: normal;
+    color: var(--fig-muted);
+    overflow-wrap: anywhere;
+  }
+
+  .st__v {
+    padding: 0.4rem 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--brass) 55%, transparent);
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--brass) 7%, transparent);
+    font-size: 1rem;
+    color: var(--brass-soft);
+    overflow-wrap: anywhere;
+  }
+
+  .st__v :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--brass-soft);
+  }
+
+  .st__note {
+    margin: 1rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--text-soft);
+  }
+
+  @media (max-width: 719px) {
+    .st__head {
+      display: none;
+    }
+    .st__row {
+      grid-template-columns: 3.4rem minmax(0, 1fr);
+      gap: 0.5rem 0.9rem;
+      padding: 0.8rem 0;
+    }
+    .st__f {
+      grid-row: span 2;
+      align-self: stretch;
+      align-items: center;
+    }
+    .st__x {
+      bottom: -1.4rem;
+    }
+  }
+</style>

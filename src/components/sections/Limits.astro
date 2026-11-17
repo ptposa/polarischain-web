@@ -1,0 +1,108 @@
+---
+import Chapter from '../Chapter.astro';
+
+// What a specialised reader looks for first: the status of each claim.
+const claims = [
+  ['Dominance (Proposition 1)', 'Proved by argument', 'For the relation defined by accepted continuations, with the CRL permission in the label. A computable relation that implies it is open, with delicate cases in RFC 9618, section 5.4.'],
+  ['Cycle elimination (Lemma 2)', 'Proved by argument', 'Checked by simulation. The policy part rests on the argument alone. Not reviewed by third parties.'],
+  ['NP-completeness (Proposition 3)', 'Proved by reduction', 'From the path with forbidden pairs problem. Tractability as a function of the number of constrained certificates is open.'],
+  ['Confinement (Proposition 4)', 'Proved by argument', 'For the direct profile of evidence. Not reviewed by third parties nor checked by simulation, and not proved for the extended profile.'],
+  ['Soundness and completeness against RFC 5280', 'Stated', 'Not proved. Safety does not depend on them: the selected path is validated explicitly and failure is closed.'],
+  ['Third-party bound of Govern, policy part', 'Stated', 'The bound holds for names and depth. For policies it depends on a condition that is not proved, and Govern labels it fragile.'],
+  ['Selection against exhaustive enumeration', 'Planned', 'To be checked on the small topologies of the laboratory and against a reference validation library.'],
+];
+
+// The status of a claim, from firm to open.
+const level = (s: string) =>
+  s === 'Proved' || s === 'Proved by reduction'
+    ? 'proved'
+    : s === 'Proved by argument'
+      ? 'argument'
+      : s === 'Stated'
+        ? 'stated'
+        : 'planned';
+
+const open = [
+  ['A validator for composite chains', 'On Linux, .NET 11 X509Chain over OpenSSL 3.5 validates ECDSA and ML-DSA chains and cannot read a composite public key, so the library that validates domain B is still an open decision.'],
+  ['The common log, built', 'The log is fully specified, while its implementation, several independent logs and a post-quantum signature for it are ongoing work.'],
+  ['A tamper-evident decision record', 'In the thesis it is a structured file, enough to reproduce and re-evaluate a decision, but proving one to a third party needs entries that are signed and anchored in the log.'],
+  ['Time, in full', 'The model has to separate when a datum is valid from when it becomes known, since a revocation published later with an earlier invalidity date gives a re-evaluation and leaves the reproduced decision as it was.'],
+  ['The extended profile of evidence', 'Delegated OCSP responders and lists signed by another key of the CA after a rotation need an auxiliary path to the same anchor. The thesis declares them and proves its results only for lists signed by the issuing key.'],
+  ['Search at scale', 'Pruning by dominance and admission under a time budget are deployment extensions. The thesis enumerates the admissible paths exactly, which is feasible on the topologies of the laboratory.'],
+  ['Ordering by policy before cost', 'Two admissible routes may end with different valid policies, and until this is solved a service that authorises by policy must demand it in the initial state of its anchors.'],
+  ['A post-quantum channel', 'ML-DSA certificates do not make the channel post-quantum, because the key exchange and the handshake signatures are separate layers that the thesis does not touch.'],
+  ['Counting domains instead of crossings', 'It would measure the dependence on other organisations better, but it is not additive and is therefore left as a variant.'],
+];
+---
+
+<Chapter id="limits" num="13" kicker="Limits and open work" title="What is proved, what is stated and what is open">
+  <div class="prose">
+    <p>
+      The model went through a scientific audit and a critical review in November 2026, and their findings were applied
+      before this page was written. The table separates what has a proof from what is only stated,
+      because the two are easy to confuse in an overview.
+      <span class="sn"
+        ><b>The audit</b> was run on 12 November 2026 over the model and the thesis, and it left 26 findings that range from the definition of the graph to the status of each proof. The review of 15 November took revocation out of the common graph, restricted the proofs to the direct profile of evidence and added the cone of trust.</span
+      >
+    </p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <caption><b>Table 10.</b> Status of the formal claims.</caption>
+      <thead>
+        <tr><th scope="col">Claim</th><th scope="col">Status</th><th scope="col">Scope and what is missing</th></tr>
+      </thead>
+      <tbody>
+        {
+          claims.map(([c, s, d]) => (
+            <tr>
+              <th scope="row">{c}</th>
+              <td>
+                <span class={`tag tag--${level(s)}`}>{s}</span>
+              </td>
+              <td>{d}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Open work</h3>
+  <dl class="open">
+    {
+      open.map(([t, d]) => (
+        <div>
+          <dt>{t}</dt>
+          <dd>{d}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</Chapter>
+
+<style>
+  .open {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1.6rem 2.5rem;
+    max-width: var(--table);
+    margin: 0;
+  }
+
+  .open dt {
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--rule);
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--text);
+  }
+
+  .open dd {
+    margin: 0.35rem 0 0;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+</style>

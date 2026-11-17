@@ -71,7 +71,7 @@ const emergingArt = [
 const emerging = [
   {
     title: 'Operational lifecycle fatigue',
-    text: 'Short-lived certificates, renewals, revocations and policy updates are hard to sustain across many domains.',
+    text: 'Short-lived certificates, renewals, revocations and policy updates are hard to sustain across many domains at once.',
   },
   {
     title: 'Machine and AI identity explosion',
@@ -88,20 +88,33 @@ const emerging = [
 ];
 ---
 
-<Chapter id="motivation" num="01" kicker="Research motivation" title="Challenges in federated PKI environments.">
+<Chapter id="motivation" num="1" kicker="Motivation" title="Challenges in federated PKI environments">
   <div class="prose">
     <p>
-      Cross-certification and bridge CAs have enabled interoperability for years. As trust topologies
-      grow denser and the cryptographic transition gets closer, <strong
+      Cross-certification and bridge CAs have made domains interoperable for years, but as trust topologies grow denser and the cryptographic transition draws closer, <strong
         >discovering, governing and choosing certification paths</strong
-      > is still hard to do in a formal, deterministic and crypto-aware way.
+      > is still hard to do formally and deterministically, with an eye on the cryptography of each hop.
+      <span class="sn sn--key"
+        ><b>Key idea</b> The paths exist whether or not anyone looks at them, and what has been missing is a way to compute over them before trusting them.</span
+      >
+    </p>
+    <p>
+      The risk is far from theoretical, as the case of eMudhra showed in October 2026, when eight of its intermediate CAs turned out to hold weak ECDSA keys. Sectigo had cross-certified them, so every verifier that trusted the
+      Sectigo root admitted those keys without ever having decided to trust eMudhra. Passive
+      measurements had already shown that a cross-certificate can keep a trust path valid after a
+      revocation <a href="#ref-Hiller2020">[Hiller2020]</a>, and yet nobody had computed what those cross-certificates enabled before they were signed.
+      <span class="sn"
+        ><b>The eMudhra case.</b> The CA’s final report of 10 November 2026 corrects its first
+        account: the HSM generated correct keys, and a program on the ceremony host cut the private
+        value down to its leading byte <a href="#ref-BZ2083449">[BZ2083449]</a>.</span
+      >
     </p>
   </div>
 
   <div class="challenges grid-4">
     <article>
       <h3>Growing complexity of trust topologies</h3>
-      <p>Every new relationship multiplies the paths between an identity and an anchor.</p>
+      <p>Every new relationship multiplies the paths that lead from an identity to an anchor, and few of them were ever drawn on purpose.</p>
       <svg class="svg-fig mini" viewBox="22 4 224 116" aria-hidden="true">
         <path class="grid-line" d="M40 100 H232 M40 20 V100" />
         <path class="edge-path" d="M40 98 C 90 96, 120 86, 146 66 S 200 30, 228 24" />
@@ -121,7 +134,7 @@ const emerging = [
       </p>
       <svg class="svg-fig mini" viewBox="22 4 224 116" aria-hidden="true">
         <!-- Three chains of the same length. The builder keeps the first
-             one it finds, through classical CAs; the post-quantum one,
+             one it finds, through traditional CAs; the post-quantum one,
              cheaper for this receiver, is never looked at. -->
         <path class="edge-muted" d="M44 62 H224 M100 90 L168 34" />
         <path class="edge-dash dash-pq" d="M44 62 L100 90 H168 L224 62" />
@@ -137,8 +150,8 @@ const emerging = [
         <text x="35" y="65" text-anchor="end" class="t-label">EE</text>
         <text x="233" y="65" class="t-label">TA</text>
         <text x="134" y="13" text-anchor="middle" class="t-label t-path">one heuristic result</text>
-        <text x="134" y="29" text-anchor="middle" class="t-label">classical · c = 1</text>
-        <text x="134" y="102" text-anchor="middle" class="t-label">post-quantum · c = 0</text>
+        <text x="134" y="29" text-anchor="middle" class="t-label">traditional</text>
+        <text x="134" y="102" text-anchor="middle" class="t-label">post-quantum</text>
         <text x="134" y="116" text-anchor="middle" class="t-label t-pq">admissible, never explored</text>
       </svg>
     </article>
@@ -170,7 +183,7 @@ const emerging = [
     <article>
       <h3>No crypto agility awareness</h3>
       <p>
-        Federation rarely weighs the algorithm on each hop, just as classical, hybrid and
+        Federation rarely weighs the algorithm on each hop, just as traditional, hybrid and
         post-quantum material starts to coexist.
       </p>
       <svg class="svg-fig mini" viewBox="22 4 224 116" aria-hidden="true">
@@ -181,7 +194,7 @@ const emerging = [
         <circle class="n n--pq" cx="228" cy="18" r="3" />
         <circle class="n n--hy" cx="228" cy="46" r="3" />
         <circle class="n" cx="228" cy="96" r="3" />
-        <text x="50" y="20" class="t-label">classical</text>
+        <text x="50" y="20" class="t-label">traditional</text>
         <text x="74" y="72" class="t-label t-hy">hybrid</text>
         <text x="220" y="12" text-anchor="end" class="t-label t-pq">post-quantum</text>
         <text x="232" y="116" text-anchor="end" class="t-label">time</text>
@@ -190,7 +203,7 @@ const emerging = [
   </div>
 
   <div class="emerging">
-    <p class="label">Emerging challenges</p>
+    <h3 class="sub">Pressures that make it worse</h3>
     <div class="grid-4">
       {
         emerging.map((e, i) => (
@@ -207,12 +220,12 @@ const emerging = [
 
 <style>
   .challenges {
-    margin-top: 3rem;
+    margin-top: 5rem;
   }
 
   .challenges,
   .emerging .grid-4 {
-    gap: 1.2rem;
+    gap: 1.4rem;
   }
 
   /* Each challenge in its own faint frame: title and text first, then its
@@ -221,8 +234,8 @@ const emerging = [
   .emerging__item {
     display: flex;
     flex-direction: column;
-    padding: 0.95rem 0.95rem 0.85rem;
-    border: 1px solid rgba(186, 198, 217, 0.12);
+    padding: 1.3rem 1.1rem 1rem;
+    border: 1px solid var(--rule);
     border-radius: 3px;
   }
 
@@ -230,20 +243,22 @@ const emerging = [
      to the drawing so no margin is wasted. */
   .mini {
     display: block;
-    width: 82%;
+    width: 100%;
     height: auto;
-    margin: auto auto 0;
-    padding-top: 1rem;
+    margin: auto 0 0;
+    padding-top: 1.4rem;
   }
 
   .mini .t-label {
     font-size: 8px;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.02em;
   }
 
   .challenges p,
   .emerging__item p {
     margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
     color: var(--text-soft);
   }
 
@@ -269,7 +284,7 @@ const emerging = [
     stroke: var(--pq);
   }
   .dash-deny {
-    stroke: rgba(234, 148, 143, 0.5);
+    stroke: rgba(220, 147, 136, 0.5);
   }
 
   .line-pq,
@@ -328,26 +343,28 @@ const emerging = [
   }
 
   .emerging {
-    margin-top: 3.5rem;
+    margin-top: 5rem;
   }
 
-  .emerging .label {
-    margin: 0 0 1.2rem;
-    color: var(--ieee-red-50);
+  /* The heading of the second row: the yellow of the section title, paler. */
+  .emerging :global(h3.sub) {
+    margin: 0 0 1.6rem;
+    color: #f1dea8;
   }
 
-  /* The names of the challenges, in the heading face and a warm apricot.
-     They fill each line of their frame before breaking: no balanced or
-     orphan-avoiding wrap, which would send words down early. */
+  /* The names of the challenges fill each line before breaking: no
+     balanced wrap, which would send words down early. */
   .challenges h3,
   .emerging__item h4 {
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.7rem;
     font-family: var(--font-heading);
-    font-size: 1.12rem;
-    line-height: 1.3;
-    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: 1.25;
+    font-weight: 500;
     text-wrap: wrap;
-    color: #e6b994;
+    /* Near white: the names sit one level below the yellow section title
+       by size alone, with no colour of their own. */
+    color: #f3f6fa;
   }
   /* The emerging drawings are injected as HTML, so their inner elements
      carry no scope attribute: reach them through :global(). */
@@ -422,10 +439,10 @@ const emerging = [
     stroke-linecap: round;
   }
   .mini--em :global(.dash-deny) {
-    stroke: rgba(234, 148, 143, 0.5);
+    stroke: rgba(220, 147, 136, 0.5);
   }
   .mini--em :global(.t-label) {
     font-size: 8px;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.02em;
   }
 </style>

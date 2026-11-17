@@ -1,0 +1,249 @@
+---
+// The two decisions of the worked example, kept apart. The floor decides
+// which candidates compete; the price of a boundary, κ, decides which of
+// them wins. Costs are those of the thesis, in octet-equivalents:
+//   C1 = 16289 + κ     C4 = 18046 + κ     C2 = 11028 + 2κ
+// The reader moves κ and changes the floor; the script redraws the marker
+// and the result. Without script the figure shows receiver B as in the text.
+const X0 = 64;
+const X1 = 610;
+const Y0 = 250;
+const Y1 = 24;
+const KMAX = 10000;
+const WMIN = 10000;
+const WMAX = 32000;
+const x = (k: number) => X0 + ((X1 - X0) * k) / KMAX;
+const y = (w: number) => Y0 - ((Y0 - Y1) * (w - WMIN)) / (WMAX - WMIN);
+const paths = [
+  { id: 'C1', base: 16289, n: 1, label: 'C₁ · hybrid intermediate' },
+  { id: 'C4', base: 18046, n: 1, label: 'C₄ · ML-DSA-87 intermediate' },
+  { id: 'C2', base: 11028, n: 2, label: 'C₂ · through domain A' },
+];
+const line = (p: (typeof paths)[number]) =>
+  `M${x(0)} ${y(p.base).toFixed(1)} L${x(KMAX)} ${y(p.base + p.n * KMAX).toFixed(1)}`;
+const xt = [0, 2500, 5000, 7500, 10000];
+const yt = [10000, 15000, 20000, 25000, 30000];
+const fmt = (n: number) => n.toLocaleString('en-US');
+---
+
+<div class="fp" data-fp>
+  <div class="fp__plot">
+  <svg class="svg-fig" viewBox="0 0 640 300" role="img" aria-labelledby="fp-t fp-d">
+    <title id="fp-t">Cost of the three candidate paths as a function of the price of a boundary</title>
+    <desc id="fp-d">
+      C1 and C4 cross one boundary and rise in parallel, C4 always 1757 octets above C1. C2 crosses
+      two boundaries and rises twice as fast: it is cheaper than C1 below 5261 octets per boundary
+      and dearer above. With a hybrid floor C2 does not compete at all.
+    </desc>
+
+    {yt.map((w) => <line class="grid-line" x1={X0} x2={X1} y1={y(w)} y2={y(w)} />)}
+    {
+      yt.map((w) => (
+        <text class="t-tiny" x={X0 - 8} y={y(w) + 3.5} text-anchor="end">
+          {fmt(w)}
+        </text>
+      ))
+    }
+    {
+      xt.map((k) => (
+        <text class="t-tiny" x={x(k)} y={Y0 + 18} text-anchor="middle">
+          {fmt(k)}
+        </text>
+      ))
+    }
+    <line class="edge-muted" x1={X0} x2={X1} y1={Y0} y2={Y0}></line>
+    <text class="t-small" x={X1} y={Y0 + 38} text-anchor="end">κ, octets that crossing one boundary is worth</text>
+    <text class="t-small" x={X0 - 52} y={Y1 - 8}>W(P), octet-equivalents</text>
+
+    <!-- The crossover of C1 and C2 -->
+    <line class="edge-dash" x1={x(5261)} x2={x(5261)} y1={y(16289 + 5261)} y2={Y0}></line>
+    <text class="t-tiny" x={x(5261) + 5} y={Y0 - 6}>5,261</text>
+
+    {
+      paths.map((p) => (
+        <path class={`fp-line fp-line--${p.id}`} d={line(p)} data-fp-line={p.id} />
+      ))
+    }
+    <text class="t-small fp-lbl--C1" x={x(7700)} y={y(16289 + 7700) + 16}>C₁</text>
+    <text class="t-small fp-lbl--C4" x={x(7700)} y={y(18046 + 7700) - 8}>C₄</text>
+    <text class="t-small fp-lbl--C2" x={x(8500)} y={y(11028 + 2 * 8500) - 8} data-fp-lbl="C2">C₂</text>
+
+    <line class="fp-cursor" x1={x(6000)} x2={x(6000)} y1={Y1} y2={Y0} data-fp-cursor></line>
+    {paths.map((p) => <circle class="fp-dot" r="3.5" cx={x(6000)} cy={y(p.base + p.n * 6000)} data-fp-dot={p.id} />)}
+  </svg>
+  </div>
+
+  <div class="fp__controls">
+    <label class="fp__k" for="fp-kappa">
+      <span>κ = <output data-fp-kout>6,000</output> octets</span>
+      <input id="fp-kappa" type="range" min="0" max="10000" step="1" value="6000" data-fp-k />
+    </label>
+
+    <fieldset class="fp__floor">
+      <legend>Floor τ of the receiver</legend>
+      <label><input type="radio" name="fp-floor" value="hybrid" checked data-fp-floor /> (hybrid, 0)</label>
+      <label><input type="radio" name="fp-floor" value="traditional" data-fp-floor /> (traditional, 0)</label>
+    </fieldset>
+  </div>
+
+  <p class="fp__out" aria-live="polite" data-fp-out>
+    Candidates C₁ and C₄. Selected: <b>C₁</b>, 22,289 octet-equivalents, against 24,046 for C₄.
+  </p>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-fp]');
+  if (root) {
+    const X0 = 64, X1 = 610, Y0 = 250, Y1 = 24, KMAX = 10000, WMIN = 10000, WMAX = 32000;
+    const x = (k: number) => X0 + ((X1 - X0) * k) / KMAX;
+    const y = (w: number) => Y0 - ((Y0 - Y1) * (w - WMIN)) / (WMAX - WMIN);
+    const P = [
+      { id: 'C1', sub: 'C₁', base: 16289, n: 1 },
+      { id: 'C4', sub: 'C₄', base: 18046, n: 1 },
+      { id: 'C2', sub: 'C₂', base: 11028, n: 2 },
+    ];
+    const fmt = (n: number) => n.toLocaleString('en-US');
+    const kIn = root.querySelector<HTMLInputElement>('[data-fp-k]')!;
+    const kOut = root.querySelector<HTMLOutputElement>('[data-fp-kout]')!;
+    const out = root.querySelector<HTMLElement>('[data-fp-out]')!;
+    const cursor = root.querySelector<SVGLineElement>('[data-fp-cursor]')!;
+    const floors = Array.from(root.querySelectorAll<HTMLInputElement>('[data-fp-floor]'));
+
+    const render = (): void => {
+      const k = Number(kIn.value);
+      const traditional = floors.find((f) => f.checked)?.value === 'traditional';
+      kOut.textContent = fmt(k);
+      cursor.setAttribute('x1', String(x(k)));
+      cursor.setAttribute('x2', String(x(k)));
+      const live = P.filter((p) => traditional || p.id !== 'C2');
+      // Sel: least cost, then fewest certificates. All three have three CA
+      // certificates, so an exact tie is left to the last key of Sel.
+      const cost = (p: (typeof P)[number]) => p.base + p.n * k;
+      const best = live.reduce((a, b) => (cost(b) < cost(a) ? b : a));
+      const tie = live.filter((p) => cost(p) === cost(best)).length > 1;
+      for (const p of P) {
+        const on = live.includes(p);
+        const dot = root.querySelector<SVGCircleElement>(`[data-fp-dot="${p.id}"]`)!;
+        dot.setAttribute('cx', String(x(k)));
+        dot.setAttribute('cy', String(y(cost(p))));
+        dot.classList.toggle('is-best', p === best && !tie);
+        dot.classList.toggle('is-off', !on);
+        root.querySelector(`[data-fp-line="${p.id}"]`)!.classList.toggle('is-off', !on);
+        root.querySelector(`[data-fp-line="${p.id}"]`)!.classList.toggle('is-best', p === best && !tie);
+      }
+      root.querySelector('[data-fp-lbl="C2"]')!.classList.toggle('is-off', !traditional);
+      const names = live.map((p) => p.sub).join(traditional ? ', ' : ' and ');
+      const others = live.filter((p) => p !== best).map((p) => `${fmt(cost(p))} for ${p.sub}`).join(' and ');
+      out.innerHTML = tie
+        ? `Candidates ${names}. C₁ and C₂ tie at ${fmt(cost(best))} octet-equivalents: the tie-break of Sel decides.`
+        : `Candidates ${names}${traditional ? '' : ' (C₂ falls below the floor)'}. Selected: <b>${best.sub}</b>, ${fmt(cost(best))} octet-equivalents, against ${others}.`;
+    };
+    kIn.addEventListener('input', render);
+    floors.forEach((f) => f.addEventListener('change', render));
+    render();
+  }
+</script>
+
+<style>
+  .fp {
+    max-width: var(--table);
+  }
+
+  /* On a phone the plot keeps a legible size and scrolls inside its own box. */
+  .fp__plot {
+    overflow-x: auto;
+  }
+
+  .fp svg {
+    display: block;
+    width: 100%;
+    min-width: 30rem;
+    height: auto;
+  }
+
+  .fp-line {
+    fill: none;
+    stroke: var(--fig-stroke);
+    stroke-width: 1.3;
+  }
+  .fp-line.is-best {
+    stroke: var(--path);
+    stroke-width: 2;
+  }
+  .fp-line.is-off {
+    stroke: var(--deny);
+    stroke-dasharray: 2 5;
+    opacity: 0.6;
+  }
+  .fp-dot {
+    fill: var(--ground);
+    stroke: var(--fig-stroke);
+    stroke-width: 1.3;
+  }
+  .fp-dot.is-best {
+    fill: var(--path);
+    stroke: var(--path);
+  }
+  .fp-dot.is-off {
+    display: none;
+  }
+  .fp-cursor {
+    stroke: var(--brass);
+    stroke-width: 1;
+  }
+  .fp :global(.is-off[data-fp-lbl]) {
+    fill: var(--deny);
+  }
+
+  .fp__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+    align-items: end;
+    margin-top: 1rem;
+    font-family: var(--font-figure);
+    font-size: 0.875rem;
+    color: var(--text-soft);
+  }
+
+  .fp__k {
+    display: grid;
+    gap: 0.4rem;
+    flex: 1 1 16rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fp__k input {
+    width: 100%;
+    accent-color: var(--brass);
+  }
+
+  .fp__floor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.2rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .fp__floor legend {
+    padding: 0;
+    margin-bottom: 0.3rem;
+    color: var(--text-muted);
+  }
+
+  .fp__floor input {
+    accent-color: var(--brass);
+  }
+
+  .fp__out {
+    margin: 1rem 0 0;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--font-figure);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--text-soft);
+  }
+</style>

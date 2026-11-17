@@ -2,11 +2,11 @@
  * Scene of the "Federated path discovery" artefact.
  *
  * A server in the origin domain D0 presents its certificate to a relying
- * party in Dn, a hybrid domain with threshold tau = 0.3. The discovery climbs
+ * party in Dn, a hybrid domain with floor tau = (hybrid, 0). The discovery climbs
  * from the end-entity certificate to the relying party's own anchor. Crossings
  * between domains are always between intermediate CAs, never from a root, so
  * the origin root stays off the path: the relying party never has to trust it.
- * A candidate through a classical intermediate in D2 is pruned by tau.
+ * A candidate through a traditional intermediate in D2 falls below the floor.
  */
 
 export type Zone = 'origin' | 'transit' | 'rp';
@@ -55,7 +55,7 @@ export const sceneNodes: SceneNode[] = [
     domain: 'D₀',
     role: 'End-entity issuance',
     alg: 'ML-DSA-65',
-    status: '✓ c_crypto 0 ≤ τ',
+    status: '✓ (post_quantum, 3) ⪰ τ',
   },
   {
     id: 'intD0',
@@ -68,7 +68,7 @@ export const sceneNodes: SceneNode[] = [
     domain: 'D₀',
     role: 'Subordinate CA',
     alg: 'ML-DSA-65',
-    status: '✓ c_crypto 0 ≤ τ',
+    status: '✓ (post_quantum, 3) ⪰ τ',
   },
   {
     id: 'rootD0',
@@ -87,7 +87,7 @@ export const sceneNodes: SceneNode[] = [
   {
     id: 'intD1',
     x: 300,
-    y: 290,
+    y: 324,
     zone: 'transit',
     side: 'left',
     kind: 'ca',
@@ -95,12 +95,12 @@ export const sceneNodes: SceneNode[] = [
     domain: 'D₁',
     role: 'Federated transit',
     alg: 'P-384 + ML-DSA-65',
-    status: '✓ c_crypto 0.3 ≤ τ',
+    status: '✓ (hybrid, 3) ⪰ τ',
   },
   {
     id: 'intD2',
     x: 500,
-    y: 300,
+    y: 334,
     zone: 'transit',
     side: 'right',
     kind: 'ca',
@@ -108,13 +108,13 @@ export const sceneNodes: SceneNode[] = [
     domain: 'D₂',
     role: 'Federated transit',
     alg: 'RSA-2048',
-    status: '✕ c_crypto 1 > τ = 0.3',
+    status: '✕ traditional, below τ',
     rejected: true,
   },
   {
     id: 'intDn',
     x: 452,
-    y: 444,
+    y: 498,
     zone: 'rp',
     side: 'right',
     kind: 'ca',
@@ -122,12 +122,12 @@ export const sceneNodes: SceneNode[] = [
     domain: 'Dₙ',
     role: 'Subordinate CA',
     alg: 'P-384 + ML-DSA-65',
-    status: '✓ c_crypto 0.3 ≤ τ',
+    status: '✓ (hybrid, 3) ⪰ τ',
   },
   {
     id: 'rootDn',
     x: 230,
-    y: 484,
+    y: 538,
     zone: 'rp',
     side: 'left',
     kind: 'root',
@@ -160,7 +160,7 @@ export const latentEdges: [string, string][] = [
   ['intDn', 'rootDn'],
 ];
 
-/** The candidate that tau prunes. */
+/** The candidate that the floor drops. */
 export const rejectedEdge: [string, string] = ['intD0', 'intD2'];
 
 /** Which edges cross a domain boundary: they are cross-certificates. */
@@ -174,24 +174,24 @@ export const crossEdges: [string, string][] = [
 export const zones: { id: Zone; y: number; h: number; title: string; sub: string }[] = [
   {
     id: 'origin',
-    y: 20,
-    h: 180,
+    y: 16,
+    h: 214,
     title: 'ORIGIN DOMAIN · D₀',
     sub: 'Post-quantum · issuer of the certificate',
   },
   {
     id: 'transit',
-    y: 212,
-    h: 160,
+    y: 246,
+    h: 176,
     title: 'FEDERATION TRANSIT · D₁ ‥ Dₙ₋₁',
     sub: 'Intermediate domains',
   },
   {
     id: 'rp',
-    y: 384,
-    h: 176,
+    y: 438,
+    h: 186,
     title: 'RELYING-PARTY DOMAIN · Dₙ',
-    sub: 'Hybrid · threshold τ = 0.3 · validator',
+    sub: 'Hybrid · floor τ = (hybrid, 0) · validator',
   },
 ];
 
@@ -202,21 +202,21 @@ export const zones: { id: Zone; y: number; h: number; title: string; sub: string
 export type Place = 'left' | 'right' | 'below' | 'above';
 
 export const narrowLayout: Record<string, { x: number; y: number; place: Place; status?: string }> = {
-  ee: { x: 44, y: 110, place: 'below' },
-  issuing: { x: 150, y: 70, place: 'right' },
-  intD0: { x: 150, y: 150, place: 'left' },
-  rootD0: { x: 290, y: 140, place: 'below' },
-  intD1: { x: 150, y: 300, place: 'left' },
-  intD2: { x: 286, y: 280, place: 'below' },
-  intDn: { x: 150, y: 450, place: 'left' },
-  rootDn: { x: 270, y: 520, place: 'below', status: '✓ relying-party anchor' },
+  ee: { x: 70, y: 110, place: 'below' },
+  issuing: { x: 176, y: 70, place: 'right' },
+  intD0: { x: 176, y: 150, place: 'left' },
+  rootD0: { x: 316, y: 140, place: 'below' },
+  intD1: { x: 176, y: 318, place: 'left' },
+  intD2: { x: 292, y: 298, place: 'below' },
+  intDn: { x: 176, y: 474, place: 'left' },
+  rootDn: { x: 296, y: 544, place: 'below', status: '✓ relying-party anchor' },
 };
 
 /** Latent edges left out of the narrow scene, where they would cross labels. */
 export const narrowSkip: [string, string][] = [['intD2', 'intDn']];
 
 export const narrowZones: { id: Zone; y: number; h: number; title: string; sub: string }[] = [
-  { id: 'origin', y: 8, h: 192, title: 'ORIGIN · D₀', sub: 'post-quantum · issuer' },
-  { id: 'transit', y: 208, h: 162, title: 'TRANSIT · D₁ ‥ Dₙ₋₁', sub: 'intermediate domains' },
-  { id: 'rp', y: 378, h: 202, title: 'RELYING PARTY · Dₙ', sub: 'hybrid · τ = 0.3 · validator' },
+  { id: 'origin', y: 8, h: 214, title: 'ORIGIN · D₀', sub: 'post-quantum · issuer' },
+  { id: 'transit', y: 230, h: 164, title: 'TRANSIT · D₁ ‥ Dₙ₋₁', sub: 'intermediate domains' },
+  { id: 'rp', y: 402, h: 214, title: 'RELYING PARTY · Dₙ', sub: 'hybrid · τ = (hybrid, 0)' },
 ];

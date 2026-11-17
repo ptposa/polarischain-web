@@ -5,9 +5,9 @@ const nodes = [
   { id: 'RB', x: 10, y: 148, w: 104, name: 'R', sub: 'B', alg: 'P-384 + ML-DSA-65', cls: 'box-accent' },
   { id: 'IB', x: 140, y: 148, w: 130, name: 'I', sub: 'B', alg: 'P-384 + ML-DSA-65', cls: 'box-strong' },
   { id: 'IA1', x: 350, y: 20, w: 130, name: 'I', sub: 'A1', alg: 'ECDSA P-384', cls: 'box-deny' },
-  { id: 'IC1', x: 350, y: 100, w: 130, name: 'I', sub: 'C1', alg: 'P-384 + ML-DSA-65', cls: 'box-strong' },
+  { id: 'IC1', x: 350, y: 100, w: 130, name: 'I', sub: 'C1', alg: 'P-384 + ML-DSA-65', cls: 'box-path' },
   { id: 'Br', x: 350, y: 180, w: 130, name: 'Br', sub: '', alg: 'P-384 + ML-DSA-65', cls: 'box-strong' },
-  { id: 'IC3', x: 350, y: 260, w: 130, name: 'I', sub: 'C3', alg: 'ML-DSA-87', cls: 'box-path' },
+  { id: 'IC3', x: 350, y: 260, w: 130, name: 'I', sub: 'C3', alg: 'ML-DSA-87', cls: 'box-strong' },
   { id: 'IC2', x: 530, y: 180, w: 110, name: 'I', sub: 'C2', alg: 'ML-DSA-65', cls: 'box-strong' },
   { id: 'IssC', x: 650, y: 100, w: 100, name: 'Iss', sub: 'C', alg: 'ML-DSA-65', cls: 'box-path' },
 ];
@@ -19,10 +19,10 @@ const lanes: { id: string; y: number; entry: string; boxes: Box[]; note?: string
     id: 'C1',
     y: 72,
     entry: 'e2 · 3',
-    state: 'ok',
+    state: 'best',
     boxes: [
-      { name: 'I', sub: 'C1', alg: 'P-384+ML-DSA-65', cls: 'box-strong', edge: '' },
-      { name: 'Iss', sub: 'C', alg: 'ML-DSA-65', cls: 'box-strong', edge: 'e3 · 0' },
+      { name: 'I', sub: 'C1', alg: 'P-384+ML-DSA-65', cls: 'box-path', edge: '' },
+      { name: 'Iss', sub: 'C', alg: 'ML-DSA-65', cls: 'box-path', edge: 'e3 · 0' },
     ],
   },
   {
@@ -31,7 +31,7 @@ const lanes: { id: string; y: number; entry: string; boxes: Box[]; note?: string
     entry: 'e4 · 2',
     state: 'deny',
     boxes: [{ name: 'I', sub: 'A1', alg: 'ECDSA P-384', cls: 'box-deny', edge: '' }],
-    note: 'pruned: c_crypto 1 > τ_B 0.3',
+    note: 'below the floor',
   },
   {
     id: 'C3',
@@ -48,10 +48,10 @@ const lanes: { id: string; y: number; entry: string; boxes: Box[]; note?: string
     id: 'C4',
     y: 282,
     entry: 'e8 · 3',
-    state: 'best',
+    state: 'ok',
     boxes: [
-      { name: 'I', sub: 'C3', alg: 'ML-DSA-87', cls: 'box-path', edge: '' },
-      { name: 'Iss', sub: 'C', alg: 'ML-DSA-65', cls: 'box-path', edge: 'e9 · 0' },
+      { name: 'I', sub: 'C3', alg: 'ML-DSA-87', cls: 'box-strong', edge: '' },
+      { name: 'Iss', sub: 'C', alg: 'ML-DSA-65', cls: 'box-strong', edge: 'e9 · 0' },
     ],
   },
 ];
@@ -68,7 +68,7 @@ const sub = (s: string) =>
 
 <svg class="svg-fig fig-wide" viewBox="0 0 760 360" role="img" aria-labelledby="we-t we-d">
   <title id="we-t">Worked example: four candidate paths from R_B to the issuing CA Iss_C</title>
-  <desc id="we-d">The receiver B, with threshold 0.3, has four candidate paths. The threshold removes the path through the classical intermediate of A. The depth budget removes the path through the bridge, inside domain C. Of the two survivors the cost selects the path through the ML-DSA-87 intermediate, with cost 1.061 against 1.156.</desc>
+  <desc id="we-d">The receiver B, with floor (hybrid, 0), has four candidate paths. The floor removes the path through the traditional intermediate of A. The depth budget removes the path through the bridge, inside domain C. Of the two survivors the cost selects the path through the hybrid intermediate, with 22,289 octet-equivalents against 24,046.</desc>
 
   <defs>
     <marker id="we-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -88,17 +88,20 @@ const sub = (s: string) =>
   <path class="edge-deny" d="M270 164 C 300 164, 316 42, 346 42" marker-end="url(#we-ard)" />
   <text x="344" y="36" text-anchor="end" class="t-tiny t-deny">e4 · 2</text>
 
-  <path class="edge" d="M270 168 C 300 168, 316 122, 346 122" marker-end="url(#we-ar)" />
-  <text x="344" y="116" text-anchor="end" class="t-tiny">e2 · 3</text>
+  <path class="edge-path" d="M270 168 C 300 168, 316 122, 346 122" marker-end="url(#we-ara)" />
+  <text x="344" y="116" text-anchor="end" class="t-tiny t-path">e2 · 3</text>
 
   <path class="edge" d="M270 174 C 300 174, 316 202, 346 202" marker-end="url(#we-ar)" />
   <text x="344" y="217" text-anchor="end" class="t-tiny">e5 · 1</text>
 
-  <path class="edge-path" d="M270 178 C 300 178, 316 282, 346 282" marker-end="url(#we-ara)" />
-  <text x="344" y="297" text-anchor="end" class="t-tiny t-path">e8 · 3</text>
+  <path class="edge" d="M270 178 C 300 178, 316 282, 346 282" marker-end="url(#we-ar)" />
+  <text x="344" y="297" text-anchor="end" class="t-tiny">e8 · 3</text>
 
-  <path class="edge" d="M480 122 H646" marker-end="url(#we-ar)" />
-  <text x="563" y="115" text-anchor="middle" class="t-tiny">e3 · 0</text>
+  <path class="edge-path" d="M480 122 H646" marker-end="url(#we-ara)" />
+  <text x="563" y="115" text-anchor="middle" class="t-tiny t-path">e3 · 0</text>
+
+  <path class="edge-deny" d="M480 46 C 600 46, 694 58, 694 96" marker-end="url(#we-ard)" />
+  <text x="640" y="72" text-anchor="end" class="t-tiny t-deny">e10 · 0</text>
 
   <path class="edge" d="M480 202 H526" marker-end="url(#we-ar)" />
   <text x="503" y="195" text-anchor="middle" class="t-tiny">e6 · 1</text>
@@ -106,8 +109,8 @@ const sub = (s: string) =>
   <path class="edge-deny" d="M596 180 C 596 162, 680 168, 680 148" marker-end="url(#we-ard)" />
   <text x="646" y="176" class="t-tiny t-deny">e7 · 0</text>
 
-  <path class="edge-path" d="M480 282 C 700 282, 722 220, 722 148" marker-end="url(#we-ara)" />
-  <text x="642" y="276" class="t-tiny t-path">e9 · 0</text>
+  <path class="edge" d="M480 282 C 700 282, 722 220, 722 148" marker-end="url(#we-ar)" />
+  <text x="642" y="276" class="t-tiny">e9 · 0</text>
 
   {
     nodes.map((n) => (
@@ -128,16 +131,16 @@ const sub = (s: string) =>
     ))
   }
 
-  <text x="490" y="36" class="t-tiny t-deny">C2 pruned: c<tspan dy="2" font-size="0.75em">crypto</tspan><tspan dy="-2"> </tspan>= 1 &gt; τ<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2"> </tspan>= 0.3</text>
-  <text x="490" y="50" class="t-tiny t-deny">(threshold, at the first crossing)</text>
+  <text x="490" y="12" class="t-tiny t-deny">C2 pruned: I<tspan dy="2" font-size="0.75em">A1</tspan><tspan dy="-2"> </tspan>is (traditional, 0), below τ<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2"> </tspan>= (hybrid, 0)</text>
+  <text x="490" y="26" class="t-tiny t-deny">(the floor, at the first crossing)</text>
   <text x="490" y="241" class="t-tiny t-deny">C3 pruned at e7: depth reaches 0</text>
   <text x="490" y="254" class="t-tiny t-deny">(inside domain C, not at a crossing)</text>
 
   <line class="grid-line" x1="20" y1="316" x2="740" y2="316" />
-  <text x="20" y="336" class="t-mono">C1 = (e1, e2, e3)   cost 1.156</text>
-  <text x="20" y="352" class="t-mono t-path">C4 = (e1, e8, e9)   cost 1.061   selected</text>
+  <text x="20" y="336" class="t-mono t-path">C1 = (e1, e2, e3)   22,289   selected</text>
+  <text x="20" y="352" class="t-mono">C4 = (e1, e8, e9)   24,046</text>
   <text x="740" y="336" text-anchor="end" class="t-tiny">edge label: name · pathLenConstraint</text>
-  <text x="740" y="352" text-anchor="end" class="t-tiny">weights α, β, γ, δ = 0.4, 0.3, 0.2, 0.1</text>
+  <text x="740" y="352" text-anchor="end" class="t-tiny">cost in octet-equivalents, with κ = 6,000 per boundary</text>
 </svg>
 
 <svg class="svg-fig fig-narrow" viewBox="0 0 360 420" role="img" aria-labelledby="wen-t">
@@ -214,8 +217,8 @@ const sub = (s: string) =>
         )}
         {l.id === 'C2' && (
           <>
-            <text x={BX + BW + 12} y={l.y + 18} class="t-tiny t-deny">✕ pruned by the threshold:</text>
-            <text x={BX + BW + 12} y={l.y + 33} class="t-tiny t-deny">c<tspan dy="2" font-size="0.75em">crypto</tspan><tspan dy="-2"> </tspan>1 &gt; τ<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2"> </tspan>= 0.3</text>
+            <text x={BX + BW + 12} y={l.y + 18} class="t-tiny t-deny">✕ (traditional, 0): below</text>
+            <text x={BX + BW + 12} y={l.y + 33} class="t-tiny t-deny">the floor τ<tspan dy="2" font-size="0.75em">B</tspan><tspan dy="-2"> </tspan>= (hybrid, 0)</text>
           </>
         )}
       </g>
@@ -223,7 +226,7 @@ const sub = (s: string) =>
   }
 
   <line class="grid-line" x1="4" y1="346" x2="356" y2="346" />
-  <text x="4" y="366" class="t-mono">C1 = (e1, e2, e3)  cost 1.156</text>
-  <text x="4" y="384" class="t-mono t-path">C4 = (e1, e8, e9)  cost 1.061 ✓</text>
-  <text x="4" y="408" class="t-tiny">label: path · edge · pathLenConstraint;  α β γ δ = 0.4 0.3 0.2 0.1</text>
+  <text x="4" y="366" class="t-mono t-path">C1 = (e1, e2, e3)  22,289 ✓</text>
+  <text x="4" y="384" class="t-mono">C4 = (e1, e8, e9)  24,046</text>
+  <text x="4" y="408" class="t-tiny">label: path · edge · pathLenConstraint;  octet-equivalents, κ = 6,000</text>
 </svg>

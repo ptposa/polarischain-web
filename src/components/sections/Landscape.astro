@@ -3,45 +3,105 @@ import Chapter from '../Chapter.astro';
 import Figure from '../Figure.astro';
 import FigFederationModels from '../figures/FigFederationModels.astro';
 import FigTwoPaths from '../figures/FigTwoPaths.astro';
+
+// The closest related work, and what each one leaves open for this problem.
+const related = [
+  {
+    who: 'RFC 5280, section 6',
+    does: 'Validates a certification path in full detail.',
+    open: 'Its first input is the path, already built. It neither searches nor prefers.',
+    ref: 'RFC5280',
+  },
+  {
+    who: 'RFC 4158',
+    does: 'Describes how to build paths and how to sort candidates heuristically.',
+    open: 'Informational. It gives no criterion that makes one valid path better than another.',
+    ref: 'RFC4158',
+  },
+  {
+    who: 'SCVP, RFC 5055',
+    does: 'Lets a client delegate path construction and ask a server for the best path.',
+    open: 'Never defines what best means, and needs a certificate that already exists.',
+    ref: 'RFC5055',
+  },
+  {
+    who: 'ARMOR and Verdict',
+    does: 'Formally verified validators: the acceptance decision is proved against a specification.',
+    open: 'They verify whether a chain is acceptable. They do not order the acceptable ones.',
+    ref: 'ARMOR2024',
+    ref2: 'Verdict2025',
+  },
+];
 ---
 
-<Chapter id="landscape" num="02" kicker="Where federation stands" title="Trust already crosses domains, along paths nobody chose.">
+<Chapter id="landscape" num="2" kicker="Where federation stands" title="Trust already crosses domains, along paths nobody chose">
   <div class="prose">
     <p>
       A PKI binds a public key to an identity, and trust in that binding climbs a chain of
-      certificates up to an anchor the verifier has chosen. Inside one organisation this is solved.
-      The difficulty begins when <strong>sovereign domains, each with its own policies and its own
-      cryptography, need to accept each other's identities</strong>.
+      certificates up to an anchor that the verifier has chosen. Inside one organisation the problem is solved; the difficulty begins when <strong>sovereign domains, each with its own policies and its own
+      cryptography, need to accept each other’s identities</strong>.
+      <span class="sn"
+        ><b>Where the crossings are.</b> Cross-certificates are issued between intermediate CAs, never from a root: the root stays offline and only certifies its own subordinates.</span
+      >
     </p>
     <p>
-      Four models do it today. Two of them link the domains with certificates: a mesh of bilateral
-      cross-certificates, or a bridge CA in the middle. The other two link them with a list or an
-      agreement, and bound nothing.
+      Four models do this today, as figure 1 shows: two of them link the domains with certificates, either through a mesh of bilateral cross-certificates or through a bridge CA in the middle, while the other two rely on a list or an agreement and bound nothing.
     </p>
   </div>
 
-  <Figure num={1} caption="The four federation models, after the World Bank taxonomy (Tullis and Black, 2024).">
+  <Figure num={1} class="figure--text" caption="The four federation models, after the World Bank taxonomy <a href='#ref-WorldBank'>[WorldBank]</a>.">
     <FigFederationModels />
   </Figure>
 
-  <div class="prose after-fig">
+  <div class="prose">
     <p>
       Once several domains cross-certify, the hierarchy becomes a directed graph, and one credential
       can have more than one valid path. The Federal PKI playbook shows the same certificate
-      validating through three CAs or through six, crossing two bridges, <strong>depending only on
-      which anchor is installed</strong>.
+      validating through three CAs or through six, with two bridges on the longer route, and which of the two applies <strong>depends only on the anchor that is installed</strong>.
     </p>
   </div>
 
-  <Figure num={2} caption="One credential, two valid paths. Rebuilt from the Federal PKI path discovery and validation playbook (GSA).">
+  <Figure num={2} caption="One credential, two valid paths. Redrawn from the Federal PKI path discovery and validation playbook <a href='#ref-FPKI-PDVAL'>[FPKI-PDVAL]</a>.">
     <FigTwoPaths />
   </Figure>
 
-  <p class="key">If there are several paths, someone has to choose among them.</p>
-</Chapter>
+  <p class="key">If there are several paths, someone has to choose among them, and today nobody has written down how.</p>
 
-<style>
-  .after-fig {
-    margin-top: 3rem;
-  }
-</style>
+  <h3 class="sub">Related work</h3>
+  <div class="prose">
+    <p>
+      The standards and the verified validators answer a different question from the one asked
+      here. A validator, verified or not, takes a chain and a policy and says yes or no. This work
+      takes a federation and a receiver and says which chains exist for a certificate, which one the
+      receiver prefers, and what would change if a cross-certificate were issued. The two are
+      complementary: the path the model selects still has to pass a validator, and a verified one
+      is a candidate for that final check.
+      <span class="sn"
+        ><b>Verdict</b> is the closest work to this one, although the question it answers is a different one. Its policy is a first-order predicate over one chain and its path builder is specified over the paths that repeat no certificate, so the universe searched here (paths that repeat no key) is a subset of Verdict’s.</span
+      >
+    </p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <caption><b>Table 1.</b> What the closest work does, and what it leaves open.</caption>
+      <thead>
+        <tr><th scope="col">Work</th><th scope="col">What it does</th><th scope="col">What it leaves open</th></tr>
+      </thead>
+      <tbody>
+        {
+          related.map((r) => (
+            <tr>
+              <th scope="row">
+                {r.who} <a href={`#ref-${r.ref}`}>[{r.ref}]</a>
+                {r.ref2 && <a href={`#ref-${r.ref2}`}>[{r.ref2}]</a>}
+              </th>
+              <td>{r.does}</td>
+              <td>{r.open}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</Chapter>
