@@ -172,7 +172,7 @@ PolarisChain is structured as a modular platform:
 This project is developed as part of:
 
 - 🎓 Master's Degree in Cybersecurity & Cyberintelligence
-- 🏫 Universitat Politècnica de València (UPV)
+- 🏫 Polytechnic University of Valencia (UPV)
 - 📄 Master's Thesis (TFM), with planned continuation toward a PhD
 - 👨‍🏫 Thesis director: Dr. Mario Aragonés Lozano
 
@@ -198,7 +198,7 @@ This project embraces an open and collaborative approach to:
 ## 📬 Contact
 
 Author: Jorge Pablo Trías Posa
-Institution: Universitat Politècnica de València
+Institution: Polytechnic University of Valencia (UPV)
 
 
 ## ⭐ Future Work
