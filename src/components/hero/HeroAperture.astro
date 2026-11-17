@@ -1,11 +1,11 @@
 ---
-// Right column of the hero: the sky chart that the dive enters.
+// Right column of the title page: the federation under Polaris.
 // Of the sky only Polaris is kept. Around it sways the federation of the
 // laboratory: three domains, each with its trust anchor, intermediate CAs and
 // issuing CAs, cross-certified only between intermediates. Polaris is not a
 // node and no path goes through it; each receiver in turn takes it as its
-// reference. `lib/federation-wheel.ts` draws and moves the graph, and
-// `lib/dive.ts` reads `data-focal` to aim the camera at Polaris.
+// reference. `lib/federation-wheel.ts` draws the graph and changes the
+// receiver in turn. The graph itself stands still.
 ---
 
 <aside class="aperture" aria-hidden="true" data-aperture>
@@ -27,17 +27,17 @@
   </div>
 
   <div class="aperture__legend" data-aperture-legend>
-    <span class="lg lg--a">classical</span>
+    <span class="lg lg--a">traditional</span>
     <span class="lg lg--b">hybrid</span>
     <span class="lg lg--c">post-quantum</span>
-    <span class="lg lg--pruned">pruned by τ</span>
+    <span class="lg lg--pruned">below the floor τ</span>
   </div>
 </aside>
 
 <style>
   .aperture {
     width: 100%;
-    max-width: 400px;
+    max-width: 25rem;
     justify-self: end;
     align-self: center;
   }
@@ -76,16 +76,14 @@
 
   .fw-route {
     fill: none;
-    stroke: var(--ieee-cyan);
-    stroke-width: 1.5;
+    stroke: var(--path);
+    stroke-width: 1.7;
     stroke-linecap: round;
     stroke-linejoin: round;
-    stroke-dasharray: 5 4;
-    animation: route 1.3s linear infinite;
   }
 
   .aperture :global(.fw-sight) {
-    stroke: rgba(255, 199, 44, 0.42);
+    stroke: rgba(199, 166, 96, 0.55);
     stroke-width: 1;
     stroke-dasharray: 1 5;
     stroke-linecap: round;
@@ -115,7 +113,7 @@
   }
 
   .fw-polaris {
-    fill: var(--ieee-yellow);
+    fill: var(--star);
   }
   .fw-polaris-halo {
     fill: none;
@@ -124,23 +122,24 @@
   }
 
   .aperture :global(.fw-lbl) {
+    /* Identifiers of a diagram: the monospaced face keeps them legible at
+       this size, each letter with its own width. */
     font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.03em;
-    fill: rgba(186, 198, 217, 0.8);
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
+    fill: rgba(214, 221, 232, 0.92);
   }
   .aperture :global(.fw-lbl--iss) {
-    fill: rgba(147, 169, 198, 0.8);
+    fill: rgba(176, 192, 214, 0.9);
   }
   .aperture :global(.fw-lbl--leaf) {
     fill: var(--text);
   }
   .aperture .fw-lbl--polaris {
-    fill: var(--ieee-yellow-75);
+    fill: var(--brass-soft);
   }
   .aperture .fw-lbl--caption {
-    fill: var(--text-muted);
-    letter-spacing: 0.08em;
+    fill: var(--text-soft);
   }
 
   .aperture__legend {
@@ -150,8 +149,8 @@
     gap: 0.4rem 1.2rem;
     margin-top: 1.1rem;
     font-family: var(--font-mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
     color: var(--text-muted);
   }
 
@@ -183,12 +182,6 @@
     vertical-align: 0.25em;
   }
 
-  @keyframes route {
-    to {
-      stroke-dashoffset: -18;
-    }
-  }
-
   /* One column (tablets): a larger chart with smaller type, since the view
      box is drawn bigger. */
   @media (max-width: 960px) {
@@ -209,12 +202,6 @@
     }
     .aperture :global(.fw-lbl) {
       font-size: 10.5px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .fw-route {
-      animation: none;
     }
   }
 </style>

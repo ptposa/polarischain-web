@@ -6,7 +6,7 @@
  * cleared and replayed: each CA is typed in as the discovery reaches it, the
  * admissible path is drawn segment by segment from the certificate up to the
  * relying party's anchor, one candidate is pruned by the threshold, and once
- * the path is selected its dashes start to flow from the anchor down.
+ * the path is selected its dashes flow from the certificate up to the anchor.
  */
 
 type StatusState = 'search' | 'eval' | 'reject' | 'found';
@@ -29,6 +29,16 @@ function setup(root: HTMLElement): void {
   const probe = q<SVGPathElement>('[data-pd-reject]');
   const segs = Array.from(root.querySelectorAll<SVGPathElement>('[data-seg]'));
   const node = (id: string): SVGGElement | null => q<SVGGElement>(`[data-node="${id}"]`);
+  const latent = Array.from(root.querySelectorAll<SVGPathElement>('.pd-latent path'));
+
+  // A relation between two keys is shown once the search has reached both.
+  function showLatent(): void {
+    for (const p of latent) {
+      const a = node(p.dataset.a ?? '');
+      const b = node(p.dataset.b ?? '');
+      if (a?.classList.contains('is-in') && b?.classList.contains('is-in')) p.classList.add('is-in');
+    }
+  }
 
   let run = 0; // bumps on every replay so stale timers do nothing
   const wait = (ms: number, id: number): Promise<boolean> =>
@@ -76,6 +86,7 @@ function setup(root: HTMLElement): void {
     const g = node(id);
     if (!g) return true;
     g.classList.add('is-in');
+    showLatent();
     for (const el of Array.from(g.querySelectorAll<SVGElement>('[data-type]'))) {
       el.innerHTML = markup.get(el) ?? el.dataset.type ?? '';
       const parts = textNodes(el);
@@ -116,6 +127,7 @@ function setup(root: HTMLElement): void {
       probe.style.opacity = '0';
     }
     root!.querySelectorAll<SVGGElement>('[data-node]').forEach(clearNode);
+    latent.forEach((p) => p.classList.remove('is-in'));
     setStatus('searching…', 'search');
     void root!.getBoundingClientRect();
   }
@@ -173,6 +185,10 @@ function setup(root: HTMLElement): void {
   }
 
   q<HTMLButtonElement>('[data-pd-replay]')?.addEventListener('click', () => void play());
+
+  // Start from an empty scene, so nothing is seen drawn before the search
+  // reaches it; the markup alone (no script) still shows the finished scene.
+  reset();
 
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver(

@@ -7,32 +7,35 @@ const cases = [
   {
     tag: 'In the thesis',
     title: 'Machine-to-machine mTLS',
-    text: 'A service of one domain admits a client certificate issued in another, at connection time. Discover works inside the handshake. It is the case the laboratory implements end to end.',
+    text: 'A service of one domain admits, at connection time, a client certificate issued in another, with Discover working inside the handshake. It is also the case that the laboratory implements from end to end, with real certificates.',
   },
   {
     tag: 'Beyond',
     title: 'Long-term signature validation',
-    text: 'A PAdES signature made years ago in another domain must be judged against the trust in force when it was signed, not today. It needs the graph as it was: part of the ongoing doctoral research.',
+    text: 'A PAdES signature made years ago in another domain has to be judged against the trust in force when it was signed, which needs the graph as it was at that moment and belongs to the ongoing doctoral research.',
   },
   {
     tag: 'Beyond',
     title: 'Coalition S/MIME',
-    text: 'Participants join and leave during an exercise, and every arrival is a new cross-certificate. It is where Govern is exercised most often.',
+    text: 'Participants join and leave during an exercise and every arrival brings a new cross-certificate, which makes this the scenario where Govern is used most often.',
   },
 ];
 ---
 
-<Chapter id="use-cases" num="10" kicker="Use cases" title="Where a governed path matters.">
+<Chapter id="use-cases" num="11" kicker="Use cases" title="Where a governed path matters">
   <div class="prose">
     <p>
-      One scenario runs through the whole thesis. A client of domain A connects over mTLS to a
+      One scenario runs through the whole thesis, in which a client of domain A connects over mTLS to a
       service of domain B. B trusts only its own root, and its intermediate has cross-certified the
       intermediate of A. <strong>Inside the handshake, B has to decide whether an admissible path
       exists under its policy, and which one is best.</strong>
+      <span class="sn"
+        ><b>The candidate path</b> in this scenario is Root B → Intermediate B → Intermediate A → Issuing A. B starts with a traditional floor, so that it admits the clients of A; raising it is the migration variant.</span
+      >
     </p>
   </div>
 
-  <Figure num={10} caption="The use case of the thesis. Its variants (a key renewal, a revocation, a higher threshold) are all told on this same scenario.">
+  <Figure num={14} class="figure--text" caption="The use case of the thesis. Its variants (a key rotation, a revocation, a higher floor) are all told on this same scenario.">
     <FigUseCase />
   </Figure>
 

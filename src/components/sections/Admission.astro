@@ -11,35 +11,50 @@ const props = [
   },
   {
     t: 'Possession stays with TLS',
-    d: 'The engine decides whether the issuer is admissible. Only the TLS stack decides whether the peer holds the private key.',
+    d: 'The engine decides whether the issuer is admissible, while only the TLS stack decides whether the peer holds the private key.',
   },
   {
     t: 'No network in the handshake',
-    d: 'Graph, policy and status evidence are compiled beforehand and resident in memory. Governance can be down and admission goes on.',
+    d: 'Graph, policy and status evidence are compiled beforehand and kept in memory, so governance can be down and admission goes on for as long as the material stays within the freshness that the receiver demands. Under a time budget a deployment may admit with the first path that passes validation and note that the optimum was not certified; the thesis enumerates exactly.',
   },
   {
     t: 'Selection, not authority',
-    d: 'A standard library validates the selected path, and only that path. An error of the engine becomes a denial, never an undue acceptance.',
+    d: 'A standard library validates the selected path, and only that path, and a final checker repeats the receiver’s own limits, so that an error of the engine becomes a denial and never an undue acceptance.',
   },
 ];
 ---
 
-<Chapter id="admission" num="07" kicker="Admission at the server" title="The decision lives where the connection is accepted.">
+<Chapter id="admission" num="8" kicker="Admission at the server" title="The decision lives where the connection is accepted">
   <div class="prose">
     <p>
-      The work does not end when the model computes a path. It ends when that path decides whether
-      a connection gets in. PolarisChain sits in the <strong>server side of an mTLS handshake</strong>:
-      the enforcement point is the TLS endpoint's own client-certificate check, and the decision
+      The work only ends when the path that the model computes decides whether a connection gets in. PolarisChain sits in the <strong>server side of an mTLS handshake</strong>:{' '}
+      the enforcement point is the TLS endpoint’s own client-certificate check, and the decision
       point runs in the same process, with no proxy and no network in between.
+      <span class="sn sn--key"
+        ><b>Key idea</b> In TLS the chain that travels is chosen by whoever sends it, whereas the one PolarisChain selects at admission is chosen by whoever receives it and so it never travels.</span
+      >
     </p>
     <p>
       Each domain splits the work in two planes that can fail separately: an asynchronous
       governance plane that compiles the graph, and an execution plane on the critical path of the
       handshake.
     </p>
+    <p>
+      Every decision leaves a record with what is needed to reproduce it: the presented
+      certificate, the instant of the decision <span class="m">t<sub>dec</sub></span>, the selected and the validated path, the closing output <span class="m">o*</span> with its valid
+      policies, the evidence known for each certificate of the path, and the versions of the graph, of the
+      policy and of the compilation profile. Reproducing it also demands keeping the material those versions point to, because the same certificate evaluated with the same snapshot gives different results before and after it expires. A denial is classified by asking what would have to be relaxed for an admissible path
+      to exist, so that the result does not depend on the order in which the search discarded
+      candidates.
+      <span class="sn"
+        ><b>Audit outcomes.</b> <code>admitted</code>, <code>validation_mismatch</code>,{' '}
+        <code>search_incomplete</code>, <code>unsupported_profile</code>,{' '}
+        <code>insufficient_evidence</code>, <code>policy_rejected</code> and <code>no_path</code>, and only the last of them states that there was no route.</span
+      >
+    </p>
   </div>
 
-  <Figure num={6} class="figure--large" caption="Two planes in the receiving domain. Adapted from Annex I of the thesis.">
+  <Figure num={10} class="figure--large" caption="Two planes in the receiving domain. Adapted from Annex I of the thesis.">
     <FigPlanes />
   </Figure>
 
@@ -56,7 +71,7 @@ const props = [
 
   <details class="more">
     <summary>The handshake, step by step</summary>
-    <Figure num={7} caption="mTLS admission governed by PolarisChain, with the PEP at the server endpoint and a local PDP. Adapted from Annex II of the thesis.">
+    <Figure num={11} caption="mTLS admission governed by PolarisChain, with the PEP at the server endpoint and a local PDP. Adapted from Annex II of the thesis.">
       <FigHandshake />
     </Figure>
   </details>
@@ -67,8 +82,7 @@ const props = [
     margin-top: 3rem;
   }
   .props h3 {
-    font-size: 1.08rem;
-    color: var(--subhead);
+    font-size: 1.2rem;
   }
   .props .small {
     margin: 0;
@@ -81,9 +95,7 @@ const props = [
   }
   .more summary {
     padding: 1rem 0;
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.06em;
+    font-size: 1.0625rem;
     color: var(--link);
     cursor: pointer;
     list-style: none;

@@ -1,15 +1,16 @@
 /**
  * The federation under Polaris, drawn in the hero sky chart.
  *
- * Three deployed domains (A classical, B hybrid, C post-quantum) sit around
+ * Three deployed domains (A traditional, B hybrid, C post-quantum) sit around
  * Polaris, each drawn as a small certification tree: the trust anchor above,
  * the intermediate CA on the wheel, and below it the CAs it certifies, one
  * level per step. Cross-certificates exist only between intermediates.
- * Polaris is not a node: no path goes through it. The wheel sways slowly
- * about Polaris, each domain staying upright.
+ * Polaris is not a node: no path goes through it. The graph stands still;
+ * what changes is who reads it.
  *
  * The receiver changes in turn. Its trust anchor takes the line of sight to
- * Polaris, its threshold τ prunes the cross-certificates it cannot use, and
+ * Polaris, its cryptographic floor τ drops the cross-certificates that reach
+ * a key below it, and
  * its selected path crosses into another domain, down to an end-entity
  * certificate.
  */
@@ -30,7 +31,7 @@ interface Spec {
 
 const NS = 'http://www.w3.org/2000/svg';
 const RADIUS = 86; // distance from Polaris to each domain's intermediate
-const SWAY = (22 * Math.PI) / 180; // amplitude of the wheel's sway
+const SWAY = 0; // the graph does not move; only the receiver changes
 const SWAY_SECONDS = 36; // one full sway, there and back
 const RECEIVER_SECONDS = 7; // time each receiver holds the line of sight
 const BIRTH_SECONDS = 3.2;
@@ -40,17 +41,19 @@ const HALF_WIDTH = 206; // half the view box width, less a margin
  * Where each domain sits on the wheel, and to which side its tree opens:
  * always outwards, so labels never meet in the middle.
  */
-const DOMAINS: Record<Domain, { at: number; side: 1 | -1; cCrypto: number }> = {
-  A: { at: -Math.PI / 2, side: 1, cCrypto: 1 },
-  C: { at: Math.PI / 6, side: 1, cCrypto: 0 },
-  B: { at: (5 * Math.PI) / 6, side: -1, cCrypto: 0.3 },
+const DOMAINS: Record<Domain, { at: number; side: 1 | -1; stage: number }> = {
+  A: { at: -Math.PI / 2, side: 1, stage: 0 },
+  C: { at: Math.PI / 6, side: 1, stage: 2 },
+  B: { at: (5 * Math.PI) / 6, side: -1, stage: 1 },
 };
 
 /**
- * Thresholds of the receivers in this illustration. C accepts hybrid nodes
+ * Cryptographic floors of the receivers in this illustration, as migration
+ * stages: 0 traditional, 1 hybrid, 2 post-quantum. C accepts hybrid keys
  * here so that its path, like the others, crosses into another domain.
  */
-const TAU: Record<Domain, number> = { A: 1, B: 0.3, C: 0.3 };
+const TAU: Record<Domain, number> = { A: 0, B: 1, C: 1 };
+const STAGE = ['traditional', 'hybrid', 'post_quantum'];
 
 // Tree geometry: one step to the side and one row down per level.
 const STEP = 16;
@@ -229,9 +232,9 @@ export function initFederationWheel(): void {
       const leafShown = SPECS[to].kind !== 'leaf' ? 1 : to === turn.leaf ? on : 0;
       path.setAttribute('opacity', (Math.min(grow[a], grow[to]) * leafShown).toFixed(2));
       if (cross) {
-        // The receiver's threshold prunes a cross-certificate that reaches a
-        // node above it.
-        const pruned = DOMAINS[SPECS[a].dom].cCrypto > tau || DOMAINS[SPECS[to].dom].cCrypto > tau;
+        // The receiver's floor drops a cross-certificate that touches a key
+        // below it.
+        const pruned = DOMAINS[SPECS[a].dom].stage < tau || DOMAINS[SPECS[to].dom].stage < tau;
         path.classList.toggle('is-pruned', pruned && on > 0.5);
       }
     }
@@ -253,7 +256,7 @@ export function initFederationWheel(): void {
 
     caption.textContent = `receiver ${turn.d} · τ`;
     make('tspan', { dy: 3, 'font-size': '0.75em' }, caption).textContent = turn.d;
-    make('tspan', { dy: -3 }, caption).textContent = ` = ${tau}`;
+    make('tspan', { dy: -3 }, caption).textContent = ` = (${STAGE[tau]}, 0)`;
     caption.setAttribute('opacity', on.toFixed(2));
   }
 

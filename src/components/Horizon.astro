@@ -1,8 +1,8 @@
 ---
 // The last screen of the page: the night sky meets the sea. Polaris stands
 // over the horizon, its light runs down the swell, and a small sailboat keeps
-// its course by it. It closes the image the page opens with. Decorative only:
-// silhouettes and the undulation of the sea.
+// its course by it. It closes the image the title page opens with. Decorative
+// only. The one thing that moves is the swell, slowly.
 
 const W = 1600; // view box
 const H = 380;
@@ -183,16 +183,12 @@ const swell = Array.from({ length: ROWS }, (_, i) => {
   }
   .hz-polaris__halo {
     fill: none;
-    stroke: rgba(255, 199, 44, 0.45);
+    stroke: rgba(199, 166, 96, 0.5);
     stroke-width: 1;
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: hz-breathe 6s ease-in-out infinite;
   }
   .hz-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.14em;
+    font-family: var(--font-figure);
+    font-size: 10.5px;
     fill: var(--ieee-yellow-75);
     opacity: 0.7;
   }
@@ -213,9 +209,7 @@ const swell = Array.from({ length: ROWS }, (_, i) => {
 
   /* The boat: sails in soft grey, the hull a dark silhouette */
   .hz-boat {
-    transform-box: fill-box;
-    transform-origin: 50% 100%;
-    animation: hz-bob 7s ease-in-out infinite;
+    /* The boat holds still: only the sea moves. */
   }
   .hz-sail {
     fill: var(--fig-text);
@@ -243,27 +237,6 @@ const swell = Array.from({ length: ROWS }, (_, i) => {
       transform: translateX(calc(-1 * var(--period)));
     }
   }
-  @keyframes hz-breathe {
-    0%,
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.18);
-      opacity: 0.5;
-    }
-  }
-  @keyframes hz-bob {
-    0%,
-    100% {
-      transform: translateY(0) rotate(-1.6deg);
-    }
-    50% {
-      transform: translateY(1.2px) rotate(1.6deg);
-    }
-  }
-
   /* On phones the label would be a few pixels high: the star speaks alone. */
   @media (max-width: 560px) {
     .hz-label {
@@ -272,9 +245,7 @@ const swell = Array.from({ length: ROWS }, (_, i) => {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hz-row,
-    .hz-polaris__halo,
-    .hz-boat {
+    .hz-row {
       animation: none;
     }
   }

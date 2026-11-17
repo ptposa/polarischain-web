@@ -80,28 +80,28 @@ const nLabel = (place: string) => {
 
         <svg
           class="pd__svg"
-          viewBox={wide ? '0 0 680 572' : '0 0 360 588'}
+          viewBox={wide ? '0 0 700 640' : '0 0 386 628'}
           role="img"
           aria-labelledby={`pd-t-${v} pd-d-${v}`}
         >
           <title id={`pd-t-${v}`}>Federated path discovery across three trust zones</title>
           <desc id={`pd-d-${v}`}>
             A server in the origin domain D0 presents its certificate to a relying party in the
-            hybrid domain Dn, whose threshold is 0.3. The discovery climbs from the certificate
+            hybrid domain Dn, whose cryptographic floor is (hybrid, 0). The discovery climbs from the certificate
             through the issuing and intermediate CAs of D0, crosses to an intermediate CA of D1 and
             then to an intermediate CA of Dn, and ends at the relying party's own root, its trust
             anchor. Every crossing links intermediate CAs. The root of D0 is not on the path. A
-            candidate through a classical RSA-2048 intermediate of D2 is pruned, because its
-            cryptographic cost 1 exceeds the threshold.
+            candidate through a traditional RSA-2048 intermediate of D2 is pruned, because that key is
+            below the receiver’s cryptographic floor.
           </desc>
 
           {zs.map((z) => (
             <g class={`pd-zone pd-zone--${z.id}`}>
-              <rect x={wide ? 20 : 4} y={z.y} width={wide ? 640 : 352} height={z.h} />
-              <text x={wide ? 36 : 14} y={z.y + (wide ? 24 : 20)} class="pd-zone__title">
+              <rect x={wide ? 16 : 6} y={z.y} width={wide ? 668 : 374} height={z.h} />
+              <text x={wide ? 36 : 18} y={z.y + (wide ? 24 : 20)} class="pd-zone__title">
                 {z.title}
               </text>
-              <text x={wide ? 36 : 14} y={z.y + (wide ? 40 : 34)} class="pd-zone__sub">
+              <text x={wide ? 36 : 18} y={z.y + (wide ? 40 : 34)} class="pd-zone__sub">
                 {z.sub}
               </text>
             </g>
@@ -109,7 +109,7 @@ const nLabel = (place: string) => {
 
           <g class="pd-latent">
             {latentFor(v).map((e) => (
-              <path d={seg(v, e).d} class={isCross(e) ? 'is-cross' : ''} />
+              <path d={seg(v, e).d} class={isCross(e) ? 'is-cross' : ''} data-a={e[0]} data-b={e[1]} />
             ))}
           </g>
 
@@ -209,11 +209,17 @@ const nLabel = (place: string) => {
 }
 
 <style>
+  /* This artefact keeps the saturated cyan of the original page for the
+     path, which reads best on the dark ground; the relying party takes the
+     yellow of the section titles, so the page keeps one yellow. */
   .pd {
     margin: 0;
-    --pd-origin: var(--ieee-blue-50);
-    --pd-transit: var(--ieee-dark-blue-25);
-    --pd-rp: var(--ieee-yellow);
+    --pd-cyan: #00b5e2;
+    --pd-cyan-50: #6dcff6;
+    --pd-origin: #809dbd;
+    --pd-transit: #adaebe;
+    --pd-rp: #ffd46a;
+    --pd-rp-75: #ffd46a;
   }
 
   .pd__head {
@@ -247,13 +253,13 @@ const nLabel = (place: string) => {
     text-transform: none;
   }
   .pd__status[data-state='eval'] {
-    color: var(--ieee-yellow-75);
+    color: var(--pd-rp-75);
   }
   .pd__status[data-state='reject'] {
     color: var(--deny);
   }
   .pd__status[data-state='found'] {
-    color: var(--ieee-cyan-50);
+    color: var(--pd-cyan-50);
   }
 
   .pd__svg {
@@ -293,7 +299,7 @@ const nLabel = (place: string) => {
     fill: var(--pd-transit);
   }
   .pd-zone--rp rect {
-    stroke: rgba(255, 199, 44, 0.45);
+    stroke: rgba(255, 212, 106, 0.45);
   }
   .pd-zone--rp .pd-zone__title {
     fill: var(--pd-rp);
@@ -318,7 +324,7 @@ const nLabel = (place: string) => {
 
   .pd-path path {
     fill: none;
-    stroke: var(--ieee-cyan);
+    stroke: var(--pd-cyan);
     stroke-width: 1.6;
     stroke-linecap: round;
   }
@@ -351,7 +357,7 @@ const nLabel = (place: string) => {
   }
   .pd-halo {
     fill: none;
-    stroke: rgba(255, 199, 44, 0.5);
+    stroke: rgba(255, 212, 106, 0.5);
     stroke-width: 1;
   }
 
@@ -375,7 +381,7 @@ const nLabel = (place: string) => {
     fill: var(--pd-origin);
   }
   .pd-node--rp .pd-t {
-    fill: var(--ieee-yellow-75);
+    fill: var(--pd-rp-75);
   }
   .pd-node--ee .pd-t {
     font-family: var(--font-mono);
@@ -418,6 +424,16 @@ const nLabel = (place: string) => {
   }
 
   /* Before the script runs, and without it, the finished scene is shown. */
+  /* While the search plays, a certificate relation appears only once both
+     of its keys have been reached. */
+  .pd[data-playing] .pd-latent path {
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  .pd[data-playing] .pd-latent path.is-in {
+    opacity: 1;
+  }
+
   .pd[data-playing] .pd-node {
     opacity: 0;
     transition: opacity 0.2s;
@@ -454,9 +470,11 @@ const nLabel = (place: string) => {
     border-color: var(--text-muted);
   }
 
+  /* The dashes run along each segment from its start, the certificate end,
+     towards the relying party's anchor. */
   @keyframes pd-flow {
     to {
-      stroke-dashoffset: 18;
+      stroke-dashoffset: -18;
     }
   }
 

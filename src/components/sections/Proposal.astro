@@ -9,7 +9,7 @@ const removed = [
   ['The trust list', 'Verifiers are left without anchors.'],
   [
     'PolarisChain',
-    'Nothing in the federation falls. Certificates stay signed and any RFC 5280 validator still works. What is lost is knowing what each certificate enables, and choosing among the paths.',
+    'Nothing in the federation falls. Certificates stay signed and any RFC 5280 validator still works. The only loss is knowing what each certificate enables and being able to choose among the paths.',
   ],
 ];
 
@@ -17,35 +17,45 @@ const caps = [
   {
     name: 'Govern',
     cls: 'govern',
-    text: 'Before a cross-certificate is signed, or a policy changes: which anchors gain or lose an admissible path, and which selected paths change.',
+    text: 'Before a cross-certificate is signed, or a policy changes: which certificates become admissible and which stop being so, for the issuer and for third parties that trust its anchors.',
   },
   {
     name: 'Discover',
     cls: 'discover',
-    text: 'Inside the handshake: whether an admissible path exists from an anchor the receiver accepts and, if there are several, which one it prefers.',
+    text: 'Inside the handshake: whether an admissible path exists for the presented certificate from an anchor the receiver accepts and, if there are several, which one it prefers.',
   },
   {
     name: 'Audit',
     cls: 'audit',
-    text: 'After the decision: not another verdict but its reason, the constraint or missing edge behind a rejection, with a record that reproduces it.',
+    text: 'After the decision: not another verdict but its reason, one of seven defined outcomes, with a record that reproduces it.',
   },
 ];
 ---
 
-<Chapter id="proposal" num="04" kicker="The proposal" title="A frame of reference, not another federation.">
+<Chapter id="proposal" num="4" kicker="The proposal" title="A formal model of the federation, not another federation">
   <div class="prose">
     <p>
-      Polaris is not on the ship's route. It is a fixed reference outside it, which lets navigators
-      compute their own position. PolarisChain plays the same role: <strong>it establishes no trust
-      relationship</strong>. It reads the ones that others established by issuing certificates,
-      represents them as a graph and computes over them.
+      Polaris is not on the ship’s route; it is a fixed reference outside it, from which navigators compute their own position. PolarisChain plays the same role, since <strong>it establishes no trust
+      relationship</strong> and only reads the ones that others established by issuing certificates, which it turns into a graph and computes over.
+      <span class="sn sn--key"
+        ><b>Key idea</b> PolarisChain is a formal model of the federation that the domains have already built, and therefore not a fifth federation model beside the other four.</span
+      >
+    </p>
+    <p>
+      A bridge, a mesh and a trust list are ways of building roads between domains. PolarisChain is
+      the map of the roads that already exist, with precise rules for which ones may be taken and
+      which one to take. For this reason it works the same over a mesh, a bridge or trust lists, since it describes those models and does not compete with any of them.
+      <span class="sn"
+        ><b>The precision the image needs.</b> Once the decision moves into the handshake, each
+        domain’s own engine is on the critical path of its own admissions. Two properties still hold, because no domain’s decision is taken by an instance it does not operate and no third party can make it admit a certificate.</span
+      >
     </p>
   </div>
 
-  <p class="key">It does not establish trust. It computes over the trust that already exists.</p>
+  <p class="key">PolarisChain computes over the trust that the federation has already established, and adds none of its own.</p>
 
-  <table class="removed">
-    <caption class="label">Remove each component and watch what falls</caption>
+  <table class="tbl removed">
+    <caption><b>Table 2.</b> Remove each component and see what falls.</caption>
     <tbody>
       {
         removed.map(([what, effect], i) => (
@@ -60,13 +70,11 @@ const caps = [
 
   <div class="prose after">
     <p>
-      From that single object follow three computable capabilities. They are not three tools that
-      share data, but <strong>three questions put to the same graph</strong>, at different moments
-      and by different people.
+      From that single object follow three computable capabilities, and each of them is <strong>a question put to the same graph</strong>, asked at a different moment and by a different person.
     </p>
   </div>
 
-  <Figure num={4} class="fig-caps" caption="Govern, Discover and Audit query the same governed graph with the same receiver policy.">
+  <Figure num={4} class="figure--text fig-caps" caption="Govern, Discover and Audit query the same graph with the same receiver policy. The axis that orders them is time.">
     <FigCapabilities />
   </Figure>
 
@@ -83,37 +91,18 @@ const caps = [
 </Chapter>
 
 <style>
-  /* Narrower than the text and centred, with room above and below. */
   .removed {
-    width: min(100%, 46rem);
-    margin: 3.5rem auto 0;
-    border-collapse: collapse;
-  }
-  .removed caption {
-    margin-bottom: 0.8rem;
-    text-align: left;
-  }
-  .removed th,
-  .removed td {
-    padding: 0.75rem 0;
-    border-top: 1px solid var(--rule);
-    vertical-align: top;
-    text-align: left;
+    max-width: var(--table);
+    margin: 2.6rem 0 0;
   }
   .removed th {
     width: 12rem;
-    padding-right: 1.5rem;
-    font-weight: 400;
-    color: var(--text);
-  }
-  .removed td {
-    color: var(--text-soft);
   }
   .removed tr.is-us th {
-    color: var(--ieee-yellow-75);
+    color: var(--brass-soft);
   }
   .removed tr.is-us td {
-    color: var(--text-soft);
+    color: var(--text);
   }
 
   .after {

@@ -5,18 +5,20 @@ import logoUrl from '../../public/logo.svg?url';
 
 const links = [
   { href: '#motivation', label: 'Motivation' },
-  { href: '#proposal', label: 'Proposal' },
+  { href: '#gap', label: 'Gap' },
   { href: '#model', label: 'Model' },
-  { href: '#how-it-works', label: 'How it works' },
+  { href: '#threats', label: 'Threat model' },
+  { href: '#admission', label: 'Admission' },
   { href: '#laboratory', label: 'Laboratory' },
-  { href: '#credits', label: 'Credits' },
+  { href: '#limits', label: 'Limits' },
+  { href: '#references', label: 'References' },
 ];
 ---
 
 <header class="site-header" data-site-header data-state="top">
   <div class="site-header__inner">
     <a href="#top" class="brand" aria-label="PolarisChain, back to the top">
-      <img src={logoUrl} class="brand__logo" alt="" width="28" height="28" />
+      <img src={logoUrl} class="brand__logo" alt="" width="24" height="24" />
       <span class="brand__name">PolarisChain</span>
     </a>
     <nav class="nav" aria-label="Sections">
@@ -46,7 +48,7 @@ const links = [
   }
 
   .site-header[data-state='solid'] {
-    background: rgba(2, 11, 28, 0.94);
+    background: rgba(2, 11, 28, 0.95);
     border-bottom-color: var(--rule);
   }
 
@@ -63,7 +65,7 @@ const links = [
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.55rem;
     color: var(--text);
     text-decoration: none;
   }
@@ -74,26 +76,26 @@ const links = [
 
   .brand__logo {
     width: auto;
-    height: 26px;
+    height: 22px;
   }
 
   .brand__name {
-    font-family: var(--font-figure);
-    font-size: 1.15rem;
+    font-family: var(--font-body);
+    font-size: 1.1rem;
     font-weight: 500;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.005em;
   }
 
   .nav {
     display: flex;
-    gap: 1.6rem;
+    gap: 1.4rem;
+    white-space: nowrap;
   }
 
   .nav a {
-    font-family: var(--font-mono);
-    font-size: 0.74rem;
-    letter-spacing: 0.06em;
-    color: var(--text-soft);
+    font-family: var(--font-figure);
+    font-size: var(--small-size);
+    color: var(--text-muted);
     text-decoration: none;
   }
 
@@ -101,7 +103,7 @@ const links = [
     color: var(--text);
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1040px) {
     .nav {
       display: none;
     }

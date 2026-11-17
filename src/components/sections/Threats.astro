@@ -1,0 +1,149 @@
+---
+import Chapter from '../Chapter.astro';
+
+// Section 3.1.4 of the thesis: against whom the guarantees hold.
+const adversaries = [
+  {
+    who: 'Network, no keys',
+    can: 'Replays public certificates and opens connections.',
+    gets: 'Computation spent at the receiver.',
+    not: 'Admission: the proof of possession fails.',
+  },
+  {
+    who: 'Holder of a valid certificate',
+    can: 'Presents it with whatever chain it likes.',
+    gets: 'Its own admission, if it is admissible.',
+    not: 'Choosing the path, or widening its names or policies.',
+  },
+  {
+    who: 'Malicious or compromised member domain',
+    can: 'Issues certificates, cross-certificates, evidence and statements, and publishes them.',
+    gets: 'Admission of its subjects within what others’ constraints leave open; attracting the selection with a cheap path; denials or a longer search in the receivers that reach its keys.',
+    not: 'Fabricating others’ edges, escaping a constraint written in a cross-certificate issued to it, or influencing a receiver that does not reach its keys.',
+  },
+  {
+    who: 'Operator of the common log',
+    can: 'Omits, delays or reorders entries, shows split views, serves an old state.',
+    gets: 'Denials and, while earlier evidence is still valid, acceptance of a certificate already revoked.',
+    not: 'Forging entries.',
+  },
+  {
+    who: 'Dishonest witnesses, up to the tolerated number',
+    can: 'Cosign any checkpoint.',
+    gets: 'Nothing against a reader that demands the minimum quorum.',
+    not: 'Making two readers accept incompatible histories.',
+  },
+  {
+    who: 'Cryptanalytic',
+    can: 'Signs as any key of a broken algorithm, or as a weak key.',
+    gets: 'Admission through any broken node the receiver admits; forged evidence or checkpoints signed with that algorithm.',
+    not: 'Anything through the nodes that the floor, the algorithm lists or the exclusions leave out.',
+  },
+  {
+    who: 'Insider of the receiver',
+    can: 'Changes the policy, the anchors or the decision record.',
+    gets: 'Everything.',
+    not: 'Out of scope.',
+  },
+];
+
+const hypotheses = [
+  'The signature algorithms the receiver admits under the last floor of its list resist forgery.',
+  'SHA-256 resists collisions.',
+  'The clocks of the domains agree within the tolerance the compilation profile fixes.',
+  'The dishonest witnesses of the log do not exceed the number each reader tolerates.',
+  'The founding charter of the federation reaches each reader through an authentic channel.',
+  'The material is published in full. This one is needed only for the negative conclusions of Govern.',
+];
+---
+
+<Chapter id="threats" num="6" kicker="Threat model" title="Against whom the guarantees hold">
+  <div class="prose">
+    <p>
+      The properties of the model do not hold equally against every adversary, and the assets they protect are four: the integrity of the admission decision and its availability, the confidentiality of each domain’s policy and topology, and the integrity of the record of its decisions.
+    </p>
+    <p>
+      Each domain trusts only what it operates: its governance plane with the compiler, its policy
+      and anchors, the validation library with the policy checker, its TLS stack and its clock. The
+      common log and the material of the other domains are untrusted inputs, whose content has to
+      authenticate itself.
+      <span class="sn"
+        ><b>Quorum.</b> With <span class="m">n</span> witnesses of which at most <span class="m">f</span> are dishonest, a reader that demands <span class="m">q</span>{' '}
+        cosignatures needs <span class="m">2q − n &gt; f</span> for two accepted checkpoints to share an honest witness,
+        and <span class="m">q ≤ n − f</span> for the honest ones to reach it alone.</span
+      >
+    </p>
+    <p>The guarantees rest on six hypotheses, of which the first five are needed for any decision:</p>
+    <ol class="hyp">
+      {hypotheses.map((h) => <li>{h}</li>)}
+    </ol>
+  </div>
+
+  <div class="tbl-wrap wide">
+    <table class="tbl">
+      <caption><b>Table 7.</b> Adversaries considered and the reach of each one.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Adversary</th>
+          <th scope="col">Capability</th>
+          <th scope="col">Achieves</th>
+          <th scope="col">Does not achieve</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          adversaries.map((a) => (
+            <tr>
+              <th scope="row">{a.who}</th>
+              <td>{a.can}</td>
+              <td>{a.gets}</td>
+              <td>{a.not}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <p>
+      The guarantee is strong against the network adversary, the certificate holder and the witnesses, whereas against a member domain or the log operator the design limits the damage without
+      reducing it to a mere denial. The case that prevents it is the omission of evidence: whoever
+      withholds the latest revocation list leaves the previous one in force, for as long as the
+      receiver’s freshness bound <span class="m">F<sub>d</sub></span> allows. Against the cryptanalytic adversary the floor reaches the keys that sign the evidence, because in the direct profile each list is signed by a key of the path itself, but it does not cover
+      the signature of the log or the authentication of the channel. And a domain that the receiver does not reach from its anchors cannot move any of its decisions, which is the confinement of section 5.8.
+    </p>
+  </div>
+</Chapter>
+
+<style>
+  .hyp {
+    margin: 0;
+    padding-left: 1.4rem;
+    list-style: decimal;
+  }
+
+  .hyp li {
+    padding: 0.15rem 0 0.15rem 0.3rem;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+
+  .hyp li::marker {
+    color: var(--brass);
+  }
+
+  .wide {
+    max-width: none;
+  }
+
+  .wide th[scope='row'] {
+    width: 22%;
+  }
+
+  @media (max-width: 760px) {
+    .wide .tbl {
+      min-width: 44rem;
+    }
+  }
+</style>

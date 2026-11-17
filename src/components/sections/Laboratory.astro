@@ -2,36 +2,40 @@
 import Chapter from '../Chapter.astro';
 
 const domains = [
-  { d: 'A', posture: 'Classical', algs: 'RSA, ECDSA', tau: '1', cls: 'classical' },
-  { d: 'B', posture: 'Hybrid', algs: 'Composite ECDSA + ML-DSA', tau: '0.3', cls: 'hybrid' },
-  { d: 'C', posture: 'Post-quantum', algs: 'ML-DSA', tau: '0', cls: 'pq' },
+  { d: 'A', posture: 'Traditional', algs: 'RSA, ECDSA', tau: '(traditional, 0)', cls: 'classical', stage: 'traditional' },
+  { d: 'B', posture: 'Hybrid', algs: 'Composite ECDSA + ML-DSA, RFC 10073', tau: '(hybrid, 0)', cls: 'hybrid', stage: 'hybrid' },
+  { d: 'C', posture: 'Post-quantum', algs: 'ML-DSA-44, -65, -87', tau: '(post_quantum, 0)', cls: 'pq', stage: 'post_quantum' },
 ];
 
-const next = [
-  ['Dominance as a theorem', 'proving the transition monotone against RFC 5280, sections 6.1.3 and 6.1.4.'],
-  ['The common log, built', 'then several independent logs, signed post-quantum.'],
-  ['Heterogeneity inside a domain', 'hierarchies whose root and intermediates use different algorithms.'],
-  ['A post-quantum channel', 'from the PKI and the graph to the key exchange of the channel.'],
-  ['Time, fully', 'when a datum is valid and when it becomes known, and how the graph evolves.'],
+// Two checks run before the laboratory was built, to know what the standard
+// validator of the platform can and cannot do.
+const checks = [
+  ['12 Nov 2026', 'OpenSSL 3.5 on Linux', 'Validates ML-DSA chains. Knows no composite signature algorithm. An intermediate as the only anchor needs the partial-chain option.'],
+  ['13 Nov 2026', '.NET 11 X509Chain, Linux and Windows', 'Validates ECDSA P-384 and ML-DSA-65 chains and detects an altered signature in both. An intermediate as the only anchor gives PartialChain, which does not affect the use case: its anchor is the self-signed root of B.'],
+  ['13 Nov 2026', '.NET 11 X509Chain, composite chain', 'On Linux it throws an OpenSSL exception when reading the composite public key and gives no verdict. On a preview build of Windows 11 the same program validates the chain.'],
 ];
 ---
 
-<Chapter id="laboratory" num="11" kicker="Laboratory" title="Three real PKI domains, one reproducible laboratory.">
+<Chapter id="laboratory" num="12" kicker="Laboratory" title="Three real PKI domains, one reproducible laboratory">
   <div class="prose">
     <p>
       Three EJBCA Community Edition instances on Proxmox, each a PKI domain with its own
       cryptographic profile, cross-certified with one another. <strong>Certificates are issued for
-      real, and every constraint of Φ is read from real extensions</strong>, never simulated.
+      real, and every constraint of <span class="m">Φ</span> is read from real extensions</strong>, never simulated.
+      <span class="sn"
+        ><b>How to read this section.</b> The rows that carry a date were run on that day, and everything else is described as planned work.</span
+      >
     </p>
   </div>
 
-  <table class="domains">
+  <div class="tbl-wrap"><table class="tbl domains">
+    <caption><b>Table 8.</b> Reference profile of each domain of the laboratory.</caption>
     <thead>
       <tr>
         <th scope="col">Domain</th>
         <th scope="col">Posture</th>
         <th scope="col">Algorithms</th>
-        <th scope="col" class="num">Reference <span class="sym">τ<sub>d</sub></span></th>
+        <th scope="col">Reference floor <span class="m">τ<sub>d</sub></span></th>
       </tr>
     </thead>
     <tbody>
@@ -44,77 +48,62 @@ const next = [
             </td>
             <td>{r.posture}</td>
             <td>{r.algs}</td>
-            <td class="num">{r.tau}</td>
+            <td><span class={`tag tag--${r.stage}`}>{r.tau}</span></td>
           </tr>
         ))
       }
     </tbody>
-  </table>
-
-  <p class="stack small">
-    <span class="label">Stack</span>
-    .NET on Kestrel · BouncyCastle .NET with native ML-DSA · PostgreSQL · Cytoscape.js · Ansible ·
-    Linux containers, no proprietary licences
-  </p>
+  </table></div>
 
   <div class="prose">
-    <p class="small muted">
-      The evaluation measures and describes; it claims no performance improvement. The selected
+    <p>
+      The engine runs on .NET with Kestrel, over EJBCA for issuance and OpenSSL 3.5 underneath the
+      platform validator, deployed with Ansible on Linux containers and with no proprietary
+      licences. In the use case B starts with a traditional floor, so that it admits the clients of
+      A, and raising it to its reference profile is the migration variant.
+    </p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <caption
+        ><b>Table 9.</b> What the platform validator can do, checked before building the
+        laboratory.</caption
+      >
+      <thead>
+        <tr><th scope="col">Run</th><th scope="col">Subject</th><th scope="col">Result</th></tr>
+      </thead>
+      <tbody>
+        {
+          checks.map(([when, what, res]) => (
+            <tr>
+              <td class="nowrap">{when}</td>
+              <th scope="row">{what}</th>
+              <td>{res}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prose">
+    <p>
+      The third row has a direct consequence, because every route of domain B starts at its root, which is
+      composite, so on Linux the platform validator cannot give B its explicit validation. Domain B
+      has to change format, validation library or system, and that decision is open (section 13).
+    </p>
+    <p>
+      The evaluation measures and describes, and it claims no improvement in performance over existing validators. The selected
       path is checked against exhaustive enumeration on small topologies and against a reference
       validation library, and a negative result counts as a result.
     </p>
   </div>
-
-
-  <div class="next">
-    <p class="label">Next lines of research</p>
-    <ul>
-      {
-        next.map(([t, d]) => (
-          <li>
-            <strong>{t}:</strong> {d}
-          </li>
-        ))
-      }
-    </ul>
-  </div>
 </Chapter>
 
 <style>
-  /* Sized to its content, not to the page: four short columns. */
-  .domains {
-    width: auto;
-    min-width: min(100%, 34rem);
-    margin: 2rem 0 0;
-    border-collapse: collapse;
-  }
-  .domains th,
-  .domains td {
-    padding: 0.7rem 2.5rem 0.7rem 0;
-    border-bottom: 1px solid var(--rule);
-    text-align: left;
-  }
-  .domains th {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    font-weight: 400;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  /* The symbol keeps its case: an uppercase tau reads as a T. */
-  .domains th .sym {
-    font-family: var(--font-math);
-    font-size: 1.15em;
-    letter-spacing: 0;
-    text-transform: none;
-  }
-  .domains td {
-    color: var(--text-soft);
-  }
-  .domains .num {
-    text-align: right;
-    padding-right: 0;
+  .nowrap {
+    white-space: nowrap;
   }
   .dot {
     display: inline-block;
@@ -134,31 +123,6 @@ const next = [
     background: var(--pq);
   }
 
-  .stack {
-    margin: 1.5rem 0 2rem;
-  }
-  .stack .label {
-    margin-right: 0.8rem;
-  }
-
-  .muted {
-    color: var(--text-soft);
-  }
-
-  .next {
-    margin-top: 3rem;
-  }
-  .next ul {
-    margin: 0.8rem 0 0;
-    padding: 0 0 0 1.2rem;
-    list-style: disc;
-  }
-  .next li {
-    padding: 0.3rem 0;
-  }
-  .next li::marker {
-    color: var(--text-muted);
-  }
 
   @media (max-width: 560px) {
     .domains th:nth-child(3),

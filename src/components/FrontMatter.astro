@@ -1,0 +1,123 @@
+---
+// What follows the opening screen: an abstract and the contents, set as the
+// front matter of a monograph.
+const contents = [
+  ['motivation', '1', 'Motivation'],
+  ['landscape', '2', 'Where federation stands'],
+  ['gap', '3', 'The gap'],
+  ['proposal', '4', 'The proposal'],
+  ['model', '5', 'The model'],
+  ['threats', '6', 'Threat model'],
+  ['how-it-works', '7', 'Path discovery'],
+  ['admission', '8', 'Admission at the server'],
+  ['common-log', '9', 'The common log'],
+  ['migration', '10', 'Post-quantum migration'],
+  ['use-cases', '11', 'Use cases'],
+  ['laboratory', '12', 'Laboratory'],
+  ['limits', '13', 'Limits and open work'],
+  ['references', '', 'References'],
+];
+---
+
+<section class="front" aria-label="Abstract and contents">
+  <div class="wrap front__grid">
+    <div class="abstract">
+      <p>
+        <b>Abstract.</b> Federated PKIs link sovereign domains through cross-certificates, bridge CAs and trust lists, and RFC 5280 specifies in detail how to validate a certification path once it is given. Yet no standard says which path a verifier should choose when several of them are valid at the same time. PolarisChain models the
+        federation as a graph of keys, compiled from the certificates themselves, and it defines for each receiving domain the paths it admits and the one it prefers.
+      </p>
+      <p>
+        It establishes no trust of its own, since it only reads the trust that others established and computes over it. From that single object follow three capabilities, which differ in the moment at which they answer: <em>Govern</em> before a cross-certificate is signed, <em>Discover</em> inside the mTLS handshake and{' '}
+        <em>Audit</em> after the decision. The post-quantum transition needs no mechanism of its own, because it becomes a cryptographic floor that the receiver demands of every key on the path.
+      </p>
+    </div>
+
+    <nav class="toc" aria-label="Contents">
+      <p class="label">Contents</p>
+      <ol>
+        {
+          contents.map(([id, n, t]) => (
+            <li>
+              <a href={`#${id}`}>
+                <span class="toc__n">{n}</span>
+                <span>{t}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+  </div>
+</section>
+
+<style>
+  .front {
+    padding-top: clamp(3rem, 7vw, 5rem);
+  }
+
+  .front__grid {
+    display: grid;
+    grid-template-columns: minmax(0, var(--measure)) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+
+  .abstract {
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .abstract p {
+    margin: 0 0 0.9em;
+  }
+
+  .abstract p:last-child {
+    margin-bottom: 0;
+  }
+
+  .toc {
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .toc .label {
+    margin: 0 0 0.6rem;
+  }
+
+  .toc ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .toc a {
+    display: grid;
+    grid-template-columns: 1.9rem 1fr;
+    padding: 0.2rem 0;
+    font-size: 1.0625rem;
+    color: var(--text-soft);
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    color: var(--text-strong);
+  }
+
+  .toc__n {
+    color: var(--sky);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  @media (max-width: 860px) {
+    .front__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .toc ol {
+      columns: 2 12rem;
+      column-gap: 2rem;
+    }
+    .toc li {
+      break-inside: avoid;
+    }
+  }
+</style>
