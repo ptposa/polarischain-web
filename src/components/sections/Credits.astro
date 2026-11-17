@@ -51,7 +51,12 @@ const refs = pick.map((k) => all.find((r) => r.key === k)).filter((r) => r !== u
       }
     </ol>
 
-    <div class="people grid-3" id="credits">
+    <div class="credits__head" id="credits">
+      <p class="sec"><span>Academic context</span></p>
+      <h2 id="credits-h">Credits</h2>
+    </div>
+
+    <div class="people grid-3">
       <div class="person rule-top">
         <p class="label">Author</p>
         <h3>Jorge Pablo Trías Posa</h3>
@@ -109,6 +114,11 @@ const refs = pick.map((k) => all.find((r) => r.key === k)).filter((r) => r !== u
     margin-bottom: 2rem;
   }
 
+  .credits__head {
+    margin-top: var(--section-gap);
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+
   .refs {
     max-width: var(--table);
     margin: 0;
@@ -143,9 +153,6 @@ const refs = pick.map((k) => all.find((r) => r.key === k)).filter((r) => r !== u
     overflow-wrap: anywhere;
   }
 
-  .people {
-    margin-top: var(--section-gap);
-  }
   .person h3 {
     font-size: 1.35rem;
   }
