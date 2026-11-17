@@ -150,7 +150,7 @@ const emerging = [
         <text x="35" y="65" text-anchor="end" class="t-label">EE</text>
         <text x="233" y="65" class="t-label">TA</text>
         <text x="134" y="13" text-anchor="middle" class="t-label t-path">one heuristic result</text>
-        <text x="134" y="29" text-anchor="middle" class="t-label">traditional</text>
+        <text x="134" y="29" text-anchor="middle" class="t-label t-cl">traditional</text>
         <text x="134" y="102" text-anchor="middle" class="t-label">post-quantum</text>
         <text x="134" y="116" text-anchor="middle" class="t-label t-pq">admissible, never explored</text>
       </svg>
@@ -193,8 +193,8 @@ const emerging = [
         <path class="line-pq" d="M44 100 C 130 98, 170 54, 228 18" />
         <circle class="n n--pq" cx="228" cy="18" r="3" />
         <circle class="n n--hy" cx="228" cy="46" r="3" />
-        <circle class="n" cx="228" cy="96" r="3" />
-        <text x="50" y="20" class="t-label">traditional</text>
+        <circle class="n n--cl" cx="228" cy="96" r="3" />
+        <text x="50" y="20" class="t-label t-cl">traditional</text>
         <text x="74" y="72" class="t-label t-hy">hybrid</text>
         <text x="220" y="12" text-anchor="end" class="t-label t-pq">post-quantum</text>
         <text x="232" y="116" text-anchor="end" class="t-label">time</text>
@@ -235,7 +235,7 @@ const emerging = [
     display: flex;
     flex-direction: column;
     padding: 1.3rem 1.1rem 1rem;
-    border: 1px solid var(--rule);
+    border: 1.5px solid var(--rule-strong);
     border-radius: 3px;
   }
 
@@ -277,8 +277,9 @@ const emerging = [
     stroke: var(--text-soft);
   }
 
+  /* Traditional keys and lines in the red of the traffic light. */
   .n--cl {
-    stroke: rgba(186, 198, 217, 0.75);
+    stroke: var(--classical);
   }
   .dash-pq {
     stroke: var(--pq);
@@ -296,7 +297,7 @@ const emerging = [
     stroke-linecap: round;
   }
   .line-cl {
-    stroke: rgba(186, 198, 217, 0.55);
+    stroke: var(--classical);
     stroke-width: 1.3;
   }
   .line-obs {
@@ -338,6 +339,9 @@ const emerging = [
   .svg-fig .t-pq {
     fill: var(--pq);
   }
+  .svg-fig .t-cl {
+    fill: var(--classical);
+  }
   .svg-fig .t-hy {
     fill: var(--hybrid);
   }
@@ -346,10 +350,11 @@ const emerging = [
     margin-top: 5rem;
   }
 
-  /* The heading of the second row: the yellow of the section title, paler. */
+  /* The heading of the second row: the red of the page, because these are
+     pressures against the federation. */
   .emerging :global(h3.sub) {
     margin: 0 0 1.6rem;
-    color: #f1dea8;
+    color: var(--deny);
   }
 
   /* The names of the challenges fill each line before breaking: no
@@ -360,7 +365,7 @@ const emerging = [
     font-family: var(--font-heading);
     font-size: 1.2rem;
     line-height: 1.25;
-    font-weight: 500;
+    font-weight: 400;
     text-wrap: wrap;
     /* Near white: the names sit one level below the yellow section title
        by size alone, with no colour of their own. */

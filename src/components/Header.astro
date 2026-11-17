@@ -27,6 +27,7 @@ const links = [
   </div>
 </header>
 
+
 <style>
   .site-header {
     position: fixed;
@@ -82,19 +83,23 @@ const links = [
   .brand__name {
     font-family: var(--font-body);
     font-size: 1.1rem;
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: -0.005em;
   }
 
   .nav {
     display: flex;
-    gap: 1.4rem;
+    gap: 1.6rem;
     white-space: nowrap;
   }
 
+  /* The small capitals of the text face, as in the status of a result,
+     small and tracked like the running head of a book. */
   .nav a {
-    font-family: var(--font-figure);
-    font-size: var(--small-size);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
     color: var(--text-muted);
     text-decoration: none;
   }
@@ -103,9 +108,30 @@ const links = [
     color: var(--text);
   }
 
+  /* Tablets keep the navigation: tighter, and with the mark alone. */
   @media (max-width: 1040px) {
     .nav {
+      gap: 0.95rem;
+    }
+    .nav a {
+      letter-spacing: 0.05em;
+    }
+  }
+  @media (max-width: 880px) {
+    .brand__name {
       display: none;
+    }
+    .nav {
+      gap: 0.75rem;
+    }
+  }
+  /* Phones have no room for eight links in one line. */
+  @media (max-width: 719px) {
+    .nav {
+      display: none;
+    }
+    .brand__name {
+      display: inline;
     }
   }
 </style>

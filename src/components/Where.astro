@@ -1,0 +1,29 @@
+---
+// The components of a displayed formula, one by one, as the "donde" that
+// follows the formulas of the thesis. Each item is [symbol, explanation] or
+// [symbol, explanation, source]; symbol and explanation are markup.
+interface Props {
+  items: string[][];
+  /** Accessible name of the list, such as "Components of (1)". */
+  label?: string;
+}
+
+const { items, label } = Astro.props;
+---
+
+<div class="where" role="group" aria-label={label}>
+  <p class="where__head">where</p>
+  <dl>
+    {
+      items.map(([sym, text, src]) => (
+        <>
+          <dt set:html={sym} />
+          <dd>
+            <Fragment set:html={text} />
+            {src && <span class="src" set:html={src} />}
+          </dd>
+        </>
+      ))
+    }
+  </dl>
+</div>

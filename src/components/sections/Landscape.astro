@@ -96,8 +96,8 @@ const related = [
                 {r.who} <a href={`#ref-${r.ref}`}>[{r.ref}]</a>
                 {r.ref2 && <a href={`#ref-${r.ref2}`}>[{r.ref2}]</a>}
               </th>
-              <td>{r.does}</td>
-              <td>{r.open}</td>
+              <td data-label="What it does">{r.does}</td>
+              <td data-label="What it leaves open">{r.open}</td>
             </tr>
           ))
         }

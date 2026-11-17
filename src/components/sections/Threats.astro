@@ -81,7 +81,7 @@ const hypotheses = [
 
   <div class="tbl-wrap wide">
     <table class="tbl">
-      <caption><b>Table 7.</b> Adversaries considered and the reach of each one.</caption>
+      <caption><b>Table 5.</b> Adversaries considered and the reach of each one.</caption>
       <thead>
         <tr>
           <th scope="col">Adversary</th>
@@ -95,9 +95,9 @@ const hypotheses = [
           adversaries.map((a) => (
             <tr>
               <th scope="row">{a.who}</th>
-              <td>{a.can}</td>
-              <td>{a.gets}</td>
-              <td>{a.not}</td>
+              <td data-label="Capability">{a.can}</td>
+              <td data-label="Achieves">{a.gets}</td>
+              <td data-label="Does not achieve">{a.not}</td>
             </tr>
           ))
         }
@@ -141,9 +141,11 @@ const hypotheses = [
     width: 22%;
   }
 
-  @media (max-width: 760px) {
-    .wide .tbl {
-      min-width: 44rem;
+  @media (max-width: 640px) {
+    .wide th[scope='row'] {
+      width: 100%;
     }
   }
+
+
 </style>

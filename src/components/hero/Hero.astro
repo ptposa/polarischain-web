@@ -28,11 +28,12 @@ import HeroAperture from './HeroAperture.astro';
           <p class="hero__body">
             Like the polar star for a navigator, PolarisChain is a fixed reference that stays outside the route. It reads the trust that others have already established and turns it into a governed graph of keys, on which each receiver computes the certification paths it admits and the one it prefers, whether its domains are traditional, hybrid or post-quantum.
           </p>
-          <p class="hero__kicker">
-            <span>Author</span> <b>Jorge Pablo Trías Posa</b><br />
-            <span>Supervisor</span> <b>Dr. Mario Aragonés Lozano</b><br />
-            Universitat Politècnica de València · Master’s thesis and doctoral research
-          </p>
+          <dl class="hero__kicker">
+            <dt>Author</dt><dd>Jorge Pablo Trías Posa</dd>
+            <dt>Supervisor</dt><dd>Dr. Mario Aragonés Lozano</dd>
+            <dt>Institution</dt><dd>Universitat Politècnica de València</dd>
+            <dt>Academic context</dt><dd>Master’s thesis and doctoral research</dd>
+          </dl>
 
           <div class="dive__cue dive__cue--inline" data-dive-cue aria-hidden="true">
             <span>Deep dive into the research</span>
@@ -96,28 +97,42 @@ import HeroAperture from './HeroAperture.astro';
     will-change: transform, opacity;
   }
 
+  /* The credits, as on the cover of a thesis: a label in the small capitals
+     of the text face before each entry, one entry per line. */
   .hero__kicker {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 0.15rem 1.1rem;
     max-width: 58ch;
     margin: 1.8rem 0 0;
     padding-top: 1rem;
     border-top: 1px solid var(--rule);
-    font-family: var(--font-figure);
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    letter-spacing: 0.01em;
-    color: var(--text-soft);
+    font-family: var(--font-body);
+    font-size: 0.96875rem;
+    line-height: 1.5;
   }
 
-  .hero__kicker b {
-    font-weight: 500;
-    color: var(--text-strong);
-  }
-
-  /* The roles, as on the cover of a thesis: a quiet label before each name. */
-  .hero__kicker span {
-    display: inline-block;
-    min-width: 5.2rem;
+  /* The labels in small capitals at the size of the names beside them: the
+     A of Author stands as tall as the J of Jorge, the rest of the word lower. */
+  .hero__kicker dt {
+    font-variant: small-caps;
+    letter-spacing: 0.04em;
     color: var(--text-muted);
+  }
+
+  .hero__kicker dd {
+    margin: 0;
+    color: var(--text);
+  }
+
+  @media (max-width: 420px) {
+    .hero__kicker {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+    .hero__kicker dd + dt {
+      margin-top: 0.35rem;
+    }
   }
 
   /* The one line set in spaced capitals on the whole page: it names the
@@ -128,8 +143,11 @@ import HeroAperture from './HeroAperture.astro';
     font-size: 0.68rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    /* A dimmed bone white: neither the blue grey of the navigation nor the
+       yellow of the headline just below. */
+    color: rgba(238, 242, 248, 0.62);
   }
+
 
   .hero__title {
     max-width: 13ch;
@@ -170,9 +188,12 @@ import HeroAperture from './HeroAperture.astro';
     align-items: center;
     gap: 0.7rem;
     transform: translateX(-50%);
-    font-family: var(--font-figure);
-    font-size: var(--small-size);
-    letter-spacing: 0.02em;
+    /* The mono capitals of the eyebrow, so the opening screen starts and
+       ends in the same voice. */
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     color: var(--text-muted);
     pointer-events: none;
     isolation: isolate;

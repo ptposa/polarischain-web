@@ -29,7 +29,7 @@ const checks = [
   </div>
 
   <div class="tbl-wrap"><table class="tbl domains">
-    <caption><b>Table 8.</b> Reference profile of each domain of the laboratory.</caption>
+    <caption><b>Table 6.</b> Reference profile of each domain of the laboratory.</caption>
     <thead>
       <tr>
         <th scope="col">Domain</th>
@@ -46,9 +46,9 @@ const checks = [
               <span class={`dot dot--${r.cls}`} />
               {r.d}
             </td>
-            <td>{r.posture}</td>
-            <td>{r.algs}</td>
-            <td><span class={`tag tag--${r.stage}`}>{r.tau}</span></td>
+            <td data-label="Posture">{r.posture}</td>
+            <td data-label="Algorithms">{r.algs}</td>
+            <td data-label="Reference floor"><span class={`tag tag--${r.stage}`}>{r.tau}</span></td>
           </tr>
         ))
       }
@@ -67,7 +67,7 @@ const checks = [
   <div class="tbl-wrap">
     <table class="tbl">
       <caption
-        ><b>Table 9.</b> What the platform validator can do, checked before building the
+        ><b>Table 7.</b> What the platform validator can do, checked before building the
         laboratory.</caption
       >
       <thead>
@@ -77,9 +77,9 @@ const checks = [
         {
           checks.map(([when, what, res]) => (
             <tr>
-              <td class="nowrap">{when}</td>
+              <td class="nowrap" data-label="Run">{when}</td>
               <th scope="row">{what}</th>
-              <td>{res}</td>
+              <td data-label="Result">{res}</td>
             </tr>
           ))
         }

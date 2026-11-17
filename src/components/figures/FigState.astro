@@ -11,6 +11,10 @@ const slots = [
   { f: 'ℕ<sub>∞</sub><sup>3</sup>', what: 'Three policy counters', rfc: 'explicit_policy · inhibit_anyPolicy · policy_mapping', v: '(0, ∞, ∞)' },
   { f: '2<sup>OID</sup>', what: 'Initial policies the receiver accepts', rfc: 'user-initial-policy-set', v: '{ p<sub>B</sub> }' },
 ];
+
+// The rows, grouped: the two name slots share a group, so the bracket that
+// joins them is drawn once, on the group, and is never cut between rows.
+const groups = [[0], [1, 2], [3], [4], [5]];
 ---
 
 <div class="st" role="group" aria-label="The six slots of a validation state">
@@ -21,19 +25,28 @@ const slots = [
   </div>
   <ol class="st__rows">
     {
-      slots.map((s, i) => (
-        <li class:list={['st__row', { 'st__row--pair': s.pair }]} tabindex="0">
-          <span class="st__f m">
-            <span set:html={s.f} />
-            {i < slots.length - 1 && <span class="st__x" aria-hidden="true">×</span>}
-          </span>
-          <span class="st__what">
-            {s.what}
-            <code class="st__rfc">{s.rfc}</code>
-          </span>
-          <span class="st__v m" set:html={s.v} />
-        </li>
-      ))
+      groups.map((g) => {
+        const rows = g.map((i) => (
+          <li class="st__row" tabindex="0">
+            <span class="st__f m">
+              <span set:html={slots[i].f} />
+              {i < slots.length - 1 && <span class="st__x" aria-hidden="true">×</span>}
+            </span>
+            <span class="st__what">
+              {slots[i].what}
+              <code class="st__rfc">{slots[i].rfc}</code>
+            </span>
+            <span class="st__v m" set:html={slots[i].v} />
+          </li>
+        ));
+        return g.length > 1 ? (
+          <li class="st__pair">
+            <ol class="st__sub">{rows}</ol>
+          </li>
+        ) : (
+          rows
+        );
+      })
     }
   </ol>
   <p class="st__note">
@@ -69,10 +82,28 @@ const slots = [
     color: var(--text);
   }
 
-  .st__rows {
+  .st__rows,
+  .st__sub {
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  .st__pair {
+    position: relative;
+  }
+
+  /* The bracket: from the top of the first name slot to the foot of the
+     second, with a short tick at each end. */
+  .st__pair::before {
+    content: '';
+    position: absolute;
+    left: -0.75rem;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    width: 0.45rem;
+    border: 1px solid var(--brass);
+    border-right: 0;
   }
 
   .st__row {
@@ -82,7 +113,7 @@ const slots = [
     transition: background-color 0.25s ease;
   }
 
-  .st__row:last-child {
+  .st__rows > .st__row:last-child {
     border-bottom: 1px solid var(--rule);
   }
 
@@ -112,25 +143,6 @@ const slots = [
     transform: translateX(-50%);
     font-size: 0.95rem;
     color: var(--brass-soft);
-  }
-
-  /* The two name slots share a bracket on the left. */
-  .st__row--pair .st__f::before {
-    content: '';
-    position: absolute;
-    left: -0.7rem;
-    top: -0.55rem;
-    bottom: -0.55rem;
-    width: 0.4rem;
-    border-left: 1px solid var(--brass);
-  }
-  .st__row--pair:nth-child(2) .st__f::before {
-    top: 50%;
-    border-top: 1px solid var(--brass);
-  }
-  .st__row--pair:nth-child(3) .st__f::before {
-    bottom: 50%;
-    border-bottom: 1px solid var(--brass);
   }
 
   .st__what {
@@ -172,6 +184,14 @@ const slots = [
   }
 
   @media (max-width: 719px) {
+    .st {
+      padding-left: 0.9rem;
+    }
+    .st__pair::before {
+      left: -0.8rem;
+      top: 1rem;
+      bottom: 1rem;
+    }
     .st__head {
       display: none;
     }

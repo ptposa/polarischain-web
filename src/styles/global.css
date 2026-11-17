@@ -43,9 +43,10 @@
   --ieee-blue: #4f86b8;
   --ieee-blue-50: #8a9cb6;
   --ieee-blue-25: #bcc6d5;
-  --ieee-cyan: #8fb9e2;
-  --ieee-cyan-50: #a9c9e8;
-  --ieee-cyan-25: #d2e2f1;
+  /* The vivid cyan of the first version: the selected path stands out. */
+  --ieee-cyan: #00b5e2;
+  --ieee-cyan-50: #6dcff6;
+  --ieee-cyan-25: #b9e5fa;
   --ieee-teal: #6fa9a8;
   --ieee-teal-50: #9cc4c2;
   --ieee-yellow: var(--brass);
@@ -67,8 +68,9 @@
   --link: var(--sky);
   --link-hover: #b9e5fa;
   --subhead: var(--brass-soft);
-  /* Names from the X.509 profile (extensions, fields), as in the thesis. */
-  --x509: #c3b5dc;
+  /* Names from the X.509 profile (extensions, fields): a light teal that
+     reads clearly on the ink blue and keeps clear of the brass and the cyan. */
+  --x509: #8fd8c8;
   --tan: var(--brass);
   /* The ink of the formulas: a toasted brown, as in the original page. */
   --ink-eq: #d2a77f;
@@ -82,8 +84,10 @@
   --anchor: var(--brass);
   --deny: var(--ieee-red-50);
   --allow: var(--ieee-green-50);
-  --classical: var(--ieee-blue-50);
-  --hybrid: var(--ieee-purple-50);
+  /* Migration stages as a traffic light: traditional red (soon obsolete),
+     hybrid yellow, post-quantum green. */
+  --classical: var(--ieee-red-50);
+  --hybrid: #efcd6a;
   --pq: var(--ieee-green-50);
   --govern: var(--ieee-purple-50);
   --discover: var(--ieee-cyan-50);
@@ -97,11 +101,11 @@
   --fig-fill: var(--ground);
 
   /* Type. Every face is served with the site. Newsreader sets the text and
-     the headings; Archivo the figures, captions and tables; IBM Plex Mono
+     the headings; Archivo the figures, captions and tables; JetBrains Mono
      only identifiers; STIX Two Math the formulas and any Greek letter. */
   --font-body: 'Newsreader Variable', 'STIX Two Math', Georgia, 'Times New Roman', serif;
   --font-heading: var(--font-body);
-  --font-mono: 'IBM Plex Mono', 'STIX Two Math', ui-monospace, monospace;
+  --font-mono: 'JetBrains Mono', 'STIX Two Math', ui-monospace, monospace;
   --font-figure: 'Archivo', 'STIX Two Math', 'Helvetica Neue', Arial, sans-serif;
   --font-math: 'STIX Two Math', Georgia, serif;
   --body-size: 1.125rem;
@@ -196,16 +200,16 @@ a:hover {
   text-decoration-color: currentColor;
 }
 
-/* Labels (Definition 1, Figure 2, Table 3, the head of a note) are bold. */
+/* Labels (Definition 1, Figure 2, Table 3, the head of a note) are not bold:
+   they keep the weight of the text and stand out by colour alone. */
 b {
   color: var(--text);
-  font-weight: 600;
+  font-weight: inherit;
 }
 
-/* Emphasis inside running text is not: it keeps the weight of the text
-   around it and is only a little lighter in colour. */
+/* Emphasis inside running text carries no weight and no colour of its own. */
 strong {
-  color: var(--text);
+  color: inherit;
   font-weight: inherit;
 }
 
@@ -269,8 +273,23 @@ sup {
 .prose + .prose,
 .figure + .prose,
 .tbl-wrap + .prose,
-.thm + .prose {
+.thm + .prose,
+.where + .prose,
+.key + .prose,
+.prose + .thm,
+.prose + .where {
   margin-top: 2.2rem;
+}
+
+/* A margin note set inside the text column (below 1120px) needs air on both
+   sides, so it does not touch the paragraph it closes or the next one. */
+@media (max-width: 1119px) {
+  .sn {
+    margin: 1.1rem 0 1.4rem;
+  }
+  .prose p:has(> .sn) {
+    margin-bottom: 1.6em;
+  }
 }
 
 .small {
@@ -294,7 +313,7 @@ sup {
 }
 
 .sn b {
-  font-weight: 500;
+  font-weight: inherit;
   color: var(--text-soft);
 }
 
@@ -317,7 +336,7 @@ sup {
   font-family: var(--font-figure);
   font-size: var(--small-size);
   font-style: normal;
-  font-weight: 500;
+  font-weight: inherit;
   color: var(--brass-soft);
 }
 
@@ -353,25 +372,38 @@ sup {
   padding-bottom: clamp(4rem, 8vw, 6rem);
 }
 
-/* The section line: its number in brass, and what the section is. */
+/* The small capitals of the text face, as in the status of a result: the
+   voice of the navigation, the section lines and the credits. */
+.sc {
+  font-family: var(--font-body);
+  font-variant: small-caps;
+  font-variant-numeric: lining-nums;
+  letter-spacing: 0.04em;
+}
+
+/* The section line: its number, a middle dot and what the section is. */
 .sec {
   display: flex;
   align-items: baseline;
-  gap: 0.7rem;
+  gap: 0.55rem;
   margin: 0 0 0.9rem;
   padding-top: 1rem;
   border-top: 1px solid var(--rule);
-  font-family: var(--font-figure);
-  font-size: var(--small-size);
-  letter-spacing: 0.02em;
-  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  color: var(--text-soft);
 }
 
 .sec b {
-  font-family: var(--font-body);
-  font-size: 1.05rem;
-  font-weight: 500;
+  font-variant-numeric: lining-nums;
   color: var(--sky);
+}
+
+.sec i {
+  font-style: normal;
+  color: var(--text-muted);
 }
 
 h1,
@@ -416,7 +448,7 @@ h4 {
 /* The one sentence of a section that carries its point */
 .key {
   max-width: var(--measure);
-  margin: 2.2rem 0;
+  margin: 2.8rem 0;
   padding-left: 1.2rem;
   border-left: 1px solid var(--brass);
   font-family: var(--font-heading);
@@ -431,7 +463,7 @@ h4 {
    The status line says whether the result is proved, and where. */
 .thm {
   max-width: var(--measure);
-  margin: 1.8rem 0;
+  margin: 2.4rem 0;
   padding-left: 1.2rem;
   border-left: 1px solid var(--brass);
 }
@@ -477,7 +509,7 @@ h4 {
 }
 
 .thm .status b {
-  font-weight: 500;
+  font-weight: inherit;
   font-variant: small-caps;
   letter-spacing: 0.03em;
   color: var(--text-soft);
@@ -599,7 +631,7 @@ a.eqref:hover {
 }
 
 .tbl caption b {
-  font-weight: 500;
+  font-weight: inherit;
   color: var(--text);
 }
 
@@ -612,7 +644,7 @@ a.eqref:hover {
 
 .tbl thead th {
   border-bottom: 1px solid var(--rule-strong);
-  font-weight: 500;
+  font-weight: inherit;
   color: var(--text);
   white-space: nowrap;
 }
@@ -622,7 +654,7 @@ a.eqref:hover {
 }
 
 .tbl tbody th {
-  font-weight: 500;
+  font-weight: inherit;
   color: var(--text);
 }
 
@@ -863,6 +895,22 @@ a.eqref:hover {
   stroke: var(--path);
   stroke-width: 1.2;
 }
+/* A key drawn in the colour of its migration stage: the traffic light. */
+.svg-fig .box-cl {
+  fill: var(--fig-fill);
+  stroke: var(--classical);
+  stroke-width: 1.2;
+}
+.svg-fig .box-hy {
+  fill: var(--fig-fill);
+  stroke: var(--hybrid);
+  stroke-width: 1.2;
+}
+.svg-fig .box-pq {
+  fill: var(--fig-fill);
+  stroke: var(--pq);
+  stroke-width: 1.2;
+}
 .svg-fig .box-govern {
   fill: var(--fig-fill);
   stroke: var(--govern);
@@ -908,18 +956,22 @@ a.eqref:hover {
   stroke-width: 1;
   stroke-dasharray: 4 4;
 }
-/* The selected path is a solid, heavier line. It does not move: the page
-   keeps motion for the few places where it shows a direction or a sequence. */
+/* The selected path and the anchor edges move along their direction, in
+   dashes, as in the first version of the page. */
 .svg-fig .edge-accent,
 .svg-fig .edge-path {
   fill: none;
   stroke: var(--path);
-  stroke-width: 1.8;
+  stroke-width: 1.6;
+  stroke-dasharray: 5 4;
+  animation: flow 1.1s linear infinite;
 }
 .svg-fig .edge-anchor {
   fill: none;
   stroke: var(--anchor);
-  stroke-width: 1.8;
+  stroke-width: 1.6;
+  stroke-dasharray: 5 4;
+  animation: flow 1.1s linear infinite;
 }
 .svg-fig .edge-deny {
   fill: none;
@@ -929,7 +981,7 @@ a.eqref:hover {
 }
 .svg-fig .edge-link {
   fill: none;
-  stroke: rgba(169, 201, 232, 0.7);
+  stroke: rgba(109, 207, 246, 0.7);
   stroke-width: 1;
 }
 .svg-fig .edge-muted {
@@ -939,7 +991,7 @@ a.eqref:hover {
 }
 .svg-fig .flow {
   stroke-dasharray: 5 4;
-  animation: flow 1.6s linear infinite;
+  animation: flow 1.1s linear infinite;
 }
 .svg-fig .flow-slow {
   stroke-dasharray: 3 6;
@@ -984,8 +1036,163 @@ a.eqref:hover {
   html {
     scroll-behavior: auto;
   }
+  .svg-fig .edge-accent,
+  .svg-fig .edge-path,
+  .svg-fig .edge-anchor,
   .svg-fig .flow,
   .svg-fig .flow-slow {
     animation: none;
+  }
+}
+
+/* ─── "Where": the components of a formula, one by one ───
+   Every displayed formula is followed by the list of its components, as the
+   "donde" of the thesis: the symbol in the ink of the formulas, and what it
+   is. On a phone each component stacks over its explanation. */
+.where {
+  max-width: var(--measure);
+  margin: 0.4rem 0 2rem;
+}
+
+.where__head {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.where dl {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, max-content) minmax(0, 1fr);
+  gap: 0;
+  margin: 0;
+}
+
+.where dt,
+.where dd {
+  margin: 0;
+  padding: 0.42rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.where dt {
+  padding-right: 1.3rem;
+  font-family: var(--font-math);
+  font-size: 1.05rem;
+  line-height: 1.45;
+  color: var(--ink-eq);
+}
+
+.where dd {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-soft);
+}
+
+.where dd .src {
+  display: block;
+  font-family: var(--font-figure);
+  font-size: var(--small-size);
+  color: var(--text-muted);
+}
+
+.where dt:last-of-type,
+.where dd:last-of-type {
+  border-bottom: 1px solid var(--rule);
+}
+
+@media (max-width: 560px) {
+  .where dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .where dt {
+    padding-bottom: 0.1rem;
+  }
+  .where dd {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .where dt:last-of-type {
+    border-bottom: 0;
+  }
+}
+
+/* ─── Phones: nothing scrolls sideways ───
+   Formulas wrap at their spaces instead of scrolling, their number drops
+   below, and every table becomes a list of cards in which each cell carries
+   the name of its column. */
+@media (max-width: 640px) {
+  .eq {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.2rem 1rem;
+  }
+
+  .eq__body,
+  .eq--long .eq__body {
+    flex: 1 1 100%;
+    white-space: normal;
+    overflow-x: visible;
+    overflow-wrap: anywhere;
+    text-align: left;
+    font-size: 1.05rem;
+  }
+
+  .eq__n {
+    flex: 1 1 100%;
+    text-align: right;
+  }
+
+  .tbl-wrap {
+    overflow-x: visible;
+  }
+
+  .tbl,
+  .tbl tbody,
+  .tbl tr,
+  .tbl th,
+  .tbl td {
+    display: block;
+    width: 100%;
+  }
+
+  .tbl caption {
+    display: block;
+  }
+
+  .tbl thead {
+    display: none;
+  }
+
+  .tbl tbody tr {
+    padding: 0.7rem 0;
+  }
+
+  .tbl tbody tr + tr > * {
+    border-top: 0;
+  }
+
+  .tbl tbody tr + tr {
+    border-top: 1px solid var(--rule);
+  }
+
+  .tbl th,
+  .tbl td,
+  .tbl .num {
+    padding: 0.12rem 0;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .tbl tbody th {
+    padding-bottom: 0.3rem;
+    font-size: 0.9375rem;
+  }
+
+  .tbl td[data-label]::before {
+    content: attr(data-label) ': ';
+    color: var(--text-muted);
   }
 }

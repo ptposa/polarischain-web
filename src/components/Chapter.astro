@@ -14,7 +14,7 @@ const { id, num, kicker, title, class: extra } = Astro.props;
 
 <section class:list={['chapter', extra]} id={id} aria-labelledby={`${id}-h`}>
   <div class="wrap">
-    <p class="sec">{num && <b>{num}</b>}<span>{kicker}</span></p>
+    <p class="sec">{num && <><b>{num}</b><i aria-hidden="true">·</i></>}<span>{kicker}</span></p>
     <h2 id={`${id}-h`} set:html={title} />
     <slot />
   </div>
