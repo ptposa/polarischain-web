@@ -144,13 +144,15 @@ GitHub Actions: every push to `main` triggers
 The wider platform is not static: `polarischain-app` is a real backend
 (ASP.NET Core validation engine and APIs) and is hosted separately.
 
-The site is served from a project subpath, so `astro.config.mjs` sets
-`site: 'https://ptposa.github.io'` and `base: '/polarischain-web'`:
+The site is served from the root of its custom domain, so
+`astro.config.mjs` sets `site: 'https://polarischain.org'` and no `base`.
+The domain is registered with Cloudflare, whose DNS points it at GitHub
+Pages, and GitHub issues the HTTPS certificate:
 
-👉 https://ptposa.github.io/polarischain-web/
+👉 https://polarischain.org/
 
-A custom domain is planned but not configured yet. Switching to one
-means dropping `base` and updating `site` accordingly.
+The old address, https://ptposa.github.io/polarischain-web/, redirects
+to the custom domain.
 
 The generated `/dist` output remains compatible with any static host
 (Nginx, IIS, Vercel, Netlify).
@@ -218,9 +220,6 @@ Just as navigators relied on the **Polaris star** to find their way across the o
 
 The PolarisChain platform is available online:
 
-👉 https://ptposa.github.io/polarischain-web/
+👉 https://polarischain.org/
 
 Experience the graph-based trust model and explore federated PKI concepts in a real environment.
-
-The `polarischain.org` domain is reserved for future use and does not
-serve the site yet.
