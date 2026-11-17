@@ -4,9 +4,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  // GitHub Pages project site: https://ptposa.github.io/polarischain-web
-  site: 'https://ptposa.github.io',
-  base: '/polarischain-web',
+  // GitHub Pages with a custom domain, served from the root
+  site: 'https://polarischain.org',
   output: 'static',
   vite: {
     plugins: [tailwindcss()],
