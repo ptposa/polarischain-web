@@ -290,6 +290,9 @@ const exEdges = [
     <p>
       The receiver does not search for a path from a root but from one of its anchors, and each anchor entry starts the validation in an initial state <span class="m">s<sub>0</sub>(d, tp)</span> that the receiver fixes, with the names it starts from, the policies it accepts and its depth. A service that authorises by certificate policies demands them here, as the initial policy set of its anchors with explicit policy, so that every admissible path credits at least one policy accepted for that service. If that set gathers policies that grant different rights, the closing step may return different subsets depending on the path, and the service then authorises with the output of the validated path and not with the initial set.
     </p>
+  </div>
+
+  <div class="prose">
     <p>
       A cryptographic floor is the least level the receiver demands of each CA on the path, the
       anchor included, and it is a pair that is compared component by component:
