@@ -220,7 +220,7 @@ const exEdges = [
       edges depends on the instant, so a question about the past is the same question asked at another <span class="m">t</span>. Finally, it is <strong>common</strong>, because none of its components depends on who queries
       it, and two domains that compile the same material therefore obtain exactly the same graph.
       <span class="sn"
-        ><b>Nodes are keys.</b> When a CA rotates its key, the new key is a new node, whether or
+        ><b>Nodes are keys</b> When a CA rotates its key, the new key is a new node, whether or
         not the algorithm changes, and since a cross-certificate certifies a single key, whatever
         the CA signs with the next one can no longer be reached through it.</span
       >
@@ -243,7 +243,7 @@ const exEdges = [
       These conditions do not constrain paths but decide whether there is an edge at all, which is
       why they are not part of <span class="m">Φ</span>. Each edge also carries four data that are not constraints: the signature algorithm of its certificate <span class="m">sigalg(e)</span>, the names it presents <span class="m">nm(e)</span>, the self-issued mark <span class="m">si(e)</span>, and the permission <span class="m">crl(e)</span>, which holds when its <code class="x509">keyUsage</code> carries <code class="x509">cRLSign</code> and decides whether the revocation lists signed by the certified key count for whoever reaches it through that edge.
       <span class="sn"
-        ><b>Why not issuer and serial number.</b> An edge is identified by the signed content of its certificate together with the key that signs it, <span class="m">id(e)</span> = SHA-256(<code class="x509">tbsCertificate</code>, issuer key). Uniqueness of a serial number holds inside one
+        ><b>Why not issuer and serial number</b> An edge is identified by the signed content of its certificate together with the key that signs it, <span class="m">id(e)</span> = SHA-256(<code class="x509">tbsCertificate</code>, issuer key). Uniqueness of a serial number holds inside one
         CA, and two unrelated CAs of a federation may share a name.</span
       >
     </p>
@@ -309,7 +309,7 @@ const exEdges = [
       which leaves ML-DSA-44 out. Raising the floor, removing an algorithm or excluding a key takes
       a subgraph of the common graph, the only part the receiver walks, so those decisions can only remove paths.
       <span class="sn"
-        ><b>A list of floors expresses a preference.</b> An adversary who breaks the algorithm of a node presents a certificate fabricated under that node, and if its only path meets the last floor of the list the receiver admits it. The guarantee against forgery is therefore that of the last floor of the list, and no higher.</span
+        ><b>A list of floors expresses a preference</b> An adversary who breaks the algorithm of a node presents a certificate fabricated under that node, and if its only path meets the last floor of the list the receiver admits it. The guarantee against forgery is therefore that of the last floor of the list, and no higher.</span
       >
     </p>
   </div>
@@ -335,7 +335,7 @@ const exEdges = [
       price <span class="m">κ<sub>d</sub></span> says how many octets crossing one boundary is worth to the receiver, so
       the cost of a path is measured in octet-equivalents and computed in exact arithmetic.
       <span class="sn"
-        ><b>One parameter is enough.</b> Selection does not change if every cost is multiplied by
+        ><b>One parameter is enough</b> Selection does not change if every cost is multiplied by
         the same positive constant, so two weights and a scale choose exactly what <span class="m">κ<sub>d</sub></span>{' '}
         chooses.</span
       >
@@ -451,7 +451,7 @@ const exEdges = [
     <p>
       The transition <span class="m">δ</span> reads from each edge its constraints, the names it presents and its self-issued mark, and returns the next state or the failure state <span class="m">⊥</span>, which is never left. The closing step <span class="m">fin<sub>t</sub></span> processes the presented certificate as the last one and returns the valid policies restricted by the user, the output RFC 9618 fixes. A path satisfies <span class="m">Φ</span> for <span class="m">c</span> when it never falls to <span class="m">⊥</span> and the closing step accepts it.
       <span class="sn"
-        ><b>The only adaptation.</b> RFC 5280 starts its counters with the length of a path that the search does not yet know, whereas the model starts them at <span class="m">∞</span> and reaches the same decisions, because a path of <span class="m">n</span> certificates applies at most <span class="m">n</span> decrements and the algorithm only asks whether a counter is zero.</span
+        ><b>The only adaptation</b> RFC 5280 starts its counters with the length of a path that the search does not yet know, whereas the model starts them at <span class="m">∞</span> and reaches the same decisions, because a path of <span class="m">n</span> certificates applies at most <span class="m">n</span> decrements and the algorithm only asks whether a counter is zero.</span
       >
     </p>
   </div>
@@ -492,7 +492,7 @@ const exEdges = [
     <p>
       The state of each certificate is resolved by induction along the path, in which the anchor credits the first certificate with its list, the key that this one certifies credits the second, and the issuing CA finally credits the presented certificate, so the definition ends without recursion. A list only counts if its key may sign it for whoever reaches it along <span class="m">P</span>, a permission that for the keys of the path is <span class="m">crl(e<sub>i−1</sub>)</span>, because RFC 10007 has required since June 2026 that the certificate of a list signer carry <code class="x509">cRLSign</code>, and that for the anchor is granted by the anchor entry. The value of <span class="m">rev<sub>d</sub></span> is the same along any path and the permission is not, so two cross-certificates to the same key can give paths with different states.
       <span class="sn"
-        ><b>Two profiles of evidence.</b> The standards admit two further signers, an OCSP responder delegated by the issuing key and another key of the same CA after a rotation. Both need an auxiliary path to the same anchor and their dependencies can close in a cycle, so this work leaves them as an extended profile, declared and not proved, and states its results for the direct profile, which is also the one of the laboratory.</span
+        ><b>Two profiles of evidence</b> The standards admit two further signers, an OCSP responder delegated by the issuing key and another key of the same CA after a rotation. Both need an auxiliary path to the same anchor and their dependencies can close in a cycle, so this work leaves them as an extended profile, declared and not proved, and states its results for the direct profile, which is also the one of the laboratory.</span
       >
     </p>
     <p>
@@ -532,7 +532,7 @@ const exEdges = [
       admission does not depend on the cost, which decides which of the admissible paths is validated, recorded and explained, and that
       makes the route Audit keeps deterministic and reproducible.
       <span class="sn"
-        ><b>Two outputs that must not be confused.</b> <span class="m">s*</span> is the state the path reaches before the
+        ><b>Two outputs that must not be confused</b> <span class="m">s*</span> is the state the path reaches before the
         presented certificate and explains the decision, whereas <span class="m">o*</span> is the output of the closing step, with
         the valid policies of RFC 9618, and the only one that a service may use to
         authorise.</span

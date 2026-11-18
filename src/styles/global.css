@@ -332,6 +332,14 @@ sup {
   color: inherit;
 }
 
+/* The head of a margin note is its label, on a line of its own and a little
+   lighter than the note, as the label of a key idea. */
+.sn:not(.sn--key) > b:first-child {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--text-soft);
+}
+
 /* A key idea in the margin: the sentence a reader should keep from the
    section, as the key boxes of the thesis. Set in the text face, with the
    brass rule of the statements. */
