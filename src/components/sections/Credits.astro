@@ -1,30 +1,11 @@
 ---
-import { normative, informative } from '../../data/references';
+import { normative, informative, cited } from '../../data/references';
 
-// References cited on this page, in the style of the references section of
-// an RFC: a key in brackets, then the entry. Each one is a link target.
-// Only the works this page cites, in the order in which it first cites them.
-const pick = [
-  'Hiller2020',
-  'BZ2083449',
-  'WorldBank',
-  'FPKI-PDVAL',
-  'RFC5280',
-  'RFC4158',
-  'RFC5055',
-  'ARMOR2024',
-  'Verdict2025',
-  'RFC9618',
-  'RFC9608',
-  'RFC10007',
-  'FIPS204',
-  'RFC10073',
-  'Gabow1976',
-  'RFC6962',
-  'RFC9810',
-];
+// References cited on this page, numbered in brackets as in the thesis
+// report, in the order in which the page first cites them. Each one is a
+// link target.
 const all = [...normative, ...informative];
-const refs = pick.map((k) => all.find((r) => r.key === k)).filter((r) => r !== undefined);
+const refs = cited.map((k) => all.find((r) => r.key === k)).filter((r) => r !== undefined);
 ---
 
 <section class="chapter credits" id="references" aria-labelledby="references-h">
@@ -34,9 +15,9 @@ const refs = pick.map((k) => all.find((r) => r.key === k)).filter((r) => r !== u
 
     <ol class="refs">
       {
-        refs.map((r) => (
+        refs.map((r, i) => (
           <li id={`ref-${r.key}`}>
-            <span class="refs__key">[{r.key}]</span>
+            <span class="refs__key">[{i + 1}]</span>
             <span>
               {r.url ? (
                 <a href={r.url} target="_blank" rel="noreferrer">
@@ -132,8 +113,8 @@ const refs = pick.map((k) => all.find((r) => r.key === k)).filter((r) => r !== u
   }
   .refs li {
     display: grid;
-    grid-template-columns: 8.5rem 1fr;
-    gap: 1rem;
+    grid-template-columns: 2.6rem 1fr;
+    gap: 0.6rem;
     padding: 0.45rem 0;
     font-size: 1rem;
     line-height: 1.5;
@@ -207,8 +188,8 @@ const refs = pick.map((k) => all.find((r) => r.key === k)).filter((r) => r !== u
 
   @media (max-width: 560px) {
     .refs li {
-      grid-template-columns: 1fr;
-      gap: 0.1rem;
+      grid-template-columns: 2.2rem 1fr;
+      gap: 0.4rem;
     }
   }
 </style>

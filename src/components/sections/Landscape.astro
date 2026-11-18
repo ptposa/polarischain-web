@@ -1,4 +1,5 @@
 ---
+import { cite, citeNum } from '../../data/references';
 import Chapter from '../Chapter.astro';
 import Figure from '../Figure.astro';
 import FigFederationModels from '../figures/FigFederationModels.astro';
@@ -49,7 +50,7 @@ const related = [
     </p>
   </div>
 
-  <Figure num={1} class="figure--text" caption="The four federation models, after the World Bank taxonomy <a href='#ref-WorldBank'>[WorldBank]</a>.">
+  <Figure num={1} class="figure--text" caption={`The four federation models, after the World Bank taxonomy ${cite('WorldBank')}.`}>
     <FigFederationModels />
   </Figure>
 
@@ -61,7 +62,7 @@ const related = [
     </p>
   </div>
 
-  <Figure num={2} caption="One credential, two valid paths. Redrawn from the Federal PKI path discovery and validation playbook <a href='#ref-FPKI-PDVAL'>[FPKI-PDVAL]</a>.">
+  <Figure num={2} caption={`One credential, two valid paths. Redrawn from the Federal PKI path discovery and validation playbook ${cite('FPKI-PDVAL')}.`}>
     <FigTwoPaths />
   </Figure>
 
@@ -93,8 +94,12 @@ const related = [
           related.map((r) => (
             <tr>
               <th scope="row">
-                {r.who} <a href={`#ref-${r.ref}`}>[{r.ref}]</a>
-                {r.ref2 && <a href={`#ref-${r.ref2}`}>[{r.ref2}]</a>}
+                {r.who} <a href={`#ref-${r.ref}`}>[{citeNum(r.ref)}]</a>
+                {r.ref2 && (
+                  <>
+                    , <a href={`#ref-${r.ref2}`}>[{citeNum(r.ref2)}]</a>
+                  </>
+                )}
               </th>
               <td data-label="What it does">{r.does}</td>
               <td data-label="What it leaves open">{r.open}</td>

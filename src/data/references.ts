@@ -66,3 +66,38 @@ export const informative: Reference[] = [
   { key: "StaticCT", text: 'C2SP, "The Static Certificate Transparency API", version v1.1.0, 20 March 2026.', url: "https://c2sp.org/static-ct-api" },
   { key: "WorldBank", text: 'Tullis, C. and D. Black, "Public Key Infrastructure: Implementing High-Trust Electronic Signatures", Digital Public Infrastructure Policy Note Series, World Bank, December 2024.' },
 ];
+
+/**
+ * The works this page cites, in the order in which it first cites them. As
+ * in the thesis report, each one is cited by its number in brackets, and the
+ * list of references follows this order.
+ */
+export const cited: string[] = [
+  "Hiller2020",
+  "BZ2083449",
+  "WorldBank",
+  "FPKI-PDVAL",
+  "RFC5280",
+  "RFC4158",
+  "RFC5055",
+  "ARMOR2024",
+  "Verdict2025",
+  "RFC9618",
+  "RFC9608",
+  "RFC10007",
+  "FIPS204",
+  "RFC10073",
+  "Gabow1976",
+  "RFC6962",
+  "RFC9810",
+];
+
+/** The number of a cited work, starting at 1. */
+export function citeNum(key: string): number {
+  const i = cited.indexOf(key);
+  if (i < 0) throw new Error(`Reference not in the cited list: ${key}`);
+  return i + 1;
+}
+
+/** A citation as HTML, for captions written as strings. */
+export const cite = (key: string): string => `<a href="#ref-${key}">[${citeNum(key)}]</a>`;
