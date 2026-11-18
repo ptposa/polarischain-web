@@ -329,7 +329,7 @@ sup {
 
 .sn b {
   font-weight: inherit;
-  color: var(--text-soft);
+  color: inherit;
 }
 
 /* A key idea in the margin: the sentence a reader should keep from the
