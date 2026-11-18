@@ -53,8 +53,9 @@
   --ieee-yellow-75: var(--brass-soft);
   --ieee-red: #b9564f;
   --ieee-red-50: #dc9388;
-  --ieee-purple: #8c6aa3;
-  --ieee-purple-50: #b8a3c9;
+  /* The official IEEE Purple and its 50% tint. */
+  --ieee-purple: #981d97;
+  --ieee-purple-50: #d195ca;
   --ieee-green: #5d9870;
   --ieee-green-50: #9fc2a6;
   --ieee-gray: #7e8590;
@@ -71,7 +72,7 @@
   /* Names from the X.509 profile (extensions, fields): the 50% tint of IEEE
      Purple, which no other element of the text uses, so it keeps clear of
      the brass, the cyan of the links and the colours of the stages. */
-  --x509: #d195ca;
+  --x509: var(--ieee-purple-50);
   --tan: var(--brass);
   /* The ink of the formulas: a toasted brown, as in the original page. */
   --ink-eq: #d2a77f;
