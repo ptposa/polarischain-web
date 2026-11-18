@@ -184,15 +184,15 @@ const exEdges = [
 <Chapter id="model" num="5" kicker="The model" title="One common graph, read by each receiver">
   <div class="prose">
     <p>
-      The model rests on a single object: the certification graph of the federation at an instant.
-      Every domain compiles it the same way from the same published material, and each receiver
-      then queries it with its own policy.
+      The model rests on a single object, the certification graph of the federation at a given instant,
+      which every domain compiles in the same way from the same published material and which each
+      receiver then queries with its own policy.
       <span class="sn sn--key"
         ><b>Key idea</b> There is one logical graph and there are as many queries as receivers, so two receivers that query the same graph can obtain different routes, which is exactly what the model intends.</span
       >
     </p>
     <p>
-      The examples use the names of the use case throughout. Domain A publishes its systems under <code class="dns">altair.example</code>, and the cross-certificate that Intermediate B issues to Intermediate A permits the names of <code class="dns">ops.altair.example</code>, its operations department, while it excludes <code class="dns">ext.ops.altair.example</code>, where A enrols the machines of its contractors. The client is <code class="dns">erp.ops.altair.example</code>, and B demands of it its own certificate policy <span class="m">p<sub>B</sub></span>, which the cross-certificate maps to the policy <span class="m">p<sub>A</sub></span> of A.
+      Every example takes its names from the use case, in which domain A publishes its systems under <code class="dns">altair.example</code> and the cross-certificate that Intermediate B issues to Intermediate A permits the names under <code class="dns">ops.altair.example</code>, those of its operations department, while it excludes <code class="dns">ext.ops.altair.example</code>, where A enrols the machines of its contractors. The client throughout is <code class="dns">erp.ops.altair.example</code>, from which B demands its own certificate policy <span class="m">p<sub>B</sub></span>, a policy that the cross-certificate maps to the policy <span class="m">p<sub>A</sub></span> of A.
     </p>
   </div>
 
@@ -217,12 +217,12 @@ const exEdges = [
       The expression <a class="eqref" href="#eq-1">(1)</a> already holds the three traits of the model, and the first is that the graph is{' '}
       <strong>governed</strong>, because its edges carry the constraints of their certificates and a
       path is only good if it respects them all. It is <strong>temporal</strong>, because the set of
-      edges depends on the instant, so a question about the past is the same question asked at another <span class="m">t</span>. And it is <strong>common</strong>: none of its components depends on who queries
-      it, so two domains that compile the same material obtain exactly the same graph.
+      edges depends on the instant, so a question about the past is the same question asked at another <span class="m">t</span>. Finally, it is <strong>common</strong>, because none of its components depends on who queries
+      it, and two domains that compile the same material therefore obtain exactly the same graph.
       <span class="sn"
         ><b>Nodes are keys.</b> When a CA rotates its key, the new key is a new node, whether or
-        not the algorithm changes. A cross-certificate certifies one key: what the CA signs with
-        the next one is no longer reachable through it.</span
+        not the algorithm changes, and since a cross-certificate certifies a single key, whatever
+        the CA signs with the next one can no longer be reached through it.</span
       >
     </p>
     <p>
@@ -240,14 +240,14 @@ const exEdges = [
       {edgeConds.map((c) => <li set:html={c} />)}
     </ol>
     <p>
-      These conditions do not constrain paths: they decide whether there is an edge at all, and so
-      they are not part of <span class="m">Φ</span>. Each edge also carries four data that are not constraints: the signature algorithm of its certificate <span class="m">sigalg(e)</span>, the names it presents <span class="m">nm(e)</span>, the self-issued mark <span class="m">si(e)</span>, and the permission <span class="m">crl(e)</span>, which holds when its <code class="x509">keyUsage</code> carries <code class="x509">cRLSign</code> and decides whether the revocation lists signed by the certified key count for whoever reaches it through that edge.
+      These conditions do not constrain paths but decide whether there is an edge at all, which is
+      why they are not part of <span class="m">Φ</span>. Each edge also carries four data that are not constraints: the signature algorithm of its certificate <span class="m">sigalg(e)</span>, the names it presents <span class="m">nm(e)</span>, the self-issued mark <span class="m">si(e)</span>, and the permission <span class="m">crl(e)</span>, which holds when its <code class="x509">keyUsage</code> carries <code class="x509">cRLSign</code> and decides whether the revocation lists signed by the certified key count for whoever reaches it through that edge.
       <span class="sn"
         ><b>Why not issuer and serial number.</b> An edge is identified by the signed content of its certificate together with the key that signs it, <span class="m">id(e)</span> = SHA-256(<code class="x509">tbsCertificate</code>, issuer key). Uniqueness of a serial number holds inside one
         CA, and two unrelated CAs of a federation may share a name.</span
       >
     </p>
-    <p>Of all the edges, the graph at <span class="m">t</span> keeps those within their validity period:</p>
+    <p>Of all the edges in the material, the graph at the instant <span class="m">t</span> keeps only those whose certificates are within their validity period at that instant:</p>
   </div>
 
   <div class="eq" role="math" aria-label="Edges at the instant t">
@@ -258,7 +258,7 @@ const exEdges = [
 
   <div class="prose">
     <p>
-      The revocation state cannot be part of the common graph. Evidence only counts if whoever signs it has authority over the certificate, and RFC 5280 binds that authority to the receiver, since the key that signs a revocation list has to validate up to the same anchor as the chain (section 6.3.3 (f)). A common verdict would have to decide that authority without knowing the anchor, and it would then be enough for a member to certify a key of its own under the name of a foreign CA to withdraw that CA’s certificates from every receiver. Each receiver <span class="m">d</span> therefore resolves the state <span class="m">rev<sub>d</sub>(x, t)</span> of a certificate at admission, with three values, because not knowing whether a certificate is revoked is not the same as knowing it is not.
+      The revocation state, on the other hand, cannot be part of the common graph, because evidence only counts when whoever signs it has authority over the certificate, and RFC 5280 binds that authority to the receiver by requiring the key that signs a revocation list to validate up to the same anchor as the chain (section 6.3.3 (f)). A common verdict would have to decide that authority without knowing the anchor, and it would then be enough for a member to certify a key of its own under the name of a foreign CA to withdraw that CA’s certificates from every receiver. Each receiver <span class="m">d</span> therefore resolves the state <span class="m">rev<sub>d</sub>(x, t)</span> of a certificate at admission, with three values, because not knowing whether a certificate is revoked is not the same as knowing it is not.
     </p>
   </div>
 
@@ -317,7 +317,7 @@ const exEdges = [
   <h3 class="sub"><span>5.3</span> The cost, and why posture is not in it</h3>
   <div class="prose">
     <p>
-      Among the paths the policy lets it consider, the receiver prefers the cheapest. The cost has two levels, the common facts on the edge and the price that one receiver puts on them with a single parameter.
+      Among the paths that its policy lets it consider, the receiver prefers the cheapest, and the cost that decides between them has two levels, the common facts carried by each edge and the price that one receiver puts on them through a single parameter.
     </p>
   </div>
 
@@ -330,7 +330,7 @@ const exEdges = [
   <div class="prose">
     <p>
       The first term of <a class="eqref" href="#eq-6">(6)</a>, <span class="m">b(e)</span>, measures in octets the two parts of a certificate that depend on the
-      algorithm: the public key it carries and the signature that closes it. The second,{' '}
+      algorithm, namely the public key it carries and the signature that closes it, while the second,{' '}
       <span class="m">c<sub>dist</sub>(e)</span>, is 1 when the two keys belong to different administrative domains. The
       price <span class="m">κ<sub>d</sub></span> says how many octets crossing one boundary is worth to the receiver, so
       the cost of a path is measured in octet-equivalents and computed in exact arithmetic.
@@ -451,7 +451,7 @@ const exEdges = [
     <p>
       The transition <span class="m">δ</span> reads from each edge its constraints, the names it presents and its self-issued mark, and returns the next state or the failure state <span class="m">⊥</span>, which is never left. The closing step <span class="m">fin<sub>t</sub></span> processes the presented certificate as the last one and returns the valid policies restricted by the user, the output RFC 9618 fixes. A path satisfies <span class="m">Φ</span> for <span class="m">c</span> when it never falls to <span class="m">⊥</span> and the closing step accepts it.
       <span class="sn"
-        ><b>The only adaptation.</b> RFC 5280 starts its counters with the length of a path that the search does not yet know. The model starts them at <span class="m">∞</span>, which gives the same decisions, because a path of <span class="m">n</span> certificates applies at most <span class="m">n</span> decrements and the algorithm only asks whether a counter is zero.</span
+        ><b>The only adaptation.</b> RFC 5280 starts its counters with the length of a path that the search does not yet know, whereas the model starts them at <span class="m">∞</span> and reaches the same decisions, because a path of <span class="m">n</span> certificates applies at most <span class="m">n</span> decrements and the algorithm only asks whether a counter is zero.</span
       >
     </p>
   </div>
@@ -484,19 +484,19 @@ const exEdges = [
   </div>
   <Where items={where9} label="Components of (9)" />
 
-  <Figure num={6} caption="The conditions of an admissible path read over the use-case route: each column is a condition of Definition 2 and says what it checks on each certificate, and the paths that pass all four go on to the selection. Hover or focus a condition of the legend to light its column.">
+  <Figure num={6} caption="The conditions of an admissible path over the use-case route, and the selection among the paths that meet them.">
     <FigAdmissionMap />
   </Figure>
 
   <div class="prose">
     <p>
-      The state of each certificate is resolved by induction along the path. The anchor credits with its list the first certificate, the key that this certifies credits the second, and the issuing CA credits at the end the presented certificate, so the definition ends without recursion. A list only counts if its key may sign it for whoever reaches it along <span class="m">P</span>: for the keys of the path that permission is <span class="m">crl(e<sub>i−1</sub>)</span>, because RFC 10007 demands since June 2026 that the certificate of a list signer carry <code class="x509">cRLSign</code>, and for the anchor it is granted by the anchor entry. The value of <span class="m">rev<sub>d</sub></span> is the same along any path and the permission is not, so two cross-certificates to the same key can give paths with different states.
+      The state of each certificate is resolved by induction along the path, in which the anchor credits the first certificate with its list, the key that this one certifies credits the second, and the issuing CA finally credits the presented certificate, so the definition ends without recursion. A list only counts if its key may sign it for whoever reaches it along <span class="m">P</span>, a permission that for the keys of the path is <span class="m">crl(e<sub>i−1</sub>)</span>, because RFC 10007 has required since June 2026 that the certificate of a list signer carry <code class="x509">cRLSign</code>, and that for the anchor is granted by the anchor entry. The value of <span class="m">rev<sub>d</sub></span> is the same along any path and the permission is not, so two cross-certificates to the same key can give paths with different states.
       <span class="sn"
         ><b>Two profiles of evidence.</b> The standards admit two further signers, an OCSP responder delegated by the issuing key and another key of the same CA after a rotation. Both need an auxiliary path to the same anchor and their dependencies can close in a cycle, so this work leaves them as an extended profile, declared and not proved, and states its results for the direct profile, which is also the one of the laboratory.</span
       >
     </p>
     <p>
-      The presented certificate is bound into every expression, because the constraints of a cross-certificate apply to everything that comes after it. Three clients of the same Issuing A have the same candidate path and it is admissible for only one: it serves <code class="dns">erp.ops.altair.example</code>, but not <code class="dns">nominas.rrhh.altair.example</code>, which falls outside the permitted subtree, nor <code class="dns">portatil7.ext.ops.altair.example</code>, which falls in the excluded one.
+      The presented certificate is bound into every expression, because the constraints of a cross-certificate apply to everything that comes after it. Three clients of the same Issuing A share the same candidate path, and yet it is admissible for only one of them, since it serves <code class="dns">erp.ops.altair.example</code> but not <code class="dns">nominas.rrhh.altair.example</code>, which falls outside the permitted subtree, nor <code class="dns">portatil7.ext.ops.altair.example</code>, which falls in the excluded one.
     </p>
   </div>
 
@@ -521,8 +521,8 @@ const exEdges = [
   <div class="prose">
     <p>
       The search universe <span class="m">𝒰<sub>d</sub></span> is the set of simple paths of the key graph with at most{' '}
-      <span class="m">L<sub>d</sub></span> CA certificates: no key is visited twice, the rule RFC 4158 recommends, which
-      implies the no-repeated-certificate rule of RFC 5280. The universe is finite, so if any path is admissible there is an optimum and <span class="m">Sel</span> makes it unique, and the search the thesis implements enumerates its admissible paths exactly, which is feasible on the topologies of the laboratory.
+      <span class="m">L<sub>d</sub></span> CA certificates, so that no key is visited twice, which is the rule RFC 4158 recommends and
+      implies the rule of RFC 5280 that no certificate is repeated. The universe is finite, so if any path is admissible there is an optimum and <span class="m">Sel</span> makes it unique, and the search the thesis implements enumerates its admissible paths exactly, which is feasible on the topologies of the laboratory.
     </p>
     <p>
       Admission <a class="eqref" href="#eq-8">(8)</a> is binary and comes first, whereas preference <a class="eqref" href="#eq-10">(10)</a> only orders the paths that were admitted. The security of
@@ -530,8 +530,8 @@ const exEdges = [
       makes the route Audit keeps deterministic and reproducible.
       <span class="sn"
         ><b>Two outputs that must not be confused.</b> <span class="m">s*</span> is the state the path reaches before the
-        presented certificate; it explains the decision. <span class="m">o*</span> is the output of the closing step, with
-        the valid policies of RFC 9618, and it is the only one a service may use to
+        presented certificate and explains the decision, whereas <span class="m">o*</span> is the output of the closing step, with
+        the valid policies of RFC 9618, and the only one that a service may use to
         authorise.</span
       >
     </p>
@@ -544,11 +544,11 @@ const exEdges = [
   <h3 class="sub"><span>5.6</span> A worked example</h3>
   <div class="prose">
     <p>
-      With admission and selection defined, a whole case can be solved. Receiver B has Root B as its anchor, demands <span class="m">τ<sub>B</sub></span> = (<code>hybrid</code>, 0), accepts
+      With admission and selection defined, a whole case can be solved for receiver B, whose anchor is Root B and whose floor is <span class="m">τ<sub>B</sub></span> = (<code>hybrid</code>, 0), and which accepts
       up to five CA certificates and prices a boundary at <span class="m">κ<sub>B</sub></span> = 6,000 octets. The
-      presented certificate was issued by Issuing C, an ML-DSA-65 CA of domain C, and four candidate paths lead to it. The floor removes the one through domain A at its first crossing, because
-      Intermediate A1 is (<code>traditional</code>, 0). The depth budget removes the one through
-      the bridge on an internal edge of domain C, which is only detected because the graph holds
+      presented certificate was issued by Issuing C, an ML-DSA-65 CA of domain C, and four candidate paths lead to it. The floor removes the path through domain A at its first crossing, because
+      Intermediate A1 is (<code>traditional</code>, 0), while the depth budget removes the path through
+      the bridge on an internal edge of domain C, which can only be detected because the graph holds
       internal edges too.
     </p>
   </div>
@@ -587,15 +587,15 @@ const exEdges = [
 
   <div class="prose">
     <p>
-      C₁ costs 22,289 and C₄ costs 24,046, so C₁ wins, and since both cross one boundary and differ only in 1,757 octets, it wins for any <span class="m">κ</span>. It is the right result: both have the same limiting
-      profile, (<code>hybrid</code>, 3), that of Root B and Intermediate B, and all the ML-DSA-87
-      intermediate of C₄ adds is octets. If the level entered the cost, C₄ could win for having one
+      C₁ costs 22,289 and C₄ costs 24,046, so C₁ wins, and since both cross one boundary and differ only in 1,757 octets, it wins for any <span class="m">κ</span>. This is the right result, because both share the limiting
+      profile (<code>hybrid</code>, 3) of Root B and Intermediate B and the ML-DSA-87
+      intermediate of C₄ adds nothing but octets, so if the level entered the cost, C₄ could win for having one
       more post-quantum node without being any more resistant.
     </p>
     <p>
-      The policy changes the optimum in two ways that can be computed, and the first is the floor: a receiver B′ of the same
+      The policy changes the optimum in two ways that can be computed, the first of which is the floor, since a receiver B′ of the same
       domain with a traditional floor also admits C₂, which crosses two boundaries and carries 5,261
-      octets less than C₁. C₂ wins as soon as a boundary is worth less than that to the receiver. The example leaves a prediction the laboratory can check, that B selects C₁, and not a proof of the integration, which belongs to the experimental validation.
+      octets less than C₁. The second is the price of a boundary, because C₂ then wins as soon as a boundary is worth less than those octets to the receiver. The example leaves a prediction the laboratory can check, that B selects C₁, and not a proof of the integration, which belongs to the experimental validation.
     </p>
   </div>
 
@@ -613,11 +613,11 @@ const exEdges = [
 
   <div class="thm">
     <p>
-      <b>Proposition 1 (dominance).</b> A label at the key <span class="m">x</span> with anchor entry <span class="m">tp</span>, state <span class="m">s</span>, visited keys <span class="m">U</span> and selection key <span class="m">k</span> dominates another at the same key and anchor with <span class="m">(s′, U′, k′)</span> when <span class="m">s</span> is at least as permissive as <span class="m">s′</span>, <span class="m">U ⊆ U′</span>, <span class="m">k ≤ k′</span> and the first carries the permission <span class="m">crl</span> whenever the second does. The dominated label can be discarded
+      <b>Proposition 1 (dominance).</b> A label at the key <span class="m">x</span> with anchor entry <span class="m">tp</span>, state <span class="m">s</span>, visited keys <span class="m">U</span> and selection key <span class="m">k</span> dominates another at the same key and anchor with <span class="m">(s′, U′, k′)</span> when <span class="m">s</span> is at least as permissive as <span class="m">s′</span>, <span class="m">U ⊆ U′</span>, <span class="m">k ≤ k′</span> and the first carries the permission <span class="m">crl</span> whenever the second does, in which case the dominated label can be discarded
       without losing the selected path.
     </p>
     <p class="status">
-      <b>Proved by argument</b> for the relation defined by accepted continuations. A relation that can be computed component by component and implies it remains open.
+      <b>Proved by argument</b> for the relation defined by accepted continuations, whereas a relation that can be computed component by component and implies it remains open.
     </p>
   </div>
 
@@ -679,7 +679,7 @@ const exEdges = [
       <b>Proposition 4 (confinement).</b> In the direct profile, with the same policy and the same valid anchor entries, let <span class="m">M</span> and <span class="m">M′</span> be two snapshots that meet <span class="m">fresh<sub>d</sub></span> at <span class="m">t</span> and hold the same objects signed by keys of the cone, <span class="m">Obj<sub>d</sub>(M, t) = Obj<sub>d</sub>(M′, t)</span>. Then <span class="m">P<sub>adm</sub>(d, c, t, τ)</span> is the same with both, for every presented certificate <span class="m">c</span> and every floor <span class="m">τ</span> of the list.
     </p>
     <p class="status">
-      <b>Proved by argument</b> for the direct profile. The cones of the two snapshots coincide, every path of the receiver starts at an anchor, and in the direct profile the evidence of each certificate is signed by the key that issued it, which is a node of the path. Not reviewed by third parties nor checked by simulation; in the extended profile it is not proved.
+      <b>Proved by argument</b> for the direct profile, since the cones of the two snapshots coincide, every path of the receiver starts at an anchor and, in the direct profile, the evidence of each certificate is signed by the key that issued it, which is a node of the path. The result has not been reviewed by third parties nor checked by simulation, and it is not proved for the extended profile.
     </p>
   </div>
 

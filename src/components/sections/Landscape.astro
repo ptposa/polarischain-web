@@ -10,13 +10,13 @@ const related = [
   {
     who: 'RFC 5280, section 6',
     does: 'Validates a certification path in full detail.',
-    open: 'Its first input is the path, already built. It neither searches nor prefers.',
+    open: 'Its first input is a path that has already been built, so it neither searches nor prefers.',
     ref: 'RFC5280',
   },
   {
     who: 'RFC 4158',
     does: 'Describes how to build paths and how to sort candidates heuristically.',
-    open: 'Informational. It gives no criterion that makes one valid path better than another.',
+    open: 'As an informational document, it gives no criterion that makes one valid path better than another.',
     ref: 'RFC4158',
   },
   {
@@ -27,8 +27,8 @@ const related = [
   },
   {
     who: 'ARMOR and Verdict',
-    does: 'Formally verified validators: the acceptance decision is proved against a specification.',
-    open: 'They verify whether a chain is acceptable. They do not order the acceptable ones.',
+    does: 'Formally verified validators, whose acceptance decision is proved against a specification.',
+    open: 'They verify whether a chain is acceptable, but they do not order the acceptable ones.',
     ref: 'ARMOR2024',
     ref2: 'Verdict2025',
   },
@@ -42,7 +42,7 @@ const related = [
       certificates up to an anchor that the verifier has chosen. Inside one organisation the problem is solved; the difficulty begins when <strong>sovereign domains, each with its own policies and its own
       cryptography, need to accept each other’s identities</strong>.
       <span class="sn"
-        ><b>Where the crossings are.</b> Cross-certificates are issued between intermediate CAs, never from a root: the root stays offline and only certifies its own subordinates.</span
+        ><b>Where the crossings are.</b> Cross-certificates are issued between intermediate CAs and never from a root, because the root stays offline and only certifies its own subordinates.</span
       >
     </p>
     <p>
@@ -72,11 +72,11 @@ const related = [
   <div class="prose">
     <p>
       The standards and the verified validators answer a different question from the one asked
-      here. A validator, verified or not, takes a chain and a policy and says yes or no. This work
+      here, because a validator, verified or not, takes a chain and a policy and says yes or no, whereas this work
       takes a federation and a receiver and says which chains exist for a certificate, which one the
-      receiver prefers, and what would change if a cross-certificate were issued. The two are
-      complementary: the path the model selects still has to pass a validator, and a verified one
-      is a candidate for that final check.
+      receiver prefers and what would change if a cross-certificate were issued. The two approaches are therefore
+      complementary, since the path the model selects still has to pass a validator, and a verified validator
+      is a natural candidate for that final check.
       <span class="sn"
         ><b>Verdict</b> is the closest work to this one, although the question it answers is a different one. Its policy is a first-order predicate over one chain and its path builder is specified over the paths that repeat no certificate, so the universe searched here (paths that repeat no key) is a subset of Verdict’s.</span
       >

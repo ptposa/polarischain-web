@@ -10,8 +10,8 @@ const domains = [
 // Two checks run before the laboratory was built, to know what the standard
 // validator of the platform can and cannot do.
 const checks = [
-  ['12 Nov 2026', 'OpenSSL 3.5 on Linux', 'Validates ML-DSA chains. Knows no composite signature algorithm. An intermediate as the only anchor needs the partial-chain option.'],
-  ['13 Nov 2026', '.NET 11 X509Chain, Linux and Windows', 'Validates ECDSA P-384 and ML-DSA-65 chains and detects an altered signature in both. An intermediate as the only anchor gives PartialChain, which does not affect the use case: its anchor is the self-signed root of B.'],
+  ['12 Nov 2026', 'OpenSSL 3.5 on Linux', 'Validates ML-DSA chains but knows no composite signature algorithm, and an intermediate as the only anchor needs the partial-chain option.'],
+  ['13 Nov 2026', '.NET 11 X509Chain, Linux and Windows', 'Validates ECDSA P-384 and ML-DSA-65 chains and detects an altered signature in both. An intermediate as the only anchor gives PartialChain, which does not affect the use case because its anchor is the self-signed root of B.'],
   ['13 Nov 2026', '.NET 11 X509Chain, composite chain', 'On Linux it throws an OpenSSL exception when reading the composite public key and gives no verdict. On a preview build of Windows 11 the same program validates the chain.'],
 ];
 ---
@@ -19,7 +19,7 @@ const checks = [
 <Chapter id="laboratory" num="12" kicker="Laboratory" title="Three real PKI domains, one reproducible laboratory">
   <div class="prose">
     <p>
-      Three EJBCA Community Edition instances on Proxmox, each a PKI domain with its own
+      The laboratory runs three EJBCA Community Edition instances on Proxmox, each of them a PKI domain with its own
       cryptographic profile, cross-certified with one another. <strong>Certificates are issued for
       real, and every constraint of <span class="m">Φ</span> is read from real extensions</strong>, never simulated.
       <span class="sn"

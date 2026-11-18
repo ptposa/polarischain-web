@@ -4,12 +4,12 @@ import Figure from '../Figure.astro';
 import FigCapabilities from '../figures/FigCapabilities.astro';
 
 const removed = [
-  ['The bridge CA', 'The federation falls: there is no path between domains.'],
-  ['The cross-certificates', 'The federation falls: the hierarchies are isolated again.'],
+  ['The bridge CA', 'The federation falls, since no path remains between domains.'],
+  ['The cross-certificates', 'The federation falls, because the hierarchies are isolated again.'],
   ['The trust list', 'Verifiers are left without anchors.'],
   [
     'PolarisChain',
-    'Nothing in the federation falls. Certificates stay signed and any RFC 5280 validator still works. The only loss is knowing what each certificate enables and being able to choose among the paths.',
+    'Nothing in the federation falls, because certificates stay signed and any RFC 5280 validator still works, so the only loss is knowing what each certificate enables and being able to choose among the paths.',
   ],
 ];
 
@@ -17,17 +17,17 @@ const caps = [
   {
     name: 'Govern',
     cls: 'govern',
-    text: 'Before a cross-certificate is signed, or a policy changes: which certificates become admissible and which stop being so, for the issuer and for third parties that trust its anchors.',
+    text: 'Before a cross-certificate is signed or a policy changes, it tells which certificates become admissible and which stop being so, for the issuer and for the third parties that trust its anchors.',
   },
   {
     name: 'Discover',
     cls: 'discover',
-    text: 'Inside the handshake: whether an admissible path exists for the presented certificate from an anchor the receiver accepts and, if there are several, which one it prefers.',
+    text: 'Inside the handshake, it decides whether an admissible path exists for the presented certificate from an anchor the receiver accepts and, if there are several, which one the receiver prefers.',
   },
   {
     name: 'Audit',
     cls: 'audit',
-    text: 'After the decision: not another verdict but its reason, one of seven defined outcomes, with a record that reproduces it.',
+    text: 'After the decision, it gives not another verdict but its reason, one of seven defined outcomes, together with a record that reproduces it.',
   },
 ];
 ---
@@ -42,12 +42,12 @@ const caps = [
       >
     </p>
     <p>
-      A bridge, a mesh and a trust list are ways of building roads between domains. PolarisChain is
-      the map of the roads that already exist, with precise rules for which ones may be taken and
-      which one to take. For this reason it works the same over a mesh, a bridge or trust lists, since it describes those models and does not compete with any of them.
+      A bridge, a mesh and a trust list are ways of building roads between domains, whereas PolarisChain is
+      the map of the roads that already exist, with precise rules for which of them may be taken and
+      which one to take. For this reason it works the same over a mesh, a bridge or trust lists, since it describes those models and competes with none of them.
       <span class="sn"
         ><b>The precision the image needs.</b> Once the decision moves into the handshake, each
-        domain’s own engine is on the critical path of its own admissions. Two properties still hold, because no domain’s decision is taken by an instance it does not operate and no third party can make it admit a certificate.</span
+        domain’s own engine is on the critical path of its own admissions, although two properties still hold, because no domain’s decision is taken by an instance it does not operate and no third party can make it admit a certificate.</span
       >
     </p>
   </div>

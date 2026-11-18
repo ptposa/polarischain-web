@@ -7,7 +7,7 @@ import FigHandshake from '../figures/FigHandshake.astro';
 const props = [
   {
     t: 'Fail closed',
-    d: 'No answer, no path, missing evidence or a validated path that differs from the selected one: the connection is denied, with its reason.',
+    d: 'With no answer, no path, missing evidence or a validated path that differs from the selected one, the connection is denied and its reason is recorded.',
   },
   {
     t: 'Possession stays with TLS',
@@ -15,7 +15,7 @@ const props = [
   },
   {
     t: 'No network in the handshake',
-    d: 'Graph, policy and status evidence are compiled beforehand and kept in memory, so governance can be down and admission goes on for as long as the material stays within the freshness that the receiver demands. Under a time budget a deployment may admit with the first path that passes validation and note that the optimum was not certified; the thesis enumerates exactly.',
+    d: 'Graph, policy and status evidence are compiled beforehand and kept in memory, so governance can be down and admission goes on for as long as the material stays within the freshness that the receiver demands. Under a time budget a deployment may admit with the first path that passes validation and note that the optimum was not certified, whereas the thesis enumerates the admissible paths exactly.',
   },
   {
     t: 'Selection, not authority',
@@ -27,8 +27,8 @@ const props = [
 <Chapter id="admission" num="8" kicker="Admission at the server" title="The decision lives where the connection is accepted">
   <div class="prose">
     <p>
-      The work only ends when the path that the model computes decides whether a connection gets in. PolarisChain sits in the <strong>server side of an mTLS handshake</strong>:{' '}
-      the enforcement point is the TLS endpoint’s own client-certificate check, and the decision
+      The work only ends when the path that the model computes decides whether a connection gets in, and for that reason PolarisChain sits on the <strong>server side of an mTLS handshake</strong>,{' '}
+      where the enforcement point is the TLS endpoint’s own client-certificate check and the decision
       point runs in the same process, with no proxy and no network in between.
       <span class="sn sn--key"
         ><b>Key idea</b> In TLS the chain that travels is chosen by whoever sends it, whereas the one PolarisChain selects at admission is chosen by whoever receives it and so it never travels.</span

@@ -3,12 +3,12 @@ import Chapter from '../Chapter.astro';
 
 // What a specialised reader looks for first: the status of each claim.
 const claims = [
-  ['Dominance (Proposition 1)', 'Proved by argument', 'For the relation defined by accepted continuations, with the CRL permission in the label. A computable relation that implies it is open, with delicate cases in RFC 9618, section 5.4.'],
-  ['Cycle elimination (Lemma 2)', 'Proved by argument', 'Checked by simulation. The policy part rests on the argument alone. Not reviewed by third parties.'],
-  ['NP-completeness (Proposition 3)', 'Proved by reduction', 'From the path with forbidden pairs problem. Tractability as a function of the number of constrained certificates is open.'],
-  ['Confinement (Proposition 4)', 'Proved by argument', 'For the direct profile of evidence. Not reviewed by third parties nor checked by simulation, and not proved for the extended profile.'],
-  ['Soundness and completeness against RFC 5280', 'Stated', 'Not proved. Safety does not depend on them: the selected path is validated explicitly and failure is closed.'],
-  ['Third-party bound of Govern, policy part', 'Stated', 'The bound holds for names and depth. For policies it depends on a condition that is not proved, and Govern labels it fragile.'],
+  ['Dominance (Proposition 1)', 'Proved by argument', 'For the relation defined by accepted continuations, with the CRL permission in the label, whereas a computable relation that implies it remains open, with delicate cases in section 5.4 of RFC 9618.'],
+  ['Cycle elimination (Lemma 2)', 'Proved by argument', 'Checked by simulation, although the policy part rests on the argument alone and has not been reviewed by third parties.'],
+  ['NP-completeness (Proposition 3)', 'Proved by reduction', 'From the path with forbidden pairs problem, while tractability as a function of the number of constrained certificates remains open.'],
+  ['Confinement (Proposition 4)', 'Proved by argument', 'For the direct profile of evidence, without review by third parties or a check by simulation, and not proved for the extended profile.'],
+  ['Soundness and completeness against RFC 5280', 'Stated', 'Not proved, although safety does not depend on them, because the selected path is validated explicitly and failure is closed.'],
+  ['Third-party bound of Govern, policy part', 'Stated', 'The bound holds for names and depth, whereas for policies it depends on a condition that is not proved, and Govern labels it fragile.'],
   ['Selection against exhaustive enumeration', 'Planned', 'To be checked on the small topologies of the laboratory and against a reference validation library.'],
 ];
 
@@ -27,8 +27,8 @@ const open = [
   ['The common log, built', 'The log is fully specified, while its implementation, several independent logs and a post-quantum signature for it are ongoing work.'],
   ['A tamper-evident decision record', 'In the thesis it is a structured file, enough to reproduce and re-evaluate a decision, but proving one to a third party needs entries that are signed and anchored in the log.'],
   ['Time, in full', 'The model has to separate when a datum is valid from when it becomes known, since a revocation published later with an earlier invalidity date gives a re-evaluation and leaves the reproduced decision as it was.'],
-  ['The extended profile of evidence', 'Delegated OCSP responders and lists signed by another key of the CA after a rotation need an auxiliary path to the same anchor. The thesis declares them and proves its results only for lists signed by the issuing key.'],
-  ['Search at scale', 'Pruning by dominance and admission under a time budget are deployment extensions. The thesis enumerates the admissible paths exactly, which is feasible on the topologies of the laboratory.'],
+  ['The extended profile of evidence', 'Delegated OCSP responders and lists signed by another key of the CA after a rotation need an auxiliary path to the same anchor, so the thesis declares them and proves its results only for lists signed by the issuing key.'],
+  ['Search at scale', 'Pruning by dominance and admission under a time budget are deployment extensions, whereas the thesis enumerates the admissible paths exactly, which is feasible on the topologies of the laboratory.'],
   ['Ordering by policy before cost', 'Two admissible routes may end with different valid policies, and until this is solved a service that authorises by policy must demand it in the initial state of its anchors.'],
   ['A post-quantum channel', 'ML-DSA certificates do not make the channel post-quantum, because the key exchange and the handshake signatures are separate layers that the thesis does not touch.'],
   ['Counting domains instead of crossings', 'It would measure the dependence on other organisations better, but it is not additive and is therefore left as a variant.'],

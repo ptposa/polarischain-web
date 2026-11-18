@@ -7,7 +7,7 @@ const adversaries = [
     who: 'Network, no keys',
     can: 'Replays public certificates and opens connections.',
     gets: 'Computation spent at the receiver.',
-    not: 'Admission: the proof of possession fails.',
+    not: 'Admission, because the proof of possession fails.',
   },
   {
     who: 'Holder of a valid certificate',
@@ -53,7 +53,7 @@ const hypotheses = [
   'The clocks of the domains agree within the tolerance the compilation profile fixes.',
   'The dishonest witnesses of the log do not exceed the number each reader tolerates.',
   'The founding charter of the federation reaches each reader through an authentic channel.',
-  'The material is published in full. This one is needed only for the negative conclusions of Govern.',
+  'The material is published in full, a hypothesis needed only for the negative conclusions of Govern.',
 ];
 ---
 
@@ -108,10 +108,10 @@ const hypotheses = [
   <div class="prose">
     <p>
       The guarantee is strong against the network adversary, the certificate holder and the witnesses, whereas against a member domain or the log operator the design limits the damage without
-      reducing it to a mere denial. The case that prevents it is the omission of evidence: whoever
-      withholds the latest revocation list leaves the previous one in force, for as long as the
+      reducing it to a mere denial, and the case that prevents it is the omission of evidence, because whoever
+      withholds the latest revocation list leaves the previous one in force for as long as the
       receiver’s freshness bound <span class="m">F<sub>d</sub></span> allows. Against the cryptanalytic adversary the floor reaches the keys that sign the evidence, because in the direct profile each list is signed by a key of the path itself, but it does not cover
-      the signature of the log or the authentication of the channel. And a domain that the receiver does not reach from its anchors cannot move any of its decisions, which is the confinement of section 5.8.
+      the signature of the log or the authentication of the channel. Finally, a domain that the receiver does not reach from its anchors cannot move any of its decisions, which is the confinement of section 5.8.
     </p>
   </div>
 </Chapter>
