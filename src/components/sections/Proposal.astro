@@ -54,19 +54,21 @@ const caps = [
 
   <p class="key">PolarisChain computes over the trust that the federation has already established, and adds none of its own.</p>
 
-  <table class="tbl removed">
-    <caption><b>Table 2.</b> Remove each component and see what falls.</caption>
-    <tbody>
-      {
-        removed.map(([what, effect], i) => (
-          <tr class={i === removed.length - 1 ? 'is-us' : ''}>
-            <th scope="row">{what}</th>
-            <td>{effect}</td>
-          </tr>
-        ))
-      }
-    </tbody>
-  </table>
+  <div class="tbl-wrap tbl-wrap--measure">
+    <table class="tbl removed">
+      <caption><b>Table 2.</b> Remove each component and see what falls.</caption>
+      <tbody>
+        {
+          removed.map(([what, effect], i) => (
+            <tr class={i === removed.length - 1 ? 'is-us' : ''}>
+              <th scope="row">{what}</th>
+              <td>{effect}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
 
   <div class="prose after">
     <p>
@@ -92,8 +94,7 @@ const caps = [
 
 <style>
   .removed {
-    max-width: var(--table);
-    margin: 2.6rem 0 0;
+    margin: 0;
   }
   .removed th {
     width: 12rem;
