@@ -126,13 +126,15 @@ import HeroAperture from './HeroAperture.astro';
     color: var(--text);
   }
 
-  @media (max-width: 420px) {
+  /* On phones each credit keeps its single line, label and name side by
+     side, in a size that follows the width of the screen. */
+  @media (max-width: 560px) {
     .hero__kicker {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0;
+      gap: 0.1rem 0.75rem;
+      font-size: clamp(0.7rem, 3.1vw, 0.96875rem);
     }
-    .hero__kicker dd + dt {
-      margin-top: 0.35rem;
+    .hero__kicker dd {
+      white-space: nowrap;
     }
   }
 
