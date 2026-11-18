@@ -69,10 +69,9 @@
   --link: var(--sky);
   --link-hover: #b9e5fa;
   --subhead: var(--brass-soft);
-  /* Names from the X.509 profile (extensions, fields): the 50% tint of IEEE
-     Purple, which no other element of the text uses, so it keeps clear of
-     the brass, the cyan of the links and the colours of the stages. */
-  --x509: var(--ieee-purple-50);
+  /* Names from the X.509 profile (extensions, fields): the bone white of
+     the other identifiers, set apart from them by the italic. */
+  --x509: var(--bone);
   /* DNS names of the use case (altair.example and below): the light orange
      of the cone of trust, apart from the links, the brass and the X.509. */
   --dns: #f6b27a;
