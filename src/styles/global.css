@@ -700,7 +700,7 @@ a.eqref:hover {
 
 .tbl-compact th,
 .tbl-compact td {
-  padding: 0.42rem 0 0.42rem 0.9rem;
+  padding: 0.22rem 0 0.22rem 0.9rem;
   text-align: left;
   vertical-align: baseline;
   font-weight: inherit;
@@ -711,8 +711,8 @@ a.eqref:hover {
 }
 
 .tbl-compact thead th {
-  padding-top: 0.55rem;
-  padding-bottom: 0.55rem;
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
   border-bottom: 1px solid var(--rule-strong);
   color: var(--text);
   white-space: nowrap;
@@ -742,27 +742,21 @@ a.eqref:hover {
 /* The heading of each group: the identifier of the stage in its colour,
    set a little apart from the rows above it. */
 .tbl-compact tbody th[scope='colgroup'] {
-  padding-top: 0.85rem;
-  padding-bottom: 0.2rem;
+  padding-top: 0.6rem;
+  padding-bottom: 0.3rem;
+}
+
+/* The last row of each group keeps a little air above the next rule. */
+.tbl-compact tbody tr:last-child > * {
+  padding-bottom: 0.5rem;
 }
 
 .tbl-compact tbody + tbody th[scope='colgroup'] {
   border-top: 1px solid var(--rule);
 }
 
-.tbl-compact th[scope='colgroup'] code {
+.tbl-compact th[scope='colgroup'] .tag {
   font-size: 0.75rem;
-  letter-spacing: 0.02em;
-}
-
-.grp--post_quantum th[scope='colgroup'] code {
-  color: var(--pq);
-}
-.grp--hybrid th[scope='colgroup'] code {
-  color: var(--hybrid);
-}
-.grp--traditional th[scope='colgroup'] code {
-  color: var(--classical);
 }
 
 @media (max-width: 640px) {
@@ -784,7 +778,6 @@ a.eqref:hover {
 .tag {
   display: inline-block;
   padding: 0.08em 0.5em 0.12em;
-  border-radius: 3px;
   background: color-mix(in srgb, currentColor 14%, transparent);
   font-family: var(--font-mono);
   font-size: 0.88em;
