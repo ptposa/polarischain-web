@@ -671,6 +671,25 @@ a.eqref:hover {
   padding-right: 0;
 }
 
+/* A table narrow enough to sit in the width of the text, with the gaps
+   between its columns closed up to fit. */
+.tbl-wrap--measure {
+  max-width: var(--measure);
+}
+
+.tbl-wrap--measure .tbl th,
+.tbl-wrap--measure .tbl td {
+  padding-right: 1rem;
+}
+
+.tbl-wrap--measure .tbl .num {
+  padding-right: 0;
+}
+
+.tbl-wrap--measure .tbl .num.pad {
+  padding-right: 1.1rem;
+}
+
 /* Table 3 on phones: the same figures as a compact table in the manner of a
    paper, grouped by stage under a small heading in the colour of the stage,
    with hairlines only. It replaces the wide table below 640px. */
