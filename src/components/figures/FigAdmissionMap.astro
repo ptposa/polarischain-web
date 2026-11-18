@@ -1,274 +1,490 @@
 ---
 // The definition of admissible paths read over the use-case route (thesis,
-// figure mapa-de-la-admision). HTML, so it reflows on a phone. Each band
-// names the certificates it checks; hovering or focusing it lights them in
-// the chain above, with a few lines of CSS and no script.
-const chain = [
-  { id: 'k0', name: 'Root B', sub: 'anchor tp', cls: 'anchor' },
-  { id: 'k1', name: 'Intermediate B' },
-  { id: 'k2', name: 'Intermediate A' },
-  { id: 'k3', name: 'Issuing A' },
-  { id: 'k4', name: 'c<sub>A</sub>', sub: 'erp.ops.altair.example', cls: 'leaf' },
-];
-const bands = [
+// figure mapa-de-la-admision), drawn as a matrix. The route runs down the
+// left, key by key, with the certificates x1 to x4 as the edges between
+// them; each condition of Definition 2 is a column, and each crossing says
+// what that condition checks on that certificate. Under the matrix, the
+// selection among the paths that pass. Two drawings, wide and narrow, as in
+// every figure; the legend below is HTML, so it reflows on a phone, and
+// hovering or focusing one of its entries lights its column.
+
+const keys = [
+  { name: 'Root B', sub: 'anchor tp', cls: 'box-accent' },
+  { name: 'Intermediate B', cls: 'box-strong' },
+  { name: 'Intermediate A', cls: 'box-strong' },
+  { name: 'Issuing A', cls: 'box-strong' },
   {
-    sym: 'fresh<sub>d</sub>(M, t)',
-    text: 'The snapshot is recent: its checkpoint is no older than F<sub>d</sub><sup>cp</sup>. Without it there is no query at all.',
-    lights: 'gate',
-    cls: 'gate',
-  },
-  {
-    sym: 'Paths<sub>d,τ</sub>(t) ∩ 𝒰<sub>d</sub>',
-    text: 'The three CA certificates x<sub>1</sub> to x<sub>3</sub> are valid at t and join keys of B’s subgraph, without repeating any, and h ≤ L<sub>d</sub>.',
-    lights: 'x1 x2 x3',
-  },
-  {
-    sym: 'P ⊨<sub>d,c</sub> Φ',
-    text: 'The state moves with δ from s<sub>0</sub> without falling to ⊥, and fin<sub>t</sub> closes the path with c<sub>A</sub>.',
-    lights: 'x1 x2 x3 x4',
-  },
-  {
-    sym: 'status<sub>t</sub>(P, i)',
-    text: 'The list of whoever issued each x<sub>i</sub>, entitled to sign it on this path, holds it good, from the anchor to the presented certificate, which may be exempt.',
-    lights: 'x1 x2 x3 x4',
+    name: 'c<tspan baseline-shift="sub" font-size="0.75em">A</tspan>',
+    sub: 'erp.ops.altair.example',
+    mono: true,
+    cls: 'box',
   },
 ];
+
+const sub = (s: string) => `<tspan baseline-shift="sub" font-size="0.72em">${s}</tspan>`;
+
+const conds = [
+  {
+    sym: `fresh${sub('d')}(M, t)`,
+    head: 'the snapshot is recent',
+    legend: 'fresh<sub>d</sub>(M, t)',
+    text: 'The snapshot is recent: its checkpoint is no older than F<sub>d</sub><sup>cp</sup>. It guards the whole query, not one certificate.',
+  },
+  {
+    sym: `Paths${sub('d,τ')}(t) ∩ 𝒰${sub('d')}`,
+    head: 'valid, simple, h ≤ L_d',
+    legend: 'Paths<sub>d,τ</sub>(t) ∩ 𝒰<sub>d</sub>',
+    text: 'The path starts at a valid anchor entry tp of B, and its CA certificates x<sub>1</sub> to x<sub>3</sub> are valid at t, stay in B’s subgraph and repeat no key, with h = 3 ≤ L<sub>d</sub>. The presented certificate is not a CA certificate.',
+  },
+  {
+    sym: `P ⊨${sub('d,c')} Φ`,
+    head: 'the constraints hold',
+    legend: 'P ⊨<sub>d,c</sub> Φ',
+    text: 'From the initial state s<sub>0</sub>, each certificate moves the state with δ without falling to ⊥, and fin<sub>t</sub> closes the path with the presented certificate c<sub>A</sub>.',
+  },
+  {
+    sym: `status${sub('t')}(P, i)`,
+    head: 'each one held good',
+    legend: 'status<sub>t</sub>(P, i)',
+    text: 'Each certificate is held good by the list of its own issuer, entitled to sign it on this path, from the anchor down; the presented certificate may instead be exempt.',
+  },
+];
+
+// One layout per drawing. Rows: the keys and, between them, the certificates.
+const layouts = [
+  {
+    cls: 'fig-wide',
+    vw: 760,
+    keyX: 20,
+    keyW: 160,
+    keyH: 36,
+    leafH: 42,
+    key0: 92,
+    step: 80,
+    cols: [262, 392, 522, 652],
+    colW: 130,
+    wide: true,
+  },
+  {
+    cls: 'fig-narrow',
+    vw: 380,
+    keyX: 6,
+    keyW: 126,
+    keyH: 34,
+    leafH: 40,
+    key0: 64,
+    step: 66,
+    cols: [170, 229, 288, 347],
+    colW: 59,
+    wide: false,
+  },
+].map((L) => {
+  const kx = L.keyX + L.keyW / 2;
+  const ky = keys.map((_, i) => L.key0 + i * L.step);
+  const xy = ky.slice(0, -1).map((y) => y + L.step / 2);
+  const top = L.key0 - L.keyH / 2 - 14;
+  const bottom = ky[ky.length - 1] + L.leafH / 2 + 12;
+  const selY = bottom + 34;
+  const selH = L.wide ? 58 : 74;
+  const headY = top - (L.wide ? 28 : 14);
+  return { ...L, kx, ky, xy, top, bottom, headY, selY, selH, vh: selY + selH + 6 };
+});
+
+const check = (x: number, y: number) => `M${x - 5} ${y} L${x - 1.5} ${y + 3.5} L${x + 5} ${y - 4}`;
 ---
 
 <div class="am">
-  <div class="am__chain" aria-label="The use-case route">
-    {
-      chain.map((k, i) => (
-        <>
-          <span class:list={['am__key', k.cls && `am__key--${k.cls}`]}>
-            <b set:html={k.name} />
-            {k.sub && <small>{k.sub}</small>}
-          </span>
-          {i < chain.length - 1 && (
-            <span class={`am__cert am__cert--x${i + 1}`} aria-hidden="true">
-              x<sub>{i + 1}</sub>
-            </span>
-          )}
-        </>
-      ))
-    }
-  </div>
-  <p class="am__count">
-    <span>x<sub>1</sub> to x<sub>3</sub>: the h = 3 CA certificates of the path</span>
-    <span>x<sub>4</sub>: the presented one, h + 1 = 4</span>
-  </p>
+  {
+    layouts.map((L) => (
+      <svg
+        class={`svg-fig am-svg ${L.cls}`}
+        viewBox={`0 0 ${L.vw} ${L.vh}`}
+        role="img"
+        aria-label="The conditions of an admissible path over the use-case route, and the selection"
+      >
+        <defs>
+          <marker
+            id={`am-ar-${L.cls}`}
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="6"
+            markerHeight="6"
+            orient="auto"
+          >
+            <path class="arrow-path" d="M0 0 L10 5 L0 10 z" />
+          </marker>
+          <marker
+            id={`am-arm-${L.cls}`}
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="6"
+            markerHeight="6"
+            orient="auto"
+          >
+            <path class="arrow" d="M0 0 L10 5 L0 10 z" />
+          </marker>
+        </defs>
 
-  <ol class="am__bands">
+        {/* Columns: a tinted ground that lights on hover, and the header. */}
+        {conds.map((c, j) => (
+          <g class={`am-col am-col--${j + 1}`}>
+            <rect
+              class="am-colbg"
+              x={L.cols[j] - L.colW / 2}
+              y={L.top}
+              width={L.colW}
+              height={L.bottom - L.top}
+            />
+            {L.wide ? (
+              <>
+                <text
+                  x={L.cols[j]}
+                  y={L.headY}
+                  text-anchor="middle"
+                  class="am-sym"
+                  set:html={c.sym}
+                />
+                <text x={L.cols[j]} y={L.headY + 18} text-anchor="middle" class="t-tiny">
+                  {c.head === 'valid, simple, h ≤ L_d' ? (
+                    <Fragment set:html={`valid, simple, h ≤ L${sub('d')}`} />
+                  ) : (
+                    c.head
+                  )}
+                </text>
+              </>
+            ) : (
+              <text x={L.cols[j]} y={L.headY} text-anchor="middle" class="am-num">
+                {j + 1}
+              </text>
+            )}
+          </g>
+        ))}
+
+        {/* The frame of the matrix: a rule above and below, and faint
+            guides along each certificate. */}
+        <line class="am-rule" x1={L.keyX} x2={L.vw - 8} y1={L.top} y2={L.top} />
+        <line class="am-rule" x1={L.keyX} x2={L.vw - 8} y1={L.bottom} y2={L.bottom} />
+        {L.xy.map((y) => (
+          <line class="am-guide" x1={L.kx + 26} x2={L.vw - 8} y1={y} y2={y} />
+        ))}
+
+        {/* The route: keys and certificates. */}
+        {keys.map((k, i) => {
+          const h = i === keys.length - 1 ? L.leafH : L.keyH;
+          const y = L.ky[i];
+          return (
+            <>
+              <rect class={k.cls} x={L.keyX} y={y - h / 2} width={L.keyW} height={h} />
+              {k.sub ? (
+                <>
+                  <text
+                    x={L.kx}
+                    y={y - 3}
+                    text-anchor="middle"
+                    class="t-strong"
+                    set:html={k.name}
+                  />
+                  <text
+                    x={L.kx}
+                    y={y + 12}
+                    text-anchor="middle"
+                    class={
+                      k.mono ? (L.wide ? 't-mono am-dns' : 't-mono am-dns am-dns--n') : 't-tiny'
+                    }
+                  >
+                    {k.sub}
+                  </text>
+                </>
+              ) : (
+                <text
+                  x={L.kx}
+                  y={y + 4.5}
+                  text-anchor="middle"
+                  class="t-strong"
+                  set:html={k.name}
+                />
+              )}
+            </>
+          );
+        })}
+        {L.xy.map((y, i) => {
+          const y1 = L.ky[i] + L.keyH / 2 + 2;
+          const y2 = L.ky[i + 1] - (i + 1 === keys.length - 1 ? L.leafH : L.keyH) / 2 - 2;
+          return (
+            <>
+              <line
+                class="am-cert"
+                x1={L.kx}
+                x2={L.kx}
+                y1={y1}
+                y2={y2}
+                marker-end={`url(#am-ar-${L.cls})`}
+              />
+              <text x={L.kx + 10} y={y + 4} class="t-path" set:html={`x${sub(String(i + 1))}`} />
+            </>
+          );
+        })}
+
+        {/* 1 · fresh: one bracket over the whole query. */}
+        <path
+          class="am-span"
+          d={`M${L.cols[0] - 5} ${L.ky[0] - 12} H${L.cols[0]} V${L.ky[4] + 12} H${L.cols[0] - 5}`}
+        />
+        <text
+          class="t-tiny"
+          text-anchor="middle"
+          transform={`translate(${L.cols[0] + 11} ${(L.ky[0] + L.ky[4]) / 2}) rotate(-90)`}
+        >
+          {L.wide ? 'the whole query, before any certificate' : 'the whole query'}
+        </text>
+
+        {/* 2 · Paths ∩ U: the anchor entry and the three CA certificates. */}
+        <text
+          x={L.cols[1]}
+          y={L.ky[0] + 4}
+          text-anchor="middle"
+          class="am-cell"
+          set:html={L.wide ? `tp ∈ TP${sub('d')}(t)` : 'tp'}
+        />
+        {[0, 1, 2].map((i) => (
+          <path class="am-ok" d={check(L.cols[1], L.xy[i])} />
+        ))}
+        <text x={L.cols[1]} y={L.xy[3] + 4} text-anchor="middle" class="am-no t-halo">
+          —
+        </text>
+        {L.wide && (
+          <text x={L.cols[1]} y={L.xy[3] + 18} text-anchor="middle" class="t-tiny">
+            not a CA certificate
+          </text>
+        )}
+
+        {/* 3 · Φ: the initial state, δ on each certificate, fin_t to close. */}
+        <text
+          x={L.cols[2]}
+          y={L.ky[0] + 4}
+          text-anchor="middle"
+          class="am-cell"
+          set:html={`s${sub('0')}`}
+        />
+        {[0, 1, 2].map((i) => (
+          <>
+            <text x={L.cols[2] - 7} y={L.xy[i] + 4} text-anchor="middle" class="am-cell">
+              δ
+            </text>
+            <path class="am-ok" d={check(L.cols[2] + 9, L.xy[i])} />
+          </>
+        ))}
+        <text
+          x={L.cols[2] - 7}
+          y={L.xy[3] + 4}
+          text-anchor="middle"
+          class="am-cell"
+          set:html={`fin${sub('t')}`}
+        />
+        <path class="am-ok" d={check(L.cols[2] + 14, L.xy[3])} />
+
+        {/* 4 · status: every certificate, the presented one possibly exempt. */}
+        {[0, 1, 2, 3].map((i) => (
+          <path class="am-ok" d={check(L.cols[3], L.xy[i])} />
+        ))}
+        {L.wide && (
+          <>
+            <text x={L.cols[3]} y={L.xy[0] + 17} text-anchor="middle" class="t-tiny">
+              list of tp
+            </text>
+            <text x={L.cols[3]} y={L.xy[3] + 17} text-anchor="middle" class="t-tiny">
+              or exempt
+            </text>
+          </>
+        )}
+
+        {/* All four hold: the selection. */}
+        <line
+          class="edge"
+          x1={(L.cols[0] + L.cols[3]) / 2}
+          x2={(L.cols[0] + L.cols[3]) / 2}
+          y1={L.bottom + 4}
+          y2={L.selY - 3}
+          marker-end={`url(#am-arm-${L.cls})`}
+        />
+        <text x={(L.cols[0] + L.cols[3]) / 2 + 10} y={L.bottom + 21} class="t-tiny">
+          {L.wide ? 'all four hold: P is admissible' : 'all four hold'}
+        </text>
+        <rect class="box-accent" x={L.keyX} y={L.selY} width={L.vw - 8 - L.keyX} height={L.selH} />
+        {L.wide ? (
+          <>
+            <text x={L.keyX + 16} y={L.selY + 25} class="am-sym" set:html={`P*${sub('d')}(c)`} />
+            <text x={L.keyX + 110} y={L.selY + 25} class="t-strong">
+              The selected path
+            </text>
+            <text x={L.keyX + 110} y={L.selY + 43} class="t-tiny">
+              <Fragment
+                set:html={`Under the first floor that leaves any (j*), the admissible path of least cost W${sub('d')}; on a tie, the first in the order of Sel.`}
+              />
+            </text>
+          </>
+        ) : (
+          <>
+            <text x={L.keyX + 12} y={L.selY + 23} class="am-sym" set:html={`P*${sub('d')}(c)`} />
+            <text x={L.keyX + 86} y={L.selY + 23} class="t-strong">
+              The selected path
+            </text>
+            <text x={L.keyX + 12} y={L.selY + 44} class="t-tiny">
+              First floor that leaves any (j*), then the least
+            </text>
+            <text x={L.keyX + 12} y={L.selY + 59} class="t-tiny">
+              <Fragment set:html={`cost W${sub('d')}; on a tie, the order of Sel.`} />
+            </text>
+          </>
+        )}
+      </svg>
+    ))
+  }
+
+  <ol class="am__legend">
     {
-      bands.map((b) => (
-        <li class:list={['am__band', b.cls && `am__band--${b.cls}`]} data-lights={b.lights} tabindex="0">
-          <span class="am__sym m" set:html={b.sym} />
-          <span class="am__txt" set:html={b.text} />
+      conds.map((c, j) => (
+        <li data-c={j + 1} tabindex="0">
+          <span class="am__n">{j + 1}</span>
+          <span class="am__sym m" set:html={c.legend} />
+          <span class="am__txt" set:html={c.text} />
         </li>
       ))
     }
   </ol>
-  <div class="am__sel">
-    <span class="am__sym m">P*<sub>d</sub>(c)</span>
-    <span class="am__txt"
-      >Among the paths that meet everything: the first floor of the list that leaves any (<span class="m">j*</span>), the least cost <span class="m">W<sub>d</sub></span> and, on a tie, the order of <span class="m">Sel</span>. It is the route that goes on to explicit validation.</span
-    >
-  </div>
 </div>
 
 <style>
   .am {
     max-width: var(--figure);
     margin-inline: auto;
-    font-family: var(--font-figure);
-    color: var(--fig-text);
   }
 
-  .am__chain {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.4rem 0;
+  .am-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-inline: auto;
+  }
+  .am-svg.fig-narrow {
+    display: none;
+    max-width: 440px;
+  }
+  @media (max-width: 719px) {
+    .am-svg.fig-wide {
+      display: none;
+    }
+    .am-svg.fig-narrow {
+      display: block;
+    }
   }
 
-  .am__key {
-    display: grid;
-    flex: 1 1 0;
-    min-width: 6.5rem;
-    padding: 0.5rem 0.4rem;
-    border: 1px solid var(--path);
-    background: var(--ground-raise);
-    text-align: center;
-    font-size: 0.875rem;
+  .am-svg .am-sym {
+    font-family: var(--font-math);
+    font-size: 15px;
+    fill: var(--text);
   }
-  .am__key b {
-    font-weight: inherit;
-    color: var(--text);
+  .am-svg .am-num {
+    font-size: 13px;
+    fill: var(--text);
   }
-  .am__key small {
-    font-size: 0.6875rem;
-    color: var(--fig-muted);
-    overflow-wrap: anywhere;
+  .am-svg .am-cell {
+    font-family: var(--font-math);
+    font-size: 13.5px;
+    fill: var(--text);
   }
-  .am__key--leaf small {
-    font-family: var(--font-mono);
+  .am-svg .am-no {
+    fill: var(--fig-muted);
   }
-  .am__key--anchor {
-    border-color: var(--anchor);
+  .am-svg .am-dns {
+    fill: var(--fig-text);
   }
-  .am__key--leaf {
-    flex-grow: 1.7;
-    border-color: var(--fig-stroke);
+  .am-svg .am-dns--n {
+    font-size: 9px;
   }
 
-  /* A certificate is the arrow between two keys. */
-  .am__cert {
-    position: relative;
-    flex: 0 0 2.6rem;
-    height: 1.4rem;
-    text-align: center;
-    font-size: 0.8125rem;
-    color: var(--fig-muted);
-    transition: color 0.25s ease;
+  .am-svg .am-ok {
+    fill: none;
+    stroke: var(--path);
+    stroke-width: 1.6;
   }
-  .am__cert::after {
-    content: '';
-    position: absolute;
-    left: 0.25rem;
-    right: 0.25rem;
-    bottom: 0;
-    border-bottom: 1.5px solid var(--fig-stroke);
-    transition: border-color 0.25s ease;
+  .am-svg .am-span {
+    fill: none;
+    stroke: var(--fig-stroke);
+    stroke-width: 1;
   }
-  .am__cert::before {
-    content: '';
-    position: absolute;
-    right: 0.15rem;
-    bottom: -0.25rem;
-    border: 0.28rem solid transparent;
-    border-left-color: var(--fig-stroke);
-    transition: border-color 0.25s ease;
+  .am-svg .am-cert {
+    stroke: var(--path);
+    stroke-width: 1.4;
+  }
+  .am-svg .am-rule {
+    stroke: var(--rule-strong);
+    stroke-width: 1;
+  }
+  .am-svg .am-guide {
+    stroke: var(--rule);
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
   }
 
-  .am__count {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.3rem 1rem;
-    margin: 0.7rem 0 1.4rem;
-    font-size: 0.8125rem;
-    color: var(--fig-muted);
+  /* The column of the condition under the pointer, or in focus, lights. */
+  .am-svg .am-colbg {
+    fill: var(--path);
+    fill-opacity: 0;
+    transition: fill-opacity 0.25s ease;
+  }
+  .am:has([data-c='1']:is(:hover, :focus-visible)) .am-col--1 .am-colbg,
+  .am:has([data-c='2']:is(:hover, :focus-visible)) .am-col--2 .am-colbg,
+  .am:has([data-c='3']:is(:hover, :focus-visible)) .am-col--3 .am-colbg,
+  .am:has([data-c='4']:is(:hover, :focus-visible)) .am-col--4 .am-colbg {
+    fill-opacity: 0.08;
   }
 
-  .am__bands {
-    margin: 0;
-    padding: 0.6rem;
+  /* The legend: the conditions of Definition 2, numbered as the columns,
+     set as the where blocks of the text, with rules only. */
+  .am__legend {
+    margin: 1.2rem 0 0;
+    padding: 0;
     list-style: none;
-    border: 1px dashed var(--rule-strong);
+    font-family: var(--font-figure);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--text-soft);
   }
-
-  .am__band,
-  .am__sel {
+  .am__legend li {
     display: grid;
-    grid-template-columns: 11.5rem minmax(0, 1fr);
-    gap: 0.4rem 1rem;
+    grid-template-columns: 1.4rem 11rem minmax(0, 1fr);
+    gap: 0.2rem 0.8rem;
     align-items: baseline;
-    padding: 0.7rem 0.9rem;
-    border: 1px solid color-mix(in srgb, var(--path) 55%, transparent);
-    background: color-mix(in srgb, var(--path) 5%, transparent);
-    font-size: 0.9375rem;
-    line-height: 1.45;
-    transition: background-color 0.25s ease, border-color 0.25s ease;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--rule);
+    transition: background-color 0.25s ease;
   }
-  .am__band + .am__band {
-    margin-top: 0.5rem;
+  .am__legend li:last-child {
+    border-bottom: 1px solid var(--rule);
   }
-  .am__band:hover,
-  .am__band:focus-visible {
+  .am__legend li:hover,
+  .am__legend li:focus-visible {
     outline: none;
-    border-color: var(--path);
-    background: color-mix(in srgb, var(--path) 12%, transparent);
+    background: color-mix(in srgb, var(--path) 6%, transparent);
   }
-
-  .am__band--gate {
-    border-color: var(--rule-strong);
-    background: var(--ground-raise);
+  .am__n {
+    color: var(--path);
   }
-
   .am__sym {
-    font-size: 1.05rem;
-    color: var(--text);
+    font-size: 1rem;
+    color: var(--ink-eq);
     white-space: nowrap;
   }
 
-  .am__sel {
-    position: relative;
-    margin-top: 1.4rem;
-    border-color: var(--brass);
-    background: color-mix(in srgb, var(--brass) 7%, transparent);
-  }
-  .am__sel::before {
-    content: '↓';
-    position: absolute;
-    left: 50%;
-    top: -1.35rem;
-    transform: translateX(-50%);
-    color: var(--fig-muted);
-  }
-
-  /* Light the certificates that the hovered band checks. */
-  .am:has([data-lights~='x1']:is(:hover, :focus-visible)) .am__cert--x1,
-  .am:has([data-lights~='x2']:is(:hover, :focus-visible)) .am__cert--x2,
-  .am:has([data-lights~='x3']:is(:hover, :focus-visible)) .am__cert--x3,
-  .am:has([data-lights~='x4']:is(:hover, :focus-visible)) .am__cert--x4 {
-    color: var(--path);
-  }
-  .am:has([data-lights~='x1']:is(:hover, :focus-visible)) .am__cert--x1::after,
-  .am:has([data-lights~='x2']:is(:hover, :focus-visible)) .am__cert--x2::after,
-  .am:has([data-lights~='x3']:is(:hover, :focus-visible)) .am__cert--x3::after,
-  .am:has([data-lights~='x4']:is(:hover, :focus-visible)) .am__cert--x4::after {
-    border-bottom-color: var(--path);
-  }
-  .am:has([data-lights~='x1']:is(:hover, :focus-visible)) .am__cert--x1::before,
-  .am:has([data-lights~='x2']:is(:hover, :focus-visible)) .am__cert--x2::before,
-  .am:has([data-lights~='x3']:is(:hover, :focus-visible)) .am__cert--x3::before,
-  .am:has([data-lights~='x4']:is(:hover, :focus-visible)) .am__cert--x4::before {
-    border-left-color: var(--path);
-  }
-
   @media (max-width: 719px) {
-    .am__chain {
-      flex-direction: column;
-      align-items: stretch;
+    .am__legend li {
+      grid-template-columns: 1.4rem minmax(0, 1fr);
     }
-    .am__key {
-      min-width: 0;
-    }
-    .am__cert {
-      flex: 0 0 1.8rem;
-      height: 1.8rem;
-      line-height: 1.8rem;
-      padding-left: 1.2rem;
-      text-align: left;
-    }
-    .am__cert::after {
-      left: 0.6rem;
-      right: auto;
-      top: 0.2rem;
-      bottom: 0.2rem;
-      border-bottom: 0;
-      border-left: 1.5px solid var(--fig-stroke);
-    }
-    .am__cert::before {
-      left: 0.32rem;
-      right: auto;
-      bottom: -0.1rem;
-      border-left-color: transparent;
-      border-top-color: var(--fig-stroke);
-    }
-    .am__band,
-    .am__sel {
-      grid-template-columns: minmax(0, 1fr);
+    .am__txt {
+      grid-column: 2;
     }
   }
 </style>
