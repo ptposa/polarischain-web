@@ -414,19 +414,30 @@ const exEdges = [
   <h3 class="sub"><span>5.5</span> Admissible paths and the selected one</h3>
   <div class="thm">
     <p>
-      <b>Definition 2 (admissible path).</b> For the receiver <span class="m">d</span>, the presented certificate <span class="m">c</span>, the instant <span class="m">t</span> and a floor <span class="m">τ</span>, a path is admissible when it starts at a valid anchor entry of <span class="m">d</span>, runs over the receiver’s subgraph inside the search universe, satisfies <span class="m">Φ</span> up to and including <span class="m">c</span>, and every certificate of its chain <span class="m">(x<sub>1</sub>, …, x<sub>h+1</sub>)</span> is held good by its own issuer.
+      <b>Definition 2 (admissible path).</b> For the receiver <span class="m">d</span>, the presented certificate <span class="m">c</span>, the instant <span class="m">t</span> and a floor <span class="m">τ</span>, the admissible paths are the set
     </p>
     <div class="eq eq--long" role="math" aria-label="Admissible paths">
       <span class="eq__body" set:html={eqAdm} />
       <span class="eq__n" id="eq-8">(8)</span>
     </div>
-  <Where items={where8} label="Components of (8)" />
-    <div class="eq eq--long" role="math" aria-label="Status of each certificate of the chain">
-      <span class="eq__body" set:html={eqStatus} />
-      <span class="eq__n" id="eq-9">(9)</span>
-    </div>
-  <Where items={where9} label="Components of (9)" />
+    <p>
+      of paths that start at a valid anchor entry of <span class="m">d</span>, run over its subgraph inside the search universe, satisfy <span class="m">Φ</span> up to and including <span class="m">c</span>, and have every certificate of their chain <span class="m">(x<sub>1</sub>, …, x<sub>h+1</sub>)</span> held good by its own issuer.
+    </p>
   </div>
+
+  <Where items={where8} label="Components of (8)" />
+
+  <div class="prose">
+    <p>
+      Each certificate of the chain is held good when it is exempt, or when the key that signs its list may sign it for that path and the list holds it good:
+    </p>
+  </div>
+
+  <div class="eq eq--long" role="math" aria-label="Status of each certificate of the chain">
+    <span class="eq__body" set:html={eqStatus} />
+    <span class="eq__n" id="eq-9">(9)</span>
+  </div>
+  <Where items={where9} label="Components of (9)" />
 
   <Figure num={6} caption="The conditions of an admissible path and the selection, over the use-case route. Hover or focus a condition to see what it checks.">
     <FigAdmissionMap />
@@ -449,14 +460,18 @@ const exEdges = [
   <div class="thm">
     <p>
       <b>Definition 3 (selected path).</b> Among the admissible paths under the first floor of the
-      list that leaves any, the receiver selects the one of least cost, and <span class="m">Sel</span> makes it unique by ordering paths on the key <span class="m">k(P)</span>.
+      list that leaves any, the selected path is
     </p>
     <div class="eq eq--long" role="math" aria-label="Selected path and selection key">
       <span class="eq__body" set:html={eqSel} />
       <span class="eq__n" id="eq-10">(10)</span>
     </div>
-  <Where items={where10} label="Components of (10)" />
+    <p>
+      the one of least cost, made unique by ordering the paths on the key <span class="m">k(P)</span>.
+    </p>
   </div>
+
+  <Where items={where10} label="Components of (10)" />
 
   <div class="prose">
     <p>
