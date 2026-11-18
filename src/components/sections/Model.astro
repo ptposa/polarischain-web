@@ -62,9 +62,6 @@ const policyRows = [
   ['D<sub>d</sub>', 'Keys the receiver excludes, by a canonical identifier <span class="m">kid(v)</span> of the key material.', 'outside the RFC'],
 ];
 
-// On phones each row becomes a card with a bar of the two sizes, scaled to
-// the largest signature and public key of the table.
-const octets = (n: string) => Number(n.replace(/,/g, ''));
 const sizes = [
   ['ML-DSA-87', '4,627', '2,592', 'post_quantum', '5'],
   ['ECDSA P-384 + ML-DSA-65', '3,413', '2,049', 'hybrid', '3'],
@@ -76,9 +73,10 @@ const sizes = [
   ['ECDSA P-384', '104', '97', 'traditional', '0'],
   ['ECDSA P-256', '72', '65', 'traditional', '0'],
 ];
-const sizeMax = Math.max(...sizes.map(([, s, k]) => octets(s) + octets(k)));
-const sizeBar = (s: string, k: string) =>
-  `--sig: ${((octets(s) / sizeMax) * 100).toFixed(2)}%; --all: ${(((octets(s) + octets(k)) / sizeMax) * 100).toFixed(2)}%`;
+// On phones the same rows are grouped by stage, so the stage is written once
+// per group and the table keeps four narrow columns.
+const stages = ['post_quantum', 'hybrid', 'traditional'];
+const sizesByStage = stages.map((st) => ({ st, rows: sizes.filter((r) => r[3] === st) }));
 
 // The components of every displayed formula, one by one (see Where.astro).
 const where1 = [
@@ -363,7 +361,7 @@ const exEdges = [
       <tbody>
         {
           sizes.map(([a, s, k, st, cat]) => (
-            <tr class={`size--${st}`} style={sizeBar(s, k)}>
+            <tr>
               <th scope="row">{a}</th>
               <td class="num pad" data-label="Signature">{s}</td>
               <td class="num pad" data-label="Public key">{k}</td>
@@ -375,6 +373,47 @@ const exEdges = [
           ))
         }
       </tbody>
+    </table>
+    <table class="tbl-compact tbl--sizes-m">
+      <caption
+        ><b>Table 3.</b> Reference sizes in octets, and the level <span class="m">ℓ(v)</span> of a key of each algorithm,
+        grouped by <code>stage</code>; Cat. is <code>nist_category</code>. ML-DSA sizes are those of FIPS 204; composite sizes are the sum of the two
+        components, as in RFC 10073.</caption
+      >
+      <thead>
+        <tr>
+          <th scope="col">Algorithm</th>
+          <th scope="col" class="num">Signature</th>
+          <th scope="col" class="num">Public key</th>
+          <th scope="col" class="num"><abbr title="nist_category">Cat.</abbr></th>
+        </tr>
+      </thead>
+      {
+        sizesByStage.map(({ st, rows }) => (
+          <tbody class={`grp grp--${st}`}>
+            <tr>
+              <th scope="colgroup" colspan="4">
+                <code>{st}</code>
+              </th>
+            </tr>
+            {rows.map(([a, s, k, , cat]) => (
+              <tr>
+                <th scope="row">
+                  {a.split(' + ').map((part, i) => (
+                    <>
+                      {i > 0 && ' + '}
+                      <span class="nobr">{part}</span>
+                    </>
+                  ))}
+                </th>
+                <td class="num">{s}</td>
+                <td class="num">{k}</td>
+                <td class="num">{cat}</td>
+              </tr>
+            ))}
+          </tbody>
+        ))
+      }
     </table>
   </div>
 
