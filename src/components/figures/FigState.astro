@@ -73,7 +73,10 @@ const groups = [[0], [1, 2], [3], [4], [5]];
   .st__head,
   .st__row {
     display: grid;
-    grid-template-columns: var(--st-fcol) minmax(0, 1.25fr) minmax(0, 1fr);
+    /* Each row is a grid of its own, so the column of values takes one fixed
+       width, that of its longest value, ext.ops.altair.example, and the boxes
+       do not run on past what they hold. */
+    grid-template-columns: var(--st-fcol) minmax(0, 1fr) 12.5rem;
     gap: 0 var(--st-gap);
     align-items: center;
   }
