@@ -456,7 +456,8 @@ h4 {
   font-size: 1.0625rem;
   font-style: italic;
   line-height: 1.4;
-  color: var(--text);
+  /* The pale yellow of the brass rule beside it and of the Key idea labels. */
+  color: var(--brass-soft);
 }
 
 /* ─── Definitions, lemmas and propositions ───
