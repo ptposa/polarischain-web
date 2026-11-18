@@ -1197,3 +1197,100 @@ a.eqref:hover {
     color: var(--text-muted);
   }
 }
+
+/* Table 3 on phones: one card per algorithm. The name and its stage head the
+   card, a bar shows the signature (solid) and the public key (lighter) to the
+   scale of the largest of the table, in the colour of the stage, and the
+   three figures sit side by side below it. */
+@media (max-width: 640px) {
+  .tbl--sizes tbody tr {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      'name name stage'
+      'bar bar bar'
+      'sig key cat';
+    align-items: center;
+    row-gap: 0.55rem;
+    padding: 0.95rem 0 1rem;
+  }
+
+  .tbl--sizes tbody tr::after {
+    content: '';
+    grid-area: bar;
+    height: 6px;
+    border-radius: 3px;
+    background:
+      linear-gradient(
+        to right,
+        var(--size-c) 0 var(--sig),
+        color-mix(in srgb, var(--size-c) 42%, transparent) var(--sig) var(--all),
+        transparent var(--all)
+      ),
+      var(--rule);
+  }
+
+  .tbl--sizes .size--traditional {
+    --size-c: var(--classical);
+  }
+  .tbl--sizes .size--hybrid {
+    --size-c: var(--hybrid);
+  }
+  .tbl--sizes .size--post_quantum {
+    --size-c: var(--pq);
+  }
+
+  .tbl--sizes tbody th {
+    grid-area: name;
+    padding: 0;
+    font-size: 1rem;
+  }
+
+  .tbl--sizes tbody td:nth-of-type(1) {
+    grid-area: sig;
+  }
+  .tbl--sizes tbody td:nth-of-type(2) {
+    grid-area: key;
+  }
+  .tbl--sizes tbody td:nth-of-type(3) {
+    grid-area: stage;
+    text-align: right;
+  }
+  .tbl--sizes tbody td:nth-of-type(4) {
+    grid-area: cat;
+  }
+
+  .tbl--sizes tbody td {
+    padding: 0;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+
+  /* The label small and above its figure, instead of before it. */
+  .tbl--sizes tbody td[data-label]::before {
+    display: block;
+    margin-bottom: 0.1rem;
+    content: attr(data-label);
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+  }
+
+  .tbl--sizes tbody td:nth-of-type(3)::before {
+    display: none;
+  }
+
+  /* A swatch before Signature and Public key, in the tone of their part of
+     the bar, so the bar reads without a legend. */
+  .tbl--sizes tbody td:nth-of-type(-n + 2)::before {
+    padding-left: 0.85rem;
+    background: linear-gradient(var(--size-swatch), var(--size-swatch)) left center / 0.5rem 0.5rem
+      no-repeat;
+  }
+  .tbl--sizes tbody td:nth-of-type(1) {
+    --size-swatch: var(--size-c);
+  }
+  .tbl--sizes tbody td:nth-of-type(2) {
+    --size-swatch: color-mix(in srgb, var(--size-c) 42%, var(--ground));
+  }
+}
