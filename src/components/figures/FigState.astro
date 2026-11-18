@@ -163,7 +163,9 @@ const groups = [[0], [1, 2], [3], [4], [5]];
     position: absolute;
     left: 50%;
     bottom: calc(-1 * var(--st-pad) - 0.5em);
-    transform: translateX(-50%);
+    /* The glyph sits above the middle of its line box; this lowers its ink
+       to the middle of the gap between the two boxes. */
+    transform: translate(-50%, 0.1em);
     font-size: 0.95rem;
     line-height: 1;
     color: var(--brass-soft);
