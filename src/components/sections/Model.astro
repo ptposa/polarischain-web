@@ -502,6 +502,14 @@ const exEdges = [
 
   <p class="key">A path is always admissible for a particular certificate, and never towards a CA in general.</p>
 
+  <div class="prose">
+    <p>
+      The search universe <span class="m">𝒰<sub>d</sub></span> is the set of simple paths of the key graph with at most{' '}
+      <span class="m">L<sub>d</sub></span> CA certificates, so that no key is visited twice, which is the rule RFC 4158 recommends and
+      implies the rule of RFC 5280 that no certificate is repeated. The universe is finite, so if any path is admissible there is an optimum, which Definition 3 makes unique, and the search the thesis implements enumerates its admissible paths exactly, which is feasible on the topologies of the laboratory.
+    </p>
+  </div>
+
   <div class="thm">
     <p>
       <b>Definition 3 (selected path).</b> Among the admissible paths under the first floor of the
@@ -519,11 +527,6 @@ const exEdges = [
   <Where items={where10} label="Components of (10)" />
 
   <div class="prose">
-    <p>
-      The search universe <span class="m">𝒰<sub>d</sub></span> is the set of simple paths of the key graph with at most{' '}
-      <span class="m">L<sub>d</sub></span> CA certificates, so that no key is visited twice, which is the rule RFC 4158 recommends and
-      implies the rule of RFC 5280 that no certificate is repeated. The universe is finite, so if any path is admissible there is an optimum and <span class="m">Sel</span> makes it unique, and the search the thesis implements enumerates its admissible paths exactly, which is feasible on the topologies of the laboratory.
-    </p>
     <p>
       Admission <a class="eqref" href="#eq-8">(8)</a> is binary and comes first, whereas preference <a class="eqref" href="#eq-10">(10)</a> only orders the paths that were admitted. The security of
       admission does not depend on the cost, which decides which of the admissible paths is validated, recorded and explained, and that
@@ -670,6 +673,10 @@ const exEdges = [
     </p>
   </div>
 
+  <p class="key">
+    Nothing signed by a domain the receiver does not reach from its anchors can make it admit a certificate or deny one, and inside its cone what a foreign key can get admitted is bounded by the constraints of the receiver’s own edges that lead to it.
+  </p>
+
   <Figure num={9} class="figure--large" caption="The cone of trust of receiver B, inside its subgraph, inside the common graph. Change the floor of B and watch the cone follow it.">
     <FigCone />
   </Figure>
@@ -683,9 +690,6 @@ const exEdges = [
     </p>
   </div>
 
-  <p class="key">
-    Nothing signed by a domain the receiver does not reach from its anchors can make it admit a certificate or deny one, and inside its cone what a foreign key can get admitted is bounded by the constraints of the receiver’s own edges that lead to it.
-  </p>
 </Chapter>
 
 <style>
