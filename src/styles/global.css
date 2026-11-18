@@ -455,7 +455,9 @@ h4 {
   border-left: 1px solid var(--brass);
   /* The type of the key ideas in the margin, so both read as one voice. */
   font-family: var(--font-body);
-  font-size: 1.0625rem;
+  /* As the key ideas on phones; a step above the running text on wide
+     screens, where it stands in the column and not in the margin. */
+  font-size: clamp(var(--body-size), 0.75rem + 0.75vw, 1.3125rem);
   font-style: italic;
   line-height: 1.4;
   /* The pale yellow of the brass rule beside it and of the Key idea labels. */
