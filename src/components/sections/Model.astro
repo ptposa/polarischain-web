@@ -101,14 +101,14 @@ const where3 = [
   ['rev<sub>d</sub>(e, t)', 'The revocation state of the certificate at <i>t</i> for the receiver: <code>revoked</code> if the applicable evidence revokes it or some evidence did so irrevocably, <code>good</code> if the applicable evidence covers <i>t</i> and holds it good, and <code>unknown</code> otherwise.'],
 ];
 const where4 = [
-  ['TP<sub>d</sub>', 'The trust anchor entries, each with its identifier, its key, its initial state s<sub>0</sub>(d, tp), its provenance and its validity.', 'RFC 5280, 6.1.1 (c) to (i)'],
-  ['κ<sub>d</sub>', 'The octets that crossing one administrative boundary is worth to the receiver.', 'outside the RFC'],
-  ['τ<sub>d</sub>', 'The ordered list of cryptographic floors, of one or more elements, from the most to the least demanding.', 'outside the RFC'],
-  ['A<sub>d</sub><sup>key</sup>, A<sub>d</sub><sup>sig</sup>', 'The key profiles and the signature algorithms the receiver admits.', 'outside the RFC'],
-  ['σ<sub>d</sub>', 'The purposes the chain must allow, such as <code class="x509">clientAuth</code>.', 'outside section 6'],
-  ['L<sub>d</sub>', 'The largest number of CA certificates in a path.', 'outside the RFC'],
-  ['F<sub>d</sub>', 'The freshness demanded of the log checkpoint, F<sub>d</sub><sup>cp</sup>, and of the status evidence, F<sub>d</sub><sup>ev</sup>.', 'outside section 6'],
-  ['D<sub>d</sub>', 'The keys the receiver excludes, by a canonical identifier kid(v) of the key material.', 'outside the RFC'],
+  ['TP<sub>d</sub>', 'The trust anchor entries, each with its identifier, its key, its initial state s<sub>0</sub>(d, tp), its provenance and its validity.', 'RFC 5280, section 6.1.1 (c) to (i)'],
+  ['κ<sub>d</sub>', 'The octets that crossing one administrative boundary is worth to the receiver.'],
+  ['τ<sub>d</sub>', 'The ordered list of cryptographic floors, of one or more elements, from the most to the least demanding.'],
+  ['A<sub>d</sub><sup>key</sup>, A<sub>d</sub><sup>sig</sup>', 'The key profiles and the signature algorithms the receiver admits.'],
+  ['σ<sub>d</sub>', 'The purposes the chain must allow, such as <code class="x509">clientAuth</code>.', 'Outside the path validation of RFC 5280 (section 6)'],
+  ['L<sub>d</sub>', 'The largest number of CA certificates in a path.'],
+  ['F<sub>d</sub>', 'The freshness demanded of the log checkpoint, F<sub>d</sub><sup>cp</sup>, and of the status evidence, F<sub>d</sub><sup>ev</sup>.', 'Outside the path validation of RFC 5280 (section 6)'],
+  ['D<sub>d</sub>', 'The keys the receiver excludes, by a canonical identifier kid(v) of the key material.'],
 ];
 const where5 = [
   ['u', 'A key of the path, the anchor included.'],
@@ -283,7 +283,7 @@ const exEdges = [
   <Where items={where4} label="Components of (4)" />
 
   <div class="prose">
-    <p class="small">A value belongs to the policy if it changes when the verifying domain changes and no certificate is touched. The anchors with their initial state are inputs of section 6.1.1 of RFC 5280; the rest of the policy does not come from that standard.</p>
+    <p class="small">A value belongs to the policy if it changes when the verifying domain changes and no certificate is touched. Only the anchors with their initial state are inputs of the path validation of RFC 5280 (section 6.1.1), whereas the purposes and the freshness are demanded outside that validation and the components without a note are defined by this work.</p>
   </div>
 
   <div class="prose">
