@@ -60,6 +60,10 @@ const groups = [[0], [1, 2], [3], [4], [5]];
        between two boxes is twice this, and the product sign and the ends of
        the bracket are placed from it. */
     --st-pad: 0.45rem;
+    /* Width of the column of factors and the gap after it: the rules between
+       rows start after that column, so they never cross a product sign. */
+    --st-fcol: 4.5rem;
+    --st-gap: 1.2rem;
     max-width: var(--figure);
     margin-inline: auto;
     font-family: var(--font-figure);
@@ -69,8 +73,8 @@ const groups = [[0], [1, 2], [3], [4], [5]];
   .st__head,
   .st__row {
     display: grid;
-    grid-template-columns: 4.5rem minmax(0, 1.25fr) minmax(0, 1fr);
-    gap: 0 1.2rem;
+    grid-template-columns: var(--st-fcol) minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 0 var(--st-gap);
     align-items: center;
   }
 
@@ -113,8 +117,22 @@ const groups = [[0], [1, 2], [3], [4], [5]];
   .st__row {
     position: relative;
     padding: var(--st-pad) 0;
-    border-top: 1px solid var(--rule);
     transition: background-color 0.25s ease;
+  }
+
+  /* The rule above each row starts after the column of factors; only the
+     first and the last rules, which close the whole product, run across. */
+  .st__row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(var(--st-fcol) + var(--st-gap));
+    right: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .st__rows > .st__row:first-child::before {
+    left: 0;
   }
 
   .st__rows > .st__row:last-child {
@@ -146,8 +164,6 @@ const groups = [[0], [1, 2], [3], [4], [5]];
     left: 50%;
     bottom: calc(-1 * var(--st-pad) - 0.5em);
     transform: translateX(-50%);
-    padding: 0 0.25em;
-    background: var(--ground);
     font-size: 0.95rem;
     line-height: 1;
     color: var(--brass-soft);
@@ -195,6 +211,8 @@ const groups = [[0], [1, 2], [3], [4], [5]];
   @media (max-width: 719px) {
     .st {
       --st-pad: 0.5rem;
+      --st-fcol: 3.4rem;
+      --st-gap: 0.9rem;
       padding-left: 0.9rem;
     }
     .st__pair::before {
@@ -204,8 +222,8 @@ const groups = [[0], [1, 2], [3], [4], [5]];
       display: none;
     }
     .st__row {
-      grid-template-columns: 3.4rem minmax(0, 1fr);
-      gap: 0.35rem 0.9rem;
+      grid-template-columns: var(--st-fcol) minmax(0, 1fr);
+      gap: 0.35rem var(--st-gap);
     }
     .st__f {
       grid-row: span 2;
