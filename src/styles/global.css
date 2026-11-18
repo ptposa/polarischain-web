@@ -586,6 +586,13 @@ a.eqref:hover {
   text-decoration: underline;
 }
 
+/* Citations [n] read as part of the text: no underline, only the colour of
+   a link. */
+a[href^='#ref-'] {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
 /* A symbol of the model cited in the text takes the ink of the formulas. */
 .math,
 .m,
