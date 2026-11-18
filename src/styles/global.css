@@ -68,10 +68,10 @@
   --link: var(--sky);
   --link-hover: #b9e5fa;
   --subhead: var(--brass-soft);
-  /* Names from the X.509 profile (extensions, fields): the lavender of the
-     IEEE palette, which no other element of the text uses, so it keeps clear
-     of the brass, the cyan of the links and the colours of the stages. */
-  --x509: var(--ieee-purple-50);
+  /* Names from the X.509 profile (extensions, fields): the 50% tint of IEEE
+     Purple, which no other element of the text uses, so it keeps clear of
+     the brass, the cyan of the links and the colours of the stages. */
+  --x509: #d195ca;
   --tan: var(--brass);
   /* The ink of the formulas: a toasted brown, as in the original page. */
   --ink-eq: #d2a77f;
