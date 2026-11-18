@@ -191,7 +191,7 @@ const check = (x: number, y: number) => `M${x - 5} ${y} L${x - 1.5} ${y + 3.5} L
                     y={y + 12}
                     text-anchor="middle"
                     class={
-                      k.mono ? (L.wide ? 't-mono am-dns' : 't-mono am-dns am-dns--n') : 't-tiny'
+                      k.mono ? (L.wide ? 't-mono t-dns' : 't-mono t-dns am-dns--n') : 't-tiny'
                     }
                   >
                     {k.sub}
@@ -397,9 +397,6 @@ const check = (x: number, y: number) => `M${x - 5} ${y} L${x - 1.5} ${y + 3.5} L
   }
   .am-svg .am-no {
     fill: var(--fig-muted);
-  }
-  .am-svg .am-dns {
-    fill: var(--fig-text);
   }
   .am-svg .am-dns--n {
     font-size: 9px;

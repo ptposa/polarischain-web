@@ -133,7 +133,7 @@ const ORANGE = '#f0893a';
     <text x="420" y="358" text-anchor="middle" class="t-tiny cn-wide-only">(traditional, 0)</text>
     <text x="420" y="358" text-anchor="middle" class="t-tiny t-deny cn-strict-only">cut off with it</text>
 
-    <text x="420" y="392" text-anchor="middle" class="t-mono t-halo">erp.ops.altair.example</text>
+    <text x="420" y="392" text-anchor="middle" class="t-mono t-dns t-halo">erp.ops.altair.example</text>
     <text x="420" y="407" text-anchor="middle" class="t-tiny t-allow t-halo cn-wide-only">client of A &#183; admitted</text>
     <text x="420" y="407" text-anchor="middle" class="t-tiny t-deny t-halo cn-strict-only">client of A &#183; no route</text>
 
@@ -253,7 +253,7 @@ const ORANGE = '#f0893a';
     <text x="255" y="300" text-anchor="middle" class="t-strong cn-a-t">Issuing A</text>
     <text x="255" y="314" text-anchor="middle" class="t-tiny cn-wide-only">(traditional, 0)</text>
     <text x="255" y="314" text-anchor="middle" class="t-tiny t-deny cn-strict-only">cut off with it</text>
-    <text x="255" y="338" text-anchor="middle" class="t-mono t-halo">erp.ops.altair.example</text>
+    <text x="255" y="338" text-anchor="middle" class="t-mono t-dns t-halo">erp.ops.altair.example</text>
     <text x="255" y="352" text-anchor="middle" class="t-tiny t-allow t-halo cn-wide-only">admitted</text>
     <text x="255" y="352" text-anchor="middle" class="t-tiny t-deny t-halo cn-strict-only">no route</text>
 
@@ -301,7 +301,7 @@ const ORANGE = '#f0893a';
     </fieldset>
   </div>
   <p class="cn__out" aria-live="polite" data-cn-out>
-    With the floor (traditional, 0) the cone holds Root B, Intermediate B, Issuing B and, through the cross-certificate, Intermediate A and Issuing A, so the client <code>erp.ops.altair.example</code> has a route. Domain M meets the floor but stays outside the cone, and nothing it signs changes a decision of B.
+    With the floor (traditional, 0) the cone holds Root B, Intermediate B, Issuing B and, through the cross-certificate, Intermediate A and Issuing A, so the client <code class="dns">erp.ops.altair.example</code> has a route. Domain M meets the floor but stays outside the cone, and nothing it signs changes a decision of B.
   </p>
 </div>
 
@@ -314,8 +314,8 @@ const ORANGE = '#f0893a';
       const strict = floors.find((f) => f.checked)?.value === 'hybrid';
       root.classList.toggle('is-strict', strict);
       out.innerHTML = strict
-        ? 'With the floor (hybrid, 0) Intermediate A, a traditional key, leaves the subgraph of B, and the cone bends back to B’s own branch. The client <code>erp.ops.altair.example</code> is denied: no certificate was revoked and the relation with A is intact, and the route returns as soon as A offers a key that meets the floor.'
-        : 'With the floor (traditional, 0) the cone holds Root B, Intermediate B, Issuing B and, through the cross-certificate, Intermediate A and Issuing A, so the client <code>erp.ops.altair.example</code> has a route. Domain M meets the floor but stays outside the cone, and nothing it signs changes a decision of B.';
+        ? 'With the floor (hybrid, 0) Intermediate A, a traditional key, leaves the subgraph of B, and the cone bends back to B’s own branch. The client <code class="dns">erp.ops.altair.example</code> is denied: no certificate was revoked and the relation with A is intact, and the route returns as soon as A offers a key that meets the floor.'
+        : 'With the floor (traditional, 0) the cone holds Root B, Intermediate B, Issuing B and, through the cross-certificate, Intermediate A and Issuing A, so the client <code class="dns">erp.ops.altair.example</code> has a route. Domain M meets the floor but stays outside the cone, and nothing it signs changes a decision of B.';
     };
     floors.forEach((f) => f.addEventListener('change', render));
     render();
@@ -526,5 +526,8 @@ const ORANGE = '#f0893a';
     font-family: var(--font-mono);
     font-size: 0.85em;
     color: var(--text);
+  }
+  .cn__out :global(code.dns) {
+    color: var(--dns);
   }
 </style>

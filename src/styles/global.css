@@ -73,6 +73,9 @@
      Purple, which no other element of the text uses, so it keeps clear of
      the brass, the cyan of the links and the colours of the stages. */
   --x509: var(--ieee-purple-50);
+  /* DNS names of the use case (altair.example and below): the light orange
+     of the cone of trust, apart from the links, the brass and the X.509. */
+  --dns: #f6b27a;
   --tan: var(--brass);
   /* The ink of the formulas: a toasted brown, as in the original page. */
   --ink-eq: #d2a77f;
@@ -224,6 +227,15 @@ code,
   font-family: var(--font-mono);
   font-size: 0.82em;
   color: var(--text);
+}
+
+/* DNS names of the use case, upright and in their own colour, in the text
+   and in the figures alike. */
+code.dns {
+  color: var(--dns);
+}
+.svg-fig .t-dns {
+  fill: var(--dns);
 }
 
 /* X.509 names in running text: italic and in their own colour. */

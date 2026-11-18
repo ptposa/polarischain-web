@@ -192,7 +192,7 @@ const exEdges = [
       >
     </p>
     <p>
-      The examples use the names of the use case throughout. Domain A publishes its systems under <code>altair.example</code>, and the cross-certificate that Intermediate B issues to Intermediate A permits the names of <code>ops.altair.example</code>, its operations department, while it excludes <code>ext.ops.altair.example</code>, where A enrols the machines of its contractors. The client is <code>erp.ops.altair.example</code>, and B demands of it its own certificate policy <span class="m">p<sub>B</sub></span>, which the cross-certificate maps to the policy <span class="m">p<sub>A</sub></span> of A.
+      The examples use the names of the use case throughout. Domain A publishes its systems under <code class="dns">altair.example</code>, and the cross-certificate that Intermediate B issues to Intermediate A permits the names of <code class="dns">ops.altair.example</code>, its operations department, while it excludes <code class="dns">ext.ops.altair.example</code>, where A enrols the machines of its contractors. The client is <code class="dns">erp.ops.altair.example</code>, and B demands of it its own certificate policy <span class="m">p<sub>B</sub></span>, which the cross-certificate maps to the policy <span class="m">p<sub>A</sub></span> of A.
     </p>
   </div>
 
@@ -496,7 +496,7 @@ const exEdges = [
       >
     </p>
     <p>
-      The presented certificate is bound into every expression, because the constraints of a cross-certificate apply to everything that comes after it. Three clients of the same Issuing A have the same candidate path and it is admissible for only one: it serves <code>erp.ops.altair.example</code>, but not <code>nominas.rrhh.altair.example</code>, which falls outside the permitted subtree, nor <code>portatil7.ext.ops.altair.example</code>, which falls in the excluded one.
+      The presented certificate is bound into every expression, because the constraints of a cross-certificate apply to everything that comes after it. Three clients of the same Issuing A have the same candidate path and it is admissible for only one: it serves <code class="dns">erp.ops.altair.example</code>, but not <code class="dns">nominas.rrhh.altair.example</code>, which falls outside the permitted subtree, nor <code class="dns">portatil7.ext.ops.altair.example</code>, which falls in the excluded one.
     </p>
   </div>
 

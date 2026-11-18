@@ -5,8 +5,8 @@
 // between the factors. Hovering or focusing a slot lights its row.
 const slots = [
   { f: 'ℕ<sub>∞</sub>', what: 'Remaining depth', rfc: 'max_path_length', v: '1' },
-  { f: '𝒯', what: 'Permitted name subtrees', rfc: 'permitted_subtrees', v: '<code>ops.altair.example</code>', pair: true },
-  { f: '𝒯', what: 'Excluded name subtrees', rfc: 'excluded_subtrees', v: '<code>ext.ops.altair.example</code>', pair: true },
+  { f: '𝒯', what: 'Permitted name subtrees', rfc: 'permitted_subtrees', v: '<code class="dns">ops.altair.example</code>', pair: true },
+  { f: '𝒯', what: 'Excluded name subtrees', rfc: 'excluded_subtrees', v: '<code class="dns">ext.ops.altair.example</code>', pair: true },
   { f: '𝒢<sub>pol</sub>', what: 'Graph of valid policies', rfc: 'valid_policy_graph', v: 'p<sub>B</sub>, expecting p<sub>A</sub>' },
   { f: 'ℕ<sub>∞</sub><sup>3</sup>', what: 'Three policy counters', rfc: 'explicit_policy · inhibit_anyPolicy · policy_mapping', v: '(0, ∞, ∞)' },
   { f: '2<sup>OID</sup>', what: 'Initial policies the receiver accepts', rfc: 'user-initial-policy-set', v: '{ p<sub>B</sub> }' },
@@ -201,6 +201,9 @@ const groups = [[0], [1, 2], [3], [4], [5]];
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     color: var(--brass-soft);
+  }
+  .st__v :global(code.dns) {
+    color: var(--dns);
   }
 
   .st__note {
