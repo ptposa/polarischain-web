@@ -3,8 +3,14 @@
 // which candidates compete; the price of a boundary, κ, decides which of
 // them wins. Costs are those of the thesis, in octet-equivalents:
 //   C1 = 16289 + κ     C4 = 18046 + κ     C2 = 11028 + 2κ
-// The reader moves κ and changes the floor; the script redraws the marker
-// and the result. Without script the figure shows receiver B as in the text.
+// The selected cost for every κ is the lower envelope of the candidates
+// that compete, drawn in the colour of the selected path, and the band
+// under the axis says which path is selected on each stretch of κ. With
+// the hybrid floor of receiver B, C1 and C4 run parallel and κ never
+// changes the winner; with the traditional floor of receiver B′, C2
+// competes and the selection changes at 5,261 octets. The reader moves κ
+// and changes the floor; the script redraws everything. Without script the
+// figure shows receiver B′ at κ = 3,000, where C2 is selected.
 const X0 = 64;
 const X1 = 610;
 const Y0 = 250;
@@ -12,28 +18,32 @@ const Y1 = 24;
 const KMAX = 10000;
 const WMIN = 10000;
 const WMAX = 32000;
+const CROSS = 5261;
+const K0 = 3000;
 const x = (k: number) => X0 + ((X1 - X0) * k) / KMAX;
 const y = (w: number) => Y0 - ((Y0 - Y1) * (w - WMIN)) / (WMAX - WMIN);
 const paths = [
-  { id: 'C1', base: 16289, n: 1, label: 'C₁ · hybrid intermediate' },
-  { id: 'C4', base: 18046, n: 1, label: 'C₄ · ML-DSA-87 intermediate' },
-  { id: 'C2', base: 11028, n: 2, label: 'C₂ · through domain A' },
+  { id: 'C1', base: 16289, n: 1 },
+  { id: 'C4', base: 18046, n: 1 },
+  { id: 'C2', base: 11028, n: 2 },
 ];
 const line = (p: (typeof paths)[number]) =>
   `M${x(0)} ${y(p.base).toFixed(1)} L${x(KMAX)} ${y(p.base + p.n * KMAX).toFixed(1)}`;
 const xt = [0, 2500, 5000, 7500, 10000];
 const yt = [10000, 15000, 20000, 25000, 30000];
 const fmt = (n: number) => n.toLocaleString('en-US');
+const BY = Y0 + 30;
+const BH = 18;
 ---
 
-<div class="fp" data-fp>
-  <div class="fp__plot">
-  <svg class="svg-fig" viewBox="0 0 640 300" role="img" aria-labelledby="fp-t fp-d">
+<div class="fp is-trad" data-fp>
+  <svg class="svg-fig" viewBox="0 0 640 340" role="img" aria-labelledby="fp-t fp-d">
     <title id="fp-t">Cost of the three candidate paths as a function of the price of a boundary</title>
     <desc id="fp-d">
-      C1 and C4 cross one boundary and rise in parallel, C4 always 1757 octets above C1. C2 crosses
-      two boundaries and rises twice as fast: it is cheaper than C1 below 5261 octets per boundary
-      and dearer above. With a hybrid floor C2 does not compete at all.
+      C1 and C4 cross one boundary and rise in parallel, C4 always 1,757 octets above C1, so with the
+      hybrid floor of receiver B the price of a boundary never changes the selection. C2 crosses two
+      boundaries and rises twice as fast, so with the traditional floor of receiver B′ it is selected
+      below 5,261 octets per boundary and C1 above.
     </desc>
 
     {yt.map((w) => <line class="grid-line" x1={X0} x2={X1} y1={y(w)} y2={y(w)} />)}
@@ -46,48 +56,76 @@ const fmt = (n: number) => n.toLocaleString('en-US');
     }
     {
       xt.map((k, i) => (
-        <text class="t-tiny" x={x(k)} y={Y0 + 22} text-anchor="middle" data-odd={i % 2 ? '' : undefined}>
+        <text class="t-tiny" x={x(k)} y={Y0 + 18} text-anchor="middle" data-odd={i % 2 ? '' : undefined}>
           {fmt(k)}
         </text>
       ))
     }
     <line class="edge-muted" x1={X0} x2={X1} y1={Y0} y2={Y0}></line>
-    <text class="t-small" x={X1} y={Y0 + 44} text-anchor="end">κ, octets per boundary</text>
+    <text class="t-small" x={X1} y={BY + BH + 24} text-anchor="end">κ, octets per boundary</text>
     <text class="t-small" x={X0 - 52} y={Y1 - 8}>W(P), octet-equivalents</text>
 
-    <!-- The crossover of C1 and C2 -->
-    <line class="edge-dash" x1={x(5261)} x2={x(5261)} y1={y(16289 + 5261)} y2={Y0}></line>
-    <text class="t-tiny" x={x(5261) + 5} y={Y0 - 6}>5,261</text>
+    <!-- The crossover of C1 and C2, shown only when C2 competes -->
+    <g class="fp-trad-only">
+      <line class="edge-dash" x1={x(CROSS)} x2={x(CROSS)} y1={y(16289 + CROSS)} y2={Y0}></line>
+      <text class="t-tiny t-halo" x={x(CROSS) + 5} y={Y0 - 6}>5,261</text>
+    </g>
 
+    <!-- Every candidate, thin -->
+    {paths.map((p) => <path class={`fp-line fp-line--${p.id}`} d={line(p)} data-fp-line={p.id} />)}
+
+    <!-- The selected cost for every κ: the lower envelope of the candidates -->
+    <path class="fp-env fp-env--hy" d={line(paths[0])} />
+    <path
+      class="fp-env fp-env--tr"
+      d={`M${x(0)} ${y(11028).toFixed(1)} L${x(CROSS).toFixed(1)} ${y(11028 + 2 * CROSS).toFixed(1)} L${x(KMAX)} ${y(16289 + KMAX).toFixed(1)}`}
+    />
+
+    <text class="t-small fp-lbl" x={x(8300)} y={y(16289 + 8300) + 17}>C₁</text>
+    <text class="t-small fp-lbl" x={x(8300)} y={y(18046 + 8300) - 9}>C₄</text>
+    <text class="t-small fp-lbl fp-lbl--C2" x={x(9050)} y={y(11028 + 2 * 9050) - 9}>C₂</text>
+
+    <!-- Which path is selected on each stretch of κ -->
+    <g class="fp-band fp-band--hy">
+      <rect x={X0} y={BY} width={X1 - X0} height={BH} />
+      <text x={(X0 + X1) / 2} y={BY + 12.5} text-anchor="middle" class="t-tiny">
+        C₁ selected for every κ
+      </text>
+    </g>
+    <g class="fp-band fp-band--tr">
+      <rect class="fp-band--c2" x={X0} y={BY} width={x(CROSS) - X0} height={BH} />
+      <rect x={x(CROSS)} y={BY} width={X1 - x(CROSS)} height={BH} />
+      <text x={(X0 + x(CROSS)) / 2} y={BY + 12.5} text-anchor="middle" class="t-tiny">C₂ selected</text>
+      <text x={(x(CROSS) + X1) / 2} y={BY + 12.5} text-anchor="middle" class="t-tiny">C₁ selected</text>
+    </g>
+
+    <!-- The cursor, the cost of each candidate and the gap to the runner-up -->
+    <line class="fp-cursor" x1={x(K0)} x2={x(K0)} y1={Y1} y2={BY + BH} data-fp-cursor></line>
+    <line class="fp-gap" x1={x(K0) - 9} x2={x(K0) - 9} y1="0" y2="0" data-fp-gap></line>
+    <text class="t-tiny fp-gap-t t-halo" x={x(K0) - 14} y="0" text-anchor="end" data-fp-gapt></text>
     {
       paths.map((p) => (
-        <path class={`fp-line fp-line--${p.id}`} d={line(p)} data-fp-line={p.id} />
+        <rect class="fp-dot" width="7" height="7" x={x(K0) - 3.5} y={y(p.base + p.n * K0) - 3.5} data-fp-dot={p.id} />
       ))
     }
-    <text class="t-small fp-lbl--C1" x={x(7700)} y={y(16289 + 7700) + 16}>C₁</text>
-    <text class="t-small fp-lbl--C4" x={x(7700)} y={y(18046 + 7700) - 8}>C₄</text>
-    <text class="t-small fp-lbl--C2" x={x(8500)} y={y(11028 + 2 * 8500) - 8} data-fp-lbl="C2">C₂</text>
-
-    <line class="fp-cursor" x1={x(6000)} x2={x(6000)} y1={Y1} y2={Y0} data-fp-cursor></line>
-    {paths.map((p) => <circle class="fp-dot" r="3.5" cx={x(6000)} cy={y(p.base + p.n * 6000)} data-fp-dot={p.id} />)}
   </svg>
-  </div>
 
   <div class="fp__controls">
     <label class="fp__k" for="fp-kappa">
-      <span>κ = <output data-fp-kout>6,000</output> octets</span>
-      <input id="fp-kappa" type="range" min="0" max="10000" step="1" value="6000" data-fp-k />
+      <span>Price of a boundary, κ = <output data-fp-kout>{fmt(K0)}</output> octets</span>
+      <input id="fp-kappa" type="range" min="0" max="10000" step="25" value={K0} data-fp-k />
+      <small data-fp-khint>Drag κ across 5,261 and the selection changes.</small>
     </label>
 
     <fieldset class="fp__floor">
-      <legend>Floor τ of the receiver</legend>
-      <label><input type="radio" name="fp-floor" value="hybrid" checked data-fp-floor /> (hybrid, 0)</label>
-      <label><input type="radio" name="fp-floor" value="traditional" data-fp-floor /> (traditional, 0)</label>
+      <legend>Floor τ of the receiver, choose one</legend>
+      <label><input type="radio" name="fp-floor" value="hybrid" data-fp-floor /> B · (hybrid, 0)</label>
+      <label><input type="radio" name="fp-floor" value="traditional" checked data-fp-floor /> B′ · (traditional, 0)</label>
     </fieldset>
   </div>
 
   <p class="fp__out" aria-live="polite" data-fp-out>
-    Candidates C₁ and C₄. Selected: <b>C₁</b>, 22,289 octet-equivalents, against 24,046 for C₄.
+    Receiver B′ admits C₁, C₄ and C₂. At κ = 3,000 it selects <b>C₂</b>, 17,028 octet-equivalents, 2,261 below C₁: a second boundary costs it less than the 5,261 octets that C₂ saves.
   </p>
 </div>
 
@@ -105,38 +143,67 @@ const fmt = (n: number) => n.toLocaleString('en-US');
     const fmt = (n: number) => n.toLocaleString('en-US');
     const kIn = root.querySelector<HTMLInputElement>('[data-fp-k]')!;
     const kOut = root.querySelector<HTMLOutputElement>('[data-fp-kout]')!;
+    const kHint = root.querySelector<HTMLElement>('[data-fp-khint]')!;
     const out = root.querySelector<HTMLElement>('[data-fp-out]')!;
     const cursor = root.querySelector<SVGLineElement>('[data-fp-cursor]')!;
+    const gap = root.querySelector<SVGLineElement>('[data-fp-gap]')!;
+    const gapT = root.querySelector<SVGTextElement>('[data-fp-gapt]')!;
     const floors = Array.from(root.querySelectorAll<HTMLInputElement>('[data-fp-floor]'));
 
     const render = (): void => {
       const k = Number(kIn.value);
-      const traditional = floors.find((f) => f.checked)?.value === 'traditional';
+      const trad = floors.find((f) => f.checked)?.value === 'traditional';
+      root.classList.toggle('is-trad', trad);
       kOut.textContent = fmt(k);
+      kIn.style.setProperty('--fill', `${(k / KMAX) * 100}%`);
       cursor.setAttribute('x1', String(x(k)));
       cursor.setAttribute('x2', String(x(k)));
-      const live = P.filter((p) => traditional || p.id !== 'C2');
-      // Sel: least cost, then fewest certificates. All three have three CA
-      // certificates, so an exact tie is left to the last key of Sel.
+
+      const live = P.filter((p) => trad || p.id !== 'C2');
       const cost = (p: (typeof P)[number]) => p.base + p.n * k;
-      const best = live.reduce((a, b) => (cost(b) < cost(a) ? b : a));
-      const tie = live.filter((p) => cost(p) === cost(best)).length > 1;
+      const ranked = [...live].sort((a, b) => cost(a) - cost(b));
+      const best = ranked[0];
+      const next = ranked[1];
+      const tie = cost(best) === cost(next);
       for (const p of P) {
         const on = live.includes(p);
-        const dot = root.querySelector<SVGCircleElement>(`[data-fp-dot="${p.id}"]`)!;
-        dot.setAttribute('cx', String(x(k)));
-        dot.setAttribute('cy', String(y(cost(p))));
+        const dot = root.querySelector<SVGRectElement>(`[data-fp-dot="${p.id}"]`)!;
+        dot.setAttribute('x', String(x(k) - 3.5));
+        dot.setAttribute('y', String(y(cost(p)) - 3.5));
         dot.classList.toggle('is-best', p === best && !tie);
         dot.classList.toggle('is-off', !on);
         root.querySelector(`[data-fp-line="${p.id}"]`)!.classList.toggle('is-off', !on);
-        root.querySelector(`[data-fp-line="${p.id}"]`)!.classList.toggle('is-best', p === best && !tie);
       }
-      root.querySelector('[data-fp-lbl="C2"]')!.classList.toggle('is-off', !traditional);
-      const names = live.map((p) => p.sub).join(traditional ? ', ' : ' and ');
-      const others = live.filter((p) => p !== best).map((p) => `${fmt(cost(p))} for ${p.sub}`).join(' and ');
-      out.innerHTML = tie
-        ? `Candidates ${names}. C₁ and C₂ tie at ${fmt(cost(best))} octet-equivalents: the tie-break of Sel decides.`
-        : `Candidates ${names}${traditional ? '' : ' (C₂ falls below the floor)'}. Selected: <b>${best.sub}</b>, ${fmt(cost(best))} octet-equivalents, against ${others}.`;
+
+      // The gap between the selected path and the runner-up, at the cursor.
+      const yb = y(cost(best));
+      const yn = y(cost(next));
+      // The label goes on the left of the cursor, between the two lines,
+      // where neither of them runs; near the left edge it goes right.
+      const side = x(k) < X0 + 90 ? 1 : -1;
+      gap.setAttribute('x1', String(x(k) + 9 * side));
+      gap.setAttribute('x2', String(x(k) + 9 * side));
+      gap.setAttribute('y1', String(yb));
+      gap.setAttribute('y2', String(yn));
+      gapT.setAttribute('x', String(x(k) + 14 * side));
+      gapT.setAttribute('y', String((yb + yn) / 2 + 3.5));
+      gapT.setAttribute('text-anchor', side > 0 ? 'start' : 'end');
+      gapT.textContent = tie ? '' : `${fmt(cost(next) - cost(best))} less`;
+
+      kHint.textContent = trad
+        ? 'Drag κ across 5,261 and the selection changes.'
+        : 'With this floor C₁ and C₄ rise in parallel: whatever κ, C₁ is selected.';
+
+      const at = `At κ = ${fmt(k)}`;
+      if (!trad) {
+        out.innerHTML = `Receiver B admits only C₁ and C₄, because C₂ crosses Intermediate A1, a traditional key below its floor. ${at} it selects <b>C₁</b>, ${fmt(cost(best))} octet-equivalents, and C₄ costs ${fmt(cost(next) - cost(best))} more for any κ: both cross one boundary, and all the ML-DSA-87 intermediate adds is octets.`;
+      } else if (tie) {
+        out.innerHTML = `Receiver B′ admits C₁, C₄ and C₂. ${at} C₁ and C₂ cost the same, ${fmt(cost(best))} octet-equivalents, and the order of Sel breaks the tie.`;
+      } else if (best.id === 'C2') {
+        out.innerHTML = `Receiver B′ admits C₁, C₄ and C₂. ${at} it selects <b>C₂</b>, ${fmt(cost(best))} octet-equivalents, ${fmt(cost(next) - cost(best))} below C₁: a second boundary costs it less than the 5,261 octets that C₂ saves.`;
+      } else {
+        out.innerHTML = `Receiver B′ admits C₁, C₄ and C₂. ${at} it selects <b>C₁</b>, ${fmt(cost(best))} octet-equivalents, ${fmt(cost(next) - cost(best))} below ${next.sub}: a second boundary now costs more than the 5,261 octets that C₂ saves.`;
+      }
     };
     kIn.addEventListener('input', render);
     floors.forEach((f) => f.addEventListener('change', render));
@@ -159,10 +226,10 @@ const fmt = (n: number) => n.toLocaleString('en-US');
      at the smaller scale, and every other tick is left out. */
   @media (max-width: 640px) {
     .fp svg :global(text.t-tiny) {
-      font-size: 19px;
+      font-size: 17px;
     }
     .fp svg :global(text.t-small) {
-      font-size: 20px;
+      font-size: 19px;
     }
     .fp svg :global(text[data-odd]) {
       display: none;
@@ -172,17 +239,65 @@ const fmt = (n: number) => n.toLocaleString('en-US');
   .fp-line {
     fill: none;
     stroke: var(--fig-stroke);
-    stroke-width: 1.3;
-  }
-  .fp-line.is-best {
-    stroke: var(--path);
-    stroke-width: 2;
+    stroke-width: 1.2;
+    transition: opacity 0.3s ease;
   }
   .fp-line.is-off {
     stroke: var(--deny);
     stroke-dasharray: 2 5;
-    opacity: 0.6;
+    opacity: 0.55;
   }
+
+  /* The selected cost, one envelope per floor, crossfaded. */
+  .fp-env {
+    fill: none;
+    stroke: var(--path);
+    stroke-width: 2.6;
+    transition: opacity 0.4s ease;
+  }
+  .fp-env--tr,
+  .fp-band--tr,
+  .fp-trad-only {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .fp.is-trad .fp-env--tr,
+  .fp.is-trad .fp-band--tr,
+  .fp.is-trad .fp-trad-only {
+    opacity: 1;
+  }
+  .fp.is-trad .fp-env--hy,
+  .fp.is-trad .fp-band--hy {
+    opacity: 0;
+  }
+  .fp-env--hy,
+  .fp-band--hy {
+    transition: opacity 0.4s ease;
+  }
+
+  .fp-lbl {
+    fill: var(--fig-text);
+  }
+  .fp-lbl--C2 {
+    fill: var(--deny);
+    transition: fill 0.3s ease;
+  }
+  .fp.is-trad .fp-lbl--C2 {
+    fill: var(--fig-text);
+  }
+
+  .fp-band rect {
+    fill: color-mix(in srgb, var(--path) 16%, transparent);
+    stroke: color-mix(in srgb, var(--path) 55%, transparent);
+    stroke-width: 1;
+  }
+  .fp-band rect.fp-band--c2 {
+    fill: color-mix(in srgb, var(--path) 8%, transparent);
+  }
+  .fp-band text {
+    fill: var(--ieee-cyan-25);
+  }
+
   .fp-dot {
     fill: var(--ground);
     stroke: var(--fig-stroke);
@@ -199,16 +314,20 @@ const fmt = (n: number) => n.toLocaleString('en-US');
     stroke: var(--brass);
     stroke-width: 1;
   }
-  .fp :global(.is-off[data-fp-lbl]) {
-    fill: var(--deny);
+  .fp-gap {
+    stroke: var(--brass-soft);
+    stroke-width: 1;
+  }
+  .fp-gap-t {
+    fill: var(--brass-soft);
   }
 
   .fp__controls {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem 2.5rem;
-    align-items: end;
-    margin-top: 1rem;
+    gap: 1.2rem 2.5rem;
+    align-items: start;
+    margin-top: 1.2rem;
     font-family: var(--font-figure);
     font-size: 0.875rem;
     color: var(--text-soft);
@@ -216,33 +335,29 @@ const fmt = (n: number) => n.toLocaleString('en-US');
 
   .fp__k {
     display: grid;
-    gap: 0.4rem;
+    gap: 0.5rem;
     flex: 1 1 16rem;
     font-variant-numeric: tabular-nums;
   }
-
-  .fp__k input {
-    width: 100%;
-    accent-color: var(--brass);
+  .fp__k output {
+    color: var(--text);
+  }
+  .fp__k small {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
   }
 
   .fp__floor {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem 1.2rem;
+    display: grid;
+    gap: 0.5rem;
     margin: 0;
     padding: 0;
     border: 0;
   }
-
   .fp__floor legend {
     padding: 0;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.5rem;
     color: var(--text-muted);
-  }
-
-  .fp__floor input {
-    accent-color: var(--brass);
   }
 
   .fp__out {
@@ -253,5 +368,9 @@ const fmt = (n: number) => n.toLocaleString('en-US');
     font-size: 0.9375rem;
     line-height: 1.5;
     color: var(--text-soft);
+  }
+  .fp__out :global(b) {
+    color: var(--path);
+    font-weight: inherit;
   }
 </style>

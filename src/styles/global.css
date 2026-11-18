@@ -1346,3 +1346,105 @@ a[href^='#ref-'] {
     color: var(--text-muted);
   }
 }
+
+/* ─── Controls inside figures ───
+   Square, as every box of the page: a choice is a button with a square
+   mark, and a range is a flat track with a square thumb. */
+.figure fieldset label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--rule-strong);
+  color: var(--text-soft);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+.figure fieldset label:hover {
+  border-color: var(--brass-soft);
+  color: var(--text);
+}
+.figure fieldset label:has(input:checked) {
+  border-color: var(--brass);
+  background: color-mix(in srgb, var(--brass) 8%, transparent);
+  color: var(--text);
+}
+.figure fieldset label:has(input:focus-visible) {
+  outline: 1px solid var(--brass-soft);
+  outline-offset: 2px;
+}
+
+.figure input[type='radio'] {
+  appearance: none;
+  display: inline-grid;
+  place-content: center;
+  flex: none;
+  width: 0.85rem;
+  height: 0.85rem;
+  margin: 0;
+  border: 1px solid var(--fig-stroke);
+  background: transparent;
+  cursor: pointer;
+}
+.figure input[type='radio']::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  background: var(--brass);
+  transform: scale(0);
+  transition: transform 0.15s ease;
+}
+.figure input[type='radio']:checked {
+  border-color: var(--brass);
+}
+.figure input[type='radio']:checked::before {
+  transform: scale(1);
+}
+.figure input[type='radio']:focus-visible {
+  outline: none;
+}
+
+.figure input[type='range'] {
+  --fill: 50%;
+  appearance: none;
+  width: 100%;
+  height: 1.2rem;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.figure input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  background: linear-gradient(to right, var(--brass) 0 var(--fill), var(--rule-strong) var(--fill) 100%);
+}
+.figure input[type='range']::-moz-range-track {
+  height: 4px;
+  background: var(--rule-strong);
+}
+.figure input[type='range']::-moz-range-progress {
+  height: 4px;
+  background: var(--brass);
+}
+.figure input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border: 0;
+  border-radius: 0;
+  background: var(--brass);
+}
+.figure input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 0;
+  background: var(--brass);
+}
+.figure input[type='range']:focus-visible {
+  outline: 1px solid var(--brass-soft);
+  outline-offset: 4px;
+}
