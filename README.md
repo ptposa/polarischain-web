@@ -201,8 +201,8 @@ Copyright © 2026 Jorge Pablo Trías Posa.
 
 - **Code**: the source code of this site is licensed under the
   [Apache License 2.0](LICENSE).
-- **Content**: the text and figures of the site, adapted from the thesis
-  and its annexes, are licensed under
+- **Content**: the thesis report and its annexes, and the text and
+  figures of the site adapted from them, are licensed under
   [Creative Commons Attribution 4.0 International (CC BY 4.0)](LICENSE-CC-BY-4.0).
   Credit them as: *Jorge Pablo Trías Posa · PolarisChain, 2026 ·
   polarischain.org · CC BY 4.0*.
