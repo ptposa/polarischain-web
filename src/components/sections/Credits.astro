@@ -83,9 +83,10 @@ const refs = cited.map((k) => all.find((r) => r.key === k)).filter((r) => r !== 
 
     <footer class="foot">
       <p>
-        This page is a public overview of research in progress whose authoritative text is the thesis report, so laboratory results are described as planned unless a date says that they were run. The figures adapt the diagrams of the thesis and its annexes, distributed by their
-        author under CC BY 4.0, and all
-        typefaces are under the SIL Open Font License.
+        This page is a public overview of research in progress whose authoritative text is the thesis report, so laboratory results are described as planned unless a date says that they were run. The figures adapt the diagrams of the thesis and its annexes.
+      </p>
+      <p class="foot__licence">
+        The text and figures of this page are licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="license noreferrer">CC&nbsp;BY&nbsp;4.0</a>, and the source code of the site under the <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="license noreferrer">Apache License&nbsp;2.0</a>. All typefaces are under the SIL Open Font License.
       </p>
       <p class="foot__line">
         <span>PolarisChain · Jorge Pablo Trías Posa · 2026</span>
@@ -177,6 +178,15 @@ const refs = cited.map((k) => all.find((r) => r.key === k)).filter((r) => r !== 
   }
   .foot p:not(.foot__line) {
     margin: 0;
+  }
+  .foot p.foot__licence {
+    margin-top: 0.8rem;
+  }
+  .foot__licence a {
+    color: inherit;
+  }
+  .foot__licence a:hover {
+    color: var(--link-hover);
   }
   .foot__line {
     display: flex;
