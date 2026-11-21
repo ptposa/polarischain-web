@@ -8,6 +8,15 @@ Version 2.0 (see LICENSE).
 The thesis report and its annexes, and the text and figures of the site
 adapted from them, are licensed under the Creative Commons Attribution
 4.0 International licence (CC BY 4.0, see LICENSE-CC-BY-4.0).
-Credit them as:
+To reuse a text or a figure, credit its title, author, source and
+licence, and say if you adapted it, for example:
 
-  Jorge Pablo Trías Posa · PolarisChain, 2026 · polarischain.org · CC BY 4.0
+  "Figure 6" by Jorge Pablo Trías Posa, PolarisChain, 2026,
+  polarischain.org, CC BY 4.0
+
+To cite the thesis:
+
+  Trías Posa, J. P., "A Graph-Based Formal Model of PKI Federation for
+  Controlled Interoperability in Multi-Domain Environments and the
+  Post-Quantum Transition", Master's thesis, Polytechnic University of
+  Valencia (UPV), 2026.
