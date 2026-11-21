@@ -204,6 +204,8 @@ Copyright © 2026 Jorge Pablo Trías Posa.
 - **Content**: the text and figures of the site, adapted from the thesis
   and its annexes, are licensed under
   [Creative Commons Attribution 4.0 International (CC BY 4.0)](LICENSE-CC-BY-4.0).
+  Credit them as: *Jorge Pablo Trías Posa · PolarisChain, 2026 ·
+  polarischain.org · CC BY 4.0*.
 - **Typefaces**: all faces are under the SIL Open Font License; see
   `src/assets/fonts/STIXTwoMath-OFL.txt` for STIX Two Math.
 
